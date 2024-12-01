@@ -70,3 +70,20 @@ body {
     @apply bg-background text-foreground;
   }
 }
+@layer components {
+  .grid-stack {
+    @apply grid grid-cols-1 grid-rows-1;
+  }
+  .grid-stack > * {
+    grid-column: 1/1;
+    grid-row: 1/1;
+  }
+  .glass-morphism {
+    background: rgba(255, 255, 255, 0.3);
+
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(11.9px);
+    -webkit-backdrop-filter: blur(11.9px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+}

@@ -52,16 +52,30 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
         custom: {
-          background: "#1E1E1E",
+          background: "#2F3133",
+          banner_bg: "#484848",
           primary: {
             DEFAULT: "#FE6902",
           },
+          link: "#F1E4E7",
         },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontSize: {
+        64: "64px",
+        40: "40px",
+        25: "25px",
+        30: "30px",
+      },
+      maxWidth: {
+        778: "778px",
+      },
+      fontFamily: {
+        "plus-jakarta-sans": ["var(--font-jarkarta-sans)"],
       },
     },
   },
