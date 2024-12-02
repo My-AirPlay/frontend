@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans, Noto_Sans, Rubik } from "next/font/google";
 import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,6 +15,16 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-jakarta-sans",
   weight: "variable",
 });
+const notoSans = Noto_Sans({
+  subsets: ["latin"],
+  variable: "--font-noto-sans",
+  weight: "variable",
+});
+const rubik = Rubik({
+  subsets: ["latin"],
+  variable: "--font-rubik",
+  weight: "variable",
+});
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,7 +34,12 @@ export default function RootLayout({
     <html lang="en">
       <body
         suppressHydrationWarning
-        className={cn(inter.className, plusJakartaSans.variable)}
+        className={cn(
+          inter.className,
+          plusJakartaSans.variable,
+          notoSans.variable,
+          rubik.variable
+        )}
       >
         {children}
       </body>

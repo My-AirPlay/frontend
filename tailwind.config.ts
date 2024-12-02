@@ -58,6 +58,7 @@ export default {
             DEFAULT: "#FE6902",
           },
           link: "#F1E4E7",
+          auth_stroke: "#4D4D4D",
         },
       },
       borderRadius: {
@@ -70,12 +71,25 @@ export default {
         40: "40px",
         25: "25px",
         30: "30px",
+        90: "90px",
       },
       maxWidth: {
         778: "778px",
+        "auth-card": "480px",
       },
       fontFamily: {
         "plus-jakarta-sans": ["var(--font-jarkarta-sans)"],
+        "noto-sans": ["var(--font-noto-sans)"],
+        rubik: ["var(--font-rubik)"],
+      },
+      boxShadow: {
+        "auth-card": "-8px 4px 5px rgba(0,0,0,0.24)",
+      },
+      minHeight: {
+        "auth-card": "796px",
+      },
+      height: {
+        "auth-btn": "75px",
       },
     },
   },

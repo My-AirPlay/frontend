@@ -3,7 +3,7 @@ interface AuthLayoutProps {
   children: ReactNode;
 }
 const AuthLayout = ({ children }: AuthLayoutProps) => {
-  return <>{children}</>;
+  return <div className="bg-custom-background min-h-svh">{children}</div>;
 };
 
 export default AuthLayout;
