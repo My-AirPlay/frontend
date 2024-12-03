@@ -1,19 +1,14 @@
 import { Metadata } from "next";
 import React from "react";
-import AuthWrapper from "../_components/auth-wrapper";
 import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
-import facebook from "@/app/assets/facebook.svg";
-import google from "@/app/assets/google.svg";
-import github from "@/app/assets/github.svg";
-import Image from "next/image";
 import AuthFormWrapper from "../_components/auth-form-wrapper";
 export const metadata: Metadata = {
   title: "Login",
 };
-const faqTexts = ["Terms & Conditions", "Support", "Customer Care"];
+
 const RoleLogin = () => {
   return (
     <AuthFormWrapper
