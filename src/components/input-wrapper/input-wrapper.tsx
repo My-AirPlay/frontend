@@ -16,7 +16,7 @@ const InputWrapper = ({
   return (
     <div
       className={cn(
-        "focus-within:border-black  bg-custom-input_dark rounded-2xl px-6 py-4",
+        "focus-within:border-black  bg-custom-input_dark rounded-2xl px-6 py-4 flex",
         styles
       )}
       tabIndex={0}

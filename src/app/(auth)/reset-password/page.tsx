@@ -1,11 +1,11 @@
 import React from "react";
-import InputWrapper from "@/components/input-wrapper/input-wrapper";
-import AuthWrapper from "../_components/auth-wrapper";
 import ThemeHeader from "../_components/theme-header/theme-header";
+import AuthWrapper from "../_components/auth-wrapper";
 import Link from "next/link";
 import { urls } from "@/lib/constants";
 import AuthActions from "../_components/auth-actions/auth-actions";
-const ForgotPasswordPage = () => {
+import PasswordInput from "../_components/password-input/password-input";
+const ResetPasswordPage = () => {
   return (
     <>
       <ThemeHeader />
@@ -24,14 +24,15 @@ const ForgotPasswordPage = () => {
         }
       >
         <h1 className="text-center text-white font-roboto font-black text-4xl mb-10">
-          Forgot Password
+          Reset your password
         </h1>
         <p className="text-custom-footer_border mb-10 font-plus-jakarta-sans font-medium text-xl">
-          Enter your email address below and we&apos;ll email you a link to
-          reset your password.
+          Enter your new password carefully. The password must be 8 characters
+          long
         </p>
         <form className="flex flex-col gap-4">
-          <InputWrapper placeholder="Email" />
+          <PasswordInput placeholder="New password" />
+          <PasswordInput placeholder="Repeat the password" />
           <AuthActions btnText="Confirm" />
         </form>
       </AuthWrapper>
@@ -39,4 +40,4 @@ const ForgotPasswordPage = () => {
   );
 };
 
-export default ForgotPasswordPage;
+export default ResetPasswordPage;
