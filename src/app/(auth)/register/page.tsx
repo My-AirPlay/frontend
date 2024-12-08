@@ -1,34 +1,77 @@
 "use client";
 import React, { useState } from "react";
-import AuthFormWrapper from "../_components/auth-form-wrapper";
-import GeneralDetailForm from "./_components/general-detail/general-detail";
-import { SingupStep } from "@/lib/constants";
-import BankDetailForm from "./_components/bank-detail/bank-detail";
+import { urls } from "@/lib/constants";
+
+import AuthWrapper from "../_components/auth-wrapper";
+import { Check } from "lucide-react";
+import InputWrapper from "@/components/input-wrapper/input-wrapper";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import google from "@/app/(auth)/_assets/google.svg";
+import Link from "next/link";
 
 const SingupPage = () => {
-  const [currentStep, setCurrentStep] = useState(SingupStep.BANK);
+  const [checked, setChecked] = useState(false);
   return (
-    <AuthFormWrapper
-      pageTitle={
-        currentStep === SingupStep.GENERAL
-          ? "Let’s get Started.!"
-          : "Almost There.!"
+    <AuthWrapper
+      linkText={
+        <p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+          Already a member?{" "}
+          <Link href={urls.login} className="font-bold text-custom-primary">
+            Sign In
+          </Link>{" "}
+        </p>
       }
-      pageDescription="Quick & Easy"
-      formTitle="Signup"
-      formDescription="Just some details to get you in.!"
-      faqIntro="Already Registered? "
-      faqLinkText="Login"
-      faqLink="/login"
-      showFaqs={currentStep !== SingupStep.BANK}
-      showOAuth={currentStep !== SingupStep.BANK}
     >
-      {currentStep === SingupStep.GENERAL ? (
-        <GeneralDetailForm onNext={() => setCurrentStep(SingupStep.BANK)} />
-      ) : (
-        <BankDetailForm />
-      )}
-    </AuthFormWrapper>
+      <h1 className="font-black text-white text-center text-4xl mb-10">
+        Sign up
+      </h1>
+      <p className="font-plus-jakarta-sans font-medium text-xl mb-10 max-w-[542px] text-custom-footer_border ">
+        To upload music and videos, you must accept our{" "}
+        <span className="text-custom-primary">terms</span> and{" "}
+        <span className="text-custom-primary">conditions</span>{" "}
+        <span className="text-custom-registration_link">
+          on the registration
+        </span>{" "}
+        website
+      </p>
+      <form className="flex flex-col gap-5">
+        <InputWrapper type="email" placeholder="Email" />
+
+        <InputWrapper type="password" placeholder="Password" />
+        <InputWrapper type="password" placeholder="Confirm Password" />
+
+        <div className="flex gap-2">
+          <Button
+            className="bg-transparent w-full max-w-icon-btn h-16 rounded-[14px] flex items-center justify-center shadow-none border border-custom-icon-btn-border"
+            type="button"
+          >
+            <Image src={google} alt="google" />
+          </Button>
+          <Button
+            variant={"authBtn"}
+            className="h-16 tracking-wider"
+            type="submit"
+          >
+            Sign up
+          </Button>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setChecked((prev) => !prev)}
+            type="button"
+            className="h-5 text-white rounded-sm w-5 bg-custom-check-box flex justify-center items-center"
+          >
+            {checked && <Check />}
+          </button>
+          <small className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+            I read and accepted the{" "}
+            <span className="text-custom-primary">terms</span> and{" "}
+            <span className="text-custom-primary">conditions</span>
+          </small>
+        </div>
+      </form>
+    </AuthWrapper>
   );
 };
 

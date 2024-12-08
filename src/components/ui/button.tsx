@@ -20,7 +20,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         authBtn:
-          "bg-custom-primary text-white h-auth-btn flex justify-center items-center gap-4 font-rubik font-semibold text-white text-lg  rounded-full w-full",
+          "bg-custom-primary text-white flex justify-center items-center gap-4 font-plus-jakarta-sans  font-extrabold text-white text-lg  rounded-full w-full",
       },
       size: {
         default: "h-9 px-4 py-2",

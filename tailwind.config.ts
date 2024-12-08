@@ -59,6 +59,12 @@ export default {
           },
           link: "#F1E4E7",
           auth_stroke: "#4D4D4D",
+          footer_border: "#A6A6A6",
+          registration_link: "#7B7B7B",
+          input_dark: "#383838",
+          input_light: "#4C4C4D",
+          "icon-btn-border": "#FCFCFC",
+          "check-box": "#505050",
         },
       },
       borderRadius: {
@@ -72,15 +78,18 @@ export default {
         25: "25px",
         30: "30px",
         90: "90px",
+        14: "14px",
       },
       maxWidth: {
         778: "778px",
-        "auth-card": "480px",
+        "auth-card": "603px",
+        "icon-btn": "158px",
       },
       fontFamily: {
-        "plus-jakarta-sans": ["var(--font-jarkarta-sans)"],
+        "plus-jakarta-sans": ["var(--font-jakarta-sans)"],
         "noto-sans": ["var(--font-noto-sans)"],
         rubik: ["var(--font-rubik)"],
+        roboto: ["var(--font-roboto)"],
       },
       boxShadow: {
         "auth-card": "-8px 4px 5px rgba(0,0,0,0.24)",
