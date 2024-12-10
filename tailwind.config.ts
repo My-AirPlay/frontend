@@ -65,6 +65,8 @@ export default {
           input_light: "#4C4C4D",
           "icon-btn-border": "#FCFCFC",
           "check-box": "#505050",
+          "sidebar-stroke": "#2F363E",
+          sidebar: "rgba(17,22,28,0.6)",
         },
       },
       borderRadius: {
@@ -99,6 +101,9 @@ export default {
       },
       height: {
         "auth-btn": "75px",
+      },
+      minWidth: {
+        sidebar: "144px",
       },
     },
   },

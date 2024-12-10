@@ -7,4 +7,5 @@ export const urls = {
   forgotPassword: "/forgot-password",
   login: "/login",
   register: "/register",
+  dashboard: "/dashboard",
 };
