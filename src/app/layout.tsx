@@ -6,6 +6,8 @@ import {
   Noto_Sans,
   Rubik,
   Roboto,
+  Poppins,
+  Manrope,
 } from "next/font/google";
 import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
@@ -36,6 +38,16 @@ const roboto = Roboto({
   variable: "--font-roboto",
   weight: ["100", "300", "400", "500", "700", "900"],
 });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
+});
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  weight: "variable",
+});
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,7 +62,9 @@ export default function RootLayout({
           plusJakartaSans.variable,
           notoSans.variable,
           rubik.variable,
-          roboto.variable
+          roboto.variable,
+          poppins.variable,
+          manrope.variable
         )}
       >
         {children}
