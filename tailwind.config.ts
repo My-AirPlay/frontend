@@ -76,6 +76,7 @@ export default {
           "footer-stroke": "#404444",
           "sidebar-inactive": "#7B7B7B",
           "mobile-nav": "#252525",
+          "edit-modal": "#505050",
         },
       },
       borderRadius: {
@@ -101,6 +102,7 @@ export default {
         "icon-btn": "158px",
         page: "1343px",
         sidebar: "106px",
+        "preview-width": "961px",
       },
       fontFamily: {
         "plus-jakarta-sans": ["var(--font-jakarta-sans)"],
@@ -109,6 +111,7 @@ export default {
         roboto: ["var(--font-roboto)"],
         poppins: ["var(--font-poppins)"],
         manrope: ["var(--font-manrope)"],
+        inter: ["var(---font-inter)"],
       },
       boxShadow: {
         "auth-card": "-8px 4px 5px rgba(0,0,0,0.24)",

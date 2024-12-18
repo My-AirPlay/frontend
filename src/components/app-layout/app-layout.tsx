@@ -15,10 +15,10 @@ const CustomAppLayout = ({ children, showIcons }: AppLayoutProps) => {
         <main className="flex-1">{children}</main>
 
         {!showIcons && (
-          <footer className="max-w-page mx-auto flex justify-between items-center w-full">
+          <footer className="max-w-page mx-auto flex md:justify-between justify-center items-center w-full">
             <nav>
-              <ul className="flex items-center gap-4">
-                <li className="text-white font-medium text-xs">
+              <ul className="md:flex grid grid-cols-[repeat(2,auto)] items-center gap-4 justify-center place-content-center">
+                <li className="text-white font-medium text-xs col-span-2 text-center">
                   Copyright &copy; {year} Airplay
                 </li>
                 <li className="text-white font-medium text-xs">
@@ -29,7 +29,7 @@ const CustomAppLayout = ({ children, showIcons }: AppLayoutProps) => {
                 </li>
               </ul>
             </nav>
-            <small className="text-white font-medium text-xs">
+            <small className="text-white md:block hidden font-medium text-xs">
               Supported by AirPlay
             </small>
           </footer>

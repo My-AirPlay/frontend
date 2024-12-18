@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 const inter = Inter({
   subsets: ["latin"],
   weight: "variable",
+  variable: "--font-inter",
 });
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -64,7 +65,8 @@ export default function RootLayout({
           rubik.variable,
           roboto.variable,
           poppins.variable,
-          manrope.variable
+          manrope.variable,
+          inter.variable
         )}
       >
         {children}
