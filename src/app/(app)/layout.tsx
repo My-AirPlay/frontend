@@ -60,7 +60,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             </Button>
           </div>
         </div>
-        <div>{children}</div>
+        <div className="pb-10">{children}</div>
       </main>
     </div>
   );

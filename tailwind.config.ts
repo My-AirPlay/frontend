@@ -79,6 +79,7 @@ export default {
           "mobile-nav": "#252525",
           "edit-modal": "#505050",
           "profile-icon": "#B0B0B0",
+          seperator: "#393939",
         },
       },
       borderRadius: {
