@@ -88,6 +88,9 @@
   .auth-card-shadown {
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
   }
+  .withdraw-btn-shadow {
+    box-shadow: 10px 7px 15px rgba(225, 225, 225, 0.26);
+  }
 }
 @layer base {
   svg {

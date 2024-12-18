@@ -57,6 +57,7 @@ export default {
           primary: {
             DEFAULT: "#FE6902",
           },
+          "profile-btn": "#1B2128",
           link: "#F1E4E7",
           auth_stroke: "#4D4D4D",
           footer_border: "#A6A6A6",
@@ -77,6 +78,7 @@ export default {
           "sidebar-inactive": "#7B7B7B",
           "mobile-nav": "#252525",
           "edit-modal": "#505050",
+          "profile-icon": "#B0B0B0",
         },
       },
       borderRadius: {
@@ -124,6 +126,9 @@ export default {
       },
       minWidth: {
         sidebar: "106px",
+      },
+      screens: {
+        mid: "900px",
       },
     },
   },
