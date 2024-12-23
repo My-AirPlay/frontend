@@ -80,6 +80,9 @@ export default {
           "edit-modal": "#505050",
           "profile-icon": "#B0B0B0",
           seperator: "#393939",
+          "step-inactive": "#EFEFF0",
+          "step-text": "#6C6E76",
+          "step-line": "#A0A3B2",
         },
       },
       borderRadius: {

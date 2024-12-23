@@ -1,4 +1,5 @@
 // import { urls } from "@/lib/constants";
+import { urls } from "@/lib/constants";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
 import React from "react";
@@ -8,7 +9,7 @@ const DashboardPage = () => {
     {
       title: "Upload Music",
       icon: "ic:baseline-upload",
-      route: "",
+      route: urls.uploadMusic,
     },
     {
       title: "My Catalog",

@@ -18,12 +18,19 @@ export enum SingupStep {
   GENERAL,
   BANK,
 }
-
+export const uploadSteps = [
+  "Music Info",
+  "Track Upload",
+  "Music Cover",
+  "Distribution Preferences",
+  "Preview/ Distribute",
+];
 export const urls = {
   forgotPassword: "/forgot-password",
   login: "/login",
   register: "/register",
   dashboard: "/dashboard",
+  uploadMusic: "/dashboard/upload",
 };
 
 export const artistsImages = [
