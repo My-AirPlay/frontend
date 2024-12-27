@@ -1,9 +1,54 @@
 import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
+import Preview from "../preview/preview";
 
 const MusicInfo = () => {
+  const [showPreview, setShowPreview] = useState(false);
+  const data = [
+    [
+      {
+        title: "Title of Music/Album",
+        value: "Artist",
+      },
+      {
+        title: "Primary Artist Name",
+        value: "Ashley",
+      },
+      {
+        title: "Various Artists (Optional)",
+        value: "Wes, Kimo, Drew",
+      },
+      {
+        title: "Main Genre",
+        value: "Gospel",
+      },
+      {
+        title: "Secondary Genre (Optional)",
+        value: "Christian",
+      },
+      {
+        title: "Music Language",
+        value: "English",
+      },
+      {
+        title: "Release Date",
+        value: "11 Dec, 2024",
+      },
+    ],
+    [
+      {
+        title: "Release Year",
+        value: "2024",
+      },
+      {
+        title: "Music Description",
+        value:
+          "This track is inspired by '80s nostalgia and the feeling of chasing dreams through neon-lit nights.",
+      },
+    ],
+  ];
   return (
     <div>
       <h2 className="p-[10px] w-fit mx-auto font-inter font-semibold text-xl text-custom-primary mb-2">
@@ -140,10 +185,19 @@ const MusicInfo = () => {
         <Button
           variant={"authBtn"}
           className="w-full max-w-[275px] mx-auto h-auth-btn"
+          type="submit"
+          onClick={() => setShowPreview(true)}
         >
           Track Upload <MoveRight />
         </Button>
       </form>
+      {showPreview && (
+        <Preview
+          data={data}
+          onContinue={() => {}}
+          onEdit={() => setShowPreview(false)}
+        />
+      )}
     </div>
   );
 };
