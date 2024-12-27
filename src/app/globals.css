@@ -65,6 +65,10 @@
   body {
     @apply bg-background text-foreground;
   }
+  body,
+  html {
+    @apply scrollbar-track-transparent;
+  }
 }
 @layer components {
   .grid-stack {
@@ -108,5 +112,11 @@
   select:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0px 1000px white inset !important;
     transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+@layer components {
+  * {
+    @apply scrollbar-track-transparent scrollbar-thin   scrollbar-thumb-slate-500;
   }
 }

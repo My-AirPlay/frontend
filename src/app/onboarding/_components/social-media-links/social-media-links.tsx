@@ -5,8 +5,13 @@ import React, { useMemo } from "react";
 import { FormField } from "../form-step/form-step.interface";
 import FormStep from "../form-step/form-step";
 import { Button } from "@/components/ui/button";
-
-const OnboardingSocialMedia = () => {
+import { OnboardingSteps } from "@/lib/constants";
+interface OnboardingSocialMedialProps {
+  setCurrentStep: (a: OnboardingSteps) => void;
+}
+const OnboardingSocialMedia = ({
+  setCurrentStep,
+}: OnboardingSocialMedialProps) => {
   const formik = useFormik({
     validateOnChange: true,
     validationSchema: onboardingSocialLinkSchema,
@@ -20,6 +25,7 @@ const OnboardingSocialMedia = () => {
     },
     onSubmit: (value) => {
       console.log(value);
+      setCurrentStep(OnboardingSteps.PREVIEW);
     },
   });
   const fields = useMemo<FormField[]>(() => {

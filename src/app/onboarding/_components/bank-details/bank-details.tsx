@@ -5,8 +5,14 @@ import { FormField } from "../form-step/form-step.interface";
 import FormStep from "../form-step/form-step";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
+import { OnboardingSteps } from "@/lib/constants";
 
-const OnboardingBankDetail = () => {
+interface OnboardingBankDetailProps {
+  setCurrentStep: (a: OnboardingSteps) => void;
+}
+const OnboardingBankDetail = ({
+  setCurrentStep,
+}: OnboardingBankDetailProps) => {
   const formik = useFormik({
     validateOnChange: true,
     validationSchema: onboardingBankDetailSchema,
@@ -17,6 +23,7 @@ const OnboardingBankDetail = () => {
     },
     onSubmit: (value) => {
       console.log(value);
+      setCurrentStep(OnboardingSteps.SOCIAL_LINK);
     },
   });
   const fields = useMemo<FormField[]>(() => {
@@ -29,7 +36,7 @@ const OnboardingBankDetail = () => {
         },
       },
       {
-        id: "lastName",
+        id: "accountNumber",
         label: "Account Number",
         props: {
           type: "number",
@@ -37,10 +44,9 @@ const OnboardingBankDetail = () => {
         },
       },
       {
-        id: "accountNumber",
+        id: "accountName",
         label: "Account Name",
         props: {
-          type: "number",
           placeholder: "Account Name",
         },
       },

@@ -1,7 +1,13 @@
+"use client";
 import { Button } from "@/components/ui/button";
+import { OnboardingSteps, urls } from "@/lib/constants";
+import { useRouter } from "nextjs-toploader/app";
 import React, { Fragment } from "react";
-
-const PreviewOnboarding = () => {
+interface PreviewOnboardingProps {
+  setCurrentStep: (a: OnboardingSteps) => void;
+}
+const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
+  const { replace } = useRouter();
   const data = [
     [
       {
@@ -85,10 +91,15 @@ const PreviewOnboarding = () => {
           <Button
             variant={"authBtn"}
             className="max-w-[275px] bg-transparent border-2 border-white h-[75px] "
+            onClick={() => setCurrentStep(OnboardingSteps.BASIC_DETAIL)}
           >
             Edit
           </Button>
-          <Button variant={"authBtn"} className="max-w-[275px] h-[75px] ">
+          <Button
+            variant={"authBtn"}
+            className="max-w-[275px] h-[75px] "
+            onClick={() => replace(urls.onboardingSatus)}
+          >
             Continue
           </Button>
         </div>

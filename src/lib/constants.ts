@@ -31,6 +31,8 @@ export const urls = {
   register: "/register",
   dashboard: "/dashboard",
   uploadMusic: "/dashboard/upload",
+  onboarding: "/onboarding",
+  onboardingSatus: "/onboarding/status",
 };
 
 export const artistsImages = [
@@ -107,3 +109,9 @@ export const sidebarLinks: SidebarItemProps[] = [
     title: "Account",
   },
 ];
+export enum OnboardingSteps {
+  BASIC_DETAIL,
+  BANK,
+  SOCIAL_LINK,
+  PREVIEW,
+}

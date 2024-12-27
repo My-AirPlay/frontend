@@ -5,8 +5,13 @@ import { onboardingBasciInfoSchema } from "@/lib/schemas";
 import FormStep from "../form-step/form-step";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
-
-const OnboardingBasciDetail = () => {
+import { OnboardingSteps } from "@/lib/constants";
+interface OnboardingBasciDetailProps {
+  setCurrentStep: (a: OnboardingSteps) => void;
+}
+const OnboardingBasciDetail = ({
+  setCurrentStep,
+}: OnboardingBasciDetailProps) => {
   const formik = useFormik({
     validateOnChange: true,
     validationSchema: onboardingBasciInfoSchema,
@@ -20,6 +25,7 @@ const OnboardingBasciDetail = () => {
     },
     onSubmit: (value) => {
       console.log(value);
+      setCurrentStep(OnboardingSteps.BANK);
     },
   });
   const fields = useMemo<FormField[]>(() => {
