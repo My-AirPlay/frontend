@@ -5,10 +5,12 @@ import { uploadSteps } from "@/lib/constants";
 import MusicInfo from "./_components/music-info/music-info";
 import TrackUpload from "./_components/track-upload/track-upload";
 import MusicCover from "./_components/music-cover/music-cover";
+import UploadPreference from "./_components/preference/preference";
+import Distribute from "./_components/distribute/distribute";
 
 const UploadMusicPage = () => {
-  const [currentStep, setCurrentStep] = useState(2);
-  const [completedSteps, setCompletedSteps] = useState([0, 1]);
+  const [currentStep, setCurrentStep] = useState(4);
+  const [completedSteps, setCompletedSteps] = useState([0, 1, 2, 3]);
   return (
     <div>
       <h1 className="font-plus-jakarta-sans font-semibold text-2xl mb-10 text-center text-white">
@@ -27,7 +29,7 @@ const UploadMusicPage = () => {
         ))}
       </ul>
 
-      <MusicCover />
+      <Distribute />
     </div>
   );
 };
