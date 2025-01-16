@@ -31,7 +31,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </div>
       </header>
       <main className="flex-1">
-        <div
+        <section
           className="hidden justify-between items-center sticky
         top-0 left-0 right-0 md:flex  bg-custom-page-bg z-50"
         >
@@ -39,9 +39,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             <h1 className="p-[10px] font-poppins font-bold text-custom-primary text-lg">
               Account Balance: $0.00
             </h1>
-            <Button className="border border-white rounded-[6px] h-[62px] p-[10px] withdraw-btn-shadow font-bold text-base font-poppins">
-              Withdraw Funds
-            </Button>
           </div>
           <div className="flex items-center gap-4 w-fit flex-1 justify-end">
             <small className="px-4 block w-fit py-[10px] font-inter font-medium text-white whitespace-nowrap">
@@ -59,8 +56,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <ChevronDown size={24} />
             </Button>
           </div>
-        </div>
-        <div className="pb-10">{children}</div>
+        </section>
+        <section className="pb-10">{children}</section>
       </main>
     </div>
   );

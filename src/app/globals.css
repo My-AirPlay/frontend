@@ -125,4 +125,25 @@
   .preference-card-shadow {
     box-shadow: 2px 2px 8px rgba(255, 255, 255, 0.15);
   }
+  .btn-inner-shadow {
+    box-shadow: 2.17px -2.17px 2.17px hsla(31, 97%, 39%, 0.404),
+      -2.17px 2.17px 2.17px hsla(31, 97%, 100%, 0.404);
+  }
+  .blur-bg {
+    filter: blur(29.68);
+  }
+  .row-first {
+    grid-row: 1 / 2;
+  }
+  .card-radial {
+    background-image: linear-gradient(
+      to bottom left,
+      hsla(25, 99%, 50%, 0.3),
+      hsla(25, 99%, 50%, 1)
+    );
+  }
+  .no-scroll {
+    height: 100svh;
+    overflow: hidden;
+  }
 }

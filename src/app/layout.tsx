@@ -10,7 +10,7 @@ import {
   Manrope,
 } from "next/font/google";
 import { cn } from "@/lib/utils";
-import DemoLinks from "@/components/demo/demo";
+// import DemoLinks from "@/components/demo/demo";
 import NextTopLoader from "nextjs-toploader";
 export const metadata: Metadata = {
   title: "Airplay",
@@ -72,7 +72,7 @@ export default function RootLayout({
         )}
       >
         <NextTopLoader zIndex={99999999999} />
-        <DemoLinks />
+        {/* <DemoLinks /> */}
         {children}
       </body>
     </html>

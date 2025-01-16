@@ -1,104 +1,165 @@
-// import { urls } from "@/lib/constants";
+import GenderChart from "@/components/gender-chart/gender-chart";
 import { urls } from "@/lib/constants";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
 import React from "react";
-
+import ageSvg from "@/app/assets/allocation.svg";
+import Image from "next/image";
+import MetricsDropdown from "./_components/metrics-dropdown/metrics-dropdown";
+import { Button } from "@/components/ui/button";
+import MetricsBarChart from "./_components/metrics-bar-chart/metrics-bar-chart";
 const DashboardPage = () => {
-  const links = [
-    {
-      title: "Upload Music",
-      icon: "ic:baseline-upload",
-      route: urls.uploadMusic,
-    },
-    {
-      title: "My Catalog",
-      icon: "ri:disc-fill",
-      route: "",
-    },
-    {
-      title: "Royalties",
-      icon: "solar:dollar-broken",
-      route: "",
-    },
-    {
-      title: "Support",
-      icon: "ic:baseline-support-agent",
-      route: "",
-    },
-  ];
   return (
     <>
-      <h1 className="font-plus-jakarta-sans text-white font-semibold text-2xl md:my-11 my-[55px]">
+      <h1 className="font-plus-jakarta-sans mb-[50px] text-white font-semibold text-2xl md:my-11 my-[55px]">
         Dashboard Overview
       </h1>
-      <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-[68px] md:gap-5 gap-y-10 ">
-        {links.map((link) => (
-          <Link
-            href={link.route || "#"}
-            key={link.title}
-            className="flex flex-col items-center"
-          >
-            <div className="text-white w-full max-w-[152px] aspect-square bg-custom-primary grid  rounded-full place-items-center mb-[29px]">
-              <Icon icon={link.icon} width="100" height="100" />
-            </div>
-            <small className="font-plus-jakarta-sans text-white font-bold text-xl">
-              {link.title}
-            </small>
-          </Link>
-        ))}
-      </section>
-      <section>
-        <article>
-          <div className="flex justify-between items-center mb-5">
-            <h2 className="font-roboto font-black text-2xl text-white">
-              Terms and conditions
+      <section className="grid grid-cols-3 gap-[29px] mb-[50px]">
+        <article className="px-[34px] py-[29px] rounded-[20px] bg-gradient-to-bl from-custom-primary to-white flex flex-col gap-[30px]">
+          <div className="text-white flex items-center gap-4">
+            <Icon icon="fa-solid:coins" width={56} height={56} />
+            <h2 className="font-plus-jakarta-sans font-extrabold text-white text-28">
+              Total <br /> Earnings
             </h2>
-            <small className="font-roboto text-[17px] text-custom-primary md:block hidden font-medium">
-              Collapse
+          </div>
+          <p className="font-plus-jakarta-sans text-white  font-extrabold text-40">
+            $0
+          </p>
+
+          <p className="font-plus-jakarta-sans font-medium text-[15px]">
+            You have no data yet
+          </p>
+        </article>
+
+        <article className="bg-custom-dashboard-card border-custom-dashboard-card-stroke border rounded-[15px] py-[29px] px-[33px]">
+          <div className="text-white mb-[23px] flex items-center gap-4">
+            <Icon icon="ep:upload-filled" width={56} height={56} />
+            <h2 className="font-plus-jakarta-sans font-extrabold text-white text-28">
+              Recent <br /> Uploads
+            </h2>
+          </div>
+          <p className="font-plus-jakarta-sans text-white  font-extrabold text-40 mb-[17px]">
+            0
+          </p>
+          <div className="flex items-center justify-between  mb-3">
+            <div className="text-white items-center flex gap-3">
+              <Icon icon="fa6-solid:cloud" width="23" height="16" />
+              <small className="font-plus-jakarta-sans font-medium text-[15px]">
+                Storage
+              </small>
+            </div>
+            <small className="text-custom-success font-plus-jakarta-sans font-medium text-[15px]">
+              --
             </small>
           </div>
-          <p className="text-custom-footer_border font-roboto leading-6 text-xl font-medium mb-1">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
+          <div className="h-[10px] rounded-full bg-white overflow-hidden mb-3">
+            <div className="h-full w-1/2 rounded-full bg-custom-primary" />
+          </div>
+          <small className="text-white  font-plus-jakarta-sans font-medium text-[15px]">
+            --
+          </small>
+        </article>
+
+        <article className="px-[32px] py-[34px] border border-white/5 rounded-3xl max-w-[262px] h-fit  card-radial flex flex-col self-center items-center">
+          <small className="font-plus-jakarta-sans font-bold text-white text-60 text-center">
+            12K
+          </small>
+          <small className="text-white text-center font-normal text-lg">
+            happy users
+          </small>
           <Link
-            href={"#"}
-            className="text-custom-primary pb-[1px] block border-dashed border-b-2 border-b-custom-primary w-fit font-roboto"
+            href={urls.uploadMusic}
+            className="  h-8 bg-custom-primary mx-auto max-w-[132px] rounded-full w-full font-bold font-plus-jakarta-sans text-[13px] grid place-items-center text-white"
           >
-            Click to see the full terms and conditions
+            Upload Music
           </Link>
         </article>
-        <div className="w-[95%] border-t my-5 border-t-custom-seperator mx-auto " />
-        <article>
-          <div className="flex justify-between items-center mb-5">
-            <h2 className="font-roboto font-black text-2xl text-white">
-              Privacy and policy of website
-            </h2>
-            <small className="font-roboto text-[17px] text-custom-primary md:block hidden font-medium">
-              Collapse
-            </small>
+      </section>
+      <section className="flex gap-10 ">
+        <article className="w-full flex-1 bg-custom-dashboard-card rounded-[15px] border border-custom-dashboard-card-stroke px-9 py-8">
+          <div className="text-white flex items-center justify-between">
+            <div>
+              <h2 className="text-white font-bold font-plus-jakarta-sans text-25">
+                Analytics Summary
+              </h2>
+              <p className="font-plus-jakarta-sans text-white font-normal text-[15px]">
+                Visual representation of demographics
+              </p>
+            </div>
+            <Icon icon="material-symbols:more-horiz" width="29" height="29" />
           </div>
-          <p className="text-custom-footer_border font-roboto leading-6 text-xl font-medium mb-1">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <Link
-            href={"#"}
-            className="text-custom-primary pb-[1px] block border-dashed border-b-2 border-b-custom-primary w-fit font-roboto"
-          >
-            Click to see the full terms and conditions
-          </Link>
+          <div>
+            <GenderChart />
+            <div className="border-t-2 border-t-custom-dashboard-card-stroke border-dashed mt-[66px] mb-9" />
+            <div className="grid grid-cols-2 gap-11">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white w-[45px] h-[45px] rounded-[6px] grid place-items-center">
+                    <Icon
+                      icon={"tdesign:location-filled"}
+                      color="black"
+                      width={24}
+                      height={24}
+                    />
+                  </div>
+                  <p className="font-plus-jakarta-sans font-semibold text-white text-[17px] flex flex-col gap-[7px]">
+                    Location
+                    <small>--</small>
+                  </p>
+                </div>
+
+                <small className="font-plus-jakarta-sans text-custom-primary font-normal text-[10px]">
+                  No data yet
+                </small>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="bg-white w-[45px] h-[45px] rounded-[6px] grid place-items-center">
+                    <Image src={ageSvg} width={24} height={24} alt="" />
+                  </div>
+                  <p className="font-plus-jakarta-sans font-semibold text-white text-[17px] flex flex-col gap-[7px]">
+                    Age Distribution
+                    <small>--</small>
+                  </p>
+                </div>
+
+                <small className="font-plus-jakarta-sans text-custom-primary font-normal text-[10px]">
+                  No data yet
+                </small>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article className="bg-custom-dashboard-card rounded-[15px] w-full max-w-[468px] border border-custom-dashboard-card-stroke px-9 py-8 flex flex-col gap-[25px]">
+          <div className="flex items-center justify-between flex-wrap">
+            <h2 className="font-plus-jakarta-sans font-bold text-white text-25">
+              Metrics
+            </h2>
+            <MetricsDropdown />
+            <Button variant={"prodBtn"}>View all metrics</Button>
+          </div>
+
+          <MetricsBarChart />
+          <div className="flex items-center gap-10">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 after:w-2 after:h-2 bg-white rounded-full after:bg-custom-primary after:rounded-full grid place-items-center" />
+              <small className="font-plus-jakarta-sans font-normal text-[13px] text-white">
+                Spotify
+              </small>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 after:w-2 after:h-2 bg-white rounded-full after:bg-custom-error after:rounded-full grid place-items-center" />
+              <small className="font-plus-jakarta-sans font-normal text-[13px] text-white">
+                Youtube
+              </small>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 after:w-2 after:h-2 bg-white rounded-full after:bg-[#F2C94C] after:rounded-full grid place-items-center" />
+              <small className="font-plus-jakarta-sans font-normal text-[13px] text-white">
+                Apple music
+              </small>
+            </div>
+          </div>
         </article>
       </section>
     </>

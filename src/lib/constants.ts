@@ -8,23 +8,29 @@ import featureLg1img from "@/app/assets/features-lg-1.png";
 import featureLg2img from "@/app/assets/features-lg-2.png";
 import featureLg3img from "@/app/assets/features-lg-3.png";
 import featureLg4img from "@/app/assets/features-lg-4.png";
-import recordingIcon from "@/app/assets/recording-royalties.svg";
-import cloudSystemIcon from "@/app/assets/clound-system.svg";
-import creatorDashboardIcon from "@/app/assets/creator-dashboard.svg";
-import supportIcon from "@/app/assets/support.svg";
-import { FeatureCardProps } from "@/components/feature-card";
+import analyticsIcon from "@/app/assets/feature-icons/analytics.svg";
+import analytics from "@/app/assets/features/analytics.png";
+import smartlinkIcon from "@/app/assets/feature-icons/smartlink.svg";
+import smartlink from "@/app/assets/features/smartlink.png";
+import uploadIcon from "@/app/assets/feature-icons/upload.svg";
+import upload from "@/app/assets/features/upload.png";
+import swiftIcon from "@/app/assets/feature-icons/swift.svg";
+import swift from "@/app/assets/features/swift.png";
+import statisticsIcon from "@/app/assets/feature-icons/statistics.svg";
+import statistics from "@/app/assets/features/statistics.png";
+import videoUpload from "@/app/assets/features/video-upload.png";
+import { FeatureCardProps } from "@/components/landing-page/features/features-card";
 import { SidebarItemProps } from "@/app/(app)/_components/sidebar-item/sidebar-item.interface";
+import { MediaCardProps } from "@/app/(app)/catalog/_components/media-type/media-type.interface";
+import { StaticImageData } from "next/image";
+import albumImg from "@/app/assets/album.png";
+import extendedImg from "@/app/assets/extended-playlist.png";
+import trackImg from "@/app/assets/track.png";
 export enum SingupStep {
   GENERAL,
   BANK,
 }
-export const uploadSteps = [
-  "Music Info",
-  "Track Upload",
-  "Music Cover",
-  "Distribution Preferences",
-  "Preview/ Distribute",
-];
+
 export const urls = {
   forgotPassword: "/forgot-password",
   login: "/login",
@@ -53,28 +59,46 @@ export const featureLgImages = [
 
 export const landingPageFeatures: FeatureCardProps[] = [
   {
-    title: "Publishing and Recording Royalties",
-    descriptions:
-      "Fully manage your contract terms, create beautiful and informative royalty statements. Manage your mechanical royalty accounting to publishers.  Ingest sales files from anywhere. Market leading Artist Dashboard. .",
-    img: recordingIcon,
+    title: "Music Uploads",
+    description:
+      "Upload tracks with support for multiple formats, ensuring seamless distribution to all major platforms ",
+    background: upload,
+    icon: uploadIcon,
   },
   {
-    title: "Highly Sufficient Cloud Based System",
-    descriptions:
-      "Using the best in today's cloud technology, the system scales with the needs or your music royalties. No need to install expensive servers and databases",
-    img: cloudSystemIcon,
+    title: "Music Uploads",
+    description:
+      "Upload high-quality videos to showcase your music and engage your audience across top streaming platforms",
+    background: videoUpload,
+    icon: uploadIcon,
   },
   {
-    title: "Creator’s Dashboard",
-    descriptions:
-      "AirPlay enhances your service to artists & composers. Using the artist dashboard you’re no longer stuck emailing 100-page PDFs: grant your artists access to retrieve their statements, data & analytics.",
-    img: creatorDashboardIcon,
+    title: "Earnings & Analytics",
+    description:
+      "Track your revenue, streaming stats, and audience insights in real-time ",
+    background: analytics,
+    icon: analyticsIcon,
   },
   {
-    title: "Support",
-    img: supportIcon,
-    descriptions:
-      "We know how royalties work. Our team has a collective 50 years of experience in royalties. Our goal is to make YOU successful on the platform. We will support you through training & documentation, so you get the most from Airplay.",
+    title: "Sharable Smart Link ",
+    description:
+      "Customized, shareable links that connect your audience directly to your music across all major streaming platforms ",
+    background: smartlink,
+    icon: smartlinkIcon,
+  },
+  {
+    title: "Swift Onboarding",
+    description:
+      "Get started in minutes with a simple, user-friendly setup process designed to get your music out to the world faster",
+    background: swift,
+    icon: swiftIcon,
+  },
+  {
+    title: "Daily Statistics",
+    description:
+      "Stay updated with daily insights on your streams, audience engagement, and earnings",
+    background: statistics,
+    icon: statisticsIcon,
   },
 ];
 
@@ -115,3 +139,100 @@ export enum OnboardingSteps {
   SOCIAL_LINK,
   PREVIEW,
 }
+
+export const metricsDate = ["daily", "monthly", "yearly"];
+
+export const MEDIAS: {
+  [key: string]: MediaCardProps[];
+} = {
+  music: [
+    {
+      author: "Myself",
+      title: "Cinnamon gril",
+    },
+    {
+      author: "Myself",
+      title: "Mahesty",
+    },
+  ],
+  video: [
+    {
+      author: "Myself",
+      title: "Cinnamon gril",
+      fallbackIcon: "icon-park-outline:video-two",
+    },
+    {
+      author: "Myself",
+      title: "Mahesty",
+      fallbackIcon: "icon-park-outline:video-two",
+    },
+  ],
+};
+
+export enum UPLOAD_TYPE {
+  TRACK,
+  ALBUM,
+  EXTENDED_PLAYLIST,
+  MIX_TAPE,
+}
+
+export const uploadTypes: {
+  title: string;
+  img: StaticImageData;
+  type: UPLOAD_TYPE;
+}[] = [
+  {
+    title: "Track",
+    type: UPLOAD_TYPE.TRACK,
+    img: trackImg,
+  },
+  {
+    title: "Album",
+    type: UPLOAD_TYPE.ALBUM,
+    img: albumImg,
+  },
+  {
+    title: "Extended Playlist (EP)",
+    type: UPLOAD_TYPE.EXTENDED_PLAYLIST,
+    img: extendedImg,
+  },
+  {
+    title: "Mix Tape",
+    type: UPLOAD_TYPE.MIX_TAPE,
+    img: albumImg,
+  },
+];
+
+export enum UPLOAD_STEPS {
+  MUSIC_INFO,
+  TRACK_UPLOAD,
+  MUSIC_COVER,
+  DISTRIBUTION_PREFERENCE,
+  PREVIEW,
+}
+
+export const uploadSteps: {
+  title: string;
+  step: UPLOAD_STEPS;
+}[] = [
+  {
+    title: "Music Info",
+    step: UPLOAD_STEPS.MUSIC_INFO,
+  },
+  {
+    title: "Track Upload",
+    step: UPLOAD_STEPS.TRACK_UPLOAD,
+  },
+  {
+    title: "Music Cover",
+    step: UPLOAD_STEPS.MUSIC_COVER,
+  },
+  {
+    title: "Distribution Preferences",
+    step: UPLOAD_STEPS.DISTRIBUTION_PREFERENCE,
+  },
+  {
+    title: "Preview/ Distribute",
+    step: UPLOAD_STEPS.PREVIEW,
+  },
+];

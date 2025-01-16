@@ -83,6 +83,13 @@ export default {
           "step-inactive": "#EFEFF0",
           "step-text": "#6C6E76",
           "step-line": "#A0A3B2",
+          dashboard: {
+            card: "#11161C",
+            "card-stroke": "#A5A1A1",
+          },
+          success: "#1ED760",
+          "dropdown-text": "#9F9F9F",
+          "dropdown-bg": "#1D2531",
         },
       },
       borderRadius: {

@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import React, { useState } from "react";
 import Preview from "../preview/preview";
+import ArtistNameModal from "../artist-name-modal/artist-name-modal";
 
 const MusicInfo = () => {
   const [showPreview, setShowPreview] = useState(false);
@@ -72,7 +73,7 @@ const MusicInfo = () => {
             className="font-plus-jakarta-sans text-white font-semibold md:text-base"
             htmlFor="title"
           >
-            Title of Music/ Album
+            Song Title
           </label>
           <InputWrapper
             id="title"
@@ -81,17 +82,11 @@ const MusicInfo = () => {
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
-          <label
-            className="font-plus-jakarta-sans text-white font-semibold md:text-base"
-            htmlFor="primary_name"
-          >
-            Primary Artist Name
+          <label className="font-plus-jakarta-sans text-white font-semibold md:text-base">
+            Artist Name
           </label>
-          <InputWrapper
-            id="primary_name"
-            placeholder="Input Name"
-            styles="h-[64px]"
-          />
+
+          <ArtistNameModal />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
           <label

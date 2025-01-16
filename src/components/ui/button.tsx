@@ -21,6 +21,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         authBtn:
           "bg-custom-primary text-white flex justify-center items-center gap-4 font-plus-jakarta-sans  font-extrabold text-white text-lg  rounded-full w-full",
+        prodBtn:
+          "bg-custom-primary h-9 w-full max-w-[145px] text-center grid place-items-center py-[10px] px-[23px] font-plus-jakarta-sans font-bold text-[13px] text-white rounded-full",
       },
       size: {
         default: "h-9 px-4 py-2",
