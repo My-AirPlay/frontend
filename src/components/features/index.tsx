@@ -1,6 +1,6 @@
 import React from "react";
-import FeatureCard from "@/components/feature-card";
-import { featureLgImages, landingPageFeatures } from "@/lib/constants";
+// import FeatureCard from "@/components/feature-card";
+import { featureLgImages } from "@/lib/constants";
 import Image from "next/image";
 
 const FeaturesSection = () => {
@@ -21,9 +21,9 @@ const FeaturesSection = () => {
           Explore our Features
         </h2>
         <div className="flex flex-col gap-5">
-          {landingPageFeatures.map((feature) => (
+          {/* {landingPageFeatures.map((feature) => (
             <FeatureCard key={feature.title} {...feature} />
-          ))}
+          ))} */}
         </div>
       </div>
     </section>
