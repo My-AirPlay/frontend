@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -69,6 +65,10 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  body,
+  html {
+    @apply scrollbar-track-transparent;
+  }
 }
 @layer components {
   .grid-stack {
@@ -86,10 +86,64 @@ body {
     -webkit-backdrop-filter: blur(11.9px);
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
+  .sidebar-active-shadow {
+    box-shadow: 4px 0px 14.3px rgba(255, 255, 255, 0.5);
+  }
+  .auth-card-shadown {
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+  }
+  .withdraw-btn-shadow {
+    box-shadow: 10px 7px 15px rgba(225, 225, 225, 0.26);
+  }
 }
 @layer base {
   svg {
     width: auto;
     height: auto;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+@layer components {
+  * {
+    @apply scrollbar-track-transparent scrollbar-thin   scrollbar-thumb-slate-500;
+  }
+  .upload-preference-shadow {
+    box-shadow: inset -2px 4px 4px 10px rgba(117, 116, 116, 0.13);
+  }
+  .preference-card-shadow {
+    box-shadow: 2px 2px 8px rgba(255, 255, 255, 0.15);
+  }
+  .btn-inner-shadow {
+    box-shadow: 2.17px -2.17px 2.17px hsla(31, 97%, 39%, 0.404),
+      -2.17px 2.17px 2.17px hsla(31, 97%, 100%, 0.404);
+  }
+  .blur-bg {
+    filter: blur(29.68);
+  }
+  .row-first {
+    grid-row: 1 / 2;
+  }
+  .card-radial {
+    background-image: linear-gradient(
+      to bottom left,
+      hsla(25, 99%, 50%, 0.3),
+      hsla(25, 99%, 50%, 1)
+    );
+  }
+  .no-scroll {
+    height: 100svh;
+    overflow: hidden;
   }
 }

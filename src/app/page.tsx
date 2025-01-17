@@ -1,16 +1,20 @@
-import HeroSection from "@/components/hero";
-import LandingPageFooter from "@/components/footer";
 import ArtistsSection from "@/components/artists";
 import ExploreSection from "@/components/explore";
-import FeaturesSection from "@/components/features";
+import LandingPageFooter from "@/components/footer";
+import FeaturesSection from "@/components/landing-page/features/features";
+import HeroSection from "@/components/landing-page/hero/hero";
 
 export default function Home() {
   return (
-    <main className="min-h-svh pb-10 bg-custom-background overflow-hidden">
+    <main className="bg-custom-background min-h-svh flex flex-col gap-6">
       <HeroSection />
+
       <ArtistsSection />
+
       <FeaturesSection />
+
       <ExploreSection />
+
       <LandingPageFooter />
     </main>
   );
