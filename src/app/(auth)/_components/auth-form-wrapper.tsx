@@ -31,7 +31,7 @@ const AuthFormWrapper = ({
   faqLinkText = "Singup",
 }: AuthFormWrapperProps) => {
   return (
-    <AuthWrapper title={pageTitle} subTitle={pageDescription}>
+    <AuthWrapper title={pageTitle} description={pageDescription}>
       <div className="flex-1">
         <h1 className="font-noto-sans text-white font-semibold text-4xl">
           {formTitle}
