@@ -41,3 +41,21 @@ export const onboardingSocialLinkSchema = Yup.object({
   tiktok: Yup.string().optional().url("Invalid url"),
   website: Yup.string().optional().url("Invalid url"),
 });
+const requiredError = "Field is required";
+export const musicInfoSchema = Yup.object({
+  song_title: Yup.string().required(requiredError),
+  genre: Yup.string().required(requiredError),
+  release_date: Yup.string().required(requiredError),
+  description: Yup.string()
+    .required(requiredError)
+    .min(20, "Provide a well detailed description"),
+  record_label: Yup.string().required(requiredError),
+  publisher: Yup.string().required(requiredError),
+  instruments_played: Yup.string().required(requiredError),
+  lyrics: Yup.string().required(requiredError),
+  explict_content: Yup.string().optional(),
+  upcCode: Yup.string().required(requiredError),
+  iscCode: Yup.string().required(requiredError),
+  realease_version: Yup.string().required(requiredError),
+  copyright: Yup.string().required(requiredError),
+});

@@ -13,6 +13,7 @@ const MusicTypeModal = ({ onContinue }: MusicTypeModalProps) => {
     document.body.classList.add("no-scroll");
     return () => document.body.classList.remove("no-scroll");
   }, []);
+
   return (
     <section className="fixed w-svw h-screen bg-custom-page-bg z-50 inset-0 py-16 px-10 overflow-y-auto">
       <div className="container mx-auto">

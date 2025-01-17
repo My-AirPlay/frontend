@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import React, { Fragment } from "react";
 interface PreviewProps {
   data: { title: string; value: string }[][];
+  onEdit: () => void;
+  onContinue: () => void;
 }
-const Preview = ({ data }: PreviewProps) => {
+const Preview = ({ data, onContinue, onEdit }: PreviewProps) => {
   return (
     <div className="fixed left-0 top-0 h-svh w-svw bg-custom-edit-modal z-50 py-14 px-5 overflow-y-auto">
       <div className="max-w-[961px] mx-auto md:w-full w-fit">
@@ -37,14 +39,14 @@ const Preview = ({ data }: PreviewProps) => {
           <Button
             variant={"authBtn"}
             className="max-w-[275px] bg-transparent border-2 border-white h-[75px] "
-            // onClick={onEdit}
+            onClick={onEdit}
           >
             Edit
           </Button>
           <Button
             variant={"authBtn"}
             className="max-w-[275px] h-[75px] "
-            // onClick={onContinue}
+            onClick={onContinue}
           >
             Continue
           </Button>

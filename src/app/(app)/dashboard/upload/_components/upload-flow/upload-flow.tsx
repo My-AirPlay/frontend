@@ -8,7 +8,7 @@ import MusicInfo from "../music-info/music-info";
 import useUploadMusicStore from "@/stores/upload-music.store";
 import TrackUpload from "../track-upload/track-upload";
 import Distribute from "../distribute/distribute";
-import Preview from "../preview/preview";
+import UploadPreference from "../preference/preference";
 interface UploadScreen {
   [key: string]: ReactNode;
 }
@@ -19,8 +19,8 @@ const UploadFlow = () => {
     [UPLOAD_STEPS.MUSIC_INFO]: <MusicInfo />,
     [UPLOAD_STEPS.TRACK_UPLOAD]: <TrackUpload />,
     [UPLOAD_STEPS.MUSIC_COVER]: <MusicCover />,
-    [UPLOAD_STEPS.DISTRIBUTION_PREFERENCE]: <Distribute />,
-    [UPLOAD_STEPS.PREVIEW]: <Preview data={[]} />,
+    [UPLOAD_STEPS.DISTRIBUTION_PREFERENCE]: <UploadPreference />,
+    [UPLOAD_STEPS.PREVIEW]: <Distribute />,
   };
   return (
     <section>

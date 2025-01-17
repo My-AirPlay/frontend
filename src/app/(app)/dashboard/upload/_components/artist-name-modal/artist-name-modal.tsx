@@ -17,7 +17,10 @@ import CustomSelect from "@/components/custom-dropdown/custom-select";
 const ArtistNameModal = () => {
   return (
     <Dialog>
-      <DialogTrigger className="h-[64px] text-[#FCFCFC] bg-[#7B7B7B] hover:bg-[#7B7B7B] text-start px-3 rounded-lg">
+      <DialogTrigger
+        type="button"
+        className="h-[64px] text-[#FCFCFC] bg-[#7B7B7B] hover:bg-[#7B7B7B] text-start px-3 rounded-lg"
+      >
         Add Name
       </DialogTrigger>
       <DialogContent className="bg-[#222222] w-full max-w-[1000px] border-none max-h-[80vh] overflow-y-auto">

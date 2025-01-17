@@ -170,10 +170,10 @@ export const MEDIAS: {
 };
 
 export enum UPLOAD_TYPE {
-  TRACK,
-  ALBUM,
-  EXTENDED_PLAYLIST,
-  MIX_TAPE,
+  TRACK = "TRACK",
+  ALBUM = "ALBUM",
+  EXTENDED_PLAYLIST = "EXTENDED_PLAYLIST",
+  MIX_TAPE = "MIX_TAPE",
 }
 
 export const uploadTypes: {
@@ -236,3 +236,5 @@ export const uploadSteps: {
     step: UPLOAD_STEPS.PREVIEW,
   },
 ];
+
+export const GENRES = ["Hip pop", "Blues", "Regae"];
