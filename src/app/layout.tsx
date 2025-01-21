@@ -12,6 +12,8 @@ import {
 import { cn } from "@/lib/utils";
 // import DemoLinks from "@/components/demo/demo";
 import NextTopLoader from "nextjs-toploader";
+import ReactQueryProvider from "./_query-provider/provider.client";
+import { Toaster } from "@/components/ui/sonner";
 export const metadata: Metadata = {
   title: "Airplay",
   description: "Music",
@@ -71,9 +73,12 @@ export default function RootLayout({
           inter.variable
         )}
       >
-        <NextTopLoader zIndex={99999999999} />
+        <NextTopLoader zIndex={99999999999} color="#FE6902" />
         {/* <DemoLinks /> */}
-        {children}
+        <ReactQueryProvider>
+          {children}
+          <Toaster duration={5000} position="bottom-right" />
+        </ReactQueryProvider>
       </body>
     </html>
   );

@@ -116,6 +116,7 @@ export default {
         page: "1343px",
         sidebar: "106px",
         "preview-width": "961px",
+        profile: "835.34px",
       },
       fontFamily: {
         "plus-jakarta-sans": ["var(--font-jakarta-sans)"],

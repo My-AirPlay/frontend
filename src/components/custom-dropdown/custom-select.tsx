@@ -35,12 +35,9 @@ const CustomSelect = ({
         <SelectContent className="bg-[#383838] border-none">
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              {option.value}
+              {option.label}
             </SelectItem>
           ))}
-          <SelectItem className="bg-[#383838]" value="band">
-            Band
-          </SelectItem>
         </SelectContent>
       </Select>
       {error && (

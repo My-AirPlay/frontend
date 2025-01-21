@@ -26,7 +26,7 @@ const Sidebar = ({ setShowMenu, showMenu }: SidebarProps) => {
   return (
     <aside
       className={cn(
-        " md:h-auto md:sticky fixed left-0 top-0 bottom-0 md:max-w-sidebar max-h-fit md:rounded-[30px]  bg-custom-sidebar flex flex-col justify-between gap-10 min-w-sidebar overflow-x-hidden overflow-y-auto w-full scroll-m-2 scrollbar-none overflow-hidden md:translate-x-0 -translate-x-full",
+        " md:h-auto md:sticky z-[9999] fixed left-0 top-0 bottom-0 md:max-w-sidebar max-h-fit md:rounded-[30px]  bg-custom-sidebar flex flex-col justify-between gap-10 min-w-sidebar overflow-x-hidden overflow-y-auto w-full scroll-m-2 scrollbar-none overflow-hidden md:translate-x-0 -translate-x-full",
         showMenu && "translate-x-0"
       )}
     >

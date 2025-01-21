@@ -20,9 +20,11 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         authBtn:
-          "bg-custom-primary text-white flex justify-center items-center gap-4 font-plus-jakarta-sans  font-extrabold text-white text-lg  rounded-full w-full",
+          "bg-custom-primary text-white h-auth-btn max-w-[275px] flex justify-center items-center gap-4 font-plus-jakarta-sans  font-extrabold text-white text-lg  rounded-full w-full",
         prodBtn:
           "bg-custom-primary h-9 w-full max-w-[145px] text-center grid place-items-center py-[10px] px-[23px] font-plus-jakarta-sans font-bold text-[13px] text-white rounded-full",
+        profileBtn:
+          "bg-custom-primary h-auth-btn rounded-full w-full max-w-[275px] grid place-items-center text-white font-rubik font-semibold text-lg",
       },
       size: {
         default: "h-9 px-4 py-2",

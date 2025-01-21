@@ -39,8 +39,42 @@ export const urls = {
   uploadMusic: "/dashboard/upload",
   onboarding: "/onboarding",
   onboardingSatus: "/onboarding/status",
+  settings: "/settings",
+  editProfile: "/settings/edit-profile",
+  settingsPassword: "/settings/password",
+  changePassword: "/settings/edit-password",
+  editBank: "/settings/edit-bank",
+  settingsBank: "/settings/bank",
+  notification: "/settings/notification",
+  catalog: "/catalog",
 };
 
+export const settingsLinks: {
+  title: string;
+  route: string;
+  subRoute: string;
+}[] = [
+  {
+    title: "Profile Information",
+    route: urls.settings,
+    subRoute: urls.editProfile,
+  },
+  {
+    title: "Password",
+    route: urls.settingsPassword,
+    subRoute: urls.changePassword,
+  },
+  {
+    title: "Bank Details",
+    route: urls.settingsBank,
+    subRoute: urls.editBank,
+  },
+  {
+    title: "Notifications",
+    route: urls.notification,
+    subRoute: "",
+  },
+];
 export const artistsImages = [
   artist1Img,
   artist2Img,
@@ -115,6 +149,7 @@ export const sidebarLinks: SidebarItemProps[] = [
   {
     icon: "ri:disc-fill",
     title: "My Catalog",
+    route: urls.catalog,
   },
   {
     icon: "solar:dollar-broken",
@@ -129,8 +164,9 @@ export const sidebarLinks: SidebarItemProps[] = [
     title: "Support",
   },
   {
-    icon: "fi:user",
+    icon: "prime:user",
     title: "Account",
+    route: urls.settings,
   },
 ];
 export enum OnboardingSteps {
@@ -238,3 +274,37 @@ export const uploadSteps: {
 ];
 
 export const GENRES = ["Hip pop", "Blues", "Regae"];
+
+export const paymentOptions = [
+  {
+    label: "Monthly",
+    value: "monthly",
+  },
+  {
+    label: "Quarterly",
+    value: "quarterly",
+  },
+  {
+    label: "Annually",
+    value: "annually",
+  },
+];
+
+export const currencyOptions = [
+  {
+    label: "₦ (Naira)",
+    value: "₦ (Naira)",
+  },
+  {
+    label: "$ (USD)",
+    value: "$ (USD)",
+  },
+  {
+    label: "€ (Euro)",
+    value: "€ (Euro)",
+  },
+  {
+    label: "£ (Pounds)",
+    value: "£ (Pounds)",
+  },
+];

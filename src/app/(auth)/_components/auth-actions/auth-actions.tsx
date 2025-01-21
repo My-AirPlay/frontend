@@ -4,8 +4,9 @@ import React from "react";
 import google from "@/app/(auth)/_assets/google.svg";
 interface AuthActionsProps {
   btnText: string;
+  isDisabled?: boolean;
 }
-const AuthActions = ({ btnText }: AuthActionsProps) => {
+const AuthActions = ({ btnText, isDisabled }: AuthActionsProps) => {
   return (
     <div className="flex gap-2">
       <Button
@@ -14,7 +15,12 @@ const AuthActions = ({ btnText }: AuthActionsProps) => {
       >
         <Image src={google} alt="google" />
       </Button>
-      <Button variant={"authBtn"} className="h-16 tracking-wider" type="submit">
+      <Button
+        disabled={isDisabled}
+        variant={"authBtn"}
+        className="h-16 tracking-wider"
+        type="submit"
+      >
         {btnText}
       </Button>
     </div>
