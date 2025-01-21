@@ -6,7 +6,6 @@ import useUploadMusicStore from "@/stores/upload-music.store";
 import UploadInfo from "../upload-info/upload-info";
 import { generateMusicUploadPreview } from "@/lib/utils";
 import PreviewTable from "@/components/preview-table/preview-table";
-import UploadNotification from "../upload-notification/upload-notification";
 
 const Distribute = () => {
   const { musicUpload } = useUploadMusicStore((s) => s);
