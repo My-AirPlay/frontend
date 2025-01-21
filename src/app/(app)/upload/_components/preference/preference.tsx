@@ -1,10 +1,14 @@
+"use client";
 import React from "react";
 import uploadImg from "@/app/assets/upload-music-placeholder.png";
 import Image from "next/image";
 import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import PreferenceCard from "./preference-card/preference-card";
 import { Button } from "@/components/ui/button";
+import useUploadMusicStore from "@/stores/upload-music.store";
+import { UPLOAD_STEPS } from "@/lib/constants";
 const UploadPreference = () => {
+  const { setCurrentStep, changeStep } = useUploadMusicStore((s) => s);
   return (
     <div>
       <h2 className="text-custom-primary font-inter font-semibold text-xl text-center p-[10px] mb-2">
@@ -58,7 +62,7 @@ const UploadPreference = () => {
         </div>
       </div>
 
-      <form className="">
+      <form className="" onSubmit={(e) => e.preventDefault()}>
         <div className="flex flex-col gap-5 mb-9">
           <fieldset className="flex flex-col gap-5">
             <label
@@ -115,6 +119,7 @@ const UploadPreference = () => {
             variant={"authBtn"}
             className="max-w-[275px] bg-transparent border-2 border-white h-[75px] "
             type="button"
+            onClick={() => setCurrentStep(UPLOAD_STEPS.MUSIC_COVER)}
           >
             Music Cover
           </Button>
@@ -122,6 +127,7 @@ const UploadPreference = () => {
             variant={"authBtn"}
             type="submit"
             className="max-w-[275px] h-[75px] "
+            onClick={() => changeStep(UPLOAD_STEPS.PREVIEW)}
           >
             Preview
           </Button>

@@ -20,7 +20,7 @@ export const data = {
 };
 const GenderChart = () => {
   return (
-    <div className="flex gap-[50px]">
+    <div className="flex md:gap-[50px] flex-col md:flex-row">
       <div className="max-w-[231px]">
         <Doughnut
           data={{

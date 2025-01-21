@@ -57,7 +57,7 @@ const MusicInfo = () => {
             placeholder="Input title"
             styles="h-[64px]"
             {...formik.getFieldProps("song_title")}
-            error={formik.errors.song_title}
+            error={formik.touched.song_title ? formik.errors.song_title : ""}
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -83,7 +83,7 @@ const MusicInfo = () => {
             onChange={(val) =>
               formik.setFieldValue("genre", val, formik.submitCount > 0)
             }
-            error={formik.errors.genre}
+            error={formik.touched.genre ? formik.errors.genre : ""}
             defaultValue={formik.values.genre}
           />
         </fieldset>
@@ -99,7 +99,9 @@ const MusicInfo = () => {
             onDateChange={(date) =>
               formik.setFieldValue("release_date", date.toISOString(), true)
             }
-            error={formik.errors.release_date}
+            error={
+              formik.touched.release_date ? formik.errors.release_date : ""
+            }
           />
         </fieldset>
 
@@ -115,7 +117,7 @@ const MusicInfo = () => {
             placeholder="Write description/notes here"
             styles="h-[64px]"
             {...formik.getFieldProps("description")}
-            error={formik.errors.description}
+            error={formik.touched.description ? formik.errors.description : ""}
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -130,7 +132,9 @@ const MusicInfo = () => {
             placeholder="Input record label"
             styles="h-[64px]"
             {...formik.getFieldProps("record_label")}
-            error={formik.errors.record_label}
+            error={
+              formik.touched.record_label ? formik.errors.record_label : ""
+            }
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -145,7 +149,7 @@ const MusicInfo = () => {
             placeholder="Input Name"
             styles="h-[64px]"
             {...formik.getFieldProps("publisher")}
-            error={formik.errors.publisher}
+            error={formik.touched.publisher ? formik.errors.publisher : ""}
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -160,7 +164,11 @@ const MusicInfo = () => {
             placeholder="Select Instruments"
             styles="h-[64px]"
             {...formik.getFieldProps("instruments_played")}
-            error={formik.errors.instruments_played}
+            error={
+              formik.touched.instruments_played
+                ? formik.errors.instruments_played
+                : ""
+            }
           />
         </fieldset>
 
@@ -176,7 +184,7 @@ const MusicInfo = () => {
             placeholder="Add Lyrics here"
             styles="h-[64px]"
             {...formik.getFieldProps("lyrics")}
-            error={formik.errors.lyrics}
+            error={formik.touched.lyrics ? formik.errors.lyrics : ""}
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -191,7 +199,11 @@ const MusicInfo = () => {
             placeholder="Input restriction"
             styles="h-[64px]"
             {...formik.getFieldProps("explict_content")}
-            error={formik.errors.explict_content}
+            error={
+              formik.touched.explict_content
+                ? formik.errors.explict_content
+                : ""
+            }
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -206,7 +218,7 @@ const MusicInfo = () => {
             placeholder="Input Code"
             styles="h-[64px]"
             {...formik.getFieldProps("upcCode")}
-            error={formik.errors.upcCode}
+            error={formik.touched.upcCode ? formik.errors.upcCode : ""}
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -221,7 +233,7 @@ const MusicInfo = () => {
             placeholder="Input Code"
             styles="h-[64px]"
             {...formik.getFieldProps("iscCode")}
-            error={formik.errors.iscCode}
+            error={formik.touched.iscCode ? formik.errors.iscCode : ""}
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -236,7 +248,11 @@ const MusicInfo = () => {
             placeholder="Input version"
             styles="h-[64px]"
             {...formik.getFieldProps("realease_version")}
-            error={formik.errors.realease_version}
+            error={
+              formik.touched.realease_version
+                ? formik.errors.realease_version
+                : ""
+            }
           />
         </fieldset>
         <fieldset className="flex flex-col gap-5">
@@ -251,7 +267,7 @@ const MusicInfo = () => {
             placeholder="Input Copyright"
             styles="h-[64px]"
             {...formik.getFieldProps("copyright")}
-            error={formik.errors.copyright}
+            error={formik.touched.copyright ? formik.errors.copyright : ""}
           />
         </fieldset>
         <Button

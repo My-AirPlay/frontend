@@ -56,7 +56,7 @@ const UploadStep = ({
       </div>
       <p
         className={cn(
-          "text-center font-plus-jakarta-sans text-custom-step-text  font-medium text-sm",
+          "text-center font-plus-jakarta-sans text-custom-step-text  font-medium md:text-sm text-xs",
           (isCurrent || isDone) && "text-custom-primary"
         )}
       >

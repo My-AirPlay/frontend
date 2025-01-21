@@ -1,8 +1,9 @@
 "use client";
+import PreviewTable from "@/components/preview-table/preview-table";
 import { Button } from "@/components/ui/button";
 import { OnboardingSteps, urls } from "@/lib/constants";
 import { useRouter } from "nextjs-toploader/app";
-import React, { Fragment } from "react";
+import React from "react";
 interface PreviewOnboardingProps {
   setCurrentStep: (a: OnboardingSteps) => void;
 }
@@ -71,22 +72,7 @@ const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
         <h2 className="text-white font-plus-jakarta-sans font-bold text-base mb-9">
           Personal Basic Information
         </h2>
-        <div className="grid md:grid-cols-2 grid-cols-1 gap-4 items-start justify-between md:mb-[59px] mb-[110px]">
-          {data.map((data, i) => (
-            <div className="grid gap-y-4 grid-cols-2 " key={i}>
-              {data.map((onboardingInfo) => (
-                <Fragment key={onboardingInfo.title}>
-                  <small className="font-plus-jakarta-sans  text-white font-semibold h-9 text-base">
-                    {onboardingInfo.title}
-                  </small>
-                  <small className="font-plus-jakarta-sans  text-white font-semibold text-base">
-                    {onboardingInfo.value || "--"}
-                  </small>
-                </Fragment>
-              ))}
-            </div>
-          ))}
-        </div>
+        <PreviewTable previewData={data} />
         <div className="flex justify-between items-center  gap-12 w-full md:flex-row flex-col">
           <Button
             variant={"authBtn"}

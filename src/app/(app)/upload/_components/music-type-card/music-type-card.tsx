@@ -21,9 +21,9 @@ const MusicTypeCard = ({
       )}
     >
       <figure>
-        <Image src={img} alt={title} />
+        <Image src={img} alt={title} className="md:max-w-none max-w-10" />
       </figure>
-      <p className="font-plus-jakarta-sans font-semibold text-28 text-white">
+      <p className="font-plus-jakarta-sans font-semibold md:text-28 text-base text-white">
         {title}
       </p>
     </button>

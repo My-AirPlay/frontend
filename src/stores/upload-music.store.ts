@@ -34,6 +34,7 @@ const defaultMusicUpload: UploadMusicStore["musicUpload"] = {
     release_date: "",
     song_title: "",
     upcCode: "",
+    explict_content: "",
   },
   trackCover: null,
   musicCover: null,

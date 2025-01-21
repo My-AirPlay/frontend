@@ -36,7 +36,8 @@ export const urls = {
   login: "/login",
   register: "/register",
   dashboard: "/dashboard",
-  uploadMusic: "/dashboard/upload",
+  uploadMusic: "/upload",
+  uploadAlbum: "/upload/album",
   onboarding: "/onboarding",
   onboardingSatus: "/onboarding/status",
   settings: "/settings",
@@ -145,6 +146,7 @@ export const sidebarLinks: SidebarItemProps[] = [
   {
     icon: "lucide:music",
     title: "Upload Music",
+    route: urls.uploadMusic,
   },
   {
     icon: "ri:disc-fill",

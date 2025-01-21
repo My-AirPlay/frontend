@@ -26,7 +26,7 @@ const MusicTypeModal = ({ onContinue }: MusicTypeModalProps) => {
       <h1 className="font-inter font-normal text-xl text-center p-[10px] mb-2 text-custom-primary">
         MUSIC UPLOAD
       </h1>
-      <p className="text-white font-semibold text-28 text-center font-inter">
+      <p className="text-white font-semibold md:text-28 text-xl text-center font-inter">
         Kindly choose what kind of music you want to upload
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 md:max-w-[630px] mx-auto gap-6 mt-20">

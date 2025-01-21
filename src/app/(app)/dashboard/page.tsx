@@ -14,7 +14,7 @@ const DashboardPage = () => {
       <h1 className="font-plus-jakarta-sans mb-[50px] text-white font-semibold text-2xl md:my-11 my-[55px]">
         Dashboard Overview
       </h1>
-      <section className="grid grid-cols-3 gap-[29px] mb-[50px]">
+      <section className="grid md:grid-cols-3 grid-cols-1 gap-[29px] mb-[50px]">
         <article className="px-[34px] py-[29px] rounded-[20px] bg-gradient-to-bl from-custom-primary to-white flex flex-col gap-[30px]">
           <div className="text-white flex items-center gap-4">
             <Icon icon="fa-solid:coins" width={56} height={56} />
@@ -75,9 +75,9 @@ const DashboardPage = () => {
           </Link>
         </article>
       </section>
-      <section className="flex gap-10 ">
+      <section className="flex flex-col md:flex-row gap-10 ">
         <article className="w-full flex-1 bg-custom-dashboard-card rounded-[15px] border border-custom-dashboard-card-stroke px-9 py-8">
-          <div className="text-white flex items-center justify-between">
+          <div className="text-white flex items-center justify-between flex-col md:flex-row">
             <div>
               <h2 className="text-white font-bold font-plus-jakarta-sans text-25">
                 Analytics Summary
@@ -88,10 +88,10 @@ const DashboardPage = () => {
             </div>
             <Icon icon="material-symbols:more-horiz" width="29" height="29" />
           </div>
-          <div>
+          <div className="flex md:block flex-col">
             <GenderChart />
             <div className="border-t-2 border-t-custom-dashboard-card-stroke border-dashed mt-[66px] mb-9" />
-            <div className="grid grid-cols-2 gap-11">
+            <div className="grid md:grid-cols-2 gap-11 grid-cols-1">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="bg-white w-[45px] h-[45px] rounded-[6px] grid place-items-center">

@@ -90,6 +90,7 @@ export default {
           success: "#1ED760",
           "dropdown-text": "#9F9F9F",
           "dropdown-bg": "#1D2531",
+          "notification-bg": "#11171D",
         },
       },
       borderRadius: {
