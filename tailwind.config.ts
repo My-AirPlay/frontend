@@ -91,6 +91,8 @@ export default {
           "dropdown-text": "#9F9F9F",
           "dropdown-bg": "#1D2531",
           "notification-bg": "#11171D",
+          "analytics-border": "#808080",
+          "engagement-boder": "#D9D9D9",
         },
       },
       borderRadius: {
@@ -99,6 +101,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontSize: {
+        10: "10px",
         60: "60px",
         64: "64px",
         40: "40px",

@@ -142,4 +142,7 @@
     height: 100svh;
     overflow: hidden;
   }
+  .custom-bg-right {
+    background-position: 95% 100%;
+  }
 }
