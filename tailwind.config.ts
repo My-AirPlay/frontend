@@ -93,6 +93,7 @@ export default {
           "notification-bg": "#11171D",
           "analytics-border": "#808080",
           "engagement-boder": "#D9D9D9",
+          "engagement-bg": "#130D1B",
         },
       },
       borderRadius: {
@@ -112,6 +113,7 @@ export default {
         14: "14px",
         50: "50px",
         80: "80px",
+        15: "15px",
       },
       maxWidth: {
         778: "778px",

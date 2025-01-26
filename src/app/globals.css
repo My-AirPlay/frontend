@@ -65,10 +65,6 @@
   body {
     @apply bg-background text-foreground;
   }
-  body,
-  html {
-    @apply scrollbar-track-transparent;
-  }
 }
 @layer components {
   .grid-stack {
@@ -113,7 +109,8 @@
 
 @layer components {
   * {
-    @apply scrollbar-track-transparent scrollbar-thin   scrollbar-thumb-slate-500;
+    @apply scrollbar-track-[#D9D9D9] scrollbar-thin
+    scrollbar-thumb-custom-primary;
   }
   .upload-preference-shadow {
     box-shadow: inset -2px 4px 4px 10px rgba(117, 116, 116, 0.13);
