@@ -11,6 +11,7 @@ import soundCloud from "@/app/assets/SoundCloud.svg";
 import Image from "next/image";
 import { Plus } from "lucide-react";
 import { Fragment } from "react";
+import AnalyticsWrapper from "./analytics-wrapper";
 
 const dummyData = [spotifyLogo, youtubeLogo, appleMusic, soundCloud];
 const dummyEarnings = [
@@ -50,18 +51,7 @@ const dummyEngagements = [
 const dummyDate = [5, 6, 7, 8, 9, 10, 11, 12, 13];
 const AnalyticsClient = () => {
   return (
-    <section className="mt-[88px] ">
-      <div className="flex justify-between items-center mb-9">
-        <h1 className="text-white font-plus-jakarta-sans font-semibold md:text-30 text-2xl">
-          Analytics Overview
-        </h1>
-        <div>
-          <Button className="h-10 bg-custom-primary rounded-lg w-full max-w-[130px] flex items-center justify-center gap-2 hover:bg-custom-primary">
-            <Icon icon="bytesize:download" width="20" height="20" />
-            Download
-          </Button>
-        </div>
-      </div>
+    <AnalyticsWrapper>
       <section className="grid md:grid-cols-3 grid-cols-1 *:min-h-[241px] gap-10 mb-6 justify-items-center md:justify-items-stretch">
         <article className="max-w-[306px] bg-white/[2%] rounded-lg border border-custom-analytics-border px-3 py-5 w-full">
           <div className="flex justify-between items-center mb-4">
@@ -408,7 +398,7 @@ const AnalyticsClient = () => {
           </div>
         </article>
       </section>
-    </section>
+    </AnalyticsWrapper>
   );
 };
 

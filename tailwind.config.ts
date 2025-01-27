@@ -94,6 +94,7 @@ export default {
           "analytics-border": "#808080",
           "engagement-boder": "#D9D9D9",
           "engagement-bg": "#130D1B",
+          "analytics-table": "#171717",
         },
       },
       borderRadius: {

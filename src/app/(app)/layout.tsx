@@ -33,7 +33,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       <main className="flex-1">
         <section
           className="hidden justify-between items-center sticky
-        top-0 left-0 right-0 md:flex  bg-custom-page-bg z-50"
+        top-0 left-0 right-0 md:flex mb-20  bg-custom-page-bg z-50"
         >
           <div className="mid:flex hidden items-center gap-2 ">
             <h1 className="p-[10px] font-poppins font-bold text-custom-primary text-lg">
