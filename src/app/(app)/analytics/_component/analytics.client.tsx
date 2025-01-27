@@ -12,6 +12,8 @@ import Image from "next/image";
 import { Plus } from "lucide-react";
 import { Fragment } from "react";
 import AnalyticsWrapper from "./analytics-wrapper";
+import Link from "next/link";
+import { urls } from "@/lib/constants";
 
 const dummyData = [spotifyLogo, youtubeLogo, appleMusic, soundCloud];
 const dummyEarnings = [
@@ -281,13 +283,15 @@ const AnalyticsClient = () => {
                 +32
               </div>
             </div>
-            <Button
-              variant={"prodBtn"}
-              className="flex items-center justify-center rounded-md px-3 py-2 gap-3 max-w-fit font-medium font-inter text-10 text-white"
-            >
-              <Plus className="w-4 h-4" />
-              View All
-            </Button>
+            <Link href={urls.analyticsEearrning}>
+              <Button
+                variant={"prodBtn"}
+                className="flex items-center justify-center rounded-md px-3 py-2 gap-3 max-w-fit font-medium font-inter text-10 text-white"
+              >
+                <Plus className="w-4 h-4" />
+                View All
+              </Button>
+            </Link>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <small className="text-custom-analytics-border font-plus-jakarta-sans font-medium text-xs">
@@ -339,13 +343,15 @@ const AnalyticsClient = () => {
                 />
               </div>
             </div>
-            <Button
-              variant={"prodBtn"}
-              className="flex items-center justify-center rounded-md px-3 py-2 gap-3 max-w-fit font-medium font-inter text-10 text-white"
-            >
-              <Plus className="w-4 h-4" />
-              View All
-            </Button>
+            <Link href={urls.analyticsEngagement}>
+              <Button
+                variant={"prodBtn"}
+                className="flex items-center justify-center rounded-md px-3 py-2 gap-3 max-w-fit font-medium font-inter text-10 text-white"
+              >
+                <Plus className="w-4 h-4" />
+                View All
+              </Button>
+            </Link>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <small className="text-custom-analytics-border font-plus-jakarta-sans font-medium text-xs">
@@ -377,13 +383,15 @@ const AnalyticsClient = () => {
             <h2 className="p-[10px] text-white font-poppins font-semibold text-15">
               Uploads
             </h2>
-            <Button
-              variant={"prodBtn"}
-              className="flex items-center justify-center rounded-md px-3 py-2 gap-3 max-w-fit font-medium font-inter text-10 text-white"
-            >
-              <Plus className="w-4 h-4" />
-              View All
-            </Button>
+            <Link href={urls.analyticsUploads}>
+              <Button
+                variant={"prodBtn"}
+                className="flex items-center justify-center rounded-md px-3 py-2 gap-3 max-w-fit font-medium font-inter text-10 text-white"
+              >
+                <Plus className="w-4 h-4" />
+                View All
+              </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-3 gap-2">

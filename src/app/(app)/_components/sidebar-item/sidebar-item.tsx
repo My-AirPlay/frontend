@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 const SidebarItem = ({ icon, title, route }: SidebarItemProps) => {
   const pathname = usePathname();
-  const isSelected = route && pathname.includes(route);
+  const isSelected = route && pathname.startsWith(route);
   return (
     <li className="relative">
       {isSelected && (

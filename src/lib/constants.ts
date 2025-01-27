@@ -48,6 +48,10 @@ export const urls = {
   settingsBank: "/settings/bank",
   notification: "/settings/notification",
   catalog: "/catalog",
+  analytics: "/analytics",
+  analyticsUploads: "/analytics/uploads",
+  analyticsEngagement: "/analytics/engagement",
+  analyticsEearrning: "/analytics/earnings",
 };
 
 export const settingsLinks: {
@@ -159,7 +163,8 @@ export const sidebarLinks: SidebarItemProps[] = [
   },
   {
     icon: "map:accounting",
-    title: "Accounting",
+    title: "Analytics",
+    route: urls.analytics,
   },
   {
     icon: "ic:baseline-support-agent",
