@@ -52,6 +52,7 @@ export const urls = {
   analyticsUploads: "/analytics/uploads",
   analyticsEngagement: "/analytics/engagement",
   analyticsEearrning: "/analytics/earnings",
+  reports: "/reports",
 };
 
 export const settingsLinks: {
@@ -159,7 +160,8 @@ export const sidebarLinks: SidebarItemProps[] = [
   },
   {
     icon: "solar:dollar-broken",
-    title: "Royalties",
+    title: "Report",
+    route: urls.reports,
   },
   {
     icon: "map:accounting",

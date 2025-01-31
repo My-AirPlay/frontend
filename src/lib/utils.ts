@@ -4,6 +4,7 @@ import { InferType } from "yup";
 import { musicInfoSchema } from "./schemas";
 import { PreviewTableProps } from "@/components/preview-table/preview-table";
 import { formatDate } from "date-fns";
+import { plusJakartaSans } from "./fonts";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -59,4 +60,44 @@ export const generateMusicUploadPreview = (
       },
     ],
   ];
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const generateRevenuChartPlugins: () => any = () => {
+  return {
+    plugins: {
+      tooltip: {
+        backgroundColor: "rgba(0,0,0)",
+        bodyFont: {
+          family: plusJakartaSans.style.fontFamily,
+          weight: 600,
+          size: 12,
+        },
+
+        caretSize: 10,
+        bodyAlign: "center",
+        axis: "y",
+      },
+      legend: {
+        display: false,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          color: "#4D4D4D",
+          lineWidth: 1,
+        },
+      },
+    },
+    font: {
+      family: plusJakartaSans.style.fontFamily,
+    },
+    color: "white",
+  };
 };

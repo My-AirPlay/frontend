@@ -95,6 +95,8 @@ export default {
           "engagement-boder": "#D9D9D9",
           "engagement-bg": "#130D1B",
           "analytics-table": "#171717",
+          "age-range-border": "#1C1C1C",
+          "analytics-white": "rgba(255,255,255,0.02)",
         },
       },
       borderRadius: {
