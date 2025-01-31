@@ -35,7 +35,7 @@ const RevenueChart = () => {
               borderColor: "#FE6902",
               borderCapStyle: "round",
               borderWidth: 2,
-              tension: 0.4,
+              tension: 0,
 
               pointBorderWidth: 4,
               pointBorderColor: "#000",
@@ -48,7 +48,7 @@ const RevenueChart = () => {
               borderColor: "#EB5757",
               borderCapStyle: "round",
               borderWidth: 2,
-              tension: 0.4,
+              tension: 0,
 
               pointBorderWidth: 4,
               pointBorderColor: "#000",
