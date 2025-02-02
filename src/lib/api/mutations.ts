@@ -37,3 +37,27 @@ export const loginUser = async (userInfo: InferType<typeof loginSchema>) => {
     };
   }
 };
+
+export const verifyUser = async ({
+  email,
+  verificationCode,
+}: {
+  email: string;
+  verificationCode: string;
+}) => {
+  try {
+    const { data } = await api.post("/artist/verify-email", {
+      email,
+      verificationCode,
+    });
+    return {
+      data,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error: error as AxiosError,
+    };
+  }
+};

@@ -97,6 +97,10 @@ export default {
           "analytics-table": "#171717",
           "age-range-border": "#1C1C1C",
           "analytics-white": "rgba(255,255,255,0.02)",
+          "faq-border": "#282726",
+          "faq-text": "#949391",
+          "tutorial-card": "#2D2D2D",
+          "tutorial-border": "#575757",
         },
       },
       borderRadius: {
@@ -150,6 +154,15 @@ export default {
       },
       screens: {
         mid: "900px",
+      },
+      keyframes: {
+        "caret-blink": {
+          "0%,70%,100%": { opacity: "1" },
+          "20%,50%": { opacity: "0" },
+        },
+      },
+      animation: {
+        "caret-blink": "caret-blink 1.25s ease-out infinite",
       },
     },
   },

@@ -14,12 +14,16 @@ import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/lib/api/mutations";
 import { toast } from "sonner";
+import useUserVerifcationStore from "@/stores/verification/user-verification.store";
+import { useRouter } from "nextjs-toploader/app";
 
 const SingupPage = () => {
+  const router = useRouter();
   const [checked, setChecked] = useState(false);
+  const { setUserEmail } = useUserVerifcationStore.getState();
   const { mutateAsync, status } = useMutation({
     mutationFn: registerUser,
-    onSuccess({ error }) {
+    onSuccess({ error, data }) {
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         toast.error((error.response as any)?.data.message as string);
@@ -27,8 +31,11 @@ const SingupPage = () => {
         return;
       }
       toast.success(
-        "Your account has been created. Check yor email to verify your acount"
+        "Your account has been created. Check your email to verify your acount"
       );
+
+      setUserEmail(data.email);
+      router.push(urls.verification);
     },
   });
   const formik = useFormik<InferType<typeof registerSchema>>({

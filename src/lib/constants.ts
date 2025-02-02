@@ -53,6 +53,8 @@ export const urls = {
   analyticsEngagement: "/analytics/engagement",
   analyticsEearrning: "/analytics/earnings",
   reports: "/reports",
+  verification: "/verify",
+  support: "/support",
 };
 
 export const settingsLinks: {
@@ -171,6 +173,7 @@ export const sidebarLinks: SidebarItemProps[] = [
   {
     icon: "ic:baseline-support-agent",
     title: "Support",
+    route: urls.support,
   },
   {
     icon: "prime:user",

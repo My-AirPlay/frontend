@@ -25,6 +25,8 @@ const buttonVariants = cva(
           "bg-custom-primary h-9 w-full max-w-[145px] text-center grid place-items-center py-[10px] px-[23px] font-plus-jakarta-sans font-bold text-[13px] text-white rounded-full",
         profileBtn:
           "bg-custom-primary h-auth-btn rounded-full w-full max-w-[275px] grid place-items-center text-white font-rubik font-semibold text-lg",
+        smBtn:
+          "text-white flex max-w-fit px-4 py-2  items-center gap-2 rounded-lg bg-custom-primary",
       },
       size: {
         default: "h-9 px-4 py-2",
