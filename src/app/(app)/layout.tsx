@@ -12,9 +12,9 @@ interface AppLayoutProps {
 const AppLayout = ({ children }: AppLayoutProps) => {
   const [showMenu, setShowMenu] = useState(false);
   return (
-    <div className="min-h-svh flex md:flex-row flex-col px-7 pt-10 bg-custom-page-bg lg:gap-24 ">
+    <div className="min-h-svh flex md:flex-row flex-col px-7 py-10  bg-custom-page-bg lg:gap-24 ">
       <Sidebar showMenu={showMenu} setShowMenu={setShowMenu} />
-      <header className="md:hidden sticky bg-custom-page-bg z-50 flex justify-between items-center">
+      <header className="md:hidden sticky mb-[88px] bg-custom-page-bg z-50 flex justify-between items-center">
         <Button
           className="bg-transparent hover:bg-transparent border  w-[31px] h-[31px] flex   border-custom-icon-btn-border rounded  text-white lg:hidden  "
           onClick={() => setShowMenu(true)}

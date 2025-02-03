@@ -55,6 +55,7 @@ export const urls = {
   reports: "/reports",
   verification: "/verify",
   support: "/support",
+  reportIssue: "/support/issues/report",
 };
 
 export const settingsLinks: {
@@ -320,3 +321,8 @@ export const currencyOptions = [
     value: "£ (Pounds)",
   },
 ];
+
+export enum TOKENS {
+  ACCESS = "access",
+  REFRESH = "refresh",
+}

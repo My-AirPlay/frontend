@@ -7,16 +7,18 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { verifyUser } from "@/lib/api/mutations";
 import { toast } from "sonner";
+import { useRouter } from "nextjs-toploader/app";
+import { urls } from "@/lib/constants";
 
 // import AuthHeader from "@/components/auth-header/auth-header";
 
 const VerifyPage = () => {
   const { email } = useUserVerifcationStore.getState();
   const [otp, setOtp] = useState("");
-
+  const router = useRouter();
   const { mutateAsync, status } = useMutation({
     mutationFn: verifyUser,
-    onSuccess({ error, data }) {
+    onSuccess({ error }) {
       if (error) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         toast.error((error.response as any)?.data.message as string);
@@ -25,7 +27,7 @@ const VerifyPage = () => {
       }
       toast.success("Your account has been verified.");
 
-      console.log(data);
+      router.replace(urls.login);
     },
   });
   const sendVerification = () => {

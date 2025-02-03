@@ -6,6 +6,7 @@ interface InputWrapperProps extends ComponentProps<"input"> {
   rightEl?: ReactNode;
   styles?: ComponentProps<"input">["className"];
   error?: string;
+  touched?: boolean;
 }
 const InputWrapper = ({
   leftEl,
@@ -13,6 +14,7 @@ const InputWrapper = ({
   className,
   styles,
   error,
+
   ...props
 }: InputWrapperProps) => {
   return (

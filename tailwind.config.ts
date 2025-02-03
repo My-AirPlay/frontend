@@ -101,6 +101,7 @@ export default {
           "faq-text": "#949391",
           "tutorial-card": "#2D2D2D",
           "tutorial-border": "#575757",
+          "uploader-text": "#C1C1C1",
         },
       },
       borderRadius: {
