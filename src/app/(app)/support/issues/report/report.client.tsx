@@ -8,6 +8,7 @@ import CustomSelect from "@/components/custom-dropdown/custom-select";
 import TextareaWrapper from "@/components/text-area-wrapper/text-area-wrapper";
 import Uploader from "@/components/uploader/uploader";
 import { MoveRight } from "lucide-react";
+import { urls } from "@/lib/constants";
 
 const ReportClientPage = () => {
   return (
@@ -23,7 +24,7 @@ const ReportClientPage = () => {
           </p>
         </div>
         <div className="flex gap-4">
-          <Link href={"#"}>
+          <Link href={urls.issues}>
             <Button variant={"smBtn"}>
               <Icon
                 icon={"mingcute:question-line"}

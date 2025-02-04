@@ -5,6 +5,8 @@ import { musicInfoSchema } from "./schemas";
 import { PreviewTableProps } from "@/components/preview-table/preview-table";
 import { formatDate } from "date-fns";
 import { plusJakartaSans } from "./fonts";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -100,4 +102,18 @@ export const generateRevenuChartPlugins: () => any = () => {
     },
     color: "white",
   };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const handleClientError = (error: any) => {
+  if (error instanceof AxiosError) {
+    if (error.code === "500") {
+      toast.error("Something went wrong. Try again");
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.error((error.response as any)?.data.message as string);
+    }
+    return;
+  }
+  toast.error("Something went wrong. Try again");
 };

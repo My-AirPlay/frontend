@@ -33,6 +33,7 @@ export enum SingupStep {
 
 export const urls = {
   forgotPassword: "/forgot-password",
+
   login: "/login",
   register: "/register",
   dashboard: "/dashboard",
@@ -56,6 +57,7 @@ export const urls = {
   verification: "/verify",
   support: "/support",
   reportIssue: "/support/issues/report",
+  issues: "/support/issues",
 };
 
 export const settingsLinks: {
@@ -322,7 +324,12 @@ export const currencyOptions = [
   },
 ];
 
-export enum TOKENS {
-  ACCESS = "access",
-  REFRESH = "refresh",
-}
+export const TOKENS = {
+  ACCESS: "access",
+  REFRESH: "refresh",
+};
+
+export const userProfileStage = {
+  onboarding: "verifyProfile",
+  verifyEmail: "verifyEmail",
+};

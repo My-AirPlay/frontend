@@ -2,7 +2,7 @@
 import React from "react";
 import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import Link from "next/link";
-import { urls } from "@/lib/constants";
+import { urls, userProfileStage } from "@/lib/constants";
 import AuthWrapper from "../_components/auth-wrapper";
 import AuthActions from "../_components/auth-actions/auth-actions";
 import PasswordInput from "../_components/password-input/password-input";
@@ -10,18 +10,31 @@ import { useFormik } from "formik";
 import { InferType } from "yup";
 import { loginSchema } from "@/lib/schemas";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "@/lib/api/mutations";
+import { loginUser } from "@/lib/api/mutations/auth.mutations";
 import { toast } from "sonner";
+import { useRouter } from "nextjs-toploader/app";
 const LoginPageClient = () => {
+  const router = useRouter();
   const { mutate, status } = useMutation({
     mutationFn: loginUser,
     onSuccess({ data, error }) {
       if (error) {
+        if (error.code === "500") return;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         toast.error((error.response?.data as any).message);
         return;
       }
-      console.log(data);
+      if (data.user.stage === userProfileStage.verifyEmail) {
+        toast.success("Check your email to verify your acount");
+        router.push(urls.verification);
+        return;
+      }
+      if (data.user.stage === userProfileStage.onboarding) {
+        toast.success("Welcome.");
+        router.replace(urls.onboarding);
+        return;
+      }
+      router.replace(urls.dashboard);
     },
   });
   const formik = useFormik<InferType<typeof loginSchema>>({
