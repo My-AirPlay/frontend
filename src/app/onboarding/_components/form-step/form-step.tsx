@@ -34,7 +34,11 @@ const FormStep = ({
                 id={field.id}
                 {...field.props}
                 {...formik.getFieldProps(field.id)}
-                error={(formik.errors[field.id] as string) || ""}
+                error={
+                  formik.touched[field.id]
+                    ? (formik.errors[field.id] as string)
+                    : ""
+                }
                 styles="h-[64px]"
               />
             </fieldset>

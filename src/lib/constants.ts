@@ -58,6 +58,7 @@ export const urls = {
   support: "/support",
   reportIssue: "/support/issues/report",
   issues: "/support/issues",
+  deleteAccount: "/settings/account",
 };
 
 export const settingsLinks: {
@@ -83,6 +84,11 @@ export const settingsLinks: {
   {
     title: "Notifications",
     route: urls.notification,
+    subRoute: "",
+  },
+  {
+    title: "Account",
+    route: urls.deleteAccount,
     subRoute: "",
   },
 ];

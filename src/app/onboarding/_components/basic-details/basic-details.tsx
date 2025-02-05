@@ -6,12 +6,32 @@ import FormStep from "../form-step/form-step";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import { OnboardingSteps } from "@/lib/constants";
+import { useMutation } from "@tanstack/react-query";
+import { postOnboardingPersonalDetail } from "@/lib/api/mutations/onboarding.mutation";
+import { toast } from "sonner";
+import { handleClientError } from "@/lib/utils";
 interface OnboardingBasciDetailProps {
   setCurrentStep: (a: OnboardingSteps) => void;
+  email: string;
 }
 const OnboardingBasciDetail = ({
   setCurrentStep,
+  email,
 }: OnboardingBasciDetailProps) => {
+  const { mutateAsync, status } = useMutation({
+    mutationFn: postOnboardingPersonalDetail,
+    onSuccess(data) {
+      if (!data) {
+        toast.error("Something went wrong. Try again");
+        return;
+      }
+      if (data.error) {
+        handleClientError(data.error);
+        return;
+      }
+      setCurrentStep(OnboardingSteps.BANK);
+    },
+  });
   const formik = useFormik({
     validateOnChange: true,
     validationSchema: onboardingBasciInfoSchema,
@@ -24,8 +44,10 @@ const OnboardingBasciDetail = ({
       artistName: "",
     },
     onSubmit: (value) => {
-      console.log(value);
-      setCurrentStep(OnboardingSteps.BANK);
+      mutateAsync({
+        userInfo: value,
+        email,
+      });
     },
   });
   const fields = useMemo<FormField[]>(() => {
@@ -87,6 +109,7 @@ const OnboardingBasciDetail = ({
         variant={"authBtn"}
         type="submit"
         className="max-w-[275px] h-[75px] mx-auto"
+        disabled={!formik.isValid || status === "pending"}
       >
         Continue <MoveRight />
       </Button>

@@ -38,10 +38,10 @@ export const getUserProfile = async (accessToken: string) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
     return data;
   } catch (error) {
     if (error instanceof AxiosError) {
+      console.log(error.response?.data, accessToken);
       if (error.code === "401") {
         await clearAuthTokens();
       }

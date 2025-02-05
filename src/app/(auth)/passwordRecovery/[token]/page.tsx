@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-// import ThemeHeader from "../_components/theme-header/theme-header";
 import AuthWrapper from "../../_components/auth-wrapper";
 import Link from "next/link";
 import { urls } from "@/lib/constants";
@@ -14,9 +13,11 @@ import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "@/lib/api/mutations/auth.mutations";
 import { handleClientError } from "@/lib/utils";
+import { toast } from "sonner";
+import { useRouter } from "nextjs-toploader/app";
 const ResetPasswordPage = () => {
   const { token } = useParams();
-
+  const { replace } = useRouter();
   const { mutateAsync, status } = useMutation({
     mutationFn: resetPassword,
     onSuccess({ data, error }) {
@@ -24,7 +25,8 @@ const ResetPasswordPage = () => {
         handleClientError(error);
         return;
       }
-      console.log(data);
+      toast.success(data.message);
+      replace(urls.login);
     },
   });
   const formik = useFormik<InferType<typeof resetPasswordSchema>>({

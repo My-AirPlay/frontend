@@ -1,29 +1,17 @@
-"use client";
-
-import { OnboardingSteps } from "@/lib/constants";
-import OnboardingBasciDetail from "./_components/basic-details/basic-details";
-import OnboardingBankDetail from "./_components/bank-details/bank-details";
-import OnboardingSocialMedia from "./_components/social-media-links/social-media-links";
-import PreviewOnboarding from "./_components/preview-onboarding/preview-onboarding";
-import { useState } from "react";
-import CustomAppLayout from "@/components/app-layout/app-layout";
-const OnboardingPage = () => {
-  const [currentStep, setCurrentStep] = useState(OnboardingSteps.BASIC_DETAIL);
-  const screens = {
-    [OnboardingSteps.BASIC_DETAIL]: (
-      <OnboardingBasciDetail setCurrentStep={setCurrentStep} />
-    ),
-    [OnboardingSteps.BANK]: (
-      <OnboardingBankDetail setCurrentStep={setCurrentStep} />
-    ),
-    [OnboardingSteps.SOCIAL_LINK]: (
-      <OnboardingSocialMedia setCurrentStep={setCurrentStep} />
-    ),
-    [OnboardingSteps.PREVIEW]: (
-      <PreviewOnboarding setCurrentStep={setCurrentStep} />
-    ),
-  };
-  return <CustomAppLayout>{screens[currentStep]}</CustomAppLayout>;
+import { getAccessToken, getUserProfile } from "@/actions/auth/auth.action";
+import OnboardingClientPage from "./onboarding.client";
+import { redirect } from "next/navigation";
+import { urls, userProfileStage } from "@/lib/constants";
+const OnboardingPage = async () => {
+  const accessToken = await getAccessToken();
+  const user = await getUserProfile(accessToken?.value || "");
+  if (!user) {
+    redirect(urls.login);
+  }
+  if (user.stage !== userProfileStage.onboarding) {
+    redirect(urls.dashboard);
+  }
+  return <OnboardingClientPage email={user.email} />;
 };
 
 export default OnboardingPage;

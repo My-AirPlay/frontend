@@ -102,6 +102,7 @@ export default {
           "tutorial-card": "#2D2D2D",
           "tutorial-border": "#575757",
           "uploader-text": "#C1C1C1",
+          "notification-close": "#A6A4AD",
         },
       },
       borderRadius: {
