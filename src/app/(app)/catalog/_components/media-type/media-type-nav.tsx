@@ -5,9 +5,14 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useState } from "react";
 import MediaCard from "../media-card/media-card";
 import { MEDIAS } from "@/lib/constants";
+import MediaModal from "../media-modal/media-modal";
+import DeleteMedia from "../delete-media/delete-media";
+import { toast } from "sonner";
 
 const MediaType = () => {
   const [catalogType, setCatalogType] = useState<"music" | "video">("music");
+  const [showModal, setShowModal] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
   return (
     <section>
       <nav className="border-b border-b-[#fcfcfc] mb-8">
@@ -46,9 +51,23 @@ const MediaType = () => {
       </nav>
       <div className="lg:grid-cols-5 md:grid-cols-3 grid-cols-2 grid gap-[14px]">
         {MEDIAS[catalogType]?.map((mediaInfo) => (
-          <MediaCard {...mediaInfo} key={mediaInfo.title} />
+          <MediaCard
+            onView={() => setShowModal(true)}
+            {...mediaInfo}
+            key={mediaInfo.title}
+            onDelete={() => setShowDelete(true)}
+          />
         ))}
       </div>
+      <MediaModal show={showModal} onClose={() => setShowModal(false)} />
+      <DeleteMedia
+        show={showDelete}
+        onCancel={() => setShowDelete(false)}
+        onDelete={() => {
+          toast.success("Media deleted successfully");
+          setShowDelete(false);
+        }}
+      />
     </section>
   );
 };

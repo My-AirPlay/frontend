@@ -2,12 +2,15 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React from "react";
 import { MediaCardProps } from "../media-type/media-type.interface";
 import Image from "next/image";
+import MediaDropdown from "../media-dropdown/media-dropdown";
 
 const MediaCard = ({
   author,
   title,
   fallbackIcon = "mdi:music",
   img,
+  onView,
+  onDelete,
 }: MediaCardProps) => {
   return (
     <article>
@@ -24,15 +27,9 @@ const MediaCard = ({
             />
           )}
         </figure>
-        <div className="px-3 py-[14px]">
-          <Icon
-            icon="material-symbols:more-vert"
-            width="24"
-            height="24"
-            color="white"
-          />
-        </div>
+        <MediaDropdown onDelete={onDelete} onView={onView} />
       </div>
+
       <h3 className="text-white font-bold font-plus-jakarta-sans text-lg mt-[6px]">
         {title}
       </h3>

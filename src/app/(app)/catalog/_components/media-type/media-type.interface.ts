@@ -3,4 +3,6 @@ export interface MediaCardProps {
   author: string;
   img?: string;
   fallbackIcon?: string;
+  onDelete?: () => void;
+  onView?: () => void;
 }

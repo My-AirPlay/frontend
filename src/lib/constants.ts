@@ -294,7 +294,30 @@ export const uploadSteps: {
   },
 ];
 
-export const GENRES = ["Hip pop", "Blues", "Regae"];
+export const Genre = {
+  AFROBEATS: "Afrobeats",
+  ROCK: "Rock",
+  R_AND_B: "R&B",
+  CLASSICAL: "Classical",
+  EDM: "EDM",
+  COUNTRY: "Country",
+  HOUSE: "House",
+  DANCE: "Dance",
+  JAZZ: "Jazz",
+  HIP_HOP: "Hip Hop",
+  REGGAE: "Reggae",
+  POP: "Pop",
+  SOUL: "Soul",
+  BLUES: "Blues",
+  GOSPEL: "Gospel",
+  FOLK: "Folk",
+  METAL: "Metal",
+  PUNK: "Punk",
+  ALTERNATIVE: "Alternative",
+  INDIE: "Indie",
+  OTHERS: "Others",
+};
+export const GENRES = Object.values(Genre);
 
 export const paymentOptions = [
   {
