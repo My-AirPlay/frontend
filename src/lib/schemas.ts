@@ -29,19 +29,19 @@ export const onboardingBankDetailSchema = Yup.object({
     .required("Field is required")
     .min(3, "Must be at least 3 charactes"),
   accountNumber: Yup.string()
-    .min(10, "Must be at least 3 charactes")
     .matches(/^[0-9]/gi, "Must be a number")
     .required("Field is required"),
 });
+const requiredError = "Field is required";
 export const onboardingSocialLinkSchema = Yup.object({
-  instagram: Yup.string().optional().url("Invalid url"),
+  instagram: Yup.string().required(requiredError).url("Invalid url"),
   twitter: Yup.string().optional().url("Invalid url"),
   facebook: Yup.string().optional().url("Invalid url"),
-  soundcloud: Yup.string().optional().url("Invalid url"),
+  soundCloud: Yup.string().optional().url("Invalid url"),
   tiktok: Yup.string().optional().url("Invalid url"),
   website: Yup.string().optional().url("Invalid url"),
 });
-const requiredError = "Field is required";
+
 export const musicInfoSchema = Yup.object({
   song_title: Yup.string().required(requiredError),
   genre: Yup.string().required(requiredError),

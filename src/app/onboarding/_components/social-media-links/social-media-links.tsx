@@ -5,13 +5,32 @@ import React, { useMemo } from "react";
 import { FormField } from "../form-step/form-step.interface";
 import FormStep from "../form-step/form-step";
 import { Button } from "@/components/ui/button";
-import { OnboardingSteps } from "@/lib/constants";
+import { OnboardingSteps, urls } from "@/lib/constants";
+import { useMutation } from "@tanstack/react-query";
+import { postSocialLinks } from "@/lib/api/mutations/onboarding.mutation";
+import { toast } from "sonner";
+import { handleClientError } from "@/lib/utils";
+import { useRouter } from "nextjs-toploader/app";
 interface OnboardingSocialMedialProps {
   setCurrentStep: (a: OnboardingSteps) => void;
+  email: string;
 }
-const OnboardingSocialMedia = ({
-  setCurrentStep,
-}: OnboardingSocialMedialProps) => {
+const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
+  const { replace } = useRouter();
+  const { mutateAsync, status } = useMutation({
+    mutationFn: postSocialLinks,
+    onSuccess(result) {
+      if (!result) {
+        toast.error("Something went wrong. Try again");
+        return;
+      }
+      if (result.error) {
+        handleClientError(result.error);
+        return;
+      }
+      replace(urls.dashboard);
+    },
+  });
   const formik = useFormik({
     validateOnChange: true,
     validationSchema: onboardingSocialLinkSchema,
@@ -24,8 +43,10 @@ const OnboardingSocialMedia = ({
       website: "",
     },
     onSubmit: (value) => {
-      console.log(value);
-      setCurrentStep(OnboardingSteps.PREVIEW);
+      mutateAsync({
+        email,
+        socialLinks: value,
+      });
     },
   });
   const fields = useMemo<FormField[]>(() => {
@@ -79,14 +100,9 @@ const OnboardingSocialMedia = ({
         <div className="flex justify-between md:items-center gap-12 w-full md:flex-row flex-col">
           <Button
             variant={"authBtn"}
-            className="max-w-[275px] bg-transparent border-2 border-white h-[75px] "
-          >
-            Skip
-          </Button>
-          <Button
-            variant={"authBtn"}
             type="submit"
             className="max-w-[275px] h-[75px] "
+            disabled={!formik.isValid || status === "pending"}
           >
             Submit
           </Button>

@@ -1,17 +1,19 @@
 import { getAccessToken, getUserProfile } from "@/actions/auth/auth.action";
 import OnboardingClientPage from "./onboarding.client";
 import { redirect } from "next/navigation";
-import { urls, userProfileStage } from "@/lib/constants";
+import { onboardingStagesKey, urls } from "@/lib/constants";
 const OnboardingPage = async () => {
   const accessToken = await getAccessToken();
   const user = await getUserProfile(accessToken?.value || "");
+  console.log(user);
   if (!user) {
     redirect(urls.login);
   }
-  if (user.stage !== userProfileStage.onboarding) {
+
+  if (!onboardingStagesKey.includes(user.stage)) {
     redirect(urls.dashboard);
   }
-  return <OnboardingClientPage email={user.email} />;
+  return <OnboardingClientPage stage={user.stage} email={user.email} />;
 };
 
 export default OnboardingPage;

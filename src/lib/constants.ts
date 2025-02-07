@@ -338,4 +338,13 @@ export const TOKENS = {
 export const userProfileStage = {
   onboarding: "verifyProfile",
   verifyEmail: "verifyEmail",
+  bankInfo: "Add bank info",
+  socialLinks: "Add social links",
 };
+
+export const onboardingStages = {
+  [userProfileStage.bankInfo]: OnboardingSteps.BANK,
+  [userProfileStage.onboarding]: OnboardingSteps.BASIC_DETAIL,
+  [userProfileStage.socialLinks]: OnboardingSteps.SOCIAL_LINK,
+};
+export const onboardingStagesKey = Object.keys(onboardingStages);
