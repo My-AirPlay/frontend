@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import ProfileDropdown from "@/components/profile-dropdown/profile-dropdown";
 import { ChevronDown } from "lucide-react";
+import LogoutBtn from "@/components/logout-btn/logout-btn";
 
 interface AppLayoutClientProps {
   children: ReactNode;
@@ -46,12 +47,9 @@ const AppLayoutClient = ({ children }: AppLayoutClientProps) => {
               Hello User,
             </small>
             <ProfileDropdown />
-            <Button
-              variant={"authBtn"}
-              className="font-inter rounded-[6px] md:block hidden h-[58px] max-w-[180px]"
-            >
-              Log Out
-            </Button>
+            <div className=" md:block hidden">
+              <LogoutBtn />
+            </div>
             <Button className="text-white bg-transparent hover:bg-transparent flex gap-2 items-start">
               <Icon width={30} icon={"flagpack:gb-ukm"} />
               <ChevronDown size={24} />
