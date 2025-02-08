@@ -105,6 +105,9 @@ export default {
           "notification-close": "#A6A4AD",
           "media-modal": "#222222",
           "media-time": "#333333",
+          "issues-border": "#454545",
+          "issues-card": "#363636",
+          "issues-card-border": "#3E3E3E",
         },
       },
       borderRadius: {

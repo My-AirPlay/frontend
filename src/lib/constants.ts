@@ -371,3 +371,38 @@ export const onboardingStages = {
   [userProfileStage.socialLinks]: OnboardingSteps.SOCIAL_LINK,
 };
 export const onboardingStagesKey = Object.keys(onboardingStages);
+
+export enum ISSUE_STATUS {
+  PENDING = "pending",
+  IN_PROGRESS = "in-progress",
+  RESOLVED = "resolved",
+}
+
+export const dummyIssues = {
+  pending: [
+    {
+      title: "Music Uploads",
+      description:
+        "I can,t upload my music on the dashboard, it is Unresponsive",
+      isImageAttached: true,
+    },
+    {
+      title: "Distrribution Issues",
+      description:
+        "I can,t upload my music on the dashboard, it is Unresponsive",
+      isImageAttached: false,
+    },
+    {
+      title: "Distrribution Issues",
+      description:
+        "I can,t upload my music on the dashboard, it is Unresponsive",
+      isImageAttached: false,
+    },
+    {
+      title: "Distrribution Issues",
+      description:
+        "I can,t upload my music on the dashboard, it is Unresponsive",
+      isImageAttached: false,
+    },
+  ],
+};

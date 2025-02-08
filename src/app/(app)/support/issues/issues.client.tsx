@@ -5,7 +5,9 @@ import SupportWrapper from "../_components/support-wrapper/support-wrapper";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { urls } from "@/lib/constants";
+import { ISSUE_STATUS, urls } from "@/lib/constants";
+
+import IssueCardWrapper from "./_components/issue-card-wrapper/issue-card-wrapper";
 
 const IssuesClientPage = () => {
   return (
@@ -31,6 +33,14 @@ const IssuesClientPage = () => {
             </Button>
           </Link>
         </div>
+      </div>
+      <div className="grid md:grid-cols-3 gap-6 ">
+        <IssueCardWrapper title="Pending" status={ISSUE_STATUS.PENDING} />
+        <IssueCardWrapper
+          title="In Progress"
+          status={ISSUE_STATUS.IN_PROGRESS}
+        />
+        <IssueCardWrapper title="Completed" status={ISSUE_STATUS.RESOLVED} />
       </div>
     </SupportWrapper>
   );
