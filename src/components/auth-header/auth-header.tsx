@@ -46,7 +46,7 @@ const AuthHeader = () => {
         <ul className="flex flex-col lg:flex-row font-poppins flex-1 lg:flex-auto lg:w-fit  lg:px-0 px-4 lg:justify-between  lg:gap-4 gap-[31px] lg:max-w-[627px]">
           {navLinks.map((link) => (
             <li
-              className="font-bold font-poppins text-white text-base  items-center gap-3 flex justify-between lg:justify-start"
+              className="font-bold font-poppins text-white text-sm  items-center gap-3 flex justify-between lg:justify-start"
               key={link}
             >
               <Link href={"#"}>{link}</Link>
