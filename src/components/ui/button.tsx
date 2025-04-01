@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-foreground bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
@@ -27,12 +27,21 @@ const buttonVariants = cva(
           "bg-custom-primary h-auth-btn rounded-full w-full max-w-[275px] grid place-items-center text-white font-rubik font-semibold text-lg",
         smBtn:
           "text-white flex max-w-fit px-4 py-2  items-center gap-2 rounded-lg bg-custom-primary",
+        inputButton: cn(
+          "!appearance-none flex items-center h-[2.875rem] 2xl:h-[3.25rem] rounded-lg text-sm w-full px-3.5 py-1.5 border-2 border-transparent outline-none focus:outline-none",
+          "bg-[#383838] text-foreground rounded-md border border-border px-3 py-2 w-full focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted transition-all",
+          "text-foreground/80 file:bg-transparent file:text-sm ",
+        ),
+        unstyled:""
       },
       size: {
         default: "h-9 px-4 py-2",
         sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
+        thin: "h-[1.85rem] px-4 py-1.5 text-xs",
+        md: "h-10 rounded-md px-5",
+        lg: "h-12 rounded-md px-8",
         icon: "h-9 w-9",
+        inputButton: ""
       },
     },
     defaultVariants: {
@@ -44,7 +53,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoading?: boolean;
 }
@@ -57,7 +66,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           buttonVariants({ variant, size, className }),
           isLoading &&
-            "relative after:absolute after:top-0 after:left-0 after:w-full after:h-full after:bg-black/20 cursor-wait"
+          "relative after:absolute after:top-0 after:left-0 after:w-full after:h-full after:bg-black/20 cursor-wait"
         )}
         ref={ref}
         disabled={props.disabled || isLoading}
