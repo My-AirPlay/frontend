@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, Settings, Bell, ChevronDown, Menu } from 'lucide-react';
+import { Settings, Bell, ChevronDown, Menu } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';

@@ -22,6 +22,7 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({
       id: 'realName',
       header: 'Artist Real Name',
       accessorKey: 'realName',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cell: (info: any) => <span>{info.getValue() || '--'}</span>,
     },
     {
@@ -37,7 +38,7 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({
     {
       id: 'status',
       header: 'Status',
-      cell: (info: any) => (
+      cell: () => (
         <div className="status-badge-pending">
           Pending
         </div>

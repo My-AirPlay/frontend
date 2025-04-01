@@ -1,15 +1,13 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Download, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import Link from 'next/link';
 import { Notepad2 } from 'iconsax-react';
 import { LinkButton, PreviousPageButton } from '@/components/ui';
 
 const AllTicketsPage: React.FC = () => {
     // Mock tickets data
-    const tickets = Array.from({ length: 6 }, (_, i) => ({
+    const tickets = Array.from({ length: 6 }, () => ({
         id: 1234,
         title: 'Upload Errors',
         user: 'Nina Dobrev',

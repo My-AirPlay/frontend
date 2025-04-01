@@ -77,7 +77,7 @@ const MediaItem: React.FC<MediaItemProps> = ({ title, type, album, tracks, platf
     );
 };
 
-const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artistId }) => {
+const ArtistOverview: React.FC<ArtistOverviewProps> = ({ }) => {
     // Mock data
     const streamingItems = [
         {

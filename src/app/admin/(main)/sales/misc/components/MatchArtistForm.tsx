@@ -19,7 +19,6 @@ interface MatchArtistFormProps {
 const MatchArtistForm: React.FC<MatchArtistFormProps> = ({
   onMatch,
   onCreateNew,
-  unmatchedArtistName = ''
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
@@ -101,7 +100,7 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({
       </div>
       
       <div className="flex items-center space-x-3 mb-6">
-        <span className="textwhite/50">Can't find artist?</span>
+        <span className="textwhite/50">Can&apost find artist?</span>
         <Button 
           variant="link" 
           className="text-primary p-0 h-auto" 

@@ -40,6 +40,7 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) =>
     {
       id: 'status',
       header: 'Status',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cell: (info: any) => (
         <div className={`${info.row.original.status === 'completed'
             ? 'status-badge-completed'

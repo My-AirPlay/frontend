@@ -23,6 +23,7 @@
     "chart.js": "^4.4.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "iconsax-react": "^0.0.8",

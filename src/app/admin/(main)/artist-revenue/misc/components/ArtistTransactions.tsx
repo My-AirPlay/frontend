@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Filter } from 'lucide-react';
@@ -16,7 +16,7 @@ interface TransactionData {
   type: 'credit' | 'debit';
 }
 
-const ArtistTransactions: React.FC<ArtistTransactionsProps> = ({ artistId }) => {
+const ArtistTransactions: React.FC<ArtistTransactionsProps> = ({  }) => {
   // Mock transaction data
   const creditTransactions: TransactionData[] = [
     { id: 1, description: 'Royalty Payment for Youtube', date: '12 Feb 2023', amount: '₦4,000,000', type: 'credit' },

@@ -1,18 +1,14 @@
 'use client'
 
 import * as React from "react"
-import { FieldErrors, FieldValues } from "react-hook-form"
-import { CheckIcon, SearchIcon, } from "lucide-react"
+import { CheckIcon, ChevronDown, SearchIcon, } from "lucide-react"
 import { VariantProps } from "class-variance-authority"
 
-import { cn } from "@/utils"
-import { convertKebabAndSnakeToTitleCase } from "@/utils/strings"
+import { cn } from "@/lib/utils"
 
-import { Button, Command, CommandGroup, CommandItem } from "."
+import { Command, CommandGroup, CommandItem } from "./command"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover-without-portal"
-import { Label } from "./label"
 import FormError from "./form-error"
-import { CaretDown, SmallSpinner } from "./icons"
 import { inputVariants } from "./input"
 
 
@@ -49,12 +45,10 @@ const SelectSingleCombo = <T extends object>({
     name,
     placeholder,
     className,
-    containerClass,
-    labelClass,
+    containerClass,    
     itemClass,
     fullWidth,
     placeHolderClass,
-    withIcon,
     isLoadingOptions,
     valueKey,
     labelKey,
@@ -106,9 +100,9 @@ const SelectSingleCombo = <T extends object>({
                 <div className="flex flex-col gap-2">
                     {
                         label && (
-                            <Label className="text-sm text-header-text font-normal" htmlFor={name || "gbo"}>
+                            <label className="text-sm text-header-text font-normal" htmlFor={name || "gbo"}>
                                 {label}
-                            </Label>
+                            </label>
                         )
                     }
                     <PopoverTrigger asChild>
@@ -137,9 +131,9 @@ const SelectSingleCombo = <T extends object>({
                                 }
 
                             </span>
-                            <CaretDown
+                            <ChevronDown
                                 className={cn("ml-2 h-5 w-5 shrink-0 opacity-70 transition-transform duration-300", open && "rotate-180")}
-                                fill={triggerColor || "#755AE2"}
+                                stroke={triggerColor || "#FE6902"}
                             />
                         </button>
                     </PopoverTrigger>
@@ -160,7 +154,7 @@ const SelectSingleCombo = <T extends object>({
                         <CommandGroup className="flex flex-col gap-3 px-3 max-w-full">
                             {isLoadingOptions && (
                                 <CommandItem className="flex items-center justify-center gap-2 text-main-solid py-2 font-medium" value={"loading"} disabled>
-                                    <SmallSpinner color='#000000' /> Loading options...
+                                    <ChevronDown color='#fff' /> Loading options...
                                 </CommandItem>
                             )}
                             {!isLoadingOptions && options && options?.length > 0 ? (

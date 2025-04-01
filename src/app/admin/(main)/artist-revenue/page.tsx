@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import { Search, Download, Filter, DollarSign } from 'lucide-react';
+import { Search, Download, Filter } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -32,7 +32,7 @@ const ArtistRevenue: React.FC = () => {
             {
                 id: 'name',
                 header: 'Artist Name',
-                cell: (info: any) => (
+                cell: (info) => (
                     <Link href={`./artist-revenue/${info.row.original.id}/details`} className="font-medium text-primary hover:underline">
                         {info.row.original.name}
                     </Link>

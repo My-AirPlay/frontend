@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import FormError from "./form-error"
@@ -42,7 +42,6 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         errorMessageClass,
         label,
         autoResize = true,
-        optional,
         minRows = 2,
         maxRows = 10,
         ...props

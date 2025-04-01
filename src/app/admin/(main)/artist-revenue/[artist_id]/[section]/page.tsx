@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArtistOverview, ArtistAnalytics, ArtistTransactions } from '../../misc/components';

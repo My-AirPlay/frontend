@@ -1,12 +1,11 @@
 'use client'
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import TracksList from '../../misc/components/TracksList';
 import { PreviousPageButton } from '@/components/ui';
 
 const ReleaseDetails: React.FC = () => {
     const { release_id } = useParams<{ release_id: string }>();
-    const router = useRouter();
 
     return (
         <div className="space-y-6">

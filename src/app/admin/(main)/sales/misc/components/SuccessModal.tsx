@@ -24,7 +24,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
 
         {type === 'created' ? (
           <div className="text-center mb-6">
-            <p className="mb-4">The Artist You Created "{artistName}" has been Saved Successfully.</p>
+            <p className="mb-4">The Artist You Created &quot;{artistName}&quot; has been Saved Successfully.</p>
             <div className="space-y-2">
               <p>Artist Name: <span className="text-primary">{artistName}</span></p>
               <p>Artist Real Name: <span className="text-primary">{artistRealName}</span></p>

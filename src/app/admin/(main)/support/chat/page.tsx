@@ -3,7 +3,6 @@ import React from 'react';
 import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { LinkButton, PreviousPageButton } from '@/components/ui';
-import Link from 'next/link';
 import { Headphone } from 'iconsax-react';
 
 const ChatsLists: React.FC = () => {

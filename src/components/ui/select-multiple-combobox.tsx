@@ -1,20 +1,18 @@
 'use client'
 
 import * as React from "react"
-import { FieldErrors, FieldValues } from "react-hook-form"
-import { CheckIcon, SearchIcon, X } from 'lucide-react'
+import { Check, ChevronDown, SearchIcon } from 'lucide-react'
 import { VariantProps } from "class-variance-authority"
 
-import { cn } from "@/utils"
-import { convertKebabAndSnakeToTitleCase } from "@/utils/strings"
+import { cn } from "@/lib/utils"
 
-import { Button, Command, CommandGroup, CommandItem } from "."
+import { Command, CommandGroup, CommandItem } from "./command"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover-without-portal"
-import { Label } from "./label"
 import FormError from "./form-error"
-import { CaretDown, SmallSpinner, StrokeCheck } from "./icons"
+// import { CaretDown, SmallSpinner, StrokeCheck } from "./icons"
 import { inputVariants } from "./input"
-import Checkbox from "./Checkbox/Checkbox"
+import {Checkbox} from "./checkbox"
+import { SmallSpinner } from "../icons"
 
 interface SelectProps<T> {
     values: string[];
@@ -54,11 +52,9 @@ const SelectMultipleCombo = <T extends object>({
     placeholder,
     className,
     containerClass,
-    labelClass,
     itemClass,
     fullWidth,
     placeHolderClass,
-    withIcon,
     isLoadingOptions,
     valueKey,
     labelKey,
@@ -114,9 +110,9 @@ const SelectMultipleCombo = <T extends object>({
             <Popover open={open} onOpenChange={setOpen}>
                 <div className="flex flex-col gap-2">
                     {label && (
-                        <Label className="text-sm text-header-text font-normal" htmlFor={name || "gbo"}>
+                        <label className="text-sm text-header-text font-normal" htmlFor={name || "gbo"}>
                             {label}
-                        </Label>
+                        </label>
                     )}
                     <PopoverTrigger asChild>
                         <button
@@ -144,9 +140,9 @@ const SelectMultipleCombo = <T extends object>({
                                         : placeholder}
                                 </span>
                             )}
-                            <CaretDown
+                            <ChevronDown
                                 className={cn("ml-2 h-5 w-5 shrink-0 opacity-70 transition-transform duration-300", open && "rotate-180")}
-                                fill={triggerColor || "#755AE2"}
+                                fill={triggerColor || "#FE6902"}
                             />
                         </button>
                     </PopoverTrigger>
@@ -166,7 +162,7 @@ const SelectMultipleCombo = <T extends object>({
                         <CommandGroup className="flex flex-col gap-3 px-3 max-w-full">
                             {isLoadingOptions && (
                                 <CommandItem className="flex items-center justify-center gap-2 text-main-solid py-2 font-medium" value={"loading"} disabled>
-                                    <SmallSpinner color='#000000' /> Loading options...
+                                    <SmallSpinner color='#fff' /> Loading options...
                                 </CommandItem>
                             )}
                             {!isLoadingOptions && options && options?.length > 0 ? (
@@ -180,7 +176,7 @@ const SelectMultipleCombo = <T extends object>({
                                         onClick={() => handleSelect(String(option[valueKey]))}
                                     >
                                         {checkType === "stroke" ? (
-                                            <StrokeCheck
+                                            <Check
                                                 className={cn(
                                                     "mr-2 h-4 w-4",
                                                     values.includes(String(option[valueKey])) ? "opacity-100" : "opacity-0"

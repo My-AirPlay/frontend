@@ -23,7 +23,7 @@ interface SelectTriggerProps
 const SelectTrigger = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Trigger>,
     SelectTriggerProps
->(({ className, children, customIcon, iconClassName, triggerColor, 'data-state': dataState, ...props }, ref) => {
+>(({ className, children, triggerColor, 'data-state': dataState, ...props }, ref) => {
     return (
         <SelectPrimitive.Trigger
             className={cn(

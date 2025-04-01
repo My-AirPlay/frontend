@@ -47,15 +47,15 @@ const Dashboard: React.FC = () => {
     { id: 3, type: 'Music - Videos', lastUploaded: '14 Jan, 2025', category: 'Videos', count: 559 },
   ];
 
-  const weeklyData = [
-    { day: '17 Sun', current: 750, previous: 650 },
-    { day: '18 Mon', current: 820, previous: 700 },
-    { day: '19 Tue', current: 750, previous: 800 },
-    { day: '20 Wed', current: 850, previous: 750 },
-    { day: '21 Thu', current: 900, previous: 850 },
-    { day: '22 Fri', current: 950, previous: 800 },
-    { day: '23 Sat', current: 880, previous: 830 },
-  ];
+  // const weeklyData = [
+  //   { day: '17 Sun', current: 750, previous: 650 },
+  //   { day: '18 Mon', current: 820, previous: 700 },
+  //   { day: '19 Tue', current: 750, previous: 800 },
+  //   { day: '20 Wed', current: 850, previous: 750 },
+  //   { day: '21 Thu', current: 900, previous: 850 },
+  //   { day: '22 Fri', current: 950, previous: 800 },
+  //   { day: '23 Sat', current: 880, previous: 830 },
+  // ];
 
   // Recent sales data
   const recentSales = [

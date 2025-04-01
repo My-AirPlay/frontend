@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useRef } from 'react';
-import { Upload, Download } from 'lucide-react';
+import {  Download } from 'lucide-react';
 
 interface FileUploaderProps {
   onFileSelected?: (file: File) => void;
@@ -18,7 +18,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   onFileSelected,
   supportedFormats = ['PDF', 'MSDOC'],
   maxFileSize = 40,
-  className = '',
   uploadText = 'Upload or',
   browseText = 'Browse',
   containerClassName = '',

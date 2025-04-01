@@ -2,7 +2,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface ArtistAnalyticsProps {
   artistId: number;
@@ -10,11 +10,13 @@ interface ArtistAnalyticsProps {
 
 interface WeeklyComparisonProps {
   title: string;
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[];
 }
 
-const WeeklyComparison: React.FC<WeeklyComparisonProps> = ({ title, data }) => {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const WeeklyComparison: React.FC<WeeklyComparisonProps> = ({ data }) => {
+//   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   
   return (
     <div className="space-y-4">
@@ -96,7 +98,7 @@ const WeeklyComparison: React.FC<WeeklyComparisonProps> = ({ title, data }) => {
   );
 };
 
-const ArtistAnalytics: React.FC<ArtistAnalyticsProps> = ({ artistId }) => {
+const ArtistAnalytics: React.FC<ArtistAnalyticsProps> = ({  }) => {
   // Mock data for streaming analytics
   const streamingData = [
     { month: 'Jan', thisWeek: 4000, lastWeek: 2400 },

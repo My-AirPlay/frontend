@@ -3,11 +3,13 @@ import React, { useState } from 'react';
 import { Button, Tabs, TabsList, TabsTrigger, TabsContent, FileUploader, Input, SelectSimple, SingleDatePicker } from '@/components/ui';
 
 interface CreateArtistFormProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSave: (artistData: any) => void;
 }
 
 const CreateArtistForm: React.FC<CreateArtistFormProps> = ({ onSave }) => {
   const [activeTab, setActiveTab] = useState('overview');
+  console.log(activeTab)
   const [artistData, setArtistData] = useState({
     name: '',
     alternativeName: '',

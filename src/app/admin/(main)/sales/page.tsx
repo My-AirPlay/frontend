@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ArrowLeftRight, ArrowRight, ChevronDown, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { AmountInput, FileUploader, Input } from '@/components/ui';
+import { AmountInput, FileUploader } from '@/components/ui';
 
 import MatchedArtistsTable, { MatchedArtist } from './misc/components/MatchedArtistsTable';
 import UnmatchedArtistsTable from './misc/components/UnmatchedArtistsTable';
@@ -116,6 +116,7 @@ const Sales: React.FC = () => {
         setShowSuccessModal('matched');
     };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handleSaveArtist = (artistData: any) => {
         console.log('New artist data:', artistData);
         // Here we would call an API to create the artist

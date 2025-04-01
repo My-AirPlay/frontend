@@ -1,7 +1,6 @@
 
 import { LinkButton } from '@/components/ui';
 import { Headphone } from 'iconsax-react';
-import Link from 'next/link';
 import React from 'react';
 
 interface ChatBotListProps {

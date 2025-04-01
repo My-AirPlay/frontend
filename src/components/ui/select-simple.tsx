@@ -1,6 +1,5 @@
 import { VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { UseControllerProps } from 'react-hook-form';
 import { cn } from '@/lib/utils';
 import FormError from './form-error';
 import { inputVariants, labelVariants } from './input';
@@ -37,9 +36,9 @@ type SelectProps<TOption> = {
   placeHolderClass?: string;
   variant?: VariantProps<typeof inputVariants>['variant'];
   size?: VariantProps<typeof inputVariants>['inputSize'];
-  control?: UseControllerProps<any, string>['control'];
 };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Select<TOption extends Record<string, any>>({
   value: propValue,
   onChange: propOnChange,
@@ -53,18 +52,15 @@ function Select<TOption extends Record<string, any>>({
   containerClass,
   labelClass,
   itemClass,
-  wrapperClass,
   defaultValue,
   valueClass,
-  placeHolderClass,
   isLoadingOptions,
   valueKey,
   labelKey,
   triggerColor,
-  showSelectedValue = true,
+//   showSelectedValue = true,
   variant,
   size,
-  control,
 }: SelectProps<TOption>) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -122,7 +118,7 @@ function Select<TOption extends Record<string, any>>({
                                 ))
                                 :
                                 <SelectItem value={""} disabled className={itemClass}>
-                                    There's no option to select from
+                                    There are no options to select from
                                 </SelectItem>
                         }
                     </SelectContent>

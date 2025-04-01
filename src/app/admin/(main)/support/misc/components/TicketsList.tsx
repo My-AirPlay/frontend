@@ -1,7 +1,6 @@
 
 import { LinkButton } from '@/components/ui';
 import { Notepad2 } from 'iconsax-react';
-import Link from 'next/link';
 import React from 'react';
 
 interface TicketsListProps {

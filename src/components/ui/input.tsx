@@ -5,7 +5,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 import FormError from "./form-error"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Eye, EyeSlash, Lock, TickCircle } from "iconsax-react"
+import { Lock, TickCircle } from "iconsax-react"
 
 import { Card, CardContent, CardHeader } from "."
 import { EyeClosedIcon, EyeIcon } from "../icons"
@@ -91,12 +91,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             leftIcon,
             rightIcon,
             errorMessageClass,
-            iconClassName,
             label,
             labelClass,
             inputMode,
             hidelabel,
-            optional,
             showValidator = false,
             validationRequirements,
             ...props
@@ -179,6 +177,7 @@ Input.displayName = "Input"
 
 type AmountInputProps = Omit<InputProps, "value" | "onChange"> & {
     value?: string | number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onChange?: (...event: any[]) => void
     onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
 }

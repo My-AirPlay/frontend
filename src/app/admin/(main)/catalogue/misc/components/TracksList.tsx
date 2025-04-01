@@ -19,6 +19,7 @@ const TracksList: React.FC<TracksListProps> = ({ }) => {
     {
       id: 'title',
       header: 'Title',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       cell: (info: any) => (
         <Link href={`/admin/catalogue/tracks/${info.row.original.id}`} className="text-primary hover:underline">
           {info.row.original.title}
