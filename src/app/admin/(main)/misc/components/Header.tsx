@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     if (path.startsWith('/admin/sales')) return 'Sales';
     if (path.startsWith('/admin/artists')) return 'Artists';
     if (path.startsWith('/admin/settings')) return 'Settings';
-    if (path.startsWith('/admin/help')) return 'Help and Support';
+    if (path.startsWith('/admin/support')) return 'Help and Support';
 
     // Handle specific detail pages
     if (path.includes('/artist/')) return 'Artist Details';
@@ -55,7 +55,7 @@ const Header: React.FC = () => {
 
         <Sheet>
           <SheetTrigger className="md:hidden text-primary">
-            <Menu size={20} className='text-primary' />
+            <Menu size={24} className='text-primary' />
           </SheetTrigger>
           <SheetContent side="right" className="w-64 !p-0">
             <Sidebar />

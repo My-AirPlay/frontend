@@ -17,19 +17,19 @@ const ArtistDetails: React.FC = () => {
 
 
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Artist Details</h1>
+                <h1 className="text-xl md:text-2xl font-semibold">Artist Details</h1>
                 <div className="flex items-center space-x-2">
-                    <Button variant="outline" className="bg-secondary text-foreground border-border">
-                        <Trash2 size={16} className="mr-2" />
-                        <span>Delete</span>
+                    <Button variant="outline" className="max-md:size-10 max-md:p-0">
+                        <Trash2 size={16} className="md:mr-2" />
+                        <span className='max-md:sr-only'>Delete</span>
                     </Button>
-                    <Button variant="outline" className="bg-secondary text-foreground border-border">
-                        <Pencil size={16} className="mr-2" />
-                        <span>Edit</span>
+                    <Button variant="outline" className="max-md:size-10 max-md:p-0">
+                        <Pencil size={16} className="md:mr-2" />
+                        <span className='max-md:sr-only'>Edit</span>
                     </Button>
-                    <Button className="admin-button-primary">
-                        <Save size={16} className="mr-2" />
-                        <span>Save</span>
+                    <Button className="max-md:size-10 max-md:p-0">
+                        <Save size={16} className="md:mr-2" />
+                        <span className='max-md:sr-only'>Save</span>
                     </Button>
                 </div>
             </div>

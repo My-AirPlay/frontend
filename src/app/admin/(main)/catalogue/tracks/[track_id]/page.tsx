@@ -18,7 +18,7 @@ const TrackDetails: React.FC = () => {
       <PreviousPageButton />
 
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Track Details</h1>
+        <h1 className="text-xl md:text-2xl font-semibold">Track Details</h1>
         <div className="flex items-center space-x-2">
           <Button variant="outline" className="bg-secondary text-foreground border-border">
             <Trash2 size={16} className="mr-2" />

@@ -93,7 +93,7 @@ const Catalogue: React.FC = () => {
 
 
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Catalogue</h1>
+                <h1 className="text-xl md:text-2xl font-semibold">Catalogue</h1>
                 <div className="flex items-center space-x-2">
                     <div className="text-sm text-muted">
                         Total: {releases.length}

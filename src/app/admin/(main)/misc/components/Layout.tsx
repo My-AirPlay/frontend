@@ -29,7 +29,7 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
         <main className="flex-1 overflow-y-auto">
-          <div className={cn(isFullWidth ? 'p-0' : "p-6 lg:px-10", "max-w-full")}>{children}</div>
+          <div className={cn(isFullWidth ? 'p-0' : "p-6 max-md:px-4 lg:px-10", "max-w-full")}>{children}</div>
         </main>
         <Footer />
       </div>

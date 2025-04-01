@@ -13,7 +13,7 @@ const ReleaseDetails: React.FC = () => {
             <PreviousPageButton />
 
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Album: {"The Good Book"}</h1>
+                <h1 className="text-xl md:text-2xl font-semibold">Album: {"The Good Book"}</h1>
                 <div className="flex items-center">
                     <span className="text-sm text-admin-muted mr-2">Artist:</span>
                     <span>{"Hannah"}</span>

@@ -107,57 +107,56 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artistId }) => {
 
     return (
         <div className="space-y-8">
-            {/* Streaming Section */}
-            <div className="space-y-4">
-                <div className="flex justify-between items-center">
+            <section className="flex flex-col rounded-lg border-[0.5px] border-[#383838]">
+                <header className="flex justify-between items-center bg-[#272727c5] p-4">
                     <h3 className="text-md font-semibold bg-admin-primary/10 text-admin-primary px-3 py-1 rounded">
                         Streaming
                     </h3>
-                    <Button variant="ghost" size="sm" className="text-xs text-admin-muted">
+                    <Button variant="outline" size="md" className="text-xs">
                         View All <ArrowRight size={14} className="ml-1" />
                     </Button>
-                </div>
+                </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
                     {streamingItems.map((item, index) => (
                         <MediaItem key={`streaming-${index}`} {...item} />
                     ))}
                 </div>
-            </div>
+            </section>
 
-            {/* Downloads Section */}
-            <div className="space-y-4">
-                <div className="flex justify-between items-center">
+
+            <section className="flex flex-col rounded-lg border-[0.5px] border-[#383838]">
+                <header className="flex justify-between items-center bg-[#27272766] p-4">
                     <h3 className="text-md font-semibold bg-admin-primary/10 text-admin-primary px-3 py-1 rounded">
                         Downloads
                     </h3>
-                    <Button variant="ghost" size="sm" className="text-xs text-admin-muted">
+                    <Button variant="outline" size="md" className="text-xs text-admin-muted">
                         View All <ArrowRight size={14} className="ml-1" />
                     </Button>
-                </div>
+                </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
                     {downloadItems.map((item, index) => (
                         <MediaItem key={`download-${index}`} {...item} />
                     ))}
                 </div>
-            </div>
+            </section>
 
             {/* Royalties Section */}
-            <div className="space-y-4">
-                <div className="flex justify-between items-center">
+            <section className="flex flex-col rounded-lg border-[0.5px] border-[#383838]">
+                <header className="flex justify-between items-center bg-[#27272766] p-4">
                     <h3 className="text-md font-semibold bg-admin-primary/10 text-admin-primary px-3 py-1 rounded">
                         Royalties
                     </h3>
-                    <Button variant="ghost" size="sm" className="text-xs text-admin-muted">
+                    <Button variant="outline" size="md" className="text-xs text-admin-muted">
                         View All <ArrowRight size={14} className="ml-1" />
                     </Button>
-                </div>
+                </header>
 
                 <div className="p-8 text-center text-admin-muted">
                     No royalties found with this artist.
                 </div>
-            </div>
+            </section>
         </div>
     );
 };

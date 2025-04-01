@@ -65,18 +65,18 @@ const Contracts = () => {
             <PreviousPageButton />
 
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-semibold">Contracts</h1>
+                <h1 className="text-xl md:text-2xl font-semibold">Contracts</h1>
                 <div className="flex items-center space-x-2">
                     <div className="text-sm text-admin-muted">
                         Total: {totalContracts}
                     </div>
-                    <Button variant="outline" className="bg-admin-secondary text-admin-foreground border-admin-border">
-                        <Filter size={16} className="mr-2" />
-                        <span>Filter</span>
+                    <Button variant="outline" className="max-md:size-10 max-md:p-0">
+                        <Filter size={16} className="md:mr-2" />
+                        <span className="max-md:sr-only">Filter</span>
                     </Button>
-                    <Button className="admin-button-primary">
-                        <Download size={16} className="mr-2" />
-                        <span>Download</span>
+                    <Button className="max-md:size-10 max-md:p-0">
+                        <Download size={16} className="md:mr-2" />
+                        <span className="max-md:sr-only">Download</span>
                     </Button>
                 </div>
             </div>

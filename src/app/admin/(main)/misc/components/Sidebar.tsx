@@ -56,7 +56,7 @@ const Sidebar= ({ className }: { className?: string }) => {
           label: "Settings",
         },
         {
-          href: "/admin/help",
+          href: "/admin/support",
           icon: Headphone,
           label: "Help and Support",
         },

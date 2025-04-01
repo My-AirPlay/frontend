@@ -12,6 +12,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { useMobile, useWindowWidth } from '@/hooks';
 
 const chartData = [
   { month: "17 Sun", this_week: 186, last_week: 80 },
@@ -35,6 +36,10 @@ const chartConfig = {
 
 
 const Dashboard: React.FC = () => {
+
+  const isMobile = useMobile();
+  const windowWidth = useWindowWidth();
+
   // Mock data
   const uploads = [
     { id: 1, type: 'Music - Tracks', lastUploaded: '14 Jan, 2025', category: 'Tracks', count: 4150 },
@@ -58,6 +63,7 @@ const Dashboard: React.FC = () => {
     { id: 2, type: 'Streaming', amount: '₦3,625,874', date: '20 Jan 2025', revenue: true },
     { id: 3, type: 'Downloads', amount: '₦2,625,874', date: '17 Jan 2025', revenue: true },
   ];
+  console.log(windowWidth)
 
   return (
     <div className="space-y-8">
@@ -88,11 +94,11 @@ const Dashboard: React.FC = () => {
                       <div className="w-6 h-6 bg-primary rounded-md"></div>
                     </div>
                     <div>
-                      <h3 className="font-medium">{upload.type}</h3>
-                      <p className="text-xs text-white/70 ">Last Uploaded: {upload.lastUploaded}</p>
+                      <h3 className="max-md:text-sm font-medium">{upload.type}</h3>
+                      <p className="text-[0.7rem] md:text-xs text-white/70 ">Last Uploaded: {upload.lastUploaded}</p>
                     </div>
                   </div>
-                  <div className="text-xl font-bold bg-[#272727] p-2.5 rounded-md">
+                  <div className="md:text-xl font-bold bg-[#272727] p-2.5 rounded-md">
                     {upload.count.toLocaleString()}
                   </div>
                 </div>
@@ -176,12 +182,12 @@ const Dashboard: React.FC = () => {
                       <div className="w-4 h-4 bg-primary rounded-sm"></div>
                     </div>
                     <div>
-                      <h3 className="font-medium">{sale.type}</h3>
+                      <h3 className="max-md:text-sm font-medium">{sale.type}</h3>
                       <p className="text-xs text-white/70">{sale.date}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">{sale.amount}</p>
+                    <p className="font-medium max-md:text-sm">{sale.amount}</p>
                     <p className="text-xs text-white/70">Revenue</p>
                   </div>
                 </div>
@@ -197,50 +203,78 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-lg bg-custom-gradient px-6 py-4">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center flex-wrap mb-4">
               <div className="flex items-center">
-                <h3 className="text-lg font-medium">Weekly Comparison</h3>
+                <h3 className="md:text-lg font-medium">Weekly Comparison</h3>
                 <ChevronRight size={16} className="ml-1 text-white/70" />
               </div>
 
               <div className="flex space-x-4">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-primary rounded-sm mr-2"></div>
-                  <span className="text-sm">This week</span>
+                  <span className="text-xs md:text-sm">This week</span>
                 </div>
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-gray-500 rounded-sm mr-2"></div>
-                  <span className="text-sm">Last week</span>
+                  <span className="text-xs md:text-sm">Last week</span>
                 </div>
               </div>
             </div>
 
-         
-            <div className="w-full max-w-full">
-              <ChartContainer config={chartConfig} className="max-h-[275px] w-full max-w-full">
-                <BarChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 10,
-                    right: 10,
-                    top: 10,
-                    bottom: 10,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                    tickFormatter={(value) => value.slice(0, 7)}
-                  />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-                  <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
-                  <Bar dataKey="this_week" fill="var(--color-this_week)" radius={4} width={2} />
-                  <Bar dataKey="last_week" fill="var(--color-last_week)" radius={4} width={2} />
-                </BarChart>
+
+            <div className="max-md:h-[400px] w-full max-w-full"
+              style={{
+                maxWidth: isMobile ? windowWidth - 800 : '100%',
+              }}
+            >
+              <ChartContainer config={chartConfig} className="max-md:h-full md:max-h-[275px] w-full max-w-full">
+                {isMobile ? (
+                  // Horizontal bar chart for mobile/tablts
+                  <BarChart
+                    accessibilityLayer
+                    layout="vertical"
+                    data={chartData}
+                    margin={{
+                      left: 5,
+                      right: 10,
+                      top: 10,
+                      bottom: 10,
+                    }}
+                    width={windowWidth - 100}
+                  >
+                    <CartesianGrid horizontal={false} />
+                    <YAxis dataKey="month" type="category" tickLine={false} axisLine={false} width={65} tickMargin={5} />
+                    <XAxis type="number" tickLine={false} axisLine={false} tickMargin={8} />
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
+                    <Bar dataKey="this_week" fill="var(--color-this_week)" radius={4} barSize={10} />
+                    <Bar dataKey="last_week" fill="var(--color-last_week)" radius={4} barSize={10} />
+                  </BarChart>
+                ) : (
+                  // Vertical bar chart for desktop
+                  <BarChart
+                    accessibilityLayer
+                    data={chartData}
+                    margin={{
+                      left: 10,
+                      right: 10,
+                      top: 10,
+                      bottom: 10,
+                    }}
+                  >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      tickMargin={10}
+                      axisLine={false}
+                      tickFormatter={(value) => value.slice(0, 7)}
+                    />
+                    <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
+                    <Bar dataKey="this_week" fill="var(--color-this_week)" radius={4} barSize={16} />
+                    <Bar dataKey="last_week" fill="var(--color-last_week)" radius={4} barSize={16} />
+                  </BarChart>
+                )}
               </ChartContainer>
             </div>
 

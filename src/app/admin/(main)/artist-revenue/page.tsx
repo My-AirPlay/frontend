@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/ui';
+import { AccountCoins } from './misc/icons';
 
 const ArtistRevenue: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -57,11 +58,9 @@ const ArtistRevenue: React.FC = () => {
 
     return (
         <div className="space-y-8">
-            {/* Total Revenue */}
             <div className="bg-secondary rounded-lg p-4 flex gap-4 items-center">
-                <div className="bg-primary/10 p-3 rounded-md">
-                    <DollarSign className="h-6 w-6 text-primary" />
-                </div>
+                <AccountCoins className="size-12" />
+
                 <div>
                     <p className="text-sm text-muted">Total Revenue Made</p>
                     <h3 className="text-2xl font-bold">{totalRevenue}</h3>
@@ -102,7 +101,7 @@ const ArtistRevenue: React.FC = () => {
                     defaultRowsPerPage={10}
 
                 />
-              
+
             </div>
         </div>
     );

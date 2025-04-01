@@ -2,15 +2,15 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DollarSign, Download, Filter, ArrowRight } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArtistOverview, ArtistAnalytics, ArtistTransactions } from '../../misc/components';
+import { AccountCoins } from '../../misc/icons';
 
 const ArtistRevenueDetails: React.FC = () => {
     const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
 
-    // Mock artist data
     const artist = {
         id: Number(artist_id),
         name: 'Nina',
@@ -50,40 +50,39 @@ const ArtistRevenueDetails: React.FC = () => {
         <div className="space-y-8">
             <section className="flex flex-col gap-10 rounded-lg p-4 md:p-6 bg-custom-gradient">
                 <div className="flex gap-4 items-center">
-                    <div className="bg-primary/10 p-3 rounded-md">
-                        <DollarSign className="h-6 w-6 text-primary" />
-                    </div>
+                
+                    <AccountCoins className="size-12"/>
                     <div>
                         <p className="text-sm text-white/60">Total Revenue Made</p>
                         <h3 className="text-2xl font-bold">{totalRevenue}</h3>
                     </div>
                 </div>
 
-                <div className=" ">
-                    <div className="grid lg:grid-cols-7 gap-4 text-sm">
-                        <div className="col-span-1">
-                            <p className="text-white/60">Artist Name</p>
-                            <p className="font-medium">{artist.name}</p>
+                <div className=" pb-5">
+                    <div className="flex flex-wrap gap-6 gap-y-4 md:gap-x-8 text-sm">
+                        <div className="flex flex-col">
+                            <p className="text-white/60 text-xs font-light">Artist Name</p>
+                            <p className="font-normal">{artist.name}</p>
                         </div>
-                        <div className="col-span-1">
-                            <p className="text-white/60">Artist Real Name</p>
-                            <p className="font-medium">{artist.realName}</p>
+                        <div className="flex flex-col">
+                            <p className="text-white/60 text-xs font-light">Artist Real Name</p>
+                            <p className="font-normal">{artist.realName}</p>
                         </div>
-                        <div className="col-span-2">
-                            <p className="text-white/60">Email Address</p>
-                            <p className="font-medium">{artist.email}</p>
+                        <div className="flex flex-col">
+                            <p className="text-white/60 text-xs font-light">Email Address</p>
+                            <p className="font-normal">{artist.email}</p>
                         </div>
-                        <div className="col-span-1">
-                            <p className="text-white/60">Revenue Generated</p>
-                            <p className="font-medium">{artist.revenue}</p>
+                        <div className="flex flex-col">
+                            <p className="text-white/60 text-xs font-light">Revenue Generated</p>
+                            <p className="font-normal">{artist.revenue}</p>
                         </div>
-                        <div className="col-span-1">
-                            <p className="text-white/60">Credits</p>
-                            <p className="font-medium">{artist.credits}</p>
+                        <div className="flex flex-col">
+                            <p className="text-white/60 text-xs font-light">Credits</p>
+                            <p className="font-normal">{artist.credits}</p>
                         </div>
-                        <div className="col-span-1">
-                            <p className="text-white/60">Debits</p>
-                            <p className="font-medium">{artist.debits}</p>
+                        <div className="flex flex-col">
+                            <p className="text-white/60 text-xs font-light">Debits</p>
+                            <p className="font-normal">{artist.debits}</p>
                         </div>
                     </div>
                 </div>
