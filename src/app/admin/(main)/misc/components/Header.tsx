@@ -29,14 +29,12 @@ const Header: React.FC = () => {
       <h1 className="text-xl font-semibold">{getPageTitle()}</h1>
 
       <div className="flex items-center space-x-4">
-        <div className="relative max-md:hidden">
-          <input
-            type="text"
-            placeholder="Search..."
-            className=" rounded-full py-2 pl-10 pr-4 w-64 text-sm border focus:outline-none focus:ring-1 focus:ring-primary"
-          />
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-white/60" />
-        </div>
+        {/* <Input
+          type="text"
+          placeholder="Search..."
+          leftIcon={<Search size={16} className="text-white" />}
+          className=" rounded-full pl-10 pr-4 w-64 text-sm max-md:hidden"
+        /> */}
 
         <button className="text-white/60 hover:text-foreground">
           <Settings size={20} />

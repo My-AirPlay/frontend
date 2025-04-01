@@ -24,3 +24,4 @@ export {
   SelectScrollDownButton,
 } from './select'
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
+export { default as FileUploader } from './file-uploader';
