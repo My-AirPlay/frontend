@@ -36,7 +36,7 @@ export const inputVariants = cva(
                 icon: "h-9 w-9",
                 unstyled: "",
                 lg: "h-12 rounded-md px-8",
-                authInput: "h-[3.5rem] rounded-lg px-8 text-base",
+                authInput: "h-[3rem] rounded-lg px-8 text-base",
             },
         },
         defaultVariants: {

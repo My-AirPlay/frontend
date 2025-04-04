@@ -12,7 +12,7 @@ const AuthWrapper = ({
   title,
 }: AuthWrapperProps) => {
   return (
-    <div className="max-w-auth-card font-plus-jakarta-sans w-full grid items-center mx-auto flex-1">
+    <div className="max-w-[550px] font-plus-jakarta-sans w-full grid items-center mx-auto flex-1">
       <div
         className="bg-custom-banner_bg/10  px-6 md:px-10 py-10 mb-3 shadow  rounded-xl"
       >

@@ -123,7 +123,7 @@ const Step3AlbumCoverUpload = () => {
 
 
     return (
-        <div className="w-[80vw] sm:w-[70vw] max-w-[500px] md:max-w-3xl mx-auto px-4">
+        <div className="w-[80vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto px-4">
 
 
             <section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">

@@ -1,16 +1,16 @@
 "use client";
 import React from "react";
 import InputWrapper from "@/components/input-wrapper/input-wrapper";
-import AuthWrapper from "../_components/auth-wrapper";
+import AuthWrapper from "../misc/components/auth-wrapper";
 import Link from "next/link";
 import { urls } from "@/lib/constants";
-import AuthActions from "../_components/auth-actions/auth-actions";
+import AuthActions from "../misc/components/auth-actions";
 import useUserVerifcationStore from "@/stores/verification/user-verification.store";
 import { useFormik } from "formik";
 import { forgotPasswordSchema } from "@/lib/schemas";
 import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { forgotPassword } from "@/lib/api/mutations/auth.mutations";
+import { forgotPassword } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { handleClientError } from "@/lib/utils";
 import { toast } from "sonner";
 const ForgotPasswordPage = () => {

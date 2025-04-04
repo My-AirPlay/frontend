@@ -3,8 +3,8 @@ import ExploreSection from "@/components/explore";
 import LandingPageFooter from "@/components/footer";
 import FeaturesSection from "@/components/landing-page/features/features";
 import HeroSection from "@/components/landing-page/hero/hero";
-import { urls } from "@/lib/constants";
-import { redirect } from "next/navigation";
+// import { urls } from "@/lib/constants";
+// import { redirect } from "next/navigation";
 
 export default function Home() {
   // redirect(urls.dashboard);

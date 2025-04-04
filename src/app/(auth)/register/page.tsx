@@ -2,17 +2,17 @@
 import React, { useState } from "react";
 import { urls } from "@/lib/constants";
 
-import AuthWrapper from "../_components/auth-wrapper";
+import AuthWrapper from "../misc/components/auth-wrapper";
 import { Check } from "lucide-react";
 import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import Link from "next/link";
-import AuthActions from "../_components/auth-actions/auth-actions";
-import PasswordInput from "../_components/password-input/password-input";
+import AuthActions from "../misc/components/auth-actions";
+import PasswordInput from "../misc/components/password-input/password-input";
 import { useFormik } from "formik";
 import { registerSchema } from "@/lib/schemas";
 import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "@/lib/api/mutations/auth.mutations";
+import { registerUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { toast } from "sonner";
 import useUserVerifcationStore from "@/stores/verification/user-verification.store";
 import { useRouter } from "nextjs-toploader/app";

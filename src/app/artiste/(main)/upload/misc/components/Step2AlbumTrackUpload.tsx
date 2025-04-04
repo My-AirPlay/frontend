@@ -250,7 +250,7 @@ export default function TrackUpload() {
     </div>
   }
   return (
-    <div className="w-[80vw] sm:w-[70vw] max-w-[500px] md:max-w-3xl mx-auto mt-16">
+    <div className="w-[80vw] sm:w-[55vw] max-w-[600px] md:max-w-3xl mx-auto mt-16">
 
       <section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
         <div className="border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center">

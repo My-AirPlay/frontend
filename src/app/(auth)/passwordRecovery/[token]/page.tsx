@@ -1,17 +1,17 @@
 "use client";
 import React from "react";
-import AuthWrapper from "../../_components/auth-wrapper";
+import AuthWrapper from "../../misc/components/auth-wrapper";
 import Link from "next/link";
 import { urls } from "@/lib/constants";
-import AuthActions from "../../_components/auth-actions/auth-actions";
-import PasswordInput from "../../_components/password-input/password-input";
+import AuthActions from "../../misc/components/auth-actions";
+import PasswordInput from "../../misc/components/password-input/password-input";
 
 import { useParams } from "next/navigation";
 import { useFormik } from "formik";
 import { resetPasswordSchema } from "@/lib/schemas";
 import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { resetPassword } from "@/lib/api/mutations/auth.mutations";
+import { resetPassword } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { handleClientError } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";

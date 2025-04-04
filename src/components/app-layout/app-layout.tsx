@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
-import AuthHeader from "../auth-header/auth-header";
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import AuthHeader from "@/app/(auth)/misc/components/auth-header";
 interface AppLayoutProps {
   children: ReactNode;
   showIcons?: boolean;
@@ -9,9 +9,10 @@ interface AppLayoutProps {
 const CustomAppLayout = ({ children, showIcons }: AppLayoutProps) => {
   const year = new Date().getFullYear();
   return (
-    <div className="flex flex-col  min-h-svh pb-[19px] bg-custom-page-bg overflow-hidden font-poppins ">
+    <div className="flex flex-col min-h-svh bg-custom-page-bg overflow-hidden font-poppins ">
       <div className="max-w-page gap-10 mb-7 mx-auto w-full px-3 flex-1 flex flex-col">
         <AuthHeader />
+
         <main className="flex-1">{children}</main>
 
         {!showIcons && (
@@ -36,26 +37,26 @@ const CustomAppLayout = ({ children, showIcons }: AppLayoutProps) => {
         )}
       </div>
       {showIcons && (
-        <footer className="pb-5 pt-8 border-t border-t-custom-footer_border">
+        <footer className="pb-3 pt-4 border-t border-t-custom-footer_border/50">
           <ul className="flex justify-center items-center text-white/30  gap-10">
             <li>
               <Link href={"#"}>
-                <Twitter />
+                <Twitter size={18} />
               </Link>
             </li>
             <li>
               <Link href={"#"}>
-                <Linkedin />
+                <Linkedin size={18} />
               </Link>
             </li>
             <li>
               <Link href={"#"}>
-                <Instagram />
+                <Instagram size={18} />
               </Link>
             </li>
             <li>
               <Link href={"#"}>
-                <Facebook />
+                <Facebook size={18} />
               </Link>
             </li>
           </ul>

@@ -4,8 +4,8 @@ import {
   onboardingSocialLinkSchema,
 } from "@/lib/schemas";
 import { InferType } from "yup";
-import api from "../core";
-import { getAccessToken } from "@/actions/auth/auth.action";
+import APIAxios from "@/utils/axios";
+import { getArtistAccessToken } from "@/actions/auth/auth.action";
 
 export const postOnboardingPersonalDetail = async ({
   userInfo,
@@ -15,9 +15,9 @@ export const postOnboardingPersonalDetail = async ({
   email: string;
 }) => {
   try {
-    const accessToken = await getAccessToken();
-    if (!accessToken?.value) return;
-    const { data } = await api.post(
+    const accessToken = await getArtistAccessToken();
+    if (!accessToken) return;
+    const { data } = await APIAxios.post(
       "/artist/add-biodata",
       {
         userBioData: userInfo,
@@ -25,7 +25,7 @@ export const postOnboardingPersonalDetail = async ({
       },
       {
         headers: {
-          Authorization: `Bearer ${accessToken.value}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
@@ -50,9 +50,9 @@ export const postOnbaordingBankDetail = async ({
   bankDetail: InferType<typeof onboardingBankDetailSchema>;
 }) => {
   try {
-    const accessToken = await getAccessToken();
-    if (!accessToken?.value) return;
-    const { data } = await api.post(
+    const accessToken = await getArtistAccessToken();
+    if (!accessToken) return;
+    const { data } = await APIAxios.post(
       "/artist/add-bankdata",
       {
         userBankData: bankDetail,
@@ -60,7 +60,7 @@ export const postOnbaordingBankDetail = async ({
       },
       {
         headers: {
-          Authorization: `Bearer ${accessToken.value}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );
@@ -85,9 +85,9 @@ export const postSocialLinks = async ({
   socialLinks: InferType<typeof onboardingSocialLinkSchema>;
 }) => {
   try {
-    const accessToken = await getAccessToken();
-    if (!accessToken?.value) return;
-    const { data } = await api.post(
+    const accessToken = await getArtistAccessToken();
+    if (!accessToken) return;
+    const { data } = await APIAxios.post(
       "/artist/add-social-links",
       {
         userBio: socialLinks,
@@ -95,7 +95,7 @@ export const postSocialLinks = async ({
       },
       {
         headers: {
-          Authorization: `Bearer ${accessToken.value}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }
     );

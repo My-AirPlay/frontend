@@ -1,5 +1,4 @@
 "use client";
-import CtaBtns from "@/app/(auth)/_components/cta-btn";
 
 import logo from "@/app/assets/logo-big.svg";
 import { Icon } from "@iconify/react";
@@ -14,15 +13,15 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { Button, LinkButton } from "@/components/ui";
 const navLinks = ["About", "Features", "Pricing", "Royalties", "Support"];
 const AuthHeader = () => {
   const [showMenu, setShowMenu] = useState(false);
   return (
-    <header className="flex gap-7 sticky top-0 justify-between items-center mb-6">
+    <header className="flex gap-7 sticky top-0 justify-between items-center mb-2 py-4">
       <Link href={"/"}>
-        <Image alt="airplay" src={logo} />
+        <Image alt="airplay" src={logo} height={60} width={60} />
       </Link>
 
       <nav
@@ -51,14 +50,25 @@ const AuthHeader = () => {
             >
               <Link href={"#"}>{link}</Link>
               <ChevronDown className="lg:block hidden" />
-              <ChevronRight className="lg:hidden block" />
+              <ChevronRight className="lg:hidden block" size={16} />
             </li>
           ))}
         </ul>
         <div className="lg:hidden block w-fit mx-auto">
-          <CtaBtns />
+          <div className="flex items-center lg:gap-5 gap-4">
+            <Button className="text-[0.9rem] text-white font-medium border border-custom-dot w-full max-w-[120px] grid place-items-center rounded-md" size="md" variant="outline">
+              Video Demo
+            </Button>
+            <LinkButton
+              href={"/register"}
+              className="text-[0.9rem] flex-1 text-white font-medium  rounded-md w-full max-w-[180px] grid place-items-center px-5"
+              size="md"
+            >
+              Create an Acount
+            </LinkButton>
+          </div>
         </div>
-        <div className="pb-2 mt-10 h-14 pt-4 border-t border-t-custom-footer_border lg:hidden block">
+        <div className="pb-2 mt-10 h-12 pt-4 border-t border-t-custom-footer_border lg:hidden block">
           <ul className="flex justify-center items-center text-white/30  gap-10">
             <li>
               <Link href={"#"}>
@@ -83,11 +93,18 @@ const AuthHeader = () => {
           </ul>
         </div>
       </nav>
+
       <div className="hidden lg:block">
-        <CtaBtns />
+        <LinkButton
+          href={"/register"}
+          className="text-[0.9rem] flex-1 text-white font-medium  rounded-md w-full max-w-[180px] grid place-items-center px-5"
+          size="md"
+        >
+          Create an Acount
+        </LinkButton>
       </div>
       <Button
-        className="bg-transparent hover:bg-transparent border  w-[31px] h-[31px] flex   border-custom-icon-btn-border rounded  text-white lg:hidden  "
+        className="bg-transparent hover:bg-transparent border  w-[31px] h-[31px] flex border-custom-icon-btn-border rounded  text-white lg:hidden  "
         onClick={() => setShowMenu(true)}
       >
         <div>

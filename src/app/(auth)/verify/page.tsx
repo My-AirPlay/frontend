@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import AuthWrapper from "../_components/auth-wrapper";
+import AuthWrapper from "../misc/components/auth-wrapper";
 import useUserVerifcationStore from "@/stores/verification/user-verification.store";
 import OTPInput from "@/components/otp-input/otp-input";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { verifyUser } from "@/lib/api/mutations/auth.mutations";
+import { verifyUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";
 import { urls } from "@/lib/constants";

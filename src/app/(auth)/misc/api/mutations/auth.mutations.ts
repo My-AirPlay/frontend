@@ -1,9 +1,10 @@
 import { InferType } from "yup";
-import { loginSchema, registerSchema } from "../../schemas";
-import api from "../core";
+import { loginSchema, registerSchema } from "../../../../../lib/schemas";
+import api from "../../../../../lib/api/core";
 import { AxiosError } from "axios";
-import { userProfileStage } from "../../constants";
-import { login } from "@/actions/auth/auth.action";
+import { userProfileStage } from "../../../../../lib/constants";
+import APIAxios from "@/utils/axios";
+import { loginArtist } from "@/actions/auth/auth.action";
 
 export const registerUser = async (
   userInfo: InferType<typeof registerSchema>
@@ -28,9 +29,9 @@ export const registerUser = async (
 
 export const loginUser = async (userInfo: InferType<typeof loginSchema>) => {
   try {
-    const { data } = await api.post("/artist/signin", userInfo);
+    const { data } = await APIAxios.post("/artist/signin", userInfo);
     if (data.user.stage !== userProfileStage.verifyEmail) {
-      await login({
+      await loginArtist({
         access: data.accessToken,
         refresh: data.refreshToken,
       });

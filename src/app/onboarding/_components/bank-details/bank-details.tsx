@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import { OnboardingSteps } from "@/lib/constants";
 import { useMutation } from "@tanstack/react-query";
-import { postOnbaordingBankDetail } from "@/lib/api/mutations/onboarding.mutation";
+import { postOnbaordingBankDetail } from "@/app/(auth)/misc/api/mutations/onboarding.mutation";
 import { toast } from "sonner";
 import { handleClientError } from "@/lib/utils";
 

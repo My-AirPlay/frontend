@@ -1,16 +1,14 @@
 "use client";
 import React from "react";
-import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import Link from "next/link";
 import { urls, userProfileStage } from "@/lib/constants";
-import AuthWrapper from "../_components/auth-wrapper";
-import AuthActions from "../_components/auth-actions/auth-actions";
-import PasswordInput from "../_components/password-input/password-input";
+import AuthWrapper from "../misc/components/auth-wrapper";
+import AuthActions from "../misc/components/auth-actions";
 import { useFormik } from "formik";
 import { InferType } from "yup";
 import { loginSchema } from "@/lib/schemas";
 import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "@/lib/api/mutations/auth.mutations";
+import { loginUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";
 import { Input } from "@/components/ui";
@@ -56,7 +54,7 @@ const LoginPageClient = () => {
             Not a member?{" "}
             <Link
               href={urls.register}
-              className="font-bold text-custom-primary"
+              className="font-bold text-primary"
             >
               Sign up
             </Link>{" "}
@@ -67,15 +65,15 @@ const LoginPageClient = () => {
         description={
           <p className="text-sm text-center max-w-[320px] mx-auto">
             To upload music and videos, you must accept our{" "}
-            <span className="text-custom-primary">terms</span> and{" "}
-            <span className="text-custom-primary">conditions</span>{" "}       
+            <span className="text-primary">terms</span> and{" "}
+            <span className="text-primary">conditions</span>{" "}       
               on the registration website
           </p>
         }
       >
         <h1 className="font-black text-white text-center md:text-4xl text-2xl  mb-10"></h1>
 
-        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5">
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5 max-w-[450px] mx-auto">
           <Input
             type="email"
             placeholder="Email"
@@ -95,7 +93,7 @@ const LoginPageClient = () => {
             />
             <Link
               href={urls.forgotPassword}
-              className="text-custom-primary text-14 font-plus-jakarta-sans font-medium"
+              className="text-primary text-14 font-plus-jakarta-sans font-medium"
             >
               Forgot your password?
             </Link>

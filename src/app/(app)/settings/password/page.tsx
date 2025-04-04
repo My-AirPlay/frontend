@@ -2,7 +2,7 @@ import React from "react";
 import SettingsNav from "../_components/settings-nav/settings-nav";
 import SettingsProfile from "../_components/settings-profile/settings-profile";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import PasswordInput from "@/app/(auth)/_components/password-input/password-input";
+import PasswordInput from "@/app/(auth)/misc/components/password-input/password-input";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
