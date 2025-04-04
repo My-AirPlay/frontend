@@ -25,3 +25,16 @@ export {
 } from './select'
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
 export { default as FileUploader } from './file-uploader';
+export { ScrollArea, ScrollBar } from './scroll-area'
+export {
+  Sheet,
+  SheetPortal,
+  SheetOverlay,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from './sheet'

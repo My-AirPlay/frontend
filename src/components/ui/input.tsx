@@ -21,7 +21,7 @@ export const inputVariants = cva(
         variants: {
             variant: {
                 default: cn(
-                    "bg-[#383838] text-foreground rounded-md border border-border px-3 py-2 w-full focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted transition-all",
+                    "bg-[#383838] text-foreground rounded-md border border-border px-3 py-2 w-full focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-white/50 transition-all",
                     "text-foreground/80 file:bg-transparent file:text-sm ",
                 ),
                 transparent:
@@ -35,6 +35,8 @@ export const inputVariants = cva(
                 short: "",
                 icon: "h-9 w-9",
                 unstyled: "",
+                lg: "h-12 rounded-md px-8",
+                authInput: "h-[3.5rem] rounded-lg px-8 text-base",
             },
         },
         defaultVariants: {
@@ -66,8 +68,8 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement>,
     label?: string | React.ReactNode
     labelClass?: string
     hasError?: boolean
-    errorMessage?: string
-    errorMessageClass?: string
+    errormessage?: string
+    errormessageClass?: string
     leftIcon?: React.ReactNode
     rightIcon?: React.ReactNode
     containerClassName?: string
@@ -90,7 +92,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             hasError,
             leftIcon,
             rightIcon,
-            errorMessageClass,
+            errormessageClass,
             label,
             labelClass,
             inputMode,
@@ -125,7 +127,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     {leftIcon && (
                         <span
                             className={cn(
-                                "absolute left-4 top-[25%] cursor-pointer z-[3]",
+                                "absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer z-[3]",
                                 iconVariants[variant || "default"],
                             )}
                         >
@@ -144,14 +146,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                         inputMode={inputMode}
                         {...props}
                     />
-                    {rightIcon && <span className="absolute right-4 top-[25%] cursor-pointer z-[3]">{rightIcon}</span>}
+                    {rightIcon && <span className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer z-[3]">{rightIcon}</span>}
                     
 
                     {type === "password" && (
                         <button
                             className={cn(
                                 iconVariants[variant || "default"],
-                                "absolute right-[3%] top-[25%] text-white cursor-pointer z-[3]",
+                                "absolute right-[3%] top-1/2 -translate-y-1/2 text-white cursor-pointer z-[3]",
                             )}
                             onClick={(e) => {
                                 e.preventDefault()
@@ -159,14 +161,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                             }}
                             type="button"
                         >
-                            {show ? <EyeClosedIcon className="text-primary" height={20} width={20} /> : <EyeIcon className="text-primary" height={20} width={20} />}
+                            {!show ? <EyeClosedIcon className="text-primary" height={20} width={20} /> : <EyeIcon className="text-primary" height={20} width={20} />}
                         </button>
                     )}
                 </div>
                 {showValidator && !!validationRequirements && !!props.value && (
                     <PasswordValidatorUI password={props.value as string} requirements={validationRequirements} />
                 )}
-                {hasError && <FormError className={errorMessageClass} errorMessage={props.errorMessage} />}
+                {hasError && <FormError className={errormessageClass} errormessage={props.errormessage} />}
             </div>
         )
     },

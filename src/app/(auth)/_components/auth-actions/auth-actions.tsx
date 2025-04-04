@@ -10,7 +10,7 @@ const AuthActions = ({ btnText, isDisabled }: AuthActionsProps) => {
   return (
     <div className="flex gap-2">
       <Button
-        className="bg-transparent w-full max-w-icon-btn h-16 rounded-[14px] flex items-center justify-center shadow-none border border-custom-icon-btn-border"
+        className="bg-transparent w-full max-w-icon-btn size-14 rounded-[14px] flex items-center justify-center shadow-none border border-custom-icon-btn-border"
         type="button"
       >
         <Image src={google} alt="google" />
@@ -18,7 +18,7 @@ const AuthActions = ({ btnText, isDisabled }: AuthActionsProps) => {
       <Button
         disabled={isDisabled}
         variant={"authBtn"}
-        className="h-16 tracking-wider"
+        className="h-14 tracking-wider font-normal text-base"
         type="submit"
       >
         {btnText}

@@ -7,7 +7,7 @@ import { urls } from "@/lib/constants";
 import { redirect } from "next/navigation";
 
 export default function Home() {
-  redirect(urls.dashboard);
+  // redirect(urls.dashboard);
   return (
     <main className="bg-custom-background min-h-svh flex flex-col gap-6">
       <HeroSection />

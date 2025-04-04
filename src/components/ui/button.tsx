@@ -20,11 +20,11 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         authBtn:
-          "bg-custom-primary text-white h-auth-btn max-w-[275px] flex justify-center items-center gap-4 font-plus-jakarta-sans  font-extrabold text-white text-lg  rounded-full w-full",
+          "bg-custom-primary text-white h-16 max-w-[275px] flex justify-center items-center gap-4 font-plus-jakarta-sans  font-extrabold text-white text-lg  rounded-full w-full",
         prodBtn:
           "bg-custom-primary h-9 w-full max-w-[145px] text-center grid place-items-center py-[10px] px-[23px] font-plus-jakarta-sans font-bold text-[13px] text-white rounded-full",
         profileBtn:
-          "bg-custom-primary h-auth-btn rounded-full w-full max-w-[275px] grid place-items-center text-white font-rubik font-semibold text-lg",
+          "bg-custom-primary h-16 rounded-full w-full max-w-[275px] grid place-items-center text-white font-rubik font-semibold text-lg",
         smBtn:
           "text-white flex max-w-fit px-4 py-2  items-center gap-2 rounded-lg bg-custom-primary",
         inputButton: cn(
@@ -40,6 +40,7 @@ const buttonVariants = cva(
         thin: "h-[1.85rem] px-4 py-1.5 text-xs",
         md: "h-10 rounded-md px-5",
         lg: "h-12 rounded-md px-8",
+        xl: "h-[3.5rem] rounded-full px-10 text-base",
         icon: "h-9 w-9",
         inputButton: ""
       },

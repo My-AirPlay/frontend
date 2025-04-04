@@ -13,6 +13,7 @@ import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/lib/api/mutations/auth.mutations";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";
+import { Input } from "@/components/ui";
 const LoginPageClient = () => {
   const router = useRouter();
   const { mutate, status } = useMutation({
@@ -51,7 +52,7 @@ const LoginPageClient = () => {
     <>
       <AuthWrapper
         linkText={
-          <p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+          <p className="font-plus-jakarta-sans text-custom-registration_link  font-normal">
             Not a member?{" "}
             <Link
               href={urls.register}
@@ -64,30 +65,32 @@ const LoginPageClient = () => {
         }
         title="Sign in"
         description={
-          <span>
+          <p className="text-sm text-center max-w-[320px] mx-auto">
             To upload music and videos, you must accept our{" "}
             <span className="text-custom-primary">terms</span> and{" "}
-            <span className="text-custom-primary">conditions</span>{" "}
-            <span className="text-custom-registration_link">
-              on the registration
-            </span>{" "}
-            website
-          </span>
+            <span className="text-custom-primary">conditions</span>{" "}       
+              on the registration website
+          </p>
         }
       >
         <h1 className="font-black text-white text-center md:text-4xl text-2xl  mb-10"></h1>
 
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5">
-          <InputWrapper
+          <Input
             type="email"
             placeholder="Email"
-            error={formik.errors.email}
+            inputSize={"authInput"}
+            hasError={!!formik.errors.email}
+            errormessage={formik.errors.email}
             {...formik.getFieldProps("email")}
           />
           <div>
-            <PasswordInput
+            <Input
+              type="password"
               placeholder="Password"
-              error={formik.errors.password}
+              inputSize={"authInput"}
+              hasError={!!formik.errors.password}
+              errormessage={formik.errors.password}
               {...formik.getFieldProps("password")}
             />
             <Link

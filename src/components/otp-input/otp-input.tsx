@@ -17,7 +17,7 @@ const OTPInput = ({ value, onChange }: OTPInputProps) => {
         <InputOTPGroup className="">
           {inputs.map((val, i) => (
             <InputOTPSlot
-              className="md:w-20 text-white aspect-square md:h-20 text-xl h-10 w-10"
+              className="text-white aspect-square md:size-16 text-xl size-10"
               index={i}
               key={val + i}
             />

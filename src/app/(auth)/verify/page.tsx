@@ -47,7 +47,7 @@ const VerifyPage = () => {
           variant={"authBtn"}
           disabled={otp.length !== 5 || status === "pending"}
           onClick={sendVerification}
-          className="bg-custom-primary w-full mx-auto flex justify-center items-center h-16 rounded-full font-plus-jakarta-sans font-extrabold text-xl tracking-wider text-white"
+          className="bg-custom-primary h-14 w-full mx-auto mt-10 rounded-full font-plus-jakarta-sans font-extrabold text-lg tracking-wider text-white"
         >
           Verify
         </Button>
