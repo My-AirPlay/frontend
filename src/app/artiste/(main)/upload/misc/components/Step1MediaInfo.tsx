@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useStaticAppInfo } from "@/contexts/StaticAppInfoContext";
-
 import { Input, SelectSimple } from "@/components/ui";
+import { MOCK_GENRES } from "@/constants";
+import { convertToTitleCase } from "@/utils/strings";
+
 import { MediaInfoFormValues, mediaInfoSchema, } from "../schema";
 import { useMediaUploadStore } from "../store";
 
@@ -19,41 +21,25 @@ export default function Step1MusicInfo() {
     const { data: staticData, isLoading } = useStaticAppInfo();
     const [genres, setGenres] = useState<{ value: string; label: string }[]>([]);
 
-    // Set up genres from static data when it's loaded
+
     useEffect(() => {
-        if (staticData && staticData.MusicalInstrument) {
-            const genreEntries = Object.entries(staticData.StreamingPlatform || {});
+        if (staticData && staticData.Genre) {
+            const genreEntries = Object.entries(staticData.Genre || {});
             const formattedGenres = genreEntries.map(([value, label]) => ({
-                value: value.toLowerCase(),
+                value: convertToTitleCase(value),
                 label
             }));
             setGenres(formattedGenres);
         } else {
-            // Fallback genres if API fails
-            setGenres([
-                { value: "pop", label: "Pop" },
-                { value: "rock", label: "Rock" },
-                { value: "hiphop", label: "Hip Hop" },
-                { value: "rnb", label: "R&B" },
-                { value: "country", label: "Country" },
-                { value: "electronic", label: "Electronic" },
-                { value: "jazz", label: "Jazz" },
-                { value: "classical", label: "Classical" },
-                { value: "reggae", label: "Reggae" },
-                { value: "folk", label: "Folk" },
-                { value: "blues", label: "Blues" },
-                { value: "metal", label: "Metal" },
-                { value: "alternative", label: "Alternative" },
-                { value: "edm", label: "EDM" },
-            ]);
+            setGenres(MOCK_GENRES);
         }
     }, [staticData])
 
-    // Pre-fill form with sample valid data if no data exists
+
     const defaultValues = {
         title: mediaInfo.title,
         artistName: mediaInfo.artistName || "Artist Name",
-        mainGenre: mediaInfo.mainGenre || "pop",
+        mainGenre: mediaInfo.mainGenre,
         releaseDate: mediaInfo.releaseDate || new Date().toISOString().split('T')[0],
         description: mediaInfo.description || "This is a sample description for the track.",
         recordLabel: mediaInfo.recordLabel || "Sample Record Label",
@@ -324,10 +310,11 @@ export default function Step1MusicInfo() {
                         />
                     </div>
 
-                    <div className="flex justify-center pt-6">
+                    <div className="flex justify-center my-8">
                         <Button
                             type="submit"
-                            className="bg-primary hover:bg-primary/80 text-white px-8 py-5 rounded-full"
+                            size="lg"
+                            className="rounded-full"
                         >
                             Save & Continue <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>

@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useMemo, useState, } from "react";
 import { toast } from "sonner";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MoveLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { SingleDatePicker } from "@/components/ui";
 import { Checkbox } from "@/components/ui/checkbox";
+import { convertToTitleCase } from "@/utils/strings";
 
 
 const releaseDateFormSchema = z.object({
@@ -50,9 +51,8 @@ export default function Step4MediaDistributionDetails() {
     const streamingPlatformOptions = useMemo(() => {
         return Object.entries(staticData?.StreamingPlatform ?? {}).map(([value, name]) => {
             return {
-                value,
                 name,
-
+                value: convertToTitleCase(value),
             };
         });
     }, [staticData])
@@ -127,8 +127,8 @@ export default function Step4MediaDistributionDetails() {
             <Form {...form}>
                 <div className="text-center text-muted-foreground mb-4 bg-secondary p-3 rounded-xl">
                     <article className="  p-4 bg-background/70 rounded-xl">
-                        <h6 className="text-lg text-primary font-semibold mb-4">Release dates</h6>
-                        <div className="space-y-5 text-left">
+                        <h6 className="text-base md:text-lg text-primary font-semibold mb-4">Release dates</h6>
+                        <div className="space-y-5 text-left max-lg:text-sm">
                             <div>
                                 <span className="font-medium text-primary">Release Date:{" "}</span>
                                 You should set the release date at least 21 days in the future,
@@ -244,10 +244,20 @@ export default function Step4MediaDistributionDetails() {
                 </ul>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-between items-center">
+                <Button
+                    onClick={() => setCurrentStep('coverArt')}
+                    size="lg"
+                    variant={"outline"}
+                    className="rounded-full"
+                >
+                    <MoveLeft className="mr-2 h-4 w-4" />
+                    Back
+                </Button>
                 <Button
                     onClick={handleContinue}
-                    className="bg-primary hover:bg-primary-hover text-white px-8 py-2 rounded-full"
+                    className=""
+                    size="lg"
                 >
                     Continue <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

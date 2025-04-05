@@ -11,6 +11,7 @@ export interface TStaticData {
     ArtistActivityType: Record<string, string>;
     StreamingPlatform: Record<string, string>;
     Gender: Record<string, string>;
+    Genre: Record<string, string>;
     PaymentOption: Record<string, string>;
     ArtistStatus: Record<string, string>;
     ComplaintType: Record<string, string>;

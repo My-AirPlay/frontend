@@ -1,16 +1,16 @@
 import { InferType } from "yup";
 import { loginSchema, registerSchema } from "../../../../../lib/schemas";
-import api from "../../../../../lib/api/core";
 import { AxiosError } from "axios";
 import { userProfileStage } from "../../../../../lib/constants";
-import APIAxios from "@/utils/axios";
-import { loginArtist } from "@/actions/auth/auth.action";
+import APIAxios, { setAxiosDefaultToken } from "@/utils/axios";
+import { setArtistAccessToken } from "@/actions/auth/auth.action";
+import { IArtistUser } from "@/contexts/AuthContextArtist";
 
 export const registerUser = async (
   userInfo: InferType<typeof registerSchema>
 ) => {
   try {
-    const { data } = await api.post("/artist/signup", {
+    const { data } = await APIAxios.post("/artist/signup", {
       password: userInfo.password,
       email: userInfo.email,
     });
@@ -26,12 +26,18 @@ export const registerUser = async (
     };
   }
 };
+interface IArtistLoginAPIResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: IArtistUser;
+}
 
-export const loginUser = async (userInfo: InferType<typeof loginSchema>) => {
+export const loginArtistUser = async (userInfo: InferType<typeof loginSchema>) => {
   try {
-    const { data } = await APIAxios.post("/artist/signin", userInfo);
+    const { data } = await APIAxios.post<IArtistLoginAPIResponse>("/artist/signin", userInfo);
+    setAxiosDefaultToken(data.accessToken);
     if (data.user.stage !== userProfileStage.verifyEmail) {
-      await loginArtist({
+      await setArtistAccessToken({
         access: data.accessToken,
         refresh: data.refreshToken,
       });
@@ -57,7 +63,7 @@ export const verifyUser = async ({
   verificationCode: string;
 }) => {
   try {
-    const { data } = await api.post("/artist/verify-email", {
+    const { data } = await APIAxios.post("/artist/verify-email", {
       email,
       verificationCode,
     });
@@ -75,7 +81,7 @@ export const verifyUser = async ({
 
 export const forgotPassword = async ({ email }: { email: string }) => {
   try {
-    const { data } = await api.post("/artist/request-password-reset", {
+    const { data } = await APIAxios.post("/artist/request-password-reset", {
       email,
     });
     return {
@@ -97,7 +103,7 @@ export const resetPassword = async ({
   newPassword: string;
 }) => {
   try {
-    const { data } = await api.post(
+    const { data } = await APIAxios.post(
       "/artist/password-reset",
       {
         newPassword,

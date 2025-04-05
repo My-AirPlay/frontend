@@ -2,13 +2,15 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import React from "react";
 import google from "@/app/(auth)/misc/assets/google.svg";
+import { SmallSpinner } from "@/components/icons";
 interface AuthActionsProps {
   btnText: string;
   isDisabled?: boolean;
+  isBusy?: boolean
 }
-const AuthActions = ({ btnText, isDisabled }: AuthActionsProps) => {
+const AuthActions = ({ btnText, isDisabled, isBusy }: AuthActionsProps) => {
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-center gap-2 mt-8">
       <Button
         className="bg-transparent w-full max-w-icon-btn size-12 rounded-full flex items-center justify-center shadow-none border border-custom-icon-btn-border p-2"
         size="lg"
@@ -24,6 +26,9 @@ const AuthActions = ({ btnText, isDisabled }: AuthActionsProps) => {
         type="submit"
       >
         {btnText}
+        {
+          isBusy && <SmallSpinner className="ml-2"/>
+        }
       </Button>
     </div>
   );

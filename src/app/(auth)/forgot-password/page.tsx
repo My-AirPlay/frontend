@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import AuthWrapper from "../misc/components/auth-wrapper";
 import Link from "next/link";
 import { urls } from "@/lib/constants";
@@ -13,6 +12,7 @@ import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { handleClientError } from "@/lib/utils";
 import { toast } from "sonner";
+import { Input } from "@/components/ui";
 const ForgotPasswordPage = () => {
   const { setUserEmail } = useUserVerifcationStore.getState();
   const { mutateAsync, status } = useMutation({
@@ -40,11 +40,11 @@ const ForgotPasswordPage = () => {
     <>
       <AuthWrapper
         linkText={
-          <p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+          <p className="font-plus-jakarta-sans text-custom-registration_link text-[0.9rem] font-normal">
             Not a member?{" "}
             <Link
               href={urls.register}
-              className="font-bold text-custom-primary"
+              className="font-bold text-primary"
             >
               Sign up
             </Link>{" "}
@@ -56,10 +56,12 @@ const ForgotPasswordPage = () => {
           reset your password."
       >
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-          <InputWrapper
+          <Input
             placeholder="Email"
             {...formik.getFieldProps("email")}
-            error={formik.touched.email ? formik.errors.email : ""}
+            hasError={!!formik.errors.email}
+            inputSize={"authInput"}
+            errormessage={formik.touched.email ? formik.errors.email : ""}
           />
           <AuthActions
             btnText="Confirm"

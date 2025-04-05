@@ -14,43 +14,29 @@ import { useAlbumUploadStore, } from "../store";
 import { Input, SelectSimple } from "@/components/ui";
 import { AlbumInfoFormValues, albumInfoSchema } from "../schema";
 import SelectMultipleCombo from "@/components/ui/select-multiple-combobox";
+import { MOCK_GENRES } from "@/constants";
+import { convertToTitleCase } from "@/utils/strings";
 
 export default function Step1MusicInfo() {
     const { albumInfo, updateAlbumInfo, setCurrentStep } = useAlbumUploadStore();
     const { data: staticData, isLoading } = useStaticAppInfo();
     const [genres, setGenres] = useState<{ value: string; label: string }[]>([]);
 
-    // Set up genres from static data when it's loaded
+
     useEffect(() => {
-        if (staticData && staticData.MusicalInstrument) {
-            const genreEntries = Object.entries(staticData.StreamingPlatform || {});
+        if (staticData && staticData.Genre) {
+            const genreEntries = Object.entries(staticData.Genre || {});
             const formattedGenres = genreEntries.map(([value, label]) => ({
-                value: value.toLowerCase(),
+                value: convertToTitleCase(value),
                 label
             }));
             setGenres(formattedGenres);
         } else {
-            // Fallback genres if API fails
-            setGenres([
-                { value: "pop", label: "Pop" },
-                { value: "rock", label: "Rock" },
-                { value: "hiphop", label: "Hip Hop" },
-                { value: "rnb", label: "R&B" },
-                { value: "country", label: "Country" },
-                { value: "electronic", label: "Electronic" },
-                { value: "jazz", label: "Jazz" },
-                { value: "classical", label: "Classical" },
-                { value: "reggae", label: "Reggae" },
-                { value: "folk", label: "Folk" },
-                { value: "blues", label: "Blues" },
-                { value: "metal", label: "Metal" },
-                { value: "alternative", label: "Alternative" },
-                { value: "edm", label: "EDM" },
-            ]);
+            setGenres(MOCK_GENRES);
         }
     }, [staticData]);
 
-    // Pre-fill form with sample valid data if no data exists
+
     const defaultValues = {
         title: albumInfo.title || "My Album Title",
         artistName: albumInfo.artistName || "Artist Name",
@@ -64,8 +50,6 @@ export default function Step1MusicInfo() {
         explicitContent: albumInfo.explicitContent || "No",
         universalProductCode: albumInfo.universalProductCode || "123456789012",
         releaseVersion: albumInfo.releaseVersion || "1.0",
-        // streamingPlatforms:
-        //     ["spotify", "apple", "youtube"]
     };
 
     const form = useForm<AlbumInfoFormValues>({

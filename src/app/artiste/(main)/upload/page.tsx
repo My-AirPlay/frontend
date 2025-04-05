@@ -122,8 +122,8 @@ export default function MediaTypeSelection() {
 
 
   return (
-    <div className="container mx-auto px-4 md:p-10 py-8 max-w-4xl">
-      <div className="bg-card rounded-xl p-6">
+    <div className="container mx-auto w-[70vw] max-w-3xl">
+      <div className="bg-card rounded-2xl p-6 px-4 md:p-10 md:px-16">
         <h2 className="text-primary text-center text-xl font-semibold mb-2">MUSIC UPLOAD</h2>
         <h1 className="text-white text-center text-2xl font-bold mb-8">
           Kindly choose what kind of music you want to upload
@@ -151,11 +151,12 @@ export default function MediaTypeSelection() {
           }
         </div>
 
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 md:mt-16">
           <Button
             onClick={handleContinue}
-            className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-full"
+            className="rounded-full"
             disabled={!selectedType}
+            size={"lg"}
           >
             Continue <MoveRight className="ml-2 h-4 w-4" />
           </Button>

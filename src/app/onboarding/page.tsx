@@ -1,10 +1,9 @@
-import { getAccessToken, getUserProfile } from "@/actions/auth/auth.action";
+import { getArtistProfile } from "@/actions/auth/auth.action";
 import OnboardingClientPage from "./onboarding.client";
 import { redirect } from "next/navigation";
 import { onboardingStagesKey, urls } from "@/lib/constants";
 const OnboardingPage = async () => {
-  const accessToken = await getAccessToken();
-  const user = await getUserProfile(accessToken?.value || "");
+  const user = await getArtistProfile();
   console.log(user);
   if (!user) {
     redirect(urls.login);

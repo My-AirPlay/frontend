@@ -19,12 +19,14 @@ const AuthWrapper = ({
         <h1 className="font-black text-white text-center md:text-3xl text-2xl mb-3">
           {title}
         </h1>
-        <p className="font-plus-jakarta-sans font-medium md:text-xl text-sm text-center mb-10 max-w-[542px] text-custom-footer_border ">
+        <div className="font-plus-jakarta-sans font-medium text-sm text-center max-w-[320px text-balance mx-auto mb-10 text-custom-footer_border ">
           {description}
-        </p>
+        </div>
         {children}
       </div>
-      {linkText}
+      <small>
+        {linkText}
+      </small>
     </div>
   );
 };

@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="px-6 text-white/50 text-[9px] md:text-xs">
+    <footer className="px-6 text-white/50 text-[9px] md:text-xs py-1.5">
       <div className="flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center space-x-4 mb-2 md:mb-0">
           <span>Copyright © {currentYear} AirPlay</span>

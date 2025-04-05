@@ -39,7 +39,7 @@ const buttonVariants = cva(
         sm: "h-8 rounded-md px-3 text-xs",
         thin: "h-[1.85rem] px-4 py-1.5 text-xs",
         md: "h-10 rounded-md px-5",
-        lg: "h-12 rounded-md px-8",
+        lg: "h-10 px-6  md:h-12 rounded-full md:px-8",
         xl: "h-[3.5rem] rounded-full px-10 text-base",
         icon: "h-9 w-9",
         inputButton: ""

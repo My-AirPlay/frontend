@@ -11,6 +11,7 @@ export const TRUE_OR_FALSE_OPTIONS  =  [
 
 
 export const MOCK_GENRES = [
+  { value: "Afrobeats", label: "Afrobeats" },
   { value: "pop", label: "Pop" },
   { value: "rock", label: "Rock" },
   { value: "hiphop", label: "Hip Hop" },

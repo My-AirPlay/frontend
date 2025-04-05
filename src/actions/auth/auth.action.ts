@@ -19,10 +19,8 @@ const cookieOptions = {
   path: '/'
 };
 
-/**
- * Login function for artist users
- */
-export async function loginArtist({
+
+export async function setArtistAccessToken({
   access,
   refresh,
 }: {
@@ -36,10 +34,8 @@ export async function loginArtist({
 
 }
 
-/**
- * Login function for admin users
- */
-export async function loginAdmin({
+
+export async function setAdminAccessToken({
   access,
   refresh,
 }: {
@@ -52,25 +48,19 @@ export async function loginAdmin({
   cookieStore.set(`${ADMIN_TOKEN_PREFIX}_REFRESH`, refresh, cookieOptions);
 }
 
-/**
- * Get artist access token
- */
+
 export async function getArtistAccessToken() {
   const cookieStore = await cookies();
   return cookieStore.get(`${ARTIST_TOKEN_PREFIX}_ACCESS`)?.value;
 }
 
-/**
- * Get admin access token
- */
+
 export async function getAdminAccessToken() {
   const cookieStore = await cookies();
   return cookieStore.get(`${ADMIN_TOKEN_PREFIX}_ACCESS`)?.value;
 }
 
-/**
- * Clear artist auth tokens
- */
+
 export async function clearArtistTokens() {
   const cookieStore = await cookies();
   cookieStore.delete(`${ARTIST_TOKEN_PREFIX}_ACCESS`);
@@ -78,19 +68,15 @@ export async function clearArtistTokens() {
   deleteAxiosDefaultToken();
 }
 
-/**
- * Clear admin auth tokens
- */
+
 export async function clearAdminTokens() {
   const cookieStore = await cookies();
   cookieStore.delete(`${ADMIN_TOKEN_PREFIX}_ACCESS`);
   cookieStore.delete(`${ADMIN_TOKEN_PREFIX}_REFRESH`);
+  deleteAxiosDefaultToken();
 }
-deleteAxiosDefaultToken();
 
-/**
- * Get artist user profile using access token
- */
+
 export async function getArtistProfile() {
   const accessToken = await getArtistAccessToken();
 
@@ -115,9 +101,7 @@ export async function getArtistProfile() {
   }
 }
 
-/**
- * Get admin user profile using access token
- */
+
 export async function getAdminProfile() {
   const accessToken = await getAdminAccessToken();
 

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useMediaUploadStore } from '../store';
 import { toast } from 'sonner';
-import { MoveRight } from 'lucide-react';
+import { MoveLeft, MoveRight } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { AppLogo } from '@/components/icons';
 import { cn } from '@/lib/utils';
@@ -34,9 +34,9 @@ const Step3MediaCoverUpload = () => {
             return;
         }
 
-        // Validate file size (35MB max)
-        if (file.size > 35 * 1024 * 1024) {
-            toast.error("File size exceeds the 35MB limit. Please upload a smaller file.");
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("File size exceeds the 5MB limit. Please upload a smaller file.");
             return;
         }
 
@@ -91,9 +91,9 @@ const Step3MediaCoverUpload = () => {
             return;
         }
 
-        // Validate file size (35MB max)
-        if (file.size > 35 * 1024 * 1024) {
-            toast.error("File size exceeds the 35MB limit. Please upload a smaller file.");
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("File size exceeds the 5MB limit. Please upload a smaller file.");
             return;
         }
 
@@ -123,14 +123,14 @@ const Step3MediaCoverUpload = () => {
 
 
     return (
-        <div className="w-[80vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto px-4">
+        <div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto">
 
 
             <section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
                 <div className="flex flex-col gap-2">
 
                     <label
-                        className={cn("flex-1 border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-h-[300px] aspect-square", isDragging ? "border-solid border-3" : "border-primary")}
+                        className={cn("flex-1 border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-md:w-[250px] md:max-h-[300px] p-3 aspect-square", isDragging ? "border-solid border-3" : "border-primary")}
                         onDragEnter={handleDrag}
                         onDragOver={handleDrag}
                         onDragLeave={handleDrag}
@@ -151,7 +151,7 @@ const Step3MediaCoverUpload = () => {
                                 <div className='flex flex-col items-center justify-start gap-4'>
                                     <Image
                                         src={previewUrl}
-                                        alt="Preview" width={150} height={150} className="rounded-xl"
+                                        alt="Preview" width={200} height={200} className="rounded-xl"
                                     />
                                     <div>
                                         <h6 className="text-lg font-medium">
@@ -190,7 +190,7 @@ const Step3MediaCoverUpload = () => {
                         <ul className="list-disc pl-6 space-y-2 text-[0.9rem] text-white/70 text-left">
                             <li>File format: JPG, PNG</li>
                             <li>Size: at least 3000×3000 pixels</li>
-                            <li>File size: Image file size cannot be greater than 35 MB</li>
+                            <li>File size: Image file size cannot be greater than 5 MB</li>
                             <li>Color mode: Best quality RGB (including black and white images)</li>
                             <li>Resolution: 72 dpi</li>
                             <li>Your cover art must not contain any social media handles of any kind.</li>
@@ -199,8 +199,8 @@ const Step3MediaCoverUpload = () => {
 
                     <Button
                         onClick={() => fileInputRef?.current?.click()}
-                        size="xl"
-                        className="bg-primary hover:bg-primary text-white rounded-full  mt-1.5"
+                        size="lg"
+                        className=" mt-1.5"
                     >
                         Browse
                     </Button>
@@ -212,10 +212,19 @@ const Step3MediaCoverUpload = () => {
 
 
 
-            <div className="flex justify-center ">
+            <div className="flex justify-between items-center ">
+                <Button
+                    onClick={() => setCurrentStep('trackUpload')}
+                    size="lg"
+                    variant={"outline"}
+                    className="rounded-full"
+                >
+                    <MoveLeft className="mr-2 h-4 w-4" />
+                    Back
+                </Button>
                 <Button
                     onClick={handleContinue}
-                    size="xl"
+                    size="lg"
                     disabled={!previewUrl || uploadProgress < 100}
                     className="rounded-full"
                 >

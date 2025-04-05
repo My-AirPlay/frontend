@@ -67,40 +67,41 @@ export const useMediaUploadStore = create<MediaUploadState>()(
         mediaFile: null,
         coverArtFile: null,
         mediaInfo: { ...defaultMediaInfo },
-        streamingPlatforms: ['spotify', 'apple', 'youtube', 'tidal', 'amazon', 'deezer', 'pandora', 'audiomack'],
+        streamingPlatforms: ['Spotify', 'Apple Music', 'YouTube', 'Tidal', 'Amazon', 'Deezer', 'Pandora', 'Audiomack'],
         clearStore: () => set({
           currentStep: 'selection',
           mediaType: null,
           mediaFile: null,
           coverArtFile: null,
           mediaInfo: { ...defaultMediaInfo },
-          streamingPlatforms: ['spotify', 'apple', 'youtube', 'tidal', 'amazon', 'deezer', 'pandora', 'audiomack']
+          streamingPlatforms: ['Spotify', 'Apple Music', 'YouTube', 'Tidal', 'Amazon', 'Deezer', 'Pandora', 'Audiomack'],
+
         }),
         setCurrentStep: (step) => {
           console.log("Setting media current step to:", step);
-            set({ currentStep: step });
-          },
-          setMediaType: (type) => set({ mediaType: type }),
-          setMediaFile: (file) => set({ mediaFile: file }),
-          setCoverArtFile: (file) => set({ coverArtFile: file }),
-          updateMediaInfo: (info) => set((state) => ({
-            mediaInfo: { ...state.mediaInfo, ...info }
-          })),
-          togglePlatform: (platform) => set((state) => {
-            const exists = state.streamingPlatforms.includes(platform);
-            return {
+          set({ currentStep: step });
+        },
+        setMediaType: (type) => set({ mediaType: type }),
+        setMediaFile: (file) => set({ mediaFile: file }),
+        setCoverArtFile: (file) => set({ coverArtFile: file }),
+        updateMediaInfo: (info) => set((state) => ({
+          mediaInfo: { ...state.mediaInfo, ...info }
+        })),
+        togglePlatform: (platform) => set((state) => {
+          const exists = state.streamingPlatforms.includes(platform);
+          return {
             streamingPlatforms: exists
               ? state.streamingPlatforms.filter((p) => p !== platform)
               : [...state.streamingPlatforms, platform]
-            };
-          }),
-          hasOngoingUpload: () => {
+          };
+        }),
+        hasOngoingUpload: () => {
           const state = get();
-          return state.mediaFile !== null || 
-                 state.coverArtFile !== null || 
-                 Object.values(state.mediaInfo).some(val => 
-                   val !== '' && Array.isArray(val) ? val.length > 0 : true
-                 );
+          return state.mediaFile !== null ||
+            state.coverArtFile !== null ||
+            Object.values(state.mediaInfo).some(val =>
+              val !== '' && Array.isArray(val) ? val.length > 0 : true
+            );
         }
       }),
       {

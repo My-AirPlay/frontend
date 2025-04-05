@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import {  MoveRight, Music, } from "lucide-react";
+import {  MoveLeft, MoveRight, Music, } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -21,14 +21,12 @@ export default function Step2MediaTrackUpload() {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Validate file type
         const validTypes = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "video/mp4"];
         if (!validTypes.includes(file.type)) {
             toast.error("Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.");
             return;
         }
 
-        // Validate file size (35MB max)
         if (file.size > 35 * 1024 * 1024) {
             toast.error("File size exceeds the 35MB limit. Please upload a smaller file.");
             return;
@@ -73,14 +71,11 @@ export default function Step2MediaTrackUpload() {
         const file = e.dataTransfer.files?.[0];
         if (!file) return;
 
-        // Validate file type
         const validTypes = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "video/mp4"];
         if (!validTypes.includes(file.type)) {
             toast.error("Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.");
             return;
         }
-
-        // Validate file size (35MB max)
         if (file.size > 35 * 1024 * 1024) {
             toast.error("File size exceeds the 35MB limit. Please upload a smaller file.");
             return;
@@ -101,8 +96,7 @@ export default function Step2MediaTrackUpload() {
     };
 
     return (
-        <div className="container w-[80vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto px-4">
-           
+        <div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto ">           
 
             <section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
                 <label
@@ -182,7 +176,17 @@ export default function Step2MediaTrackUpload() {
             }
 
 
-            <div className="flex justify-center ">               
+            <div className="flex justify-between items-center mt-8 md:mt-16">               
+                    <Button
+                        onClick={() => setCurrentStep('musicInfo')}
+                        size="lg"
+                        variant={"outline"}
+                        className="rounded-full"
+                    >
+                         <MoveLeft className="mr-2 h-4 w-4" />
+                        Back
+                    </Button>
+
                     <Button
                         onClick={handleContinue}
                         size="lg"

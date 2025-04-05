@@ -88,8 +88,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
         albumInfo: { ...defaultAlbumInfo },
         albumTracks: [],
         mediaFiles: [],
-        streamingPlatforms: ['spotify', 'apple', 'youtube', 'tidal', 'amazon', 'deezer', 'pandora', 'audiomack'],
-
+        streamingPlatforms: ['Spotify', 'Apple Music', 'YouTube', 'Audiomack'],
         clearStore: () => set({
           currentStep: 'selection',
           albumType: null,
@@ -97,8 +96,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
           albumInfo: { ...defaultAlbumInfo },
           albumTracks: [],
           mediaFiles: [],
-          streamingPlatforms: ['spotify', 'apple', 'youtube', 'tidal', 'amazon', 'deezer', 'pandora', 'audiomack'],
-
+          streamingPlatforms: ['Spotify', 'Apple Music', 'YouTube', 'Audiomack'],
         }),
         setCurrentStep: (step) => {
           console.log("Setting album current step to:", step);
@@ -112,9 +110,9 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
         togglePlatform: (platform) => set((state) => {
           const exists = state.streamingPlatforms.includes(platform);
           return {
-          streamingPlatforms: exists
-            ? state.streamingPlatforms.filter((p) => p !== platform)
-            : [...state.streamingPlatforms, platform]
+            streamingPlatforms: exists
+              ? state.streamingPlatforms.filter((p) => p !== platform)
+              : [...state.streamingPlatforms, platform]
           };
         }),
         addTrack: (track) => set((state) => ({
@@ -140,12 +138,12 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
         }),
         hasOngoingUpload: () => {
           const state = get();
-          return state.albumTracks.length > 0 || 
-                 state.mediaFiles.length > 0 || 
-                 state.coverArtFile !== null ||
-                 Object.values(state.albumInfo).some(val => 
-                  val !== '' && Array.isArray(val) ? val.length > 0 : true
-                 );
+          return state.albumTracks.length > 0 ||
+            state.mediaFiles.length > 0 ||
+            state.coverArtFile !== null ||
+            Object.values(state.albumInfo).some(val =>
+              val !== '' && Array.isArray(val) ? val.length > 0 : true
+            );
         }
       }),
       {

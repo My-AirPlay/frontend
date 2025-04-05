@@ -1,11 +1,17 @@
+'use client'
 import React from 'react'
 import { StaticAppInfoProvider } from './StaticAppInfoContext'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const AllProviders = ({children}:{children:React.ReactNode}) => {
+const queryClient = new QueryClient();
+
+const AllProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <StaticAppInfoProvider>
+    <QueryClientProvider client={queryClient}>
+      <StaticAppInfoProvider>
         {children}
-    </StaticAppInfoProvider>
+      </StaticAppInfoProvider>
+    </QueryClientProvider>
   )
 }
 

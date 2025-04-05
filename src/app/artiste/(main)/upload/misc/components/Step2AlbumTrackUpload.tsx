@@ -15,10 +15,11 @@ import { SelectSimple } from "@/components/ui"
 import { useStaticAppInfo } from "@/contexts/StaticAppInfoContext"
 import { MOCK_GENRES } from "@/constants"
 import { AppLogo, Spinner } from "@/components/icons"
+import { getFileSize } from "@/utils/numbers"
 
 import { useAlbumUploadStore } from "../store"
 import { AlbumTrackInfo } from "../store/album"
-import { getFileSize } from "@/utils/numbers"
+import { convertToTitleCase } from "@/utils/strings"
 
 export default function TrackUpload() {
   const {
@@ -229,10 +230,10 @@ export default function TrackUpload() {
   const { data: staticData, isLoading } = useStaticAppInfo();
   const [genres, setGenres] = useState<{ value: string; label: string }[]>([]);
   useEffect(() => {
-    if (staticData && staticData.MusicalInstrument) {
-      const genreEntries = Object.entries(staticData.StreamingPlatform || {});
+    if (staticData && staticData.Genre) {
+      const genreEntries = Object.entries(staticData.Genre || {});
       const formattedGenres = genreEntries.map(([value, label]) => ({
-        value: value.toLowerCase(),
+        value: convertToTitleCase(value),
         label
       }));
       setGenres(formattedGenres);
@@ -251,7 +252,6 @@ export default function TrackUpload() {
   }
   return (
     <div className="w-[80vw] sm:w-[55vw] max-w-[600px] md:max-w-3xl mx-auto mt-16">
-
       <section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
         <div className="border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center">
           <AppLogo width={150} height={150} className="" style={{ opacity: 0.3, filter: "grayscale(1)" }} />

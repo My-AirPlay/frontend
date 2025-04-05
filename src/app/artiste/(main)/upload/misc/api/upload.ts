@@ -4,7 +4,7 @@ import { UploadAlbumPayload, UploadTrackPayload } from '../types';
 import { MediaUploadInfo } from '../store/media';
 
 
-// Upload single track function using Axios
+
 export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
   const formData = new FormData();
   
@@ -16,16 +16,15 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
   });
 
   if (Array.isArray(payload.streamingPlatforms)) {
-    payload.streamingPlatforms.forEach(platform => {
-      formData.append("streamingPlatforms", platform);
+    payload.streamingPlatforms.forEach((platform, i) => {
+      formData.append(`streamingPlatforms[${i}]`, platform);
     });
   } else {
     formData.append("streamingPlatforms", payload.streamingPlatforms as unknown as string);
   }
   
-  // Add media files
-//   formData.append("media", payload.media);
   formData.append("coverArt", payload.coverArt);
+  formData.append("media", payload.media);
   
   const response = await APIAxios.post(`/media/create-media`, formData, {
     headers: {
@@ -96,6 +95,8 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
       });
     });
   }
+
+  console.log(formData.getAll('media'));
   
   const response = await APIAxios.post(`/media/create-album`, formData, {
     headers: {

@@ -4,7 +4,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
 export const APIAxios = Axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, 
 });
 
 export const setAxiosDefaultToken = (token: string) => {
