@@ -75,14 +75,14 @@ const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
         <PreviewTable previewData={data} />
         <div className="flex justify-between items-center  gap-12 w-full md:flex-row flex-col">
           <Button
-            variant={"authBtn"}
+            size={"lg"}
             className="max-w-[275px] bg-transparent border-2 border-white h-[75px] "
             onClick={() => setCurrentStep(OnboardingSteps.BASIC_DETAIL)}
           >
             Edit
           </Button>
           <Button
-            variant={"authBtn"}
+            size={"lg"}
             className="max-w-[275px] h-[75px] "
             onClick={() => replace(urls.onboardingSatus)}
           >

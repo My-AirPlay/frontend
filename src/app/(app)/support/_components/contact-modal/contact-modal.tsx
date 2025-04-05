@@ -25,7 +25,7 @@ const ContactModal = () => {
         <InputWrapper placeholder="Your Name" />
         <InputWrapper placeholder="Your Email" />
         <TextareaWrapper placeholder="Your Message" />
-        <Button className="mx-auto" type="submit" variant={"authBtn"}>
+        <Button className="mx-auto" type="submit" size={"lg"}>
           Submit <MoveRight />
         </Button>
       </form>

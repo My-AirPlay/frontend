@@ -55,7 +55,7 @@ const ArtistNameModal = () => {
           </fieldset>
 
           <Button
-            variant={"authBtn"}
+            size={"lg"}
             className="max-w-[275px] h-[75px] mx-auto"
           >
             Search
@@ -95,13 +95,13 @@ const ArtistNameModal = () => {
           </div>
           <div className="flex items-center justify-center gap-[76px]">
             <Button
-              variant={"authBtn"}
+              size={"lg"}
               className="max-w-[275px] h-[75px] mx-auto bg-transparent border border-white"
             >
               Reset
             </Button>
             <Button
-              variant={"authBtn"}
+              size={"lg"}
               className="max-w-[275px] h-[75px] mx-auto"
             >
               Confirm Selection

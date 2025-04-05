@@ -3,10 +3,10 @@ import React from "react";
 import SettingsProfile from "../_components/settings-profile/settings-profile";
 import SettingsNav from "../_components/settings-nav/settings-nav";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import PasswordInput from "@/app/(auth)/_components/password-input/password-input";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import { useRouter } from "nextjs-toploader/app";
+import { Input } from "@/components/ui";
 
 const EditPasswordClient = () => {
   const { back } = useRouter();
@@ -32,32 +32,32 @@ const EditPasswordClient = () => {
         >
           Current Password
         </div>
-        <PasswordInput defaultValue="random" />
+        <Input type="password" defaultValue="random" />
         <div
           className="font-plus-jakarta-sans font-semibold text-white text-base"
           role="label"
         >
           New Password
         </div>
-        <PasswordInput defaultValue="random" />
+        <Input type="password" defaultValue="random" />
         <div
           className="font-plus-jakarta-sans font-semibold text-white text-base"
           role="label"
         >
           Confirm New Password
         </div>
-        <PasswordInput defaultValue="random" />
+        <Input type="password" defaultValue="random" />
         <div className="border-t border-custom-seperator" />
         <div className="flex gap-9 flex-col md:flex-row">
           <Button
             type="button"
-            variant={"authBtn"}
+            size={"lg"}
             className="bg-transparent border-white border"
             onClick={back}
           >
             Cancel
           </Button>
-          <Button type="submit" variant={"authBtn"}>
+          <Button type="submit" size={"lg"}>
             Apply Changes <MoveRight />
           </Button>
         </div>

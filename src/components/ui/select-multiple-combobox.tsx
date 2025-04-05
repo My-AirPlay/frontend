@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./popover-without-porta
 import FormError from "./form-error"
 // import { CaretDown, SmallSpinner, StrokeCheck } from "./icons"
 import { inputVariants } from "./input"
-import {Checkbox} from "./checkbox"
+import { Checkbox } from "./checkbox"
 import { SmallSpinner } from "../icons"
 
 interface SelectProps<T> {
@@ -20,7 +20,7 @@ interface SelectProps<T> {
     options: T[] | undefined;
     name: string;
     hasError?: boolean;
-    errorMessage?: string;
+    errormessage?: string;
     label?: string | React.ReactNode;
     placeholder: string;
     className?: string;
@@ -46,7 +46,7 @@ const SelectMultipleCombo = <T extends object>({
     onChange,
     options,
     hasError,
-    errorMessage,
+    errormessage,
     label,
     name,
     placeholder,
@@ -124,6 +124,8 @@ const SelectMultipleCombo = <T extends object>({
                             )}
                             type="button"
                             role="combobox"
+                            aria-controls="combobox-options"
+                            aria-expanded={open}
                             onClick={() => setOpen(!open)}
                             ref={triggerRef}
                         >
@@ -148,7 +150,7 @@ const SelectMultipleCombo = <T extends object>({
                     </PopoverTrigger>
                 </div>
 
-                <PopoverContent className={cn("p-0", triggerRef?.current && `min`)} style={{ ...contentStyle, width, maxWidth: width }}>
+                <PopoverContent className={cn("p-0 min-h-[30vh] max-h-[450px]", triggerRef?.current && `min`)} style={{ ...contentStyle, width, maxWidth: width }}>
                     <Command>
                         <div className="relative px-3">
                             <SearchIcon className="absolute top-1/2 left-2 -translate-y-1/2 text-[#032282] h-4 w-4" />
@@ -159,7 +161,7 @@ const SelectMultipleCombo = <T extends object>({
                                 onChange={(e) => setSearchText(e.target.value)}
                             />
                         </div>
-                        <CommandGroup className="flex flex-col gap-3 px-3 max-w-full">
+                        <CommandGroup className="flex flex-col gap-3 px-3 max-w-full" id="combobox-options">
                             {isLoadingOptions && (
                                 <CommandItem className="flex items-center justify-center gap-2 text-main-solid py-2 font-medium" value={"loading"} disabled>
                                     <SmallSpinner color='#fff' /> Loading options...
@@ -173,6 +175,7 @@ const SelectMultipleCombo = <T extends object>({
                                             itemClass, "max-w-full text-left items-start"
                                         )}
                                         key={index}
+                                        type="button"
                                         onClick={() => handleSelect(String(option[valueKey]))}
                                     >
                                         {checkType === "stroke" ? (
@@ -209,8 +212,8 @@ const SelectMultipleCombo = <T extends object>({
                 </PopoverContent>
             </Popover>
 
-            {hasError && errorMessage && (
-                <FormError errorMessage={errorMessage} />
+            {hasError && errormessage && (
+                <FormError errormessage={errormessage} />
             )}
         </div>
     )

@@ -20,7 +20,7 @@ const AccountSetup = () => {
           An Artist
         </figcaption>
       </figure>
-      <Button variant={"authBtn"} className="max-w-[275px] h-[75px] mx-auto">
+      <Button size="lg">
         Continue <MoveRight />
       </Button>
       <div className="min-h-[91px]" />

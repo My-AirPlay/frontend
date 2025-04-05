@@ -8,10 +8,10 @@ import ProfileDropdown from "@/components/profile-dropdown/profile-dropdown";
 import { ChevronDown } from "lucide-react";
 import LogoutBtn from "@/components/logout-btn/logout-btn";
 
-interface AppLayoutClientProps {
+interface ArtistAppLayoutClientProps {
   children: ReactNode;
 }
-const AppLayoutClient = ({ children }: AppLayoutClientProps) => {
+const ArtistAppLayoutClient = ({ children }: ArtistAppLayoutClientProps) => {
   const [showMenu, setShowMenu] = useState(false);
   return (
     <div className="min-h-svh flex md:flex-row flex-col px-7 py-10  bg-custom-page-bg lg:gap-24 ">
@@ -62,4 +62,4 @@ const AppLayoutClient = ({ children }: AppLayoutClientProps) => {
   );
 };
 
-export default AppLayoutClient;
+export default ArtistAppLayoutClient;

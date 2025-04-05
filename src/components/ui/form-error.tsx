@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
 
 interface FormErrorProps {
-  errorMessage?: string;
+  errormessage?: string;
   className?: string;
 }
 
-export default function FormError({ errorMessage, className }: FormErrorProps) {
+export default function FormError({ errormessage, className }: FormErrorProps) {
   return (
     <p
       className={cn(
@@ -13,7 +13,7 @@ export default function FormError({ errorMessage, className }: FormErrorProps) {
         className
       )}
     >
-      {errorMessage || 'This is required'}
+      {errormessage || 'This is required'}
     </p>
   );
 }

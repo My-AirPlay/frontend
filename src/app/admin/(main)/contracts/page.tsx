@@ -92,16 +92,6 @@ const Contracts = () => {
                 showCheckbox={true}
                 pagination={true}
                 defaultRowsPerPage={10}
-            // filterComponent={
-            //   <DataTableFilter label="Filter">
-            //     <div className="p-4">
-            //       <div className="space-y-4">
-            //         <h4 className="font-medium">Filter Options</h4>
-            //         {/* Filter options will be added here */}
-            //       </div>
-            //     </div>
-            //   </DataTableFilter>
-            // }
             />
         </div>
     );

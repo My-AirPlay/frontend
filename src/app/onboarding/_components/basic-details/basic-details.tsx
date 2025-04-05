@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import { OnboardingSteps } from "@/lib/constants";
 import { useMutation } from "@tanstack/react-query";
-import { postOnboardingPersonalDetail } from "@/lib/api/mutations/onboarding.mutation";
+import { postOnboardingPersonalDetail } from "@/app/(auth)/misc/api/mutations/onboarding.mutation";
 import { toast } from "sonner";
 import { handleClientError } from "@/lib/utils";
 interface OnboardingBasciDetailProps {
@@ -106,7 +106,7 @@ const OnboardingBasciDetail = ({
       description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable)."
     >
       <Button
-        variant={"authBtn"}
+        size={"lg"}
         type="submit"
         className="max-w-[275px] h-[75px] mx-auto"
         disabled={!formik.isValid || status === "pending"}

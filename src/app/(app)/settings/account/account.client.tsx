@@ -3,9 +3,9 @@
 import CustomSelect from "@/components/custom-dropdown/custom-select";
 import SettingsNav from "../_components/settings-nav/settings-nav";
 import SettingsProfile from "../_components/settings-profile/settings-profile";
-import PasswordInput from "@/app/(auth)/_components/password-input/password-input";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
+import { Input } from "@/components/ui";
 
 const DeleteAccountPage = () => {
   return (
@@ -32,7 +32,7 @@ const DeleteAccountPage = () => {
             >
               Please enter your current password to proceed to account deletion.
             </label>
-            <PasswordInput id="password" placeholder="Enter your password" />
+            <Input type="password" id="password" placeholder="Enter your password" />
           </fieldset>
           <small className="font-plus-jakarta-sans text-custom-error text-base font-normal mb-16  block">
             Deleting your account on AirPlay is permanent and cannot be undone.
@@ -42,13 +42,13 @@ const DeleteAccountPage = () => {
           </small>
           <div className="flex items-center justify-center gap-5">
             <Button
-              variant={"authBtn"}
+              size={"lg"}
               className="bg-transparent border border-white"
               type="button"
             >
               Cancel
             </Button>
-            <Button variant={"authBtn"} type="submit">
+            <Button size={"lg"} type="submit">
               Delete account
               <MoveRight />
             </Button>

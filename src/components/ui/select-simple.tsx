@@ -18,7 +18,7 @@ type SelectProps<TOption> = {
   options?: TOption[];
   name?: string;
   hasError?: boolean;
-  errorMessage?: string;
+  errormessage?: string;
   label?: string | React.ReactNode;
   placeholder?: string;
   className?: string;
@@ -36,6 +36,7 @@ type SelectProps<TOption> = {
   placeHolderClass?: string;
   variant?: VariantProps<typeof inputVariants>['variant'];
   size?: VariantProps<typeof inputVariants>['inputSize'];
+  disabled?:boolean
 };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,7 +45,7 @@ function Select<TOption extends Record<string, any>>({
   onChange: propOnChange,
   options,
   hasError,
-  errorMessage,
+  errormessage,
   label,
   name,
   placeholder,
@@ -61,6 +62,7 @@ function Select<TOption extends Record<string, any>>({
 //   showSelectedValue = true,
   variant,
   size,
+  disabled
 }: SelectProps<TOption>) {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -87,6 +89,7 @@ function Select<TOption extends Record<string, any>>({
                         id={name}
                         triggerColor={triggerColor}
                         data-state={isOpen ? 'open' : 'closed'}
+                        disabled={disabled}
                     >
                         <SelectValue className={cn('!overflow-hidden !text-ellipsis', valueClass)} placeholder={placeholder} />
 
@@ -124,8 +127,8 @@ function Select<TOption extends Record<string, any>>({
                     </SelectContent>
                 </Selection>
                 {
-                    hasError && errorMessage && (
-                        <FormError errorMessage={errorMessage} />
+                    hasError && errormessage && (
+                        <FormError errormessage={errormessage} />
                     )
                 }
             </div>

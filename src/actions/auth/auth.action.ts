@@ -1,51 +1,127 @@
 "use server";
 
-import api from "@/lib/api/core";
-import { TOKENS } from "@/lib/constants";
-import { AxiosError } from "axios";
 import { cookies } from "next/headers";
+import { AxiosError } from "axios";
+import APIAxios, { deleteAxiosDefaultToken, setAxiosDefaultToken } from "@/utils/axios";
 
-export async function login({
+
+
+
+const ARTIST_TOKEN_PREFIX = 'AIRPLAY_ARTIST';
+const ADMIN_TOKEN_PREFIX = 'AIRPLAY_ADMIN';
+
+
+const cookieOptions = {
+  secure: true,
+  httpOnly: true,
+  sameSite: "strict" as const,
+  maxAge: 60 * 60 * 24 * 7,
+  path: '/'
+};
+
+
+export async function setArtistAccessToken({
   access,
   refresh,
 }: {
   access: string;
   refresh: string;
 }) {
-  const cookie = await cookies();
-  cookie.set(TOKENS.ACCESS, access, {
-    secure: true,
-  });
-  cookie.set(TOKENS.REFRESH, refresh, {
-    secure: true,
-  });
+  const cookieStore = await cookies();
+  setAxiosDefaultToken(access);
+  cookieStore.set(`${ARTIST_TOKEN_PREFIX}_ACCESS`, access, cookieOptions);
+  cookieStore.set(`${ARTIST_TOKEN_PREFIX}_REFRESH`, refresh, cookieOptions);
+
 }
 
-export async function getAccessToken() {
-  return (await cookies()).get(TOKENS.ACCESS);
+
+export async function setAdminAccessToken({
+  access,
+  refresh,
+}: {
+  access: string;
+  refresh: string;
+}) {
+  const cookieStore = await cookies();
+  setAxiosDefaultToken(access);
+  cookieStore.set(`${ADMIN_TOKEN_PREFIX}_ACCESS`, access, cookieOptions);
+  cookieStore.set(`${ADMIN_TOKEN_PREFIX}_REFRESH`, refresh, cookieOptions);
 }
 
-export const clearAuthTokens = async () => {
-  const cookie = await cookies();
-  cookie.delete(TOKENS.ACCESS);
-  cookie.delete(TOKENS.REFRESH);
-};
-export const getUserProfile = async (accessToken: string) => {
+
+export async function getArtistAccessToken() {
+  const cookieStore = await cookies();
+  return cookieStore.get(`${ARTIST_TOKEN_PREFIX}_ACCESS`)?.value;
+}
+
+
+export async function getAdminAccessToken() {
+  const cookieStore = await cookies();
+  return cookieStore.get(`${ADMIN_TOKEN_PREFIX}_ACCESS`)?.value;
+}
+
+
+export async function clearArtistTokens() {
+  const cookieStore = await cookies();
+  cookieStore.delete(`${ARTIST_TOKEN_PREFIX}_ACCESS`);
+  cookieStore.delete(`${ARTIST_TOKEN_PREFIX}_REFRESH`);
+  deleteAxiosDefaultToken();
+}
+
+
+export async function clearAdminTokens() {
+  const cookieStore = await cookies();
+  cookieStore.delete(`${ADMIN_TOKEN_PREFIX}_ACCESS`);
+  cookieStore.delete(`${ADMIN_TOKEN_PREFIX}_REFRESH`);
+  deleteAxiosDefaultToken();
+}
+
+
+export async function getArtistProfile() {
+  const accessToken = await getArtistAccessToken();
+
   try {
-    if (!accessToken.trim()) return null;
-    const { data } = await api.get("/artist/profile", {
+    if (!accessToken || !accessToken.trim()) return null;
+
+    const { data } = await APIAxios.get("/artist/profile", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
     return data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log(error.response?.data, accessToken);
-      if (error.code === "401") {
-        await clearAuthTokens();
+      if (error.response?.status === 401) {
+        await clearArtistTokens();
       }
     }
     return null;
   }
-};
+}
+
+
+export async function getAdminProfile() {
+  const accessToken = await getAdminAccessToken();
+
+  try {
+    if (!accessToken || !accessToken.trim()) return null;
+
+    const { data } = await APIAxios.get("/admin/profile", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.log(error.response?.data, accessToken);
+      if (error.response?.status === 401) {
+        await clearAdminTokens();
+      }
+    }
+    return null;
+  }
+}

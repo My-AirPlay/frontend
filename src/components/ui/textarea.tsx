@@ -23,8 +23,8 @@ export interface TextareaProps
     VariantProps<typeof inputVariants> {
     label?: string
     hasError?: boolean
-    errorMessage?: string
-    errorMessageClass?: string
+    errormessage?: string
+    errormessageClass?: string
     containerClassName?: string
     autoResize?: boolean
     optional?: boolean
@@ -39,7 +39,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         inputSize,
         containerClassName,
         hasError,
-        errorMessageClass,
+        errormessageClass,
         label,
         autoResize = true,
         minRows = 2,
@@ -103,7 +103,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
                     />
 
                 </div>
-                {hasError && <FormError className={errorMessageClass} errorMessage={props.errorMessage} />}
+                {hasError && <FormError className={errormessageClass} errormessage={props.errormessage} />}
             </div>
         )
     }

@@ -116,7 +116,7 @@ const UploadPreference = () => {
 
         <div className="flex justify-between items-center max-w-[950px] mx-auto  gap-12 w-full md:flex-row flex-col mt-16">
           <Button
-            variant={"authBtn"}
+            size={"lg"}
             className="max-w-[275px] bg-transparent border-2 border-white h-[75px] "
             type="button"
             onClick={() => setCurrentStep(UPLOAD_STEPS.MUSIC_COVER)}
@@ -124,7 +124,7 @@ const UploadPreference = () => {
             Music Cover
           </Button>
           <Button
-            variant={"authBtn"}
+            size={"lg"}
             type="submit"
             className="max-w-[275px] h-[75px] "
             onClick={() => changeStep(UPLOAD_STEPS.PREVIEW)}

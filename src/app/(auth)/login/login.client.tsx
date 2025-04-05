@@ -1,22 +1,25 @@
 "use client";
 import React from "react";
-import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import Link from "next/link";
-import { urls, userProfileStage } from "@/lib/constants";
-import AuthWrapper from "../_components/auth-wrapper";
-import AuthActions from "../_components/auth-actions/auth-actions";
-import PasswordInput from "../_components/password-input/password-input";
-import { useFormik } from "formik";
-import { InferType } from "yup";
-import { loginSchema } from "@/lib/schemas";
-import { useMutation } from "@tanstack/react-query";
-import { loginUser } from "@/lib/api/mutations/auth.mutations";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";
+import { useFormik } from "formik";
+import { InferType } from "yup";
+
+import { urls, userProfileStage } from "@/lib/constants";
+import { loginSchema } from "@/lib/schemas";
+import { useMutation } from "@tanstack/react-query";
+import { loginArtistUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";
+import { Input } from "@/components/ui";
+
+import AuthWrapper from "../misc/components/auth-wrapper";
+import AuthActions from "../misc/components/auth-actions";
+
+
 const LoginPageClient = () => {
   const router = useRouter();
   const { mutate, status } = useMutation({
-    mutationFn: loginUser,
+    mutationFn: loginArtistUser,
     onSuccess({ data, error }) {
       if (error) {
         if (error.code === "500") return;
@@ -33,8 +36,9 @@ const LoginPageClient = () => {
         toast.success("Welcome.");
         router.replace(urls.onboarding);
         return;
-      }
-      router.replace(urls.dashboard);
+      }      
+      toast.success(`Welcome Back ${data.user.firstName}`);
+      router.replace("/artiste/dashboard");
     },
   });
   const formik = useFormik<InferType<typeof loginSchema>>({
@@ -51,11 +55,11 @@ const LoginPageClient = () => {
     <>
       <AuthWrapper
         linkText={
-          <p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+          <p className="font-plus-jakarta-sans text-custom-registration_link  font-normal">
             Not a member?{" "}
             <Link
               href={urls.register}
-              className="font-bold text-custom-primary"
+              className="font-bold text-primary"
             >
               Sign up
             </Link>{" "}
@@ -64,35 +68,37 @@ const LoginPageClient = () => {
         }
         title="Sign in"
         description={
-          <span>
+          <p className="text-sm text-center max-w-[320px] mx-auto">
             To upload music and videos, you must accept our{" "}
-            <span className="text-custom-primary">terms</span> and{" "}
-            <span className="text-custom-primary">conditions</span>{" "}
-            <span className="text-custom-registration_link">
-              on the registration
-            </span>{" "}
-            website
-          </span>
+            <span className="text-primary">terms</span> and{" "}
+            <span className="text-primary">conditions</span>{" "}       
+              on the registration website
+          </p>
         }
       >
         <h1 className="font-black text-white text-center md:text-4xl text-2xl  mb-10"></h1>
 
-        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5">
-          <InputWrapper
+        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5 max-w-[450px] mx-auto">
+          <Input
             type="email"
             placeholder="Email"
-            error={formik.errors.email}
+            inputSize={"authInput"}
+            hasError={!!formik.errors.email}
+            errormessage={formik.errors.email}
             {...formik.getFieldProps("email")}
           />
           <div>
-            <PasswordInput
+            <Input
+              type="password"
               placeholder="Password"
-              error={formik.errors.password}
+              inputSize={"authInput"}
+              hasError={!!formik.errors.password}
+              errormessage={formik.errors.password}
               {...formik.getFieldProps("password")}
             />
             <Link
               href={urls.forgotPassword}
-              className="text-custom-primary text-14 font-plus-jakarta-sans font-medium"
+              className="text-primary text-14 font-plus-jakarta-sans font-medium"
             >
               Forgot your password?
             </Link>

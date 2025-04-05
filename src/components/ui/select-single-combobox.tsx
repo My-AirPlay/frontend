@@ -18,7 +18,7 @@ interface SelectProps<T> {
     options: T[] | undefined;
     name: string;
     hasError?: boolean;
-    errorMessage?: string;
+    errormessage?: string;
     label?: string | React.ReactNode;
     placeholder: string;
     className?: string;
@@ -40,7 +40,7 @@ const SelectSingleCombo = <T extends object>({
     onChange,
     options,
     hasError,
-    errorMessage,
+    errormessage,
     label,
     name,
     placeholder,
@@ -187,8 +187,8 @@ const SelectSingleCombo = <T extends object>({
             </Popover>
 
             {
-                hasError && errorMessage && (
-                    <FormError errorMessage={errorMessage} />
+                hasError && errormessage && (
+                    <FormError errormessage={errormessage} />
                 )
             }
         </div >

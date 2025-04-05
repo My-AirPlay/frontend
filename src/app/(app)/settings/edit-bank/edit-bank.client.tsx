@@ -77,13 +77,13 @@ const EditBankClient = () => {
         <div className="flex gap-9 flex-col md:flex-row">
           <Button
             type="button"
-            variant={"authBtn"}
+            size={"lg"}
             className="bg-transparent border-white border"
             onClick={back}
           >
             Cancel
           </Button>
-          <Button type="submit" variant={"authBtn"}>
+          <Button type="submit" size={"lg"}>
             Apply Changes <MoveRight />
           </Button>
         </div>

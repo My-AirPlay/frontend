@@ -21,10 +21,8 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
     pathname.startsWith('/help/chat');
 
   return (
-    <div className={cn("flex h-screen", className)}>
+    <div className={cn("flex h-screen overflow-hidden", className)}>
       <Sidebar className="max-md:hidden" />
-
-
 
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />

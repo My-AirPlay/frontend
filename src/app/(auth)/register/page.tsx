@@ -2,26 +2,25 @@
 import React, { useState } from "react";
 import { urls } from "@/lib/constants";
 
-import AuthWrapper from "../_components/auth-wrapper";
+import AuthWrapper from "../misc/components/auth-wrapper";
 import { Check } from "lucide-react";
-import InputWrapper from "@/components/input-wrapper/input-wrapper";
 import Link from "next/link";
-import AuthActions from "../_components/auth-actions/auth-actions";
-import PasswordInput from "../_components/password-input/password-input";
+import AuthActions from "../misc/components/auth-actions";
 import { useFormik } from "formik";
 import { registerSchema } from "@/lib/schemas";
 import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { registerUser } from "@/lib/api/mutations/auth.mutations";
+import { registerUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { toast } from "sonner";
 import useUserVerifcationStore from "@/stores/verification/user-verification.store";
 import { useRouter } from "nextjs-toploader/app";
+import { Input } from "@/components/ui";
 
 const SingupPage = () => {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
   const { setUserEmail } = useUserVerifcationStore.getState();
-  const { mutateAsync, status } = useMutation({
+  const { mutateAsync, status, isPending } = useMutation({
     mutationFn: registerUser,
     onSuccess({ error, data }) {
       if (error) {
@@ -53,9 +52,9 @@ const SingupPage = () => {
     <>
       <AuthWrapper
         linkText={
-          <p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+          <p className="font-plus-jakarta-sans text-custom-registration_link text-[0.9rem] font-normal">
             Already a member?{" "}
-            <Link href={urls.login} className="font-bold text-custom-primary">
+            <Link href={"/login"} className="font-bold text-primary">
               Sign In
             </Link>{" "}
           </p>
@@ -64,8 +63,8 @@ const SingupPage = () => {
         description={
           <span>
             To upload music and videos, you must accept our{" "}
-            <span className="text-custom-primary">terms</span> and{" "}
-            <span className="text-custom-primary">conditions</span>{" "}
+            <span className="text-primary">terms</span> and{" "}
+            <span className="text-primary">conditions</span>{" "}
             <span className="text-custom-registration_link">
               on the registration
             </span>{" "}
@@ -74,42 +73,52 @@ const SingupPage = () => {
         }
       >
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-5">
-          <InputWrapper
-            error={formik.errors.email}
+          <Input
+            inputSize={"authInput"}
+            errormessage={formik.errors.email}
+            hasError={!!formik.errors.email}
             type="email"
             {...formik.getFieldProps("email")}
             placeholder="Email"
           />
 
-          <PasswordInput
-            error={formik.errors.password}
+          <Input
+            type="password"
+            inputSize={"authInput"}
+            errormessage={formik.errors.password}
+            hasError={!!formik.errors.password}
             {...formik.getFieldProps("password")}
             placeholder="Password"
           />
-          <PasswordInput
-            error={formik.errors.confirm_password}
+          <Input
+            type="password"
+            inputSize={"authInput"}
+            errormessage={formik.errors.confirm_password}
+            hasError={!!formik.errors.confirm_password}
             {...formik.getFieldProps("confirm_password")}
             placeholder="Confirm Password"
           />
 
-          <AuthActions
-            isDisabled={!formik.isValid || !checked || status === "pending"}
-            btnText="Sign up"
-          />
-          <div className="flex items-center gap-1">
+          <div className="flex items-center justify-center gap-2">
             <button
               onClick={() => setChecked((prev) => !prev)}
               type="button"
-              className="h-5 text-white rounded-sm w-5 bg-custom-check-box flex justify-center items-center"
+              className="size-4 text-white rounded-sm bg-custom-check-box flex justify-center items-center"
             >
-              {checked && <Check />}
+              {checked && <Check size={20} />}
             </button>
-            <small className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+            <small className="font-plus-jakarta-sans text-custom-registration_link text-[0.9rem] text-center font-normal">
               I read and accepted the{" "}
-              <span className="text-custom-primary">terms</span> and{" "}
-              <span className="text-custom-primary">conditions</span>
+              <span className="text-primary">terms</span> and{" "}
+              <span className="text-primary">conditions</span>
             </small>
           </div>
+          <AuthActions
+            isDisabled={!formik.isValid || !checked || status === "pending"}
+            btnText="Sign up"
+            isBusy={isPending}
+          />
+
         </form>
       </AuthWrapper>
     </>

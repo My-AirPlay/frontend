@@ -1,4 +1,4 @@
-import { getAccessToken, getUserProfile } from "@/actions/auth/auth.action";
+import { getArtistProfile } from "@/actions/auth/auth.action";
 import CustomAppLayout from "@/components/app-layout/app-layout";
 import { urls, userProfileStage } from "@/lib/constants";
 import { redirect } from "next/navigation";
@@ -7,8 +7,7 @@ interface AuthLayoutProps {
   children: ReactNode;
 }
 const AuthLayout = async ({ children }: AuthLayoutProps) => {
-  const accessToken = await getAccessToken();
-  const user = await getUserProfile(accessToken?.value || "");
+  const user = await getArtistProfile();
   if (user)
     redirect(
       user.stage === userProfileStage.onboarding

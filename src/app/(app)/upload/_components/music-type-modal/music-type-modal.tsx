@@ -41,7 +41,7 @@ const MusicTypeModal = ({ onContinue }: MusicTypeModalProps) => {
       </div>
       {uploadType && (
         <Button
-          variant={"authBtn"}
+          size={"lg"}
           className="h-auth-btn max-w-[275px] mx-auto mt-10 "
           onClick={onContinue}
         >
