@@ -124,6 +124,8 @@ const SelectMultipleCombo = <T extends object>({
                             )}
                             type="button"
                             role="combobox"
+                            aria-controls="combobox-options"
+                            aria-expanded={open}
                             onClick={() => setOpen(!open)}
                             ref={triggerRef}
                         >
@@ -159,7 +161,7 @@ const SelectMultipleCombo = <T extends object>({
                                 onChange={(e) => setSearchText(e.target.value)}
                             />
                         </div>
-                        <CommandGroup className="flex flex-col gap-3 px-3 max-w-full">
+                        <CommandGroup className="flex flex-col gap-3 px-3 max-w-full" id="combobox-options">
                             {isLoadingOptions && (
                                 <CommandItem className="flex items-center justify-center gap-2 text-main-solid py-2 font-medium" value={"loading"} disabled>
                                     <SmallSpinner color='#fff' /> Loading options...

@@ -99,7 +99,7 @@ const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
       >
         <div className="flex justify-between md:items-center gap-12 w-full md:flex-row flex-col">
           <Button
-            variant={"authBtn"}
+            size={"lg"}
             type="submit"
             className="max-w-[275px] h-[75px] "
             disabled={!formik.isValid || status === "pending"}

@@ -2,11 +2,11 @@ import React from "react";
 import SettingsNav from "../_components/settings-nav/settings-nav";
 import SettingsProfile from "../_components/settings-profile/settings-profile";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import PasswordInput from "@/app/(auth)/misc/components/password-input/password-input";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
 import { urls } from "@/lib/constants";
+import { Input } from "@/components/ui";
 
 const SettingsPassword = () => {
   return (
@@ -29,11 +29,11 @@ const SettingsPassword = () => {
         >
           Current Password
         </div>
-        <PasswordInput isSecret defaultValue="random" disabled />
+        <Input type="password" defaultValue="random" disabled />
       </section>
 
       <Link href={urls.changePassword}>
-        <Button variant={"authBtn"}>
+        <Button size={"lg"}>
           Change Password <MoveRight />
         </Button>
       </Link>

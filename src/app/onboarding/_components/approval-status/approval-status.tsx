@@ -69,7 +69,7 @@ const OnboardingApprovalStatus = () => {
           ))}
         </ul>
 
-        <Button variant={"authBtn"} className="max-w-[275px] mx-auto h-[75px] ">
+        <Button size={"lg"} className="max-w-[275px] mx-auto h-[75px] ">
           Back to website
         </Button>
       </div>

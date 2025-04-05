@@ -35,7 +35,7 @@ const PreferenceCard = () => {
           </p>
         </div>
         <Button
-          variant={"authBtn"}
+          size={"lg"}
           className="h-[33px] font-inter font-medium text-[13px]"
         >
           Disable for me

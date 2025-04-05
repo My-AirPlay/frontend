@@ -74,7 +74,7 @@ const ReportClientPage = () => {
             <Uploader />
           </fieldset>
         </div>
-        <Button className="mx-auto" type="submit" variant={"authBtn"}>
+        <Button className="mx-auto" type="submit" size={"lg"}>
           Submit <MoveRight />
         </Button>
       </form>

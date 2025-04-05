@@ -106,7 +106,7 @@ const OnboardingBasciDetail = ({
       description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable)."
     >
       <Button
-        variant={"authBtn"}
+        size={"lg"}
         type="submit"
         className="max-w-[275px] h-[75px] mx-auto"
         disabled={!formik.isValid || status === "pending"}

@@ -75,7 +75,7 @@ const SettingsBank = () => {
       </section>
 
       <Link href={urls.editBank}>
-        <Button variant={"authBtn"}>
+        <Button size={"lg"}>
           Edit Bank Details <MoveRight />
         </Button>
       </Link>

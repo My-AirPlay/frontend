@@ -19,7 +19,7 @@ const EnquiryModal = () => {
         className="flex flex-col gap-10 max-w-[628.57px] mx-auto"
       >
         <TextareaWrapper placeholder="Your Message" />
-        <Button className="mx-auto" variant={"authBtn"}>
+        <Button className="mx-auto" size={"lg"}>
           Submit <MoveRight />
         </Button>
       </form>

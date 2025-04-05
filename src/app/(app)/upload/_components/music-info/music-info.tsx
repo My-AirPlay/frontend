@@ -271,7 +271,7 @@ const MusicInfo = () => {
           />
         </fieldset>
         <Button
-          variant={"authBtn"}
+          size={"lg"}
           className="w-full max-w-[275px] mx-auto h-auth-btn"
           type="submit"
           disabled={!formik.isValid}

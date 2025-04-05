@@ -45,12 +45,12 @@ const Distribute = () => {
       <PreviewTable previewData={musicPreview} />
       <div className="max-w-[834px] mx-auto flex justify-between items-center flex-col gap-4 md:flex-row">
         <Button
-          variant={"authBtn"}
+          size={"lg"}
           className="bg-transparent border border-white"
         >
           Edit
         </Button>
-        <Button variant={"authBtn"}>Continue</Button>
+        <Button size={"lg"}>Continue</Button>
       </div>
       {/* <UploadNotification
         desc="File upload completed successfully ,Go to uploads to view uploaded content!"

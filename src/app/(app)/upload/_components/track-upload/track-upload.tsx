@@ -93,7 +93,7 @@ const TrackUpload = () => {
           </ul>
           <Button
             className="h-auth-btn max-w-[275px]"
-            variant={"authBtn"}
+            size={"lg"}
             onClick={open}
           >
             Browser
@@ -104,7 +104,7 @@ const TrackUpload = () => {
       {trackCover && (
         <Button
           className="h-auth-btn max-w-[275px] mx-auto mt-32 "
-          variant={"authBtn"}
+          size={"lg"}
           onClick={() => changeStep(UPLOAD_STEPS.MUSIC_COVER)}
         >
           Save &amp; Continue <MoveRight width={24} />

@@ -4,7 +4,6 @@ import AuthWrapper from "../../misc/components/auth-wrapper";
 import Link from "next/link";
 import { urls } from "@/lib/constants";
 import AuthActions from "../../misc/components/auth-actions";
-import PasswordInput from "../../misc/components/password-input/password-input";
 
 import { useParams } from "next/navigation";
 import { useFormik } from "formik";
@@ -15,6 +14,7 @@ import { resetPassword } from "@/app/(auth)/misc/api/mutations/auth.mutations";
 import { handleClientError } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";
+import { Input } from "@/components/ui";
 const ResetPasswordPage = () => {
   const { token } = useParams();
   const { replace } = useRouter();
@@ -63,14 +63,16 @@ const ResetPasswordPage = () => {
           long"
       >
         <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-          <PasswordInput
+          <Input
             {...formik.getFieldProps("newPassword")}
-            error={formik.touched.newPassword ? formik.errors.newPassword : ""}
+            hasError={!!formik.errors.newPassword}
+            errormessage={formik.touched.newPassword ? formik.errors.newPassword : ""}
             placeholder="New password"
           />
-          <PasswordInput
+          <Input
             {...formik.getFieldProps("confirm_password")}
-            error={
+            hasError={!!formik.errors.confirm_password}
+            errormessage={
               formik.touched.confirm_password
                 ? formik.errors.confirm_password
                 : ""

@@ -45,7 +45,7 @@ const VerifyPage = () => {
       >
         <OTPInput value={otp} onChange={(val) => setOtp(val)} />
         <Button
-          variant={"authBtn"}
+          size={"lg"}
           disabled={otp.length !== 5 || status === "pending"}
           onClick={sendVerification}
           className="bg-custom-primary h-12 w-full mx-auto mt-10 rounded-full font-plus-jakarta-sans font-extrabold text-base tracking-wider text-white"
