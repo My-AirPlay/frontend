@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import AuthWrapper from "../misc/components/auth-wrapper";
 import useUserVerifcationStore from "@/stores/verification/user-verification.store";
-import OTPInput from "@/components/otp-input/otp-input";
+import OTPInput from "@/components/ui/input-otp-group-of-five";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { verifyUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";

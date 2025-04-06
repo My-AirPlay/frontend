@@ -181,7 +181,8 @@ export default function PreviewForm() {
             </CardContent>
           </Card>
 
-          {isAlbumType && albumTracks.length > 0 && (
+          {
+          isAlbumType && albumTracks.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Tracks ({albumTracks.length})</CardTitle>
@@ -200,7 +201,8 @@ export default function PreviewForm() {
                 </ScrollArea>
               </CardContent>
             </Card>
-          )}
+          )
+          }
 
           <Card>
             <CardHeader>

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useStaticAppInfo } from "@/contexts/StaticAppInfoContext";
 import { Input, SelectSimple } from "@/components/ui";
@@ -54,11 +54,11 @@ export default function Step1MusicInfo() {
     const form = useForm<MediaInfoFormValues>({
         resolver: zodResolver(mediaInfoSchema),
         defaultValues,
-        mode: "onChange" 
+        mode: "onChange"
     });
 
-   
- 
+
+
 
     const { handleSubmit, formState: { errors, isValid } } = form;
 
@@ -297,7 +297,7 @@ export default function Step1MusicInfo() {
                             name="lyrics"
                             render={({ field }) => (
                                 <FormItem className="col-span-full">
-                                    <FormLabel>Lyrics (Optional)</FormLabel>
+                                    <FormLabel>Lyrics</FormLabel>
                                     <FormControl>
                                         <Textarea
                                             placeholder="Enter lyrics"
@@ -305,6 +305,7 @@ export default function Step1MusicInfo() {
                                             {...field}
                                         />
                                     </FormControl>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

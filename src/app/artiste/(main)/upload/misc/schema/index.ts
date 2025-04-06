@@ -27,7 +27,7 @@ export const mediaInfoSchema = z.object({
   publisher: z.string().min(1, { message: "Publisher is required" }),
   copyright: z.string().min(1, { message: "Copyright information is required" }),
   explicitContent: z.string().optional(),
-  lyrics: z.string(),
+  lyrics: z.string().min(20, { message: "Your lyrics should be longer than that" }),
   universalProductCode: z.string().min(1, { message: "UPC is required" }),
   releaseVersion: z.string().min(1, { message: "Release version is required" }),
   // streamingPlatforms: z.array(z.string()).min(1, { message: "At least one platform must be selected" })

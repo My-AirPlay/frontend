@@ -223,8 +223,15 @@ export default function Step4MediaDistributionDetails() {
                             onClick={() => handleToggle(platform.value)}
                         >
                             <div className="flex flex-col items-center">
-                                <div className="w-12 h-12 rounded-full bg-gray-700 mb-3 flex items-center justify-center">
-                                    {/* Platform icon would go here */}
+                                <div className="relative w-12 h-12 rounded-full bg-gray-700 mb-3 flex items-center justify-center">
+                                    <Image
+                                        src={`/images/platform_logos/${platform.value.toLowerCase()}.svg`}
+                                        alt={platform.name}
+                                        className="rounded-full text-[0rem] bg-gray-700 z-[2]"
+                                        fill
+                                        objectFit="cover"
+                                        style={{ filter: selectedPlatforms.includes(platform.value) ? "none" : "grayscale(1)" }}
+                                    />
                                     <span className="text-xl font-bold">{platform.name.charAt(0)}</span>
                                 </div>
                                 <p className="text-sm font-medium">{platform.name}</p>
@@ -234,15 +241,6 @@ export default function Step4MediaDistributionDetails() {
                 }
             </div>
 
-            <div className="bg-muted p-6 rounded-lg mb-8">
-                <h3 className="font-semibold mb-4">Distribution Information</h3>
-                <ul className="list-disc pl-6 space-y-2">
-                    <li>Your music will be distributed to the selected platforms within 1-3 business days.</li>
-                    <li>You will receive 100% of your royalties from all platforms.</li>
-                    <li>You can add or remove platforms at any time after your initial distribution.</li>
-                    <li>Statistics and revenue information will be available in your dashboard.</li>
-                </ul>
-            </div>
 
             <div className="flex justify-between items-center">
                 <Button
@@ -252,14 +250,14 @@ export default function Step4MediaDistributionDetails() {
                     className="rounded-full"
                 >
                     <MoveLeft className="mr-2 h-4 w-4" />
-                    Back
+                    Music COver
                 </Button>
                 <Button
                     onClick={handleContinue}
                     className=""
                     size="lg"
                 >
-                    Continue <ArrowRight className="ml-2 h-4 w-4" />
+                    Preview <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
             </div>
         </div>

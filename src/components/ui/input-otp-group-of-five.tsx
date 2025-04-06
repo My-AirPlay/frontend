@@ -1,5 +1,5 @@
 import React from "react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "./input-otp";
 interface OTPInputProps {
   value: string;
   onChange: (a: string) => void;

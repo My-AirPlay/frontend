@@ -11,6 +11,7 @@ export interface AlbumInfo {
   mainGenre: string;
   secondaryGenres?: string[];
   releaseDate: string;
+  originalReleaseDate?: string;
   description: string;
   recordLabel: string;
   publisher: string;

@@ -1,4 +1,5 @@
 export { LinkButton } from './link-button';
+export { CustomAlertDialog } from './alert-dialog-with-variants'
 export { default as DataTable } from './data-table'
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card'
 export { default as FormError } from './form-error'
