@@ -11,6 +11,7 @@ export { Badge, badgeVariants } from './badge'
 export { Button, buttonVariants } from './button'
 export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from './popover'
 export { Calendar } from './calendar'
+export { ReusableDropdownMenu } from './dropdown-menu-reusable'
 export { SingleDatePicker, RangeDatePicker, RangeAndCustomDatePicker } from './date-picker'
 export {
   Select,

@@ -4,7 +4,46 @@ import { AxiosError } from "axios";
 import { userProfileStage } from "../../../../../lib/constants";
 import APIAxios, { setAxiosDefaultToken } from "@/utils/axios";
 import { setArtistAccessToken } from "@/actions/auth/auth.action";
-import { IArtistUser } from "@/contexts/AuthContextArtist";
+
+
+export interface IRegisterationArtistDetails {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    reports: any[];
+    _id: string;
+    email: string;
+    password: string;
+    stage: string;
+    hasManagement: boolean;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+    verificationDetails: VerificationDetails;
+    artistName: string;
+    city: string;
+    country: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    bankDetails: BankDetails;
+}
+
+interface BankDetails {
+    bankName: string;
+    accountName: string;
+    accountNumber: number;
+    ibanSwiftCode: string | null;
+    currency: string | null;
+    sortCode: string | null;
+    paymentOption: string | null;
+}
+
+interface VerificationDetails {
+    verificationCode: string;
+    reason: string;
+    createdAt: string;
+}
+
 
 export const registerUser = async (
   userInfo: InferType<typeof registerSchema>
@@ -29,7 +68,7 @@ export const registerUser = async (
 interface IArtistLoginAPIResponse {
   accessToken: string;
   refreshToken: string;
-  user: IArtistUser;
+  user: IRegisterationArtistDetails;
 }
 
 export const loginArtistUser = async (userInfo: InferType<typeof loginSchema>) => {

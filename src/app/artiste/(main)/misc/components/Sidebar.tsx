@@ -24,9 +24,9 @@ const Sidebar = ({ className }: { className?: string }) => {
       label: "Upload",
     },
     {
-      href: "/artiste/catalogue",
+      href: "/artiste/catalog",
       icon: MusicSquare,
-      label: "Catalogue",
+      label: "Catalog",
     },
 
     {

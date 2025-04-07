@@ -48,7 +48,7 @@ const RoyaltiesChart = () => {
 
 
     return (
-        <div className="bg-custom-gradient rounded-xl p-6 w-full">
+        <div className="bg-custom-gradient rounded-xl p-6 w-full max-md:max-h-[350px]">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl lg:text-2xl font-bold">Royalties</h2>
                 <div className="flex items-center space-x-2">

@@ -6,32 +6,26 @@ import React, {
     useReducer,
     ReactNode
 } from 'react';
-import { setAxiosDefaultToken } from "@/utils/axios";
-import {  useRouter } from 'next/navigation';
+import APIAxios, { setAxiosDefaultToken } from "@/utils/axios";
+import { useRouter } from 'next/navigation';
 import { clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
+import { AxiosError } from 'axios';
+import { SmallSpinner } from '@/components/icons';
 
 
-export interface IArtistUser {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    reports: any[];
+interface IArtistUser {
     _id: string;
     email: string;
-    password: string;
     stage: string;
-    hasManagement: boolean;
     status: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-    verificationDetails: VerificationDetails;
     artistName: string;
     city: string;
     country: string;
     firstName: string;
     lastName: string;
-    phoneNumber: string;
     bankDetails: BankDetails;
 }
+
 
 interface BankDetails {
     bankName: string;
@@ -42,14 +36,6 @@ interface BankDetails {
     sortCode: string | null;
     paymentOption: string | null;
 }
-
-interface VerificationDetails {
-    verificationCode: string;
-    reason: string;
-    createdAt: string;
-}
-
-
 
 export interface ArtistAuthState {
     artist: IArtistUser | null;
@@ -153,10 +139,10 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         dispatch({ type: 'LOGOUT' });
     };
 
-  
+
     const checkAuthStatus = React.useCallback(async () => {
         const token = await getArtistAccessToken();
-console.log("Token in checkAuthStatus:", token)
+        console.log("Token in checkAuthStatus:", token)
         if (!token) {
             router.push('/login');
             dispatch({ type: 'SET_AUTHENTICATING', payload: false });
@@ -171,22 +157,27 @@ console.log("Token in checkAuthStatus:", token)
             dispatch({ type: 'SET_AUTHENTICATING', payload: false });
             return;
         }
-        // try {
-        //     setAxiosDefaultToken(token)
-        //     const response = await APIAxios.get('/auth/get-user', {
-        //         headers: { Authorization: `Bearer ${token}` }
-        //     });
-        //     dispatch({
-        //         type: 'LOGIN_SUCCESS',
-        //         payload: response.data?.data as IArtistUser
-        //     });
-        // } catch  {
-        //     clearArtistTokens();
-        //     dispatch({ type: 'SET_AUTHENTICATING', payload: false });
-        // }
+
+        try {
+            const { data } = await APIAxios.get<IArtistUser>('/artist/profile', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            dispatch({ type: 'LOGIN_SUCCESS', payload: data });
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                console.log(error.response?.data, token);
+                if (error.response?.status === 401) {
+                    await logout();
+                    dispatch({ type: 'SET_AUTHENTICATING', payload: false });
+                }
+            }
+        }
+
     }, [router, dispatch]);
 
- 
+
     useLayoutEffect(() => {
         checkAuthStatus();
     }, [checkAuthStatus])
@@ -202,18 +193,62 @@ console.log("Token in checkAuthStatus:", token)
                 checkAuthStatus
             }}
         >
-            {children}
+            {
+                state.isAuthenticating ?
+                    <div className="flex items-center justify-center h-screen w-full bg-white">
+                        <SmallSpinner/>
+                    </div> :
+
+                    children 
+            }
         </AuthContext.Provider>
     );
 };
 
+
+
 // Custom hook for using auth context
 export const useAuth = () => {
     const context = useContext(AuthContext);
-
     if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
-
     return context;
 };
+
+
+
+export async function getArtistProfile() {
+    const accessToken = await getArtistAccessToken();
+
+    try {
+        if (!accessToken || !accessToken.trim()) return null;
+
+        const { data } = await APIAxios.get<IArtistUser>("/artist/profile", {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        return data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.log(error.response?.data, accessToken);
+            if (error.response?.status === 401) {
+                await logout();
+            }
+        }
+        return null;
+    }
+}
+
+
+const logout = async () => {
+    try {
+        await fetch("/api/auth/logout", {
+            method: "POST",
+        });
+    } catch (error) {
+        console.error("Error during logout:", error);
+    }
+}

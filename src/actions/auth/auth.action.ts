@@ -77,29 +77,6 @@ export async function clearAdminTokens() {
 }
 
 
-export async function getArtistProfile() {
-  const accessToken = await getArtistAccessToken();
-
-  try {
-    if (!accessToken || !accessToken.trim()) return null;
-
-    const { data } = await APIAxios.get("/artist/profile", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
-    return data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      console.log(error.response?.data, accessToken);
-      if (error.response?.status === 401) {
-        await clearArtistTokens();
-      }
-    }
-    return null;
-  }
-}
 
 
 export async function getAdminProfile() {
@@ -108,18 +85,17 @@ export async function getAdminProfile() {
   try {
     if (!accessToken || !accessToken.trim()) return null;
 
-    const { data } = await APIAxios.get("/admin/profile", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const { data } = await APIAxios.get("/admin/profile");
 
     return data;
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log(error.response?.data, accessToken);
       if (error.response?.status === 401) {
-        await clearAdminTokens();
+        // await clearAdminTokens();
+        await fetch("/api/auth/logout", {
+          method: "POST",
+        });
       }
     }
     return null;

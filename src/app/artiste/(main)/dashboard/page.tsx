@@ -206,9 +206,9 @@ const MusicDashboard = () => {
         </section>
 
 
-        <section className="grid lg:grid-cols-3 gap-5">
+        <section className="grid xl:grid-cols-3 gap-5">
 
-          <div className="bg-custom-gradient rounded-xl p-6 col-span-1 lg:col-span-2">
+          <div className="bg-custom-gradient rounded-xl p-6 col-span-1 xl:col-span-2">
             <div className="flex justify-between items-center mb-4">
               <div>
                 <h2 className="text-xl lg:text-2xl font-bold">Report Summary</h2>
@@ -269,7 +269,7 @@ const MusicDashboard = () => {
                   View Report
                 </Button>
 
-                <section className='border-t border-dashed border-white grid md:grid-cols-2 gap-8 mt-6 pt-6'>
+                <section className='border-t border-dashed border-white grid xl:grid-cols-2 gap-8 mt-6 pt-6'>
 
                   <div className="flex justify-between">
                     <div className="flex items-start">

@@ -1,0 +1,1 @@
+export { useGetAlbums } from './getArtisteAlbums'
