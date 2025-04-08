@@ -9,11 +9,9 @@ import { cn } from "@/lib/utils"
 import { Command, CommandGroup, CommandItem } from "./command"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover-without-portal"
 import FormError from "./form-error"
-// import { CaretDown, SmallSpinner, StrokeCheck } from "./icons"
 import { inputVariants } from "./input"
 import { Checkbox } from "./checkbox"
 import { SmallSpinner } from "../icons"
-import { Button } from "./button"
 
 interface SelectProps<T> {
     values: string[];
@@ -59,7 +57,6 @@ const SelectMultipleCombo = <T extends object>({
     className,
     containerClass,
     itemClass,
-    fullWidth,
     placeHolderClass,
     isLoadingOptions,
     valueKey,

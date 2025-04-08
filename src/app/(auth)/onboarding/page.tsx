@@ -1,7 +1,7 @@
-import { getArtistProfile } from "@/actions/auth/auth.action";
 import OnboardingClientPage from "./onboarding.client";
 import { redirect } from "next/navigation";
 import { onboardingStagesKey, urls } from "@/lib/constants";
+import { getArtistProfile } from "@/contexts/AuthContextArtist";
 const OnboardingPage = async () => {
   const user = await getArtistProfile();
   console.log(user);

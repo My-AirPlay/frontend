@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client"
 
 import type React from "react"
@@ -129,7 +131,7 @@ function TrackEditSheet({
         <SheetHeader>
           <SheetTitle>Edit Track Details</SheetTitle>
           <SheetDescription>
-            Update the information for this track. Check "Same as album" to use album values.
+            Update the information for this track. Check &quot;Same as album&quot; to use album values.
           </SheetDescription>
         </SheetHeader>
 
@@ -718,7 +720,7 @@ export default function TrackUpload() {
       return
     }
 
-    const { valid, errors } = await validateAllTracks();
+    const { valid } = await validateAllTracks();
 
     if (!valid) {
       toast.error("Validation errors", {

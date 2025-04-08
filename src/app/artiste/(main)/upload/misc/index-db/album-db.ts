@@ -1,4 +1,6 @@
-// IndexedDB utility for album uploads
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+
 import { openDB, type DBSchema, type IDBPDatabase } from "idb"
 
 // Define the database schema for album uploads
@@ -36,11 +38,8 @@ interface AlbumUploadDB extends DBSchema {
   }
 }
 
-// Database name and version
 const DB_NAME = "albumUploadDB"
 const DB_VERSION = 1
-
-// Database instance
 let dbPromise: Promise<IDBPDatabase<AlbumUploadDB>> | null = null
 
 // Initialize the database
@@ -71,7 +70,7 @@ export const initAlbumDB = async (): Promise<boolean> => {
   }
 }
 
-// Get the database instance
+
 const getDB = async () => {
   if (!dbPromise) {
     await initAlbumDB()

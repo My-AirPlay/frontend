@@ -1,33 +1,16 @@
 'use client'
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  LineChart, Line, PieChart, Pie, Cell, Area
+  PieChart, Pie, Cell, 
 } from 'recharts';
-import { Cloud, Music, Users, DollarSign, BarChart2, Download, Globe, Calendar, AlertCircle } from 'lucide-react';
+import { Cloud, Users, BarChart2, AlertCircle } from 'lucide-react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Button, LinkButton } from '@/components/ui';
 import { RoyaltiesChart } from './misc/components';
 
-// Custom hook for fetching dashboard data
-export const useDashboardData = () => {
-  return useQuery({
-    queryKey: ['dashboardData'],
-    queryFn: async () => {
-      // Replace with your actual API endpoint
-      const response = await fetch('https://api.example.com/dashboard-data');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: true,
-  });
-};
 
-// Mock data (will be replaced by API data)
+
+// Mock mockData (will be replaced by API mockData)
 const mockData = {
   totalEarnings: 50000,
   userProfiles: [
@@ -73,10 +56,9 @@ const mockData = {
 
 const MusicDashboard = () => {
   // In a real application, you would use the custom hook here
-  // const { data, isLoading, error } = useDashboardData();
+  // const { mockData, isLoading, error } = useDashboardData();
 
-  // For demonstration, we're using the mock data directly
-  const [data, setData] = useState(mockData);
+  // For demonstration, we're using the mock mockData directly
   const isLoading = false;
   const error = null;
   const [currency, setCurrency] = useState("USD");
@@ -90,16 +72,14 @@ const MusicDashboard = () => {
   if (error) return (
     <div className="text-center text-red-500 mt-10 bg-gray-900 p-6">
       <AlertCircle size={48} className="mx-auto mb-4" />
-      <h2 className="text-xl font-bold">Error loading dashboard data</h2>
+      <h2 className="text-xl font-bold">Error loading dashboard mockData</h2>
       <p>Please try again later or contact support.</p>
     </div>
   );
 
-  // Calculate percentage for the pie chart
-  const RADIAN = Math.PI / 180;
   const pieData = [
-    { name: 'Male', value: data.demographics.male, color: '#FF9800' },
-    { name: 'Female', value: data.demographics.female, color: '#FFFFFF' }
+    { name: 'Male', value: mockData.demographics.male, color: '#FF9800' },
+    { name: 'Female', value: mockData.demographics.female, color: '#FFFFFF' }
   ];
 
 
@@ -139,9 +119,9 @@ const MusicDashboard = () => {
               <Icon icon="fa-solid:coins" height={36} width={36} className="text-white" />
               <h2 className="text-xl xl:text-2xl font-bold">Total Earnings</h2>
             </div>
-            <div className="text-4xl font-bold mb-4">₦{data.totalEarnings.toLocaleString()}</div>
+            <div className="text-4xl font-bold mb-4">₦{mockData.totalEarnings.toLocaleString()}</div>
             <div className="flex mt-4">
-              {data.userProfiles.map((profile, index) => (
+              {mockData.userProfiles.map((profile, index) => (
                 <div
                   key={profile.id}
                   className="w-8 h-8 rounded-full border-2 border-secondary"
@@ -161,20 +141,20 @@ const MusicDashboard = () => {
                 <h2 className="text-2xl font-extrabold">Recent Uploads</h2>
               </div>
             </div>
-            <div className="text-4xl font-extrabold mb-4">{data.uploads.total}</div>
+            <div className="text-4xl font-extrabold mb-4">{mockData.uploads.total}</div>
             <div className="flex items-center text-sm text-gray-400 mb-2">
               <Cloud size={16} className="mr-2" />
               <span>Storage</span>
-              <span className="ml-auto text-green-500">+{data.uploads.growth}%</span>
+              <span className="ml-auto text-green-500">+{mockData.uploads.growth}%</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-2 mb-4">
               <div
                 className="bg-gradient-to-r from-primary to-red-500 h-2 rounded-full"
-                style={{ width: `${(data.uploads.used / data.uploads.capacity) * 100}%` }}
+                style={{ width: `${(mockData.uploads.used / mockData.uploads.capacity) * 100}%` }}
               ></div>
             </div>
             <div className="text-xs text-gray-400">
-              {data.uploads.used}/{data.uploads.capacity} GB Used
+              {mockData.uploads.used}/{mockData.uploads.capacity} GB Used
             </div>
           </div>
 
@@ -278,12 +258,12 @@ const MusicDashboard = () => {
                       </div>
                       <div>
                         <div className="text-sm font-medium">Location</div>
-                        <div className="text-xs text-gray-400">{data.geoData.countries} Countries</div>
+                        <div className="text-xs text-gray-400">{mockData.geoData.countries} Countries</div>
                       </div>
                     </div>
 
                     <div className="flex items-center">
-                      {data.geoData.topCountries.map((country, idx) => (
+                      {mockData.geoData.topCountries.map((country, idx) => (
                         <div key={idx} className="text-[0.7rem] bg-gray-700 rounded px-1.5 py-0.5 mr-1">
                           {country}
                         </div>
@@ -298,12 +278,12 @@ const MusicDashboard = () => {
                       </div>
                       <div>
                         <div className="text-sm font-medium">Age Distribution</div>
-                        <div className="text-xs text-gray-400">{data.ageDistribution.range}</div>
+                        <div className="text-xs text-gray-400">{mockData.ageDistribution.range}</div>
                       </div>
                     </div>
 
                     <div className="text-primary font-medium">
-                      {data.ageDistribution.total.toLocaleString()}
+                      {mockData.ageDistribution.total.toLocaleString()}
                     </div>
                   </div>
                 </section>
