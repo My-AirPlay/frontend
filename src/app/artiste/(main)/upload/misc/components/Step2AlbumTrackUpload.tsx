@@ -156,7 +156,19 @@ function TrackEditSheet({
                   name="artistName"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Artist Name</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Artist Name</FormLabel>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Checkbox
+                            id="sameArtist"
+                            checked={sameAsAlbum.artistName}
+                            onCheckedChange={() => toggleSameAsAlbum("artistName")}
+                          />
+                          <Label htmlFor="sameArtist" className="text-[0.7rem] md:text-sm text-white/40">
+                            Same as album
+                          </Label>
+                        </div>
+                      </div>
                       <div className="flex items-center justify-between">
                         <div className="flex-grow">
                           <FormControl>
@@ -164,16 +176,7 @@ function TrackEditSheet({
                           </FormControl>
                           <FormMessage />
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <Checkbox
-                            id="sameArtist"
-                            checked={sameAsAlbum.artistName}
-                            onCheckedChange={() => toggleSameAsAlbum("artistName")}
-                          />
-                          <Label htmlFor="sameArtist" className="text-sm text-gray-500">
-                            Same as album
-                          </Label>
-                        </div>
+
                       </div>
                     </FormItem>
                   )}
@@ -188,7 +191,19 @@ function TrackEditSheet({
                   name="mainGenre"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Main Genre</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Main Genre</FormLabel>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Checkbox
+                            id="sameGenre"
+                            checked={sameAsAlbum.mainGenre}
+                            onCheckedChange={() => toggleSameAsAlbum("mainGenre")}
+                          />
+                          <Label htmlFor="sameGenre" className="text-[0.7rem] md:text-sm text-white/40">
+                            Same as album
+                          </Label>
+                        </div>
+                      </div>
                       <div className="flex items-center justify-between">
                         <div className="flex-grow">
                           <FormControl>
@@ -205,16 +220,6 @@ function TrackEditSheet({
                           </FormControl>
                           <FormMessage />
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <Checkbox
-                            id="sameGenre"
-                            checked={sameAsAlbum.mainGenre}
-                            onCheckedChange={() => toggleSameAsAlbum("mainGenre")}
-                          />
-                          <Label htmlFor="sameGenre" className="text-sm text-gray-500">
-                            Same as album
-                          </Label>
-                        </div>
                       </div>
                     </FormItem>
                   )}
@@ -229,34 +234,35 @@ function TrackEditSheet({
                   name="streamingPlatforms"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Streaming PLatforms</FormLabel>
                       <div className="flex items-center justify-between">
-                        <div className="flex-grow">
-                          <FormControl>
-                            <SelectMultipleCombo
-                              name="streamingPlatforms"
-                              onChange={field.onChange}
-                              options={streamingPlatformOptions}
-                              values={field.value}
-                              labelKey="label"
-                              valueKey="value"
-                              placeholder="Select multiple streaming platforms"
-                              isLoadingOptions={isLoadingOptions}
-                              disabled={sameAsAlbum.streamingPlatforms}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </div>
+                        <FormLabel>Streaming Platforms</FormLabel>
                         <div className="flex items-center gap-2 ml-4">
                           <Checkbox
                             id="samePlatforms"
                             checked={sameAsAlbum.streamingPlatforms}
                             onCheckedChange={() => toggleSameAsAlbum("streamingPlatforms")}
                           />
-                          <Label htmlFor="samePlatforms" className="text-sm text-gray-500">
+                          <Label htmlFor="samePlatforms" className="text-[0.7rem] md:text-sm text-white/40">
                             Same as album
                           </Label>
                         </div>
+                      </div>
+                      <div className="">
+                        <FormControl>
+                          <SelectMultipleCombo
+                            name="streamingPlatforms"
+                            containerClass="max-w-full"
+                            onChange={field.onChange}
+                            options={streamingPlatformOptions}
+                            values={field.value}
+                            labelKey="label"
+                            valueKey="value"
+                            placeholder="Select multiple streaming platforms"
+                            isLoadingOptions={isLoadingOptions}
+                            disabled={sameAsAlbum.streamingPlatforms}
+                          />
+                        </FormControl>
+                        <FormMessage />
                       </div>
                     </FormItem>
                   )}
@@ -288,30 +294,31 @@ function TrackEditSheet({
                   name="releaseDate"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Release Date</FormLabel>
                       <div className="flex items-center justify-between">
-                        <div className="flex-grow">
-                          <FormControl>
-                            <Input
-                              type="date"
-                              value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
-                              onChange={(e) => field.onChange(e.target.value)}
-                              disabled={sameAsAlbum.releaseDate}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </div>
+                        <FormLabel>Release Date</FormLabel>
                         <div className="flex items-center gap-2 ml-4">
                           <Checkbox
                             id="sameDate"
                             checked={sameAsAlbum.releaseDate}
                             onCheckedChange={() => toggleSameAsAlbum("releaseDate")}
                           />
-                          <Label htmlFor="sameDate" className="text-sm text-gray-500">
+                          <Label htmlFor="sameDate" className="text-[0.7rem] md:text-[0.7rem] md:text-sm text-white/40">
                             Same as album
                           </Label>
                         </div>
                       </div>
+                      <div className="flex-grow">
+                        <FormControl>
+                          <Input
+                            type="date"
+                            value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
+                            onChange={(e) => field.onChange(e.target.value)}
+                            disabled={sameAsAlbum.releaseDate}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </div>
+
                     </FormItem>
                   )}
                 />
@@ -325,7 +332,19 @@ function TrackEditSheet({
                   name="recordLabel"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Record Label</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Record Label</FormLabel>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Checkbox
+                            id="sameLabel"
+                            checked={sameAsAlbum.recordLabel}
+                            onCheckedChange={() => toggleSameAsAlbum("recordLabel")}
+                          />
+                          <Label htmlFor="sameLabel" className="text-[0.7rem] md:text-sm text-white/40">
+                            Same as album
+                          </Label>
+                        </div>
+                      </div>
                       <div className="flex items-center justify-between">
                         <div className="flex-grow">
                           <FormControl>
@@ -333,16 +352,7 @@ function TrackEditSheet({
                           </FormControl>
                           <FormMessage />
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <Checkbox
-                            id="sameLabel"
-                            checked={sameAsAlbum.recordLabel}
-                            onCheckedChange={() => toggleSameAsAlbum("recordLabel")}
-                          />
-                          <Label htmlFor="sameLabel" className="text-sm text-gray-500">
-                            Same as album
-                          </Label>
-                        </div>
+
                       </div>
                     </FormItem>
                   )}
@@ -357,23 +367,25 @@ function TrackEditSheet({
                   name="publisher"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Publisher</FormLabel>
                       <div className="flex items-center justify-between">
-                        <div className="flex-grow">
-                          <FormControl>
-                            <Input {...field} disabled={sameAsAlbum.publisher} />
-                          </FormControl>
-                          <FormMessage />
-                        </div>
+                        <FormLabel>Publisher</FormLabel>
                         <div className="flex items-center gap-2 ml-4">
                           <Checkbox
                             id="samePublisher"
                             checked={sameAsAlbum.publisher}
                             onCheckedChange={() => toggleSameAsAlbum("publisher")}
                           />
-                          <Label htmlFor="samePublisher" className="text-sm text-gray-500">
+                          <Label htmlFor="samePublisher" className="text-[0.7rem] md:text-sm text-white/40">
                             Same as album
                           </Label>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-grow">
+                          <FormControl>
+                            <Input {...field} disabled={sameAsAlbum.publisher} />
+                          </FormControl>
+                          <FormMessage />
                         </div>
                       </div>
                     </FormItem>
@@ -413,7 +425,19 @@ function TrackEditSheet({
                   name="copyright"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel>Copyright</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Copyright</FormLabel>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Checkbox
+                            id="sameCopyright"
+                            checked={sameAsAlbum.copyright}
+                            onCheckedChange={() => toggleSameAsAlbum("copyright")}
+                          />
+                          <Label htmlFor="sameCopyright" className="text-[0.7rem] md:text-sm text-white/40">
+                            Same as album
+                          </Label>
+                        </div>
+                      </div>
                       <div className="flex items-center justify-between">
                         <div className="flex-grow">
                           <FormControl>
@@ -421,16 +445,7 @@ function TrackEditSheet({
                           </FormControl>
                           <FormMessage />
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
-                          <Checkbox
-                            id="sameCopyright"
-                            checked={sameAsAlbum.copyright}
-                            onCheckedChange={() => toggleSameAsAlbum("copyright")}
-                          />
-                          <Label htmlFor="sameCopyright" className="text-sm text-gray-500">
-                            Same as album
-                          </Label>
-                        </div>
+
                       </div>
                     </FormItem>
                   )}
@@ -484,7 +499,7 @@ function TrackEditSheet({
               )}
             />
 
-            <SheetFooter className="pt-4">
+            <SheetFooter className="flex gap-4 pt-4">
               <Button variant="outline" onClick={onClose} type="button">
                 Cancel
               </Button>

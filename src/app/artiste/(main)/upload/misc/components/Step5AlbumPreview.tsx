@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Upload, Loader2 } from "lucide-react"
@@ -11,8 +12,18 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 import { useUploadAlbum } from "../api"
 import { useAlbumUploadStore } from "../store"
+import useBooleanStateControl from "@/hooks/useBooleanStateControl"
+import { CustomAlertDialog } from "@/components/ui"
 
 export default function Step5AlbumPreview() {
+  const {
+    state: isUploadStatusModalOpen,
+    setTrue: openUploadStatusModal,
+    setFalse: closeUploadStatusModal,
+    setState: setUploadStatusModalOpen,
+  } = useBooleanStateControl()
+  const router = useRouter();
+
   const {
     albumInfo,
     coverArtId,
@@ -24,19 +35,19 @@ export default function Step5AlbumPreview() {
     getCoverArtFile,
     getMediaFile,
     isDBInitialized,
+    initializeDB,
+    clearStore
   } = useAlbumUploadStore()
 
-  const [isUploading, setIsUploading] = useState(false)
   const [coverArtFile, setCoverArtFile] = useState<File | null>(null)
   const [mediaFiles, setMediaFiles] = useState<File[]>([])
   const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null)
   const isAlbumType = albumType === "Album" || albumType === "ExtendedPlaylist" || albumType === "MixTape"
 
-  // Load files from IndexedDB
   useEffect(() => {
     const loadFiles = async () => {
+      if (!isDBInitialized) { await initializeDB() }
       if (isDBInitialized) {
-        // Load cover art
         if (coverArtId) {
           const file = await getCoverArtFile()
           if (file) {
@@ -45,7 +56,6 @@ export default function Step5AlbumPreview() {
           }
         }
 
-        // Load media files
         if (mediaFileIds.length > 0) {
           const files: File[] = []
           for (const id of mediaFileIds) {
@@ -62,7 +72,6 @@ export default function Step5AlbumPreview() {
     loadFiles()
   }, [coverArtId, mediaFileIds, getCoverArtFile, getMediaFile, isDBInitialized])
 
-  // Clean up object URLs when component unmounts
   useEffect(() => {
     return () => {
       if (coverArtPreview) {
@@ -88,17 +97,15 @@ export default function Step5AlbumPreview() {
     }
   }
 
-  const { mutate } = useUploadAlbum()
+  const { mutate, isPending, status } = useUploadAlbum()
 
   const handleSubmit = async () => {
-    setIsUploading(true)
 
     try {
       if (!coverArtFile || mediaFiles.length === 0 || albumTracks.length === 0) {
         toast.error("Missing required data", {
           description: "Please make sure you have uploaded a cover art and at least one track.",
         })
-        setIsUploading(false)
         return
       }
 
@@ -125,7 +132,6 @@ export default function Step5AlbumPreview() {
           toast.success("Upload successful", {
             description: `Your ${albumType?.toLowerCase()} has been uploaded successfully.`,
           })
-          setCurrentStep("complete")
         },
         onError: (error) => {
           console.error("Upload failed:", error)
@@ -140,7 +146,8 @@ export default function Step5AlbumPreview() {
         description: "There was an error uploading your content. Please try again.",
       })
     } finally {
-      setIsUploading(false)
+      openUploadStatusModal()
+
     }
   }
 
@@ -293,16 +300,12 @@ export default function Step5AlbumPreview() {
           </Card>
         </div>
 
-        <div className="flex justify-between mt-8">
-          <Button onClick={handleBack} variant="outline" className="px-6" disabled={isUploading}>
+        <footer className="flex justify-between mt-8">
+          <Button onClick={handleBack} variant="outline" disabled={isPending} size="lg">
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
-          <Button
-            onClick={handleSubmit}
-            className="bg-brand hover:bg-brand-hover text-white px-6"
-            disabled={isUploading}
-          >
-            {isUploading ? (
+          <Button onClick={handleSubmit} className="" disabled={isPending} size="lg">
+            {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...
               </>
@@ -312,8 +315,36 @@ export default function Step5AlbumPreview() {
               </>
             )}
           </Button>
-        </div>
+        </footer>
       </div>
+
+      <CustomAlertDialog
+        variant={status === "success" ? "success" : "error"}
+        open={status != "idle" && !isPending && isUploadStatusModalOpen}
+        onOpenChange={setUploadStatusModalOpen}
+        title={status === "success" ? "Upload Successful" : "Upload Failed"}
+        description={
+          status === "success"
+            ? "File upload completed successfully. Go to uploads to view uploaded content!"
+            : "There was an error uploading your content. Please try again."
+        }
+        actionLabel={status === "success" ? "Go to Uploads" : "Retry"}
+        cancelLabel="Back to Submit"
+        onAction={() => {
+          if (status === "success") {
+            clearStore()
+            router.push("/artiste/catalog")
+            closeUploadStatusModal()
+          } else {
+            closeUploadStatusModal()
+          }
+        }}
+        onCancel={() => {
+          closeUploadStatusModal()
+        }}
+        showCancel={status !== "success"}
+        showAction={true}
+      />
     </div>
   )
 }

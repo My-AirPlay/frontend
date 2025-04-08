@@ -207,11 +207,10 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 
 
 
-// Custom hook for using auth context
-export const useAuth = () => {
+export const useArtisteContext = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+        throw new Error('useArtisteContext must be used within an AuthProvider');
     }
     return context;
 };

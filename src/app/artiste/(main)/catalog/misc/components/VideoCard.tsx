@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import Image from 'next/image'
 import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight } from 'lucide-react'
 import { format } from 'date-fns'
-import { Musicnote } from 'iconsax-react'
+import { Video } from 'iconsax-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -40,7 +40,7 @@ type MediaUpdateFormValues = z.infer<typeof mediaUpdateSchema>
 
 
 
-const AudioCard = ({ audio }: {
+const VideoCard = ({ audio }: {
     audio: TArtistMedia,
 }) => {
     const {
@@ -148,7 +148,7 @@ const AudioCard = ({ audio }: {
                     fill
                     onError={() => setImageError(true)}
                 />
-                {imageError && <Musicnote size={60} className="stroke-white z-[3]" />}
+                {imageError && <Video size={60} className="stroke-white z-[3]" />}
             </div>
             <footer className="px-3">
                 <h6>
@@ -172,7 +172,7 @@ const AudioCard = ({ audio }: {
                                         fill
                                         onError={() => setImageError(true)}
                                     />
-                                    {imageError && <Musicnote size={60} className="stroke-white z-[3]" />}
+                                    {imageError && <Video size={60} className="stroke-white z-[3]" />}
                                 </div>
 
                                 <div className="flex flex-col justify-between">
@@ -511,11 +511,11 @@ const AudioCard = ({ audio }: {
     )
 }
 
-export default AudioCard
+export default VideoCard
 
 
 
-export const AudioCardSkeleton = () => {
+export const VideoCardSkeleton = () => {
     return (
         <div className="relative flex flex-col gap-4 rounded-xl max-h-[280px]">
             <div className="absolute top-2 right-2 z-[3]">

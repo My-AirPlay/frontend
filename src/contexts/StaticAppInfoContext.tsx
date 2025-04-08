@@ -1,9 +1,9 @@
 "use client"
 import React, { createContext, useContext, ReactNode, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { toast } from "sonner";
 import APIAxios from "@/utils/axios";
+import { convertKebabAndSnakeToTitleCase } from "@/utils/strings";
 
 export interface TStaticData {
     Currency: Record<string, string>;
@@ -55,12 +55,7 @@ interface StaticAppInfoContextProps {
 
 const StaticAppInfoContext = createContext<StaticAppInfoContextProps | undefined>(undefined);
 
-function convertToTitleCase(str: string): string {
-    return str
-        .split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-}
+
 
 async function fetchStaticAppInfo(): Promise<TStaticData> {
     try {
@@ -87,9 +82,9 @@ export function StaticAppInfoProvider({ children }: { children: ReactNode }) {
         const formatted: any = {};
         
         Object.entries(rawData).forEach(([category, items]) => {
-            formatted[category] = Object.entries(items || {}).map(([value, label]) => ({
-                value: convertToTitleCase(value),
-                label: label,
+            formatted[category] = Object.entries(items || {}).map(([label, value]) => ({
+                value: value as string,
+                label: convertKebabAndSnakeToTitleCase(label as string),
             }));
         });
 
