@@ -42,14 +42,11 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 
 
 
-// Upload album function using Axios
 export const uploadAlbum = async (payload: UploadAlbumPayload) => {
   const formData = new FormData();
   
-  // Add album cover
   formData.append("albumCover", payload.albumCover);
   
-  // Add basic album info
   formData.append("description", payload.description);
   formData.append("title", payload.title);
   formData.append("artistName", payload.artistName);
@@ -62,7 +59,6 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
   formData.append("releaseVersion", payload.releaseVersion);
   formData.append("copyright", payload.copyright);
   
-  // Handle arrays
   if (payload.secondaryGenres?.length) {
     payload.secondaryGenres.forEach((genre, i) => {
       formData.append(`secondaryGenres[${i}]`, genre);
@@ -81,17 +77,18 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
     });
   }
   
-//   // Add media files
-//   if (payload.mediaFiles?.length) {
-//     payload.mediaFiles.forEach(file => {
-//       formData.append("mediaFiles", file);
-//     });
-//   }
+  // Add media files
+  if (payload.mediaFiles?.length) {
+    payload.mediaFiles.forEach(file => {
+      formData.append("mediaFiles", file);
+    });
+  }
   
   // Add track info for each track
   if (payload.media?.length) {
     payload.media.forEach((track, i) => {
       Object.entries(track).forEach(([key, value]) => {
+        if(key == "fileId" ) return;
         if (!Array.isArray(value)) {
           formData.append(`media[${i}][${key}]`, value || '');
         } else if (key === 'secondaryGenres' || key === 'instruments' || key === 'streamingPlatforms') {

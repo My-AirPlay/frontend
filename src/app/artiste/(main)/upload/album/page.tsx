@@ -45,8 +45,7 @@ export default function AlbumUploadFlow() {
   
 
   const showSteps = currentStep !== 'selection' && currentStep !== 'complete'
-  
-  // Render the current step component
+
   const renderCurrentStep = () => {
     switch (currentStep) {
       case 'musicInfo':
