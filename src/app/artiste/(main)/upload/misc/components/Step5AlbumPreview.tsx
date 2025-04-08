@@ -332,8 +332,8 @@ export default function Step5AlbumPreview() {
         cancelLabel="Back to Submit"
         onAction={() => {
           if (status === "success") {
-            clearStore()
             router.push("/artiste/catalog")
+            clearStore()
             closeUploadStatusModal()
           } else {
             closeUploadStatusModal()

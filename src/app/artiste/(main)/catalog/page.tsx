@@ -45,7 +45,7 @@ const Catalogue = () => {
               value="albums"
               className="flex gap-3 group/albums data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4"
             >
-              <Folder size={18} variant="Bold" className='fill-white group-data-[state=active]/videos:fill-primary' />
+              <Folder size={18} variant="Bold" className='fill-white group-data-[state=active]/albums:fill-primary' />
               Albums
             </TabsTrigger>
           </Link>

@@ -27,7 +27,7 @@ const SectionAudios = () => {
                     )
                         :
 
-                        <div className="grid [grid-template-columns:repeat(auto-fill,minmax(230px,1fr))] gap-4 p-4">
+                        <div className="grid [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))] gap-4 p-4">
                             {
                                 isLoading ? Array.from({ length: 10 }).map((_, index) => (
                                     <AudioCardSkeleton key={`${_}${index}`} />

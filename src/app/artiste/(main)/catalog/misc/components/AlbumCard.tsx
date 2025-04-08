@@ -11,14 +11,16 @@ import { Button, ReusableDropdownMenu, Dialog, DialogContent, Sheet, SheetConten
 
 import useBooleanStateControl from '@/hooks/useBooleanStateControl'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
+import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { Input, SelectSimple } from '@/components/ui'
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext'
 import { SmallSpinner } from '@/components/icons'
 
-import { useDeleteMedia, useUpdateMedia } from '../api'
-import { TArtistMedia } from '../api/getArtisteMedias'
+
+import { TArtisteAlbum } from '../api/getArtisteAlbums'
+import { useDeleteAlbum, useUpdateAlbum } from '../api'
+
 
 
 const mediaUpdateSchema = z.object({
@@ -31,7 +33,6 @@ const mediaUpdateSchema = z.object({
     publisher: z.string().min(1, "Publisher is required"),
     copyright: z.string().min(1, "Copyright is required"),
     explicitContent: z.string().min(1, "Please select an option"),
-    lyrics: z.string().optional(),
     universalProductCode: z.string().min(1, "UPC is required"),
     releaseVersion: z.string().min(1, "Release version is required"),
 })
@@ -40,8 +41,8 @@ type MediaUpdateFormValues = z.infer<typeof mediaUpdateSchema>
 
 
 
-const AudioCard = ({ audio }: {
-    audio: TArtistMedia,
+const AlbumCard = ({ album }: {
+    album: TArtisteAlbum,
 }) => {
     const {
         state: isViewDetailsDialogOpen,
@@ -55,22 +56,21 @@ const AudioCard = ({ audio }: {
         setState: setIsEditSheetState
     } = useBooleanStateControl()
 
+
     const [imageError, setImageError] = React.useState(false)
 
-
     const defaultValues: MediaUpdateFormValues = {
-        title: audio.title,
-        artistName: audio.artistName || "",
-        mainGenre: audio.mainGenre || "",
-        releaseDate: audio.releaseDate ? new Date(audio.releaseDate).toISOString().split('T')[0] : "",
-        description: audio.description || "",
-        recordLabel: audio.recordLabel || "",
-        publisher: audio.publisher || "",
-        copyright: audio.copyright || "",
-        explicitContent: audio.explicitContent || "No",
-        lyrics: audio.lyrics || "",
-        universalProductCode: audio.universalProductCode || "",
-        releaseVersion: audio.releaseVersion || "",
+        title: album.title,
+        artistName: album.artistName || "",
+        mainGenre: album.mainGenre || "",
+        releaseDate: album.releaseDate ? new Date(album.releaseDate).toISOString().split('T')[0] : "",
+        description: album.description || "",
+        recordLabel: album.recordLabel || "",
+        publisher: album.publisher || "",
+        copyright: album.copyright || "",
+        explicitContent: album.explicitContent || "No",
+        universalProductCode: album.universalProductCode || "",
+        releaseVersion: album.releaseVersion || "",
     }
 
     const form = useForm<MediaUpdateFormValues>({
@@ -78,23 +78,22 @@ const AudioCard = ({ audio }: {
         defaultValues,
         mode: "onChange"
     })
-
     const { handleSubmit, formState: { errors, isValid } } = form
     const { formattedData, isLoading: isLoadingStaticData } = useStaticAppInfo();
-    const { mutate: updateMedia, isPending: isUpdatingMedia } = useUpdateMedia();
-    const { mutate: deleteMedia, isPending: isDeletingMedia } = useDeleteMedia();
+    const { mutate: updateMedia, isPending: isUpdatinAlbum } = useUpdateAlbum();
+    const { mutate: deleteMedia, isPending: isDeletingAlbum } = useDeleteAlbum();
     const onSubmit = (data: MediaUpdateFormValues) => {
-        const updatedAudio = {
-            ...audio,
+        const updatedAlbum = {
+            ...album,
             ...data
         }
-        updateMedia(updatedAudio, {
+        updateMedia(updatedAlbum, {
             onSuccess() {
-                toast.success("Audio track updated successfully")
+                toast.success("Album track updated successfully")
                 setIsEditSheetState(false)
             },
             onError() {
-                toast.error("Failed to update audio track")
+                toast.error("Failed to update album track")
             }
         })
     }
@@ -106,16 +105,19 @@ const AudioCard = ({ audio }: {
         setState: setConfirmDeleteModalState
     } = useBooleanStateControl();
     const handleDelete = () => {
-        deleteMedia(audio._id, {
+        deleteMedia(album._id, {
             onSuccess() {
-                toast.success("Audio track deleted successfully")
+                toast.success("Album track deleted successfully")
                 setIsEditSheetState(false)
             },
             onError() {
-                toast.error("Failed to delete audio track")
+                toast.error("Failed to delete album track")
             }
         })
     }
+
+
+
 
 
     return (
@@ -159,8 +161,8 @@ const AudioCard = ({ audio }: {
                 onClick={openViewDetailsDialog}
             >
                 <Image
-                    src={audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'}
-                    alt={audio.title}
+                    src={album.mediaDirCoverArtUrl}
+                    alt={album.title}
                     className="object-cover rounded-xl z-[2] text-opacity-0 text-[0px]"
                     priority={true}
                     fill
@@ -170,7 +172,7 @@ const AudioCard = ({ audio }: {
             </div>
             <footer className="px-3">
                 <h6>
-                    {audio.title}
+                    {album.title}
                 </h6>
             </footer>
 
@@ -184,8 +186,8 @@ const AudioCard = ({ audio }: {
                             <div className="flex gap-6 mb-4 p-4">
                                 <div className="relative w-32 h-32 flex items-center justify-center">
                                     <Image
-                                        src={audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'}
-                                        alt={audio.title}
+                                        src={album.mediaDirCoverArtUrl}
+                                        alt={album.title}
                                         className="object-cover rounded-lg text-opacity-0 text-[0px]"
                                         fill
                                         onError={() => setImageError(true)}
@@ -196,9 +198,9 @@ const AudioCard = ({ audio }: {
                                 <div className="flex flex-col justify-between">
                                     <div>
                                         <div className="text-orange-500 text-sm">
-                                            Released • {audio.releaseDate ? format(new Date(audio.releaseDate), 'MMM dd yyyy') : 'No date'}
+                                            Released • {album.releaseDate ? format(new Date(album.releaseDate), 'MMM dd yyyy') : 'No date'}
                                         </div>
-                                        <h2 className="text-xl font-bold mt-2">{audio.title}</h2>
+                                        <h2 className="text-xl font-bold mt-2">{album.title}</h2>
                                     </div>
 
                                     <Button
@@ -216,48 +218,48 @@ const AudioCard = ({ audio }: {
                                 <div className="grid grid-cols-2 gap-y-6">
                                     <div>
                                         <div className="text-white/50 text-sm">Artist Name</div>
-                                        <div>{audio.artistName}</div>
+                                        <div>{album.artistName}</div>
                                     </div>
 
                                     <div>
                                         <div className="text-white/50 text-sm">Publisher Name</div>
-                                        <div>{audio.publisher}</div>
+                                        <div>{album.publisher}</div>
                                     </div>
 
                                     <div>
                                         <div className="text-white/50 text-sm">Genre</div>
-                                        <div>{audio.mainGenre}</div>
+                                        <div>{album.mainGenre}</div>
                                     </div>
 
                                     <div>
                                         <div className="text-white/50 text-sm">Record Label</div>
-                                        <div>{audio.recordLabel}</div>
+                                        <div>{album.recordLabel}</div>
                                     </div>
 
                                     <div>
                                         <div className="text-white/50 text-sm">Explicit</div>
-                                        <div>{audio.explicitContent === 'true' ? 'Rated 18' : 'No'}</div>
+                                        <div>{album.explicitContent === 'true' ? 'Rated 18' : 'No'}</div>
                                     </div>
 
                                     <div>
                                         <div className="text-white/50 text-sm">Artist Name</div>
-                                        <div>{audio.artistName}</div>
+                                        <div>{album.artistName}</div>
                                     </div>
 
                                     <div>
                                         <div className="text-white/50 text-sm">Instruments</div>
-                                        <div>{audio.instruments?.length ? audio.instruments.join(', ') : 'None'}</div>
+                                        <div>{album.instruments?.length ? album.instruments.join(', ') : 'None'}</div>
                                     </div>
 
                                     <div>
                                         <div className="text-white/50 text-sm">Copyright</div>
-                                        <div>{audio.copyright ? 'Yes' : 'No'}</div>
+                                        <div>{album.copyright ? 'Yes' : 'No'}</div>
                                     </div>
                                 </div>
 
                                 <div className="mt-6">
                                     <div className="text-white/50 text-sm">Description</div>
-                                    <p className="mt-2">{audio.description}</p>
+                                    <p className="mt-2">{album.description}</p>
                                 </div>
                             </div>
                         </div>
@@ -269,7 +271,7 @@ const AudioCard = ({ audio }: {
             <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetState}>
                 <SheetContent className="w-full md:max-w-md overflow-y-auto">
                     <SheetHeader>
-                        <SheetTitle>Edit Audio Track</SheetTitle>
+                        <SheetTitle>Edit Album</SheetTitle>
                     </SheetHeader>
 
                     <div className="py-6">
@@ -488,23 +490,6 @@ const AudioCard = ({ audio }: {
                                         )}
                                     />
 
-                                    <FormField
-                                        control={form.control}
-                                        name="lyrics"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Lyrics</FormLabel>
-                                                <FormControl>
-                                                    <Textarea
-                                                        placeholder="Enter lyrics"
-                                                        className="min-h-32"
-                                                        {...field}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
                                 </div>
 
                                 <div className="flex justify-center mt-8">
@@ -516,7 +501,7 @@ const AudioCard = ({ audio }: {
                                     >
                                         Update Track <ArrowRight className="ml-2 h-4 w-4" />
                                         {
-                                            isUpdatingMedia && <SmallSpinner className='ml-1.5' />
+                                            isUpdatinAlbum && <SmallSpinner className='ml-1.5' />
                                         }
                                     </Button>
                                 </div>
@@ -532,24 +517,24 @@ const AudioCard = ({ audio }: {
                 open={isConfirmDeleteModalOpen}
                 onOpenChange={setConfirmDeleteModalState}
                 title={"Confirm Delete"}
-                description={"Are you sure you want to delete this audio track? This action cannot be undone."}
+                description={"Are you sure you want to delete this album track? This action cannot be undone."}
                 actionLabel={"Go ahead, delete"}
                 cancelLabel="Cancel"
                 onAction={handleDelete}
                 onCancel={closeConfirmDeleteModal}
                 showCancel={true}
                 showAction={true}
-                isPerformingAction={isDeletingMedia}
+                isPerformingAction={isDeletingAlbum}
             />
         </article>
     )
 }
 
-export default AudioCard
+export default AlbumCard
 
 
 
-export const AudioCardSkeleton = () => {
+export const AlbumCardSkeleton = () => {
     return (
         <div className="relative flex flex-col gap-4 rounded-xl max-h-[280px]">
             <div className="absolute top-2 right-2 z-[3]">

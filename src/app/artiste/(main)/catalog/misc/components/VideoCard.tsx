@@ -137,7 +137,7 @@ const VideoCard = ({ audio }: {
                 />
             </header>
             <div
-                className='flex items-center justify-center relative max-h-[200px] aspect-square'
+                className='flex items-center justify-center relative max-h-[150px] aspect-square'
                 onClick={openViewDetailsDialog}
             >
                 <Image
@@ -521,7 +521,7 @@ export const VideoCardSkeleton = () => {
             <div className="absolute top-2 right-2 z-[3]">
                 <Skeleton className="w-8 h-8 rounded-full bg-gray-800" />
             </div>
-            <div className="h-full min-h-[150px] relative">
+            <div className="h-full min-h-[120px] relative">
                 <Skeleton className="w-full h-full rounded-xl bg-gray-800" />
             </div>
             <div className="px-2">
