@@ -3,7 +3,7 @@ import APIAxios from "@/utils/axios";
 import { useQuery } from "@tanstack/react-query";
 
 type FetchOptions = {
-    size?: number;
+    limit?: number;
     page?: number;
 }
 

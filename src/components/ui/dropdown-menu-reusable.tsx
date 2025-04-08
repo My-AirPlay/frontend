@@ -47,16 +47,13 @@ export function ReusableDropdownMenu({
     return items.map((item, index) => {
       const Icon = item.icon
 
-      // Create a unique key for each item
       const key = `${item.label}-${index}`
 
-      // Render items
       return (
         <React.Fragment key={key}>
           {item.dividerTop && <DropdownMenuSeparator />}
 
           {item.subItems ? (
-            // Render submenu if subItems exist
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className={cn(item.className)} disabled={item.disabled}>
                 {Icon}
@@ -67,7 +64,6 @@ export function ReusableDropdownMenu({
               </DropdownMenuPortal>
             </DropdownMenuSub>
           ) : (
-            // Render regular item
             <DropdownMenuItem onClick={item.onClick} className={cn(item.className)} disabled={item.disabled}>
               {Icon}
               {item.label}

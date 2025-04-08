@@ -1,59 +1,105 @@
+"use client"
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Upload, Loader2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useUploadAlbum } from "../api";
-import { toast } from "sonner";
-import { useAlbumUploadStore } from "../store";
-import Image from "next/image";
+import { useState, useEffect } from "react"
+import { toast } from "sonner"
+import Image from "next/image"
 
-export default function PreviewForm() {
+import { Button } from "@/components/ui/button"
+import { ArrowLeft, Upload, Loader2 } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ScrollArea } from "@/components/ui/scroll-area"
+
+import { useUploadAlbum } from "../api"
+import { useAlbumUploadStore } from "../store"
+
+export default function Step5AlbumPreview() {
   const {
     albumInfo,
-    coverArtFile,
+    coverArtId,
     setCurrentStep,
     albumType,
     streamingPlatforms,
     albumTracks,
-    mediaFiles,
-  } = useAlbumUploadStore();
+    mediaFileIds,
+    getCoverArtFile,
+    getMediaFile,
+    isDBInitialized,
+  } = useAlbumUploadStore()
 
-  const [isUploading, setIsUploading] = useState(false);
-  const isAlbumType = albumType === 'Album' || albumType === 'ExtendedPlaylist' || albumType === 'MixTape';
+  const [isUploading, setIsUploading] = useState(false)
+  const [coverArtFile, setCoverArtFile] = useState<File | null>(null)
+  const [mediaFiles, setMediaFiles] = useState<File[]>([])
+  const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null)
+  const isAlbumType = albumType === "Album" || albumType === "ExtendedPlaylist" || albumType === "MixTape"
+
+  // Load files from IndexedDB
+  useEffect(() => {
+    const loadFiles = async () => {
+      if (isDBInitialized) {
+        // Load cover art
+        if (coverArtId) {
+          const file = await getCoverArtFile()
+          if (file) {
+            setCoverArtFile(file)
+            setCoverArtPreview(URL.createObjectURL(file))
+          }
+        }
+
+        // Load media files
+        if (mediaFileIds.length > 0) {
+          const files: File[] = []
+          for (const id of mediaFileIds) {
+            const file = await getMediaFile(id)
+            if (file) {
+              files.push(file)
+            }
+          }
+          setMediaFiles(files)
+        }
+      }
+    }
+
+    loadFiles()
+  }, [coverArtId, mediaFileIds, getCoverArtFile, getMediaFile, isDBInitialized])
+
+  // Clean up object URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      if (coverArtPreview) {
+        URL.revokeObjectURL(coverArtPreview)
+      }
+    }
+  }, [coverArtPreview])
 
   const handleBack = () => {
-    setCurrentStep('distribution');
-  };
+    setCurrentStep("distribution")
+  }
 
   const formatDate = (dateString: string) => {
     try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
+      const date = new Date(dateString)
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
     } catch {
-      return dateString;
+      return dateString
     }
-  };
-
-
+  }
 
   const { mutate } = useUploadAlbum()
 
   const handleSubmit = async () => {
-    setIsUploading(true);
+    setIsUploading(true)
 
     try {
       if (!coverArtFile || mediaFiles.length === 0 || albumTracks.length === 0) {
         toast.error("Missing required data", {
           description: "Please make sure you have uploaded a cover art and at least one track.",
-        });
-        setIsUploading(false);
-        return;
+        })
+        setIsUploading(false)
+        return
       }
 
       const albumPayload = {
@@ -64,52 +110,45 @@ export default function PreviewForm() {
         artistName: albumInfo.artistName,
         mainGenre: albumInfo.mainGenre,
         releaseDate: albumInfo.releaseDate,
-        recordLabel: albumInfo.recordLabel || '',
+        recordLabel: albumInfo.recordLabel || "",
         publisher: albumInfo.publisher,
-        explicitContent: albumInfo.explicitContent || 'false',
+        explicitContent: albumInfo.explicitContent || "false",
         universalProductCode: albumInfo.universalProductCode,
         releaseVersion: albumInfo.releaseVersion,
         copyright: albumInfo.copyright,
         streamingPlatforms,
-        media: albumTracks
-      };
+        media: albumTracks,
+      }
 
       mutate(albumPayload, {
         onSuccess: () => {
           toast.success("Upload successful", {
             description: `Your ${albumType?.toLowerCase()} has been uploaded successfully.`,
-          });
-          setCurrentStep('complete');
+          })
+          setCurrentStep("complete")
         },
         onError: (error) => {
-          console.error("Upload failed:", error);
+          console.error("Upload failed:", error)
           toast.error("Upload failed", {
-            description: "There was an error uploading your content. Please try again."
-          });
-        }
+            description: "There was an error uploading your content. Please try again.",
+          })
+        },
       })
-
-
-
     } catch (error) {
-      console.error("Upload failed:", error);
+      console.error("Upload failed:", error)
       toast.error("Upload failed", {
         description: "There was an error uploading your content. Please try again.",
-      });
+      })
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
     }
-  };
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="bg-card rounded-lg p-6">
-        <h2 className="text-brand text-center text-xl font-semibold mb-2">
-          {albumType?.toUpperCase()} UPLOAD
-        </h2>
-        <h1 className="text-white text-center text-2xl font-bold mb-8">
-          Review Your {albumType} Details
-        </h1>
+        <h2 className="text-brand text-center text-xl font-semibold mb-2">{albumType?.toUpperCase()} UPLOAD</h2>
+        <h1 className="text-white text-center text-2xl font-bold mb-8">Review Your {albumType} Details</h1>
 
         <div className="space-y-6">
           <Card>
@@ -181,8 +220,7 @@ export default function PreviewForm() {
             </CardContent>
           </Card>
 
-          {
-          isAlbumType && albumTracks.length > 0 && (
+          {isAlbumType && albumTracks.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Tracks ({albumTracks.length})</CardTitle>
@@ -192,7 +230,9 @@ export default function PreviewForm() {
                   <div className="space-y-4">
                     {albumTracks.map((track, index) => (
                       <div key={index} className="p-3 bg-black/10 rounded-lg">
-                        <p className="font-medium">{index + 1}. {track.title}</p>
+                        <p className="font-medium">
+                          {index + 1}. {track.title}
+                        </p>
                         <p className="text-sm text-gray-400">Artist: {track.artistName}</p>
                         <p className="text-sm text-gray-400">Genre: {track.mainGenre}</p>
                       </div>
@@ -201,8 +241,7 @@ export default function PreviewForm() {
                 </ScrollArea>
               </CardContent>
             </Card>
-          )
-          }
+          )}
 
           <Card>
             <CardHeader>
@@ -212,23 +251,19 @@ export default function PreviewForm() {
               <>
                 <div className="mb-4">
                   <p className="text-sm text-gray-400 mb-2">Cover Art</p>
-                  {coverArtFile && (
+                  {coverArtFile && coverArtPreview && (
                     <div className="flex items-center">
                       <div className="relative w-16 h-16 bg-gray-700 rounded-md overflow-hidden flex-shrink-0 mr-3">
-                        {coverArtFile && (
-                          <Image
-                            src={URL.createObjectURL(coverArtFile)}
-                            alt="Cover"
-                            className="w-full h-full object-cover"
-                            fill
-                          />
-                        )}
+                        <Image
+                          src={coverArtPreview || "/placeholder.svg"}
+                          alt="Cover"
+                          className="w-full h-full object-cover"
+                          fill
+                        />
                       </div>
                       <div>
                         <p className="text-sm">{coverArtFile.name}</p>
-                        <p className="text-xs text-gray-400">
-                          {(coverArtFile.size / (1024 * 1024)).toFixed(2)} MB
-                        </p>
+                        <p className="text-xs text-gray-400">{(coverArtFile.size / (1024 * 1024)).toFixed(2)} MB</p>
                       </div>
                     </div>
                   )}
@@ -244,32 +279,22 @@ export default function PreviewForm() {
                         </div>
                         <div>
                           <p className="text-sm">{file.name}</p>
-                          <p className="text-xs text-gray-400">
-                            {(file.size / (1024 * 1024)).toFixed(2)} MB
-                          </p>
+                          <p className="text-xs text-gray-400">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
                         </div>
                       </div>
                     ))}
                     {mediaFiles.length > 3 && (
-                      <p className="text-sm text-gray-400">
-                        + {mediaFiles.length - 3} more tracks
-                      </p>
+                      <p className="text-sm text-gray-400">+ {mediaFiles.length - 3} more tracks</p>
                     )}
                   </div>
                 </div>
               </>
-
             </CardContent>
           </Card>
         </div>
 
         <div className="flex justify-between mt-8">
-          <Button
-            onClick={handleBack}
-            variant="outline"
-            className="px-6"
-            disabled={isUploading}
-          >
+          <Button onClick={handleBack} variant="outline" className="px-6" disabled={isUploading}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
           <Button
@@ -290,5 +315,5 @@ export default function PreviewForm() {
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -13,6 +13,7 @@ import FormError from "./form-error"
 import { inputVariants } from "./input"
 import { Checkbox } from "./checkbox"
 import { SmallSpinner } from "../icons"
+import { Button } from "./button"
 
 interface SelectProps<T> {
     values: string[];
@@ -39,6 +40,11 @@ interface SelectProps<T> {
     customFooterActions?: React.ReactNode;
     contentStyle?: React.CSSProperties;
     checkType?: "stroke" | "fill";
+    disabled?: boolean;
+    variant?: VariantProps<typeof inputVariants>["variant"];
+    size?: VariantProps<typeof inputVariants>['inputSize'];
+
+
 }
 
 const SelectMultipleCombo = <T extends object>({
@@ -65,6 +71,8 @@ const SelectMultipleCombo = <T extends object>({
     customFooterActions,
     contentStyle,
     checkType = "stroke",
+    disabled,
+    size,
 }: SelectProps<T> & VariantProps<typeof inputVariants>) => {
     const [open, setOpen] = React.useState(false)
     const [optionsToDisplay, setOptionsToDisplay] = React.useState<T[] | undefined>(options)
@@ -115,12 +123,13 @@ const SelectMultipleCombo = <T extends object>({
                         </label>
                     )}
                     <PopoverTrigger asChild>
-                        <button
+                        <Button
                             tabIndex={0}
                             className={cn(
                                 "ring-offset-white transition duration-300 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
                                 fullWidth ? "max-w-full" : "max-w-[520px]",
-                                inputVariants({ variant, className })
+                                inputVariants({ variant, inputSize: size, className })
+
                             )}
                             type="button"
                             role="combobox"
@@ -128,6 +137,8 @@ const SelectMultipleCombo = <T extends object>({
                             aria-expanded={open}
                             onClick={() => setOpen(!open)}
                             ref={triggerRef}
+                            disabled={disabled}
+
                         >
                             {customDisplay ? (
                                 customDisplay
@@ -146,7 +157,7 @@ const SelectMultipleCombo = <T extends object>({
                                 className={cn("ml-2 h-5 w-5 shrink-0 opacity-70 transition-transform duration-300", open && "rotate-180")}
                                 fill={triggerColor || "#FE6902"}
                             />
-                        </button>
+                        </Button>
                     </PopoverTrigger>
                 </div>
 

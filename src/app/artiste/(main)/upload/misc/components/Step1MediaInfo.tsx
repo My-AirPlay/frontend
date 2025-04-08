@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+
 import { useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -10,30 +9,13 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Textarea } from "@/components/ui/textarea";
 import { useStaticAppInfo } from "@/contexts/StaticAppInfoContext";
 import { Input, SelectSimple } from "@/components/ui";
-import { MOCK_GENRES } from "@/constants";
-import { convertToTitleCase } from "@/utils/strings";
 
 import { MediaInfoFormValues, mediaInfoSchema, } from "../schema";
 import { useMediaUploadStore } from "../store";
 
 export default function Step1MusicInfo() {
     const { mediaInfo, updateMediaInfo, setCurrentStep } = useMediaUploadStore();
-    const { data: staticData, isLoading } = useStaticAppInfo();
-    const [genres, setGenres] = useState<{ value: string; label: string }[]>([]);
-
-
-    useEffect(() => {
-        if (staticData && staticData.Genre) {
-            const genreEntries = Object.entries(staticData.Genre || {});
-            const formattedGenres = genreEntries.map(([value, label]) => ({
-                value: convertToTitleCase(value),
-                label
-            }));
-            setGenres(formattedGenres);
-        } else {
-            setGenres(MOCK_GENRES);
-        }
-    }, [staticData])
+    const { formattedData, isLoading } = useStaticAppInfo();
 
 
     const defaultValues = {
@@ -123,10 +105,11 @@ export default function Step1MusicInfo() {
                                     <FormLabel>Genre <span className="text-primary">*</span></FormLabel>
                                     <FormControl>
                                         <SelectSimple
-                                            options={genres}
+                                            options={formattedData?.Genre}
                                             value={field.value}
                                             valueKey="value"
                                             labelKey="label"
+                                            isLoadingOptions={isLoading}
                                             onChange={field.onChange}
                                             placeholder="Select genre"
                                             hasError={!!errors.mainGenre}

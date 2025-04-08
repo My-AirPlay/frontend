@@ -31,6 +31,7 @@
     "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "iconsax-react": "^0.0.8",
+    "idb": "^8.0.2",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.456.0",
     "moment": "^2.30.1",

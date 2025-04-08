@@ -51,11 +51,11 @@ const Catalogue = () => {
           </Link>
         </TabsList>
 
-        <TabsContent value="music" className="flex-1">
+        <TabsContent value="music" className="grow ">
           <SectionAudios />
         </TabsContent>
 
-        <TabsContent value="videos" className="flex-1">
+        <TabsContent value="videos" className="grow">
           <SectionVideos />
         </TabsContent>
         
