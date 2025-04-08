@@ -9,7 +9,7 @@ import { InferType } from "yup";
 import { urls, userProfileStage } from "@/lib/constants";
 import { loginSchema } from "@/lib/schemas";
 import { useMutation } from "@tanstack/react-query";
-import { loginArtistUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";
+import { loginArtistUser } from "@/app/artiste/(auth)/misc/api/mutations/auth.mutations";
 import { Input } from "@/components/ui";
 
 import AuthWrapper from "../misc/components/auth-wrapper";

@@ -25,7 +25,7 @@ const Header: React.FC = () => {
         </button>
 
         <Avatar>
-          <AvatarImage src={null} alt="@shadcn" />
+          <AvatarImage  alt="@shadcn" />
           <AvatarFallback>{getInitials(artist?.artistName || "FN")}</AvatarFallback>
         </Avatar>
         <Sheet>

@@ -5,7 +5,7 @@ import useUserVerifcationStore from "@/stores/verification/user-verification.sto
 import OTPInput from "@/components/ui/input-otp-group-of-five";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
-import { verifyUser } from "@/app/(auth)/misc/api/mutations/auth.mutations";
+import { verifyUser } from "@/app/artiste/(auth)/misc/api/mutations/auth.mutations";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";
 import { urls } from "@/lib/constants";

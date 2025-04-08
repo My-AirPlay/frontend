@@ -1,51 +1,49 @@
+import { onboardingBankDetailSchema } from "@/lib/schemas";
 import { useFormik } from "formik";
 import React, { useMemo } from "react";
 import { FormField } from "../form-step/form-step.interface";
-import { onboardingBasciInfoSchema } from "@/lib/schemas";
 import FormStep from "../form-step/form-step";
 import { Button } from "@/components/ui/button";
 import { MoveRight } from "lucide-react";
 import { OnboardingSteps } from "@/lib/constants";
 import { useMutation } from "@tanstack/react-query";
-import { postOnboardingPersonalDetail } from "@/app/(auth)/misc/api/mutations/onboarding.mutation";
+import { postOnbaordingBankDetail } from "@/app/artiste/(auth)/misc/api/mutations/onboarding.mutation";
 import { toast } from "sonner";
 import { handleClientError } from "@/lib/utils";
-interface OnboardingBasciDetailProps {
+
+interface OnboardingBankDetailProps {
   setCurrentStep: (a: OnboardingSteps) => void;
   email: string;
 }
-const OnboardingBasciDetail = ({
+const OnboardingBankDetail = ({
   setCurrentStep,
   email,
-}: OnboardingBasciDetailProps) => {
+}: OnboardingBankDetailProps) => {
   const { mutateAsync, status } = useMutation({
-    mutationFn: postOnboardingPersonalDetail,
-    onSuccess(data) {
-      if (!data) {
+    mutationFn: postOnbaordingBankDetail,
+    onSuccess(result) {
+      if (!result) {
         toast.error("Something went wrong. Try again");
         return;
       }
-      if (data.error) {
-        handleClientError(data.error);
+      if (result.error) {
+        handleClientError(result.error);
         return;
       }
-      setCurrentStep(OnboardingSteps.BANK);
+      setCurrentStep(OnboardingSteps.SOCIAL_LINK);
     },
   });
   const formik = useFormik({
     validateOnChange: true,
-    validationSchema: onboardingBasciInfoSchema,
+    validationSchema: onboardingBankDetailSchema,
     initialValues: {
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      country: "",
-      city: "",
-      artistName: "",
+      bankName: "",
+      accountName: "",
+      accountNumber: "",
     },
     onSubmit: (value) => {
       mutateAsync({
-        userInfo: value,
+        bankDetail: value,
         email,
       });
     },
@@ -53,47 +51,25 @@ const OnboardingBasciDetail = ({
   const fields = useMemo<FormField[]>(() => {
     return [
       {
-        id: "firstName",
-        label: "First Name",
+        id: "bankName",
+        label: "Bank Name",
         props: {
-          placeholder: "First Name",
+          placeholder: "Bank Name",
         },
       },
       {
-        id: "lastName",
-        label: "Last Name",
-        props: {
-          placeholder: "Last Name",
-        },
-      },
-      {
-        id: "phoneNumber",
-        label: "Phone Number (Optional)",
+        id: "accountNumber",
+        label: "Account Number",
         props: {
           type: "number",
-          placeholder: "Phone Number",
+          placeholder: "Account number",
         },
       },
       {
-        id: "country",
-        label: "Country",
+        id: "accountName",
+        label: "Account Name",
         props: {
-          placeholder: "Input Country",
-        },
-      },
-      {
-        id: "city",
-        label: "City",
-        props: {
-          placeholder: "Input City",
-        },
-      },
-      {
-        id: "artistName",
-        label:
-          "Artist Name (Please use your official Artist, Band, Songwriter Name)",
-        props: {
-          placeholder: "Input Name",
+          placeholder: "Account Name",
         },
       },
     ];
@@ -102,13 +78,13 @@ const OnboardingBasciDetail = ({
     <FormStep
       formFields={fields}
       formik={formik}
-      title="BASIC INFORMATION"
+      title="BANK DETAILS"
       description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable)."
     >
       <Button
-        size={"lg"}
+        size="lg"
         type="submit"
-        className="max-w-[275px] h-[75px] mx-auto"
+        className="max-w-[250px] w-full rounded-full mx-auto"
         disabled={!formik.isValid || status === "pending"}
       >
         Continue <MoveRight />
@@ -117,4 +93,4 @@ const OnboardingBasciDetail = ({
   );
 };
 
-export default OnboardingBasciDetail;
+export default OnboardingBankDetail;

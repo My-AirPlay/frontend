@@ -1,7 +1,7 @@
 import { InferType } from "yup";
-import { loginSchema, registerSchema } from "../../../../../lib/schemas";
+import { loginSchema, registerSchema } from "../../../../../../lib/schemas";
 import { AxiosError } from "axios";
-import { userProfileStage } from "../../../../../lib/constants";
+import { userProfileStage } from "../../../../../../lib/constants";
 import APIAxios, { setAxiosDefaultToken } from "@/utils/axios";
 import { setArtistAccessToken } from "@/actions/auth/auth.action";
 

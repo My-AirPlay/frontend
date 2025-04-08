@@ -10,7 +10,7 @@ import { useFormik } from "formik";
 import { resetPasswordSchema } from "@/lib/schemas";
 import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { resetPassword } from "@/app/(auth)/misc/api/mutations/auth.mutations";
+import { resetPassword } from "@/app/artiste/(auth)/misc/api/mutations/auth.mutations";
 import { handleClientError } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRouter } from "nextjs-toploader/app";

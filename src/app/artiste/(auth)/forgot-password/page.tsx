@@ -9,7 +9,7 @@ import { useFormik } from "formik";
 import { forgotPasswordSchema } from "@/lib/schemas";
 import { InferType } from "yup";
 import { useMutation } from "@tanstack/react-query";
-import { forgotPassword } from "@/app/(auth)/misc/api/mutations/auth.mutations";
+import { forgotPassword } from "@/app/artiste/(auth)/misc/api/mutations/auth.mutations";
 import { handleClientError } from "@/lib/utils";
 import { toast } from "sonner";
 import { Input } from "@/components/ui";

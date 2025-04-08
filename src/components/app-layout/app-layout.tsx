@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
-import AuthHeader from "@/app/(auth)/misc/components/auth-header";
+import AuthHeader from "@/app/artiste/(auth)/misc/components/auth-header";
 interface AppLayoutProps {
   children: ReactNode;
   showIcons?: boolean;

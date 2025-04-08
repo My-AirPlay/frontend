@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import React from "react";
-import google from "@/app/(auth)/misc/assets/google.svg";
+import google from "@/app/artiste/(auth)/misc/assets/google.svg";
 import { SmallSpinner } from "@/components/icons";
 interface AuthActionsProps {
   btnText: string;
