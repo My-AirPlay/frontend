@@ -27,7 +27,7 @@ export const mediaInfoSchema = z.object({
   publisher: z.string().min(1, { message: "Publisher is required" }),
   copyright: z.string().min(1, { message: "Copyright information is required" }),
   explicitContent: z.string().optional(),
-  lyrics: z.string(),
+  lyrics: z.string().min(20, { message: "Your lyrics should be longer than that" }),
   universalProductCode: z.string().min(1, { message: "UPC is required" }),
   releaseVersion: z.string().min(1, { message: "Release version is required" }),
   // streamingPlatforms: z.array(z.string()).min(1, { message: "At least one platform must be selected" })
@@ -60,13 +60,13 @@ export const trackInfoSchema = z.object({
   recordLabel: z.string().optional(),
   publisher: z.string().min(1, { message: "Publisher is required" }),
   instruments: z.array(z.string()).optional(),
-  lyrics: z.string().optional(),
+  lyrics: z.string().min(20, { message: "Your lyrics should be longer than that" }),
   explicitContent: z.string().optional(),
   universalProductCode: z.string().min(1, { message: "UPC is required" }),
   releaseVersion: z.string().min(1, { message: "Release version is required" }),
   copyright: z.string().min(1, { message: "Copyright information is required" }),
   fileType: z.string(),
-  streamingPlatforms: z.array(z.string()).optional()
+  streamingPlatforms: z.array(z.string()).min(1, { message: "At least one platform must be selected" }),
 });
 
 export const fileUploadSchema = z.object({

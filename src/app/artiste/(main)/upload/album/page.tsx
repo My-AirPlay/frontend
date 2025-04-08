@@ -3,8 +3,9 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAlbumUploadStore } from "../misc/store"
+
 import Step1MusicInfo from "../misc/components/Step1AlbumInfo"
-import { Step0AlbumUploadSteps, Step2AlbumTrackUpload, Step3AlbumCoverUpload } from "../misc/components"
+import { Step0AlbumUploadSteps, Step2AlbumTrackUpload, Step3AlbumCoverUpload, Step4AlbumDistributionDetails, Step5AlbumPreview } from "../misc/components"
 
 export default function AlbumUploadFlow() {
   const { currentStep, albumType, setCurrentStep } = useAlbumUploadStore()
@@ -54,12 +55,10 @@ export default function AlbumUploadFlow() {
         return <Step2AlbumTrackUpload />
       case 'coverArt':
         return <Step3AlbumCoverUpload />
-    //   case 'distribution':
-    //     return <DistributionForm />
-    //   case 'preview':
-    //     return <PreviewForm />
-    //   case 'complete':
-    //     return <UploadSuccess />
+      case 'distribution':
+        return <Step4AlbumDistributionDetails />
+      case 'preview':
+        return <Step5AlbumPreview />
       default:
         return null
     }

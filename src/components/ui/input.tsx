@@ -37,6 +37,10 @@ export const inputVariants = cva(
                 unstyled: "",
                 lg: "h-12 rounded-md px-8",
                 authInput: "h-[3rem] rounded-lg px-8 text-base",
+                sm: "h-8 rounded-md px-3 text-xs",
+                thin: "h-[1.85rem] px-4 py-1.5 text-xs",
+                md: "h-10 rounded-md px-5",
+        
             },
         },
         defaultVariants: {

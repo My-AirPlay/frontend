@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { ArrowRight } from "lucide-react";
 import { toast } from "sonner";
@@ -14,28 +14,11 @@ import { useAlbumUploadStore, } from "../store";
 import { Input, SelectSimple } from "@/components/ui";
 import { AlbumInfoFormValues, albumInfoSchema } from "../schema";
 import SelectMultipleCombo from "@/components/ui/select-multiple-combobox";
-import { MOCK_GENRES } from "@/constants";
-import { convertToTitleCase } from "@/utils/strings";
 
 export default function Step1MusicInfo() {
     const { albumInfo, updateAlbumInfo, setCurrentStep } = useAlbumUploadStore();
-    const { data: staticData, isLoading } = useStaticAppInfo();
-    const [genres, setGenres] = useState<{ value: string; label: string }[]>([]);
-
-
-    useEffect(() => {
-        if (staticData && staticData.Genre) {
-            const genreEntries = Object.entries(staticData.Genre || {});
-            const formattedGenres = genreEntries.map(([value, label]) => ({
-                value: convertToTitleCase(value),
-                label
-            }));
-            setGenres(formattedGenres);
-        } else {
-            setGenres(MOCK_GENRES);
-        }
-    }, [staticData]);
-
+    const { formattedData, isLoading } = useStaticAppInfo();
+   
 
     const defaultValues = {
         title: albumInfo.title || "My Album Title",
@@ -138,7 +121,7 @@ export default function Step1MusicInfo() {
                                     <FormLabel>Genre <span className="text-primary">*</span></FormLabel>
                                     <FormControl>
                                         <SelectSimple
-                                            options={genres}
+                                            options={formattedData?.Genre}
                                             value={field.value}
                                             valueKey="value"
                                             labelKey="label"
@@ -160,7 +143,7 @@ export default function Step1MusicInfo() {
                                     <FormControl>
                                         <SelectMultipleCombo
                                             name="secondaryGenres"
-                                            options={genres}
+                                            options={formattedData?.Genre}
                                             values={field.value || []}
                                             showSelectedValues
                                             valueKey="value"
@@ -333,10 +316,11 @@ export default function Step1MusicInfo() {
 
                     </div>
 
-                    <div className="flex justify-center pt-6">
+                    <div className="flex justify-center my-8">
                         <Button
                             type="submit"
-                            className="bg-primary hover:bg-primary/80 text-white px-8 py-5 rounded-full"
+                            size="lg"
+                            className="bg-primary hover:bg-primary/80 text-white rounded-full"
                         >
                             Save & Continue <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>

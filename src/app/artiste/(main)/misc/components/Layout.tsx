@@ -14,6 +14,7 @@ interface LayoutProps {
 const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
   const pathname = usePathname();
 
+
   // Determine if we need full width (no padding) based on route
   const isFullWidth =
     pathname.startsWith('/artist-revenue') ||
@@ -27,7 +28,7 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header />
         <main className="flex-1 overflow-y-auto">
-          <div className={cn(isFullWidth ? 'p-0' : "p-6 max-md:px-4 lg:px-10", "max-w-full")}>{children}</div>
+          <div className={cn(isFullWidth ? 'p-0' : "p-6 max-md:px-4 lg:px-10 !h-full", "flex flex-col max-w-full")}>{children}</div>
         </main>
         <Footer />
       </div>

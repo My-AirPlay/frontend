@@ -1,106 +1,130 @@
-import { useState, useRef } from "react";
-import {  MoveLeft, MoveRight, Music, } from "lucide-react";
-import { toast } from "sonner";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { AppLogo } from "@/components/icons";
-import { getFileSize } from "@/utils/numbers";
-import { cn } from "@/lib/utils";
+import type React from "react"
 
-import { useMediaUploadStore } from "../store";
+import { useState, useRef, useEffect } from "react"
+import { MoveLeft, MoveRight, Music } from "lucide-react"
+import { toast } from "sonner"
 
+import { Button } from "@/components/ui/button"
+import { AppLogo } from "@/components/icons"
+import { getFileSize } from "@/utils/numbers"
+import { cn } from "@/lib/utils"
+
+import { useMediaUploadStore } from "../store"
 
 export default function Step2MediaTrackUpload() {
-    const { setMediaFile, setCurrentStep, mediaFile } = useMediaUploadStore();
-    const [uploadedFile, setUploadedFile] = useState<File | null>(mediaFile);
-    const [uploadProgress, setUploadProgress] = useState(!!mediaFile ? 100 : 0);
-    const [isDragging, setIsDragging] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { setMediaFile, setCurrentStep, mediaFileId, getMediaFile, initializeDB, isDBInitialized } =
+        useMediaUploadStore()
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+    const [uploadProgress, setUploadProgress] = useState(0)
+    const [isDragging, setIsDragging] = useState(false)
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    useEffect(() => {
+        const loadData = async () => {
+            if (!isDBInitialized) {
+                await initializeDB()
+            }
 
-        const validTypes = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "video/mp4"];
+            if (mediaFileId) {
+                const file = await getMediaFile()
+                if (file) {
+                    setUploadedFile(file)
+                    setUploadProgress(100)
+                }
+            }
+        }
+
+        loadData()
+    }, [mediaFileId, getMediaFile, initializeDB, isDBInitialized])
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        // Validate file type
+        const validTypes = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "video/mp4"]
         if (!validTypes.includes(file.type)) {
-            toast.error("Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.");
-            return;
+            toast.error("Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.")
+            return
         }
 
+        // Validate file size (35MB max)
         if (file.size > 35 * 1024 * 1024) {
-            toast.error("File size exceeds the 35MB limit. Please upload a smaller file.");
-            return;
+            toast.error("File size exceeds the 35MB limit. Please upload a smaller file.")
+            return
         }
 
-        setUploadedFile(file);
-        setMediaFile(file);
-        simulateUpload();
-    };
+        setUploadedFile(file)
+        await setMediaFile(file) // Store in IndexedDB
+        simulateUpload()
+    }
 
     const simulateUpload = () => {
-        setUploadProgress(0);
+        setUploadProgress(0)
         const timer = setInterval(() => {
             setUploadProgress((prevProgress) => {
-                const newProgress = prevProgress + 18;
+                const newProgress = prevProgress + 18
                 if (newProgress >= 100) {
-                    clearInterval(timer);
-                    return 100;
+                    clearInterval(timer)
+                    return 100
                 }
-                return newProgress;
-            });
-        }, 150);
-    };
-
-
+                return newProgress
+            })
+        }, 150)
+    }
 
     const handleDrag = (e: React.DragEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
+        e.stopPropagation()
         if (e.type === "dragenter" || e.type === "dragover") {
-            setIsDragging(true);
+            setIsDragging(true)
         } else if (e.type === "dragleave") {
-            setIsDragging(false);
+            setIsDragging(false)
         }
-    };
+    }
 
-    const handleDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsDragging(false);
+    const handleDrop = async (e: React.DragEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsDragging(false)
 
-        const file = e.dataTransfer.files?.[0];
-        if (!file) return;
+        const file = e.dataTransfer.files?.[0]
+        if (!file) return
 
-        const validTypes = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "video/mp4"];
+        const validTypes = ["audio/mpeg", "audio/mp3", "audio/wav", "audio/ogg", "video/mp4"]
         if (!validTypes.includes(file.type)) {
-            toast.error("Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.");
-            return;
+            toast.error("Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.")
+            return
         }
         if (file.size > 35 * 1024 * 1024) {
-            toast.error("File size exceeds the 35MB limit. Please upload a smaller file.");
-            return;
+            toast.error("File size exceeds the 35MB limit. Please upload a smaller file.")
+            return
         }
 
-        setUploadedFile(file);
-        simulateUpload();
-    };
+        setUploadedFile(file)
+        await setMediaFile(file)
+        simulateUpload()
+    }
 
     const handleContinue = () => {
         if (uploadedFile && uploadProgress === 100) {
-            setMediaFile(uploadedFile);
-            setCurrentStep('coverArt');
-            toast.success("Track uploaded successfully");
+            setCurrentStep("coverArt")
+            toast.success("Track uploaded successfully")
         } else {
-            toast.error("Please upload a file first");
+            toast.error("Please upload a file first")
         }
-    };
+    }
 
     return (
-        <div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto ">           
-
+        <div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto ">
             <section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
                 <label
-                    className={cn("border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center", isDragging ? "border-solid border-3" : "border-primary")}
+                    className={cn(
+                        "border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-h-[300px]",
+                        isDragging ? "border-solid border-3" : "border-primary",
+                    )}
                     onDragEnter={handleDrag}
                     onDragOver={handleDrag}
                     onDragLeave={handleDrag}
@@ -120,7 +144,6 @@ export default function Step2MediaTrackUpload() {
                         onChange={handleFileChange}
                         accept=".mp3,.mp4,.wav,.ogg"
                         id="track-upload-input "
-
                     />
 
                     <div className="mb-6 text-left">
@@ -131,8 +154,9 @@ export default function Step2MediaTrackUpload() {
                             <li>File size: Image file size cannot be greater than 35 MB</li>
                             <li>Video mode: Best quality</li>
                             <li>Resolution: 72 dpi</li>
-                            <li>Your track must not contain any logos, website address, release dates or advertisements of any kind.</li>
-
+                            <li>
+                                Your track must not contain any logos, website address, release dates or advertisements of any kind.
+                            </li>
                         </ul>
                     </div>
 
@@ -144,59 +168,42 @@ export default function Step2MediaTrackUpload() {
                         Browse
                     </Button>
                 </div>
-
             </section>
 
-
-            {
-                !!mediaFile && (
-                    <div className="mb-8">
-
-                        <div  className="flex flex-col p-4 rounded-lg border border-white bg-secondary">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex flex-col">
-                                    <h6 className="flex items-center" style={{ cursor: "pointer" }}>
-                                        <Music className="h-4 w-4 text-primary mr-2" />
-                                        <span className="text-[0.8rem]">{mediaFile.name}</span>
-                                    </h6>
-                                    <span className="text-[0.7rem] text-white/50">{getFileSize(mediaFile.size)} MB</span>
-                                </div>
-
-                            </div>
-                            <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-primary transition-all"
-                                    style={{ width: `${uploadProgress || 0}%` }}
-                                />
+            {!!uploadedFile && (
+                <div className="mb-8">
+                    <div className="flex flex-col p-4 rounded-lg border border-white bg-secondary">
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex flex-col">
+                                <h6 className="flex items-center" style={{ cursor: "pointer" }}>
+                                    <Music className="h-4 w-4 text-primary mr-2" />
+                                    <span className="text-[0.8rem]">{uploadedFile.name}</span>
+                                </h6>
+                                <span className="text-[0.7rem] text-white/50">{getFileSize(uploadedFile.size)} MB</span>
                             </div>
                         </div>
-
+                        <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
+                            <div className="h-full bg-primary transition-all" style={{ width: `${uploadProgress || 0}%` }} />
+                        </div>
                     </div>
-                )
-            }
+                </div>
+            )}
 
+            <div className="flex justify-between items-center mt-8 md:mt-16">
+                <Button onClick={() => setCurrentStep("musicInfo")} size="lg" variant={"outline"} className="rounded-full">
+                    <MoveLeft className="mr-2 h-4 w-4" />
+                    Back
+                </Button>
 
-            <div className="flex justify-between items-center mt-8 md:mt-16">               
-                    <Button
-                        onClick={() => setCurrentStep('musicInfo')}
-                        size="lg"
-                        variant={"outline"}
-                        className="rounded-full"
-                    >
-                         <MoveLeft className="mr-2 h-4 w-4" />
-                        Back
-                    </Button>
-
-                    <Button
-                        onClick={handleContinue}
-                        size="lg"
-                        disabled={!uploadedFile || uploadProgress < 100}
-                        className="rounded-full"
-                    >
-                        Continue <MoveRight className="ml-2 h-4 w-4" />
-                    </Button>
-           
+                <Button
+                    onClick={handleContinue}
+                    size="lg"
+                    disabled={!uploadedFile || uploadProgress < 100}
+                    className="rounded-full"
+                >
+                    Continue <MoveRight className="ml-2 h-4 w-4" />
+                </Button>
             </div>
         </div>
-    );
+    )
 }

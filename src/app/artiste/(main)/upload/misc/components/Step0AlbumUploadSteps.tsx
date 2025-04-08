@@ -52,7 +52,7 @@ export default function Step0AlbumUploadSteps() {
 
   return (
     <div className="px-4 py-6">
-      <div className="flex justify-center items-center gap-8 flex-wrap mt-8">
+      <div className="flex justify-center items-center gap-4 md:gap-8 flex-wrap mt-8">
         {steps.map((step, i) => (
           <div 
             key={step.name}
@@ -63,7 +63,7 @@ export default function Step0AlbumUploadSteps() {
             onClick={() => handleStepClick(step.value)}
           >
             <div className={cn(
-              "step w-10 h-10 flex items-center justify-center rounded-full border border-gray-300",
+              "step size-6 md:size-10 flex items-center justify-center rounded-full border border-gray-300 text-xs md:text-sm",
               getStepStatus(step.value) === 'active' ? "bg-primary text-white" : "",
               getStepStatus(step.value) === 'complete' ? "bg-green-500 text-white" : ""
             )}>
@@ -73,7 +73,7 @@ export default function Step0AlbumUploadSteps() {
                 i + 1
               )}
             </div>
-            <p className="text-center mt-2 text-sm">{step.label}</p>
+            <p className="text-center mt-2 text-xs md:text-sm">{step.label}</p>
           </div>
         ))}
       </div>

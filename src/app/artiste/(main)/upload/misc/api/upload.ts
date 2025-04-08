@@ -35,6 +35,13 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
   return response.data;
 };
 
+
+
+
+
+
+
+
 // Upload album function using Axios
 export const uploadAlbum = async (payload: UploadAlbumPayload) => {
   const formData = new FormData();

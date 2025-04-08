@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
+import { AppLogo } from '@/components/icons';
 
 
 
@@ -23,9 +24,9 @@ const Sidebar = ({ className }: { className?: string }) => {
       label: "Upload",
     },
     {
-      href: "/artiste/catalogue",
+      href: "/artiste/catalog",
       icon: MusicSquare,
-      label: "Catalogue",
+      label: "Catalog",
     },
 
     {
@@ -54,10 +55,8 @@ const Sidebar = ({ className }: { className?: string }) => {
 
   return (
     <div className={cn("md:w-20 h-screen md:h-[calc(100vh_-_2rem)] md:bg-secondary md:rounded-xl flex flex-col overflow-hidden md:mb-4", className)}>
-      <div className="h-16 p-4 border-b border-artiste-border flex items-center space-x-3">
-        <div className="h-8 w-8 rounded-md bg-artiste-primary flex items-center justify-center">
-          <span className="text-white font-bold">A</span>
-        </div>
+      <div className="h-16 p-4 flex items-center space-x-3">
+        <AppLogo/>
       </div>
 
       <div className="flex-1 flex flex-col gap-4 overflow-y-auto py-4 pl-2 font-plus-jakarta-sans">
