@@ -55,14 +55,14 @@ export interface TArtistMedia {
 
 export const useGetAudios = (options: FetchOptions) => {
     return useQuery({
-        queryKey: ["getMedia", options],
+        queryKey: ["getArtistMedias", options],
         queryFn: () => getMedias("audio", options),
         staleTime: 1000 * 60 * 60,
     })
 }
 export const useGetVideos = (options: FetchOptions) => {
     return useQuery({
-        queryKey: ["getVideos", options],
+        queryKey: ["getArtistVideos", options],
         queryFn: () => getMedias("video", options),
         staleTime: 1000 * 60 * 60,
     })

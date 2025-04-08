@@ -10,7 +10,7 @@ import APIAxios, { setAxiosDefaultToken } from "@/utils/axios";
 import { useRouter } from 'next/navigation';
 import { clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
-import { SmallSpinner } from '@/components/icons';
+import { AppLogo } from '@/components/icons';
 
 
 interface IArtistUser {
@@ -144,7 +144,7 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         const token = await getArtistAccessToken();
         console.log("Token in checkAuthStatus:", token)
         if (!token) {
-            router.push('/login');
+            router.push('/artiste/login');
             dispatch({ type: 'SET_AUTHENTICATING', payload: false });
             return;
         }
@@ -195,8 +195,8 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
         >
             {
                 state.isAuthenticating ?
-                    <div className="flex items-center justify-center h-screen w-full bg-white">
-                        <SmallSpinner/>
+                    <div className="flex items-center justify-center h-screen w-full bg-background">
+                        <AppLogo className='animate-pulse'/>
                     </div> :
 
                     children 

@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
+import { SmallSpinner } from "../icons"
 
 // Variants for the Alert Dialog
 const alertDialogWithVariantsVariants = cva(
@@ -202,6 +203,7 @@ interface CustomAlertDialogProps extends VariantProps<typeof alertDialogWithVari
   onCancel?: () => void
   showCancel?: boolean
   showAction?: boolean
+  isPerformingAction?:boolean
 }
 
 const CustomAlertDialog = ({
@@ -216,6 +218,7 @@ const CustomAlertDialog = ({
   onCancel,
   showCancel = true,
   showAction = true,
+  isPerformingAction = false,
 }: CustomAlertDialogProps) => {
   return (
     <AlertDialogWithVariants open={open} onOpenChange={onOpenChange} >
@@ -226,11 +229,14 @@ const CustomAlertDialog = ({
         </AlertDialogWithVariantsHeader>
         <AlertDialogWithVariantsFooter>
           {showCancel && (
-            <AlertDialogWithVariantsCancel onClick={onCancel}>{cancelLabel}</AlertDialogWithVariantsCancel>
+            <AlertDialogWithVariantsCancel disabled={isPerformingAction} onClick={onCancel}>{cancelLabel}</AlertDialogWithVariantsCancel>
           )}
           {showAction && (
-            <AlertDialogWithVariantsAction variant={variant} onClick={onAction}>
+            <AlertDialogWithVariantsAction disabled={isPerformingAction} variant={variant} onClick={onAction}>
               {actionLabel}
+              {
+                isPerformingAction && <SmallSpinner className="ml-2" />
+              }
             </AlertDialogWithVariantsAction>
           )}
         </AlertDialogWithVariantsFooter>

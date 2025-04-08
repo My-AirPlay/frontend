@@ -1,26 +1,21 @@
 import APIAxios from "@/utils/axios";
-import { TArtistMedia } from "./getArtisteMedias";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const updateSingleTrack = async (payload: Partial<TArtistMedia>) => {
+export const deleteMedia = async (media_id: string) => {
 
-    if (!payload._id) return;
+    if (!media_id) return;
 
-    const response = await APIAxios.put(`/media/update_media/${payload._id}`, payload, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
+    const response = await APIAxios.delete(`/media/delete_media/${media_id}`);
 
     return response.data;
 };
 
 
 
-export const useUpdateMedia = () => {
+export const useDeleteMedia = () => {
     const queryCLient = useQueryClient();
     return useMutation({
-        mutationFn: updateSingleTrack,
+        mutationFn: deleteMedia,
         onSuccess: () => {
             queryCLient.invalidateQueries({
                 queryKey: ["getArtistMedias"],
@@ -30,7 +25,7 @@ export const useUpdateMedia = () => {
             });
         },
         onError: (error) => {
-            console.error("Error updating media:", error);
+            console.error("Error deleting media:", error);
         },
     })
 }
