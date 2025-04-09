@@ -1,13 +1,11 @@
-import React from 'react'
-import { useGetAlbums } from '../api'
+import React from 'react';
+import { useGetAlbums } from '../api';
 
 const SectionAlbums = () => {
+	const { data } = useGetAlbums({});
+	console.log(data);
 
-    const { data } = useGetAlbums({});
-console.log(data)
-    return (
-        <div>SectionAlbums</div>
-    )
-}
+	return <div>SectionAlbums</div>;
+};
 
-export default SectionAlbums
+export default SectionAlbums;
