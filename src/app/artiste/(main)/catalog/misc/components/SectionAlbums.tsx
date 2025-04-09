@@ -96,4 +96,4 @@ const SectionAlbums = () => {
     )
 }
 
-export default SectionAlbums
+export default SectionAlbums;

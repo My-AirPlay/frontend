@@ -1,0 +1,22 @@
+{
+	"extends": [
+		"eslint:recommended",
+		"plugin:prettier/recommended"
+	],
+	"plugins": [
+		"prettier"
+	],
+	"rules": {
+		"prettier/prettier": "error"
+	},
+	"tabWidth": 2,
+	"useTabs": true,
+	"printWidth": 12000,
+	"proseWrap": "preserve",
+	"arrowParens": "avoid",
+	"singleQuote": true,
+	"trailingComma": "none",
+	"semi": true,
+	"bracketSameLine": false,
+	"jsxBracketSameLine": false
+}
