@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useMemo, useState, useEffect } from "react"
+import { useCallback, useState, useEffect } from "react"
 import { toast } from "sonner"
 import { ArrowRight, MoveLeft } from "lucide-react"
 import Image from "next/image"
@@ -13,8 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { SingleDatePicker } from "@/components/ui"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useMediaUploadStore } from "../store"
 
-import { useAlbumUploadStore } from "../store"
 
 const releaseDateFormSchema = z
   .object({
@@ -49,13 +49,13 @@ export default function Step4AlbumDistributionDetails() {
     streamingPlatforms: selectedPlatforms,
     togglePlatform,
     setCurrentStep,
-    albumInfo,
+    mediaInfo,
     coverArtId,
-    updateAlbumInfo,
+    updateMediaInfo,
     getCoverArtFile,
     isDBInitialized,
     initializeDB,
-  } = useAlbumUploadStore()
+  } = useMediaUploadStore()
 
   const { formattedData, isLoading } = useStaticAppInfo()
   const [differentReleaseDate, setDifferentReleaseDate] = useState(false)
@@ -100,8 +100,8 @@ export default function Step4AlbumDistributionDetails() {
   const form = useForm<ReleaseDateFormType>({
     resolver: zodResolver(releaseDateFormSchema),
     defaultValues: {
-      releaseDate: albumInfo.releaseDate,
-      originalReleaseDate: albumInfo.originalReleaseDate,
+      releaseDate: mediaInfo.releaseDate,
+      originalReleaseDate: mediaInfo.originalReleaseDate,
     },
     mode: "onChange",
   })
@@ -117,7 +117,7 @@ export default function Step4AlbumDistributionDetails() {
       return
     }
 
-    if (!albumInfo.title || !coverArtId) {
+    if (!mediaInfo.title || !coverArtId) {
       toast.error("Missing required information. Please go back and fill in all required fields.")
       return
     }
@@ -144,8 +144,8 @@ export default function Step4AlbumDistributionDetails() {
           />
         )}
         <div>
-          <h6 className="text-lg font-semibold text-primary">{albumInfo?.title || "Track Title"}</h6>
-          <p>{albumInfo?.artistName || "Track Artist"}</p>
+          <h6 className="text-lg font-semibold text-primary">{mediaInfo?.title || "Track Title"}</h6>
+          <p>{mediaInfo?.artistName || "Track Artist"}</p>
         </div>
       </header>
       <Form {...form}>
@@ -184,10 +184,10 @@ export default function Step4AlbumDistributionDetails() {
                 </FormLabel>
                 <FormControl>
                   <SingleDatePicker
-                    value={new Date(field.value || albumInfo.releaseDate)}
+                    value={new Date(field.value || mediaInfo.releaseDate)}
                     onChange={(date) => {
                       field.onChange(date?.toISOString().split("T")[0] || "")
-                      updateAlbumInfo({ ...albumInfo, releaseDate: date?.toISOString().split("T")[0] || "" })
+                      updateMediaInfo({ ...mediaInfo, releaseDate: date?.toISOString().split("T")[0] || "" })
                     }}
                     placeholder="Select release date"
                   />
@@ -221,7 +221,7 @@ export default function Step4AlbumDistributionDetails() {
                       value={!!field.value ? new Date(field.value) : undefined}
                       onChange={(date) => {
                         field.onChange(date?.toISOString().split("T")[0] || "")
-                        updateAlbumInfo({ ...albumInfo, originalReleaseDate: date?.toISOString().split("T")[0] || "" })
+                        updateMediaInfo({ ...mediaInfo, originalReleaseDate: date?.toISOString().split("T")[0] || "" })
                       }}
                       placeholder="Select release date"
                     />

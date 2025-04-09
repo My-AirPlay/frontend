@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useMemo, useState, useEffect } from "react"
+import { useCallback, useState, useEffect } from "react"
 import { toast } from "sonner"
 import { ArrowRight, MoveLeft } from "lucide-react"
 import Image from "next/image"

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // IndexedDB utility for single media uploads (Track, Video, PlayBack)
 import { openDB, type DBSchema, type IDBPDatabase } from "idb"
 
-// Define the database schema for media uploads
+
 interface MediaUploadDB extends DBSchema {
   mediaFile: {
     key: string
@@ -29,14 +31,13 @@ interface MediaUploadDB extends DBSchema {
   }
 }
 
-// Database name and version
+
 const DB_NAME = "mediaUploadDB"
 const DB_VERSION = 1
 
-// Database instance
 let dbPromise: Promise<IDBPDatabase<MediaUploadDB>> | null = null
 
-// Initialize the database
+
 export const initMediaDB = async (): Promise<boolean> => {
   try {
     dbPromise = openDB<MediaUploadDB>(DB_NAME, DB_VERSION, {

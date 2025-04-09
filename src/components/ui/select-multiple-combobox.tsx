@@ -9,11 +9,9 @@ import { cn } from "@/lib/utils"
 import { Command, CommandGroup, CommandItem } from "./command"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover-without-portal"
 import FormError from "./form-error"
-// import { CaretDown, SmallSpinner, StrokeCheck } from "./icons"
 import { inputVariants } from "./input"
 import { Checkbox } from "./checkbox"
 import { SmallSpinner } from "../icons"
-import { Button } from "./button"
 
 interface SelectProps<T> {
     values: string[];
@@ -59,7 +57,6 @@ const SelectMultipleCombo = <T extends object>({
     className,
     containerClass,
     itemClass,
-    fullWidth,
     placeHolderClass,
     isLoadingOptions,
     valueKey,
@@ -122,46 +119,43 @@ const SelectMultipleCombo = <T extends object>({
                             {label}
                         </label>
                     )}
-                    <PopoverTrigger asChild>
-                        <Button
-                            tabIndex={0}
-                            className={cn(
-                                "ring-offset-white transition duration-300 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-                                fullWidth ? "max-w-full" : "max-w-[520px]",
-                                inputVariants({ variant, inputSize: size, className })
+                    <PopoverTrigger
+                        className={cn("w-full !overflow-hidden whitespace-nowrap",
+                            inputVariants({ variant, inputSize: size, className })
 
-                            )}
-                            type="button"
-                            role="combobox"
-                            aria-controls="combobox-options"
-                            aria-expanded={open}
-                            onClick={() => setOpen(!open)}
-                            ref={triggerRef}
-                            disabled={disabled}
+                        )}
+                        tabIndex={0}
+                        type="button"
+                        role="combobox"
+                        aria-controls="combobox-options"
+                        aria-expanded={open}
+                        onClick={() => setOpen(!open)}
+                        ref={triggerRef}
+                        disabled={disabled}
+                    >
 
-                        >
-                            {customDisplay ? (
-                                customDisplay
-                            ) : (
-                                <span className={cn(
-                                    '!overflow-hidden text-sm w-full font-normal text-left truncate',
-                                    (values.length > 0 && options && options?.length) ? '' : '!text-[#A4A4A4]',
-                                    placeHolderClass
-                                )}>
-                                    {(showSelectedValues && values.length > 0 && options && options?.length)
-                                        ? getSelectedLabels()
-                                        : placeholder}
-                                </span>
-                            )}
-                            <ChevronDown
-                                className={cn("ml-2 h-5 w-5 shrink-0 opacity-70 transition-transform duration-300", open && "rotate-180")}
-                                fill={triggerColor || "#FE6902"}
-                            />
-                        </Button>
+                        {customDisplay ? (
+                            customDisplay
+                        ) : (
+                            <span className={cn(
+                                '!overflow-hidden text-sm w-full font-normal text-left truncate',
+                                (values.length > 0 && options && options?.length) ? '' : '!text-[#A4A4A4]',
+                                placeHolderClass
+                            )}>
+                                {(showSelectedValues && values.length > 0 && options && options?.length)
+                                    ? getSelectedLabels()
+                                    : placeholder}
+                            </span>
+                        )}
+
+                        <ChevronDown
+                            stroke={triggerColor || "#FE6902"}
+                            className={cn('opacity-80', open && 'rotate-180')}
+                        />
                     </PopoverTrigger>
                 </div>
 
-                <PopoverContent className={cn("p-0 min-h-[30vh] max-h-[450px]", triggerRef?.current && `min`)} style={{ ...contentStyle, width, maxWidth: width }}>
+                <PopoverContent className={cn("p-0 min-h-[25vh] max-h-[450px] overflow-y-scroll", triggerRef?.current && `min`)} style={{ ...contentStyle, width, maxWidth: width }}>
                     <Command>
                         <div className="relative px-3">
                             <SearchIcon className="absolute top-1/2 left-2 -translate-y-1/2 text-[#032282] h-4 w-4" />

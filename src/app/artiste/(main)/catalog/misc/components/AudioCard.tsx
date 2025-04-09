@@ -7,7 +7,7 @@ import { Musicnote } from 'iconsax-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Button, ReusableDropdownMenu, Dialog, DialogContent, Sheet, SheetContent, SheetHeader, SheetTitle, Skeleton } from '@/components/ui'
+import { Button, ReusableDropdownMenu, Dialog, DialogContent, Sheet, SheetContent, SheetHeader, SheetTitle, Skeleton, DialogTitle, CustomAlertDialog } from '@/components/ui'
 
 import useBooleanStateControl from '@/hooks/useBooleanStateControl'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -17,7 +17,7 @@ import { Input, SelectSimple } from '@/components/ui'
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext'
 import { SmallSpinner } from '@/components/icons'
 
-import { useUpdateMedia } from '../api'
+import { useDeleteMedia, useUpdateMedia } from '../api'
 import { TArtistMedia } from '../api/getArtisteMedias'
 
 
@@ -82,6 +82,7 @@ const AudioCard = ({ audio }: {
     const { handleSubmit, formState: { errors, isValid } } = form
     const { formattedData, isLoading: isLoadingStaticData } = useStaticAppInfo();
     const { mutate: updateMedia, isPending: isUpdatingMedia } = useUpdateMedia();
+    const { mutate: deleteMedia, isPending: isDeletingMedia } = useDeleteMedia();
     const onSubmit = (data: MediaUpdateFormValues) => {
         const updatedAudio = {
             ...audio,
@@ -98,6 +99,23 @@ const AudioCard = ({ audio }: {
         })
     }
 
+    const {
+        state: isConfirmDeleteModalOpen,
+        setTrue: openConfirmDeleteModal,
+        setFalse: closeConfirmDeleteModal,
+        setState: setConfirmDeleteModalState
+    } = useBooleanStateControl();
+    const handleDelete = () => {
+        deleteMedia(audio._id, {
+            onSuccess() {
+                toast.success("Audio track deleted successfully")
+                setIsEditSheetState(false)
+            },
+            onError() {
+                toast.error("Failed to delete audio track")
+            }
+        })
+    }
 
 
     return (
@@ -130,14 +148,14 @@ const AudioCard = ({ audio }: {
                         {
                             label: "Delete",
                             icon: <Trash />,
-                            onClick: () => console.log("Delete clicked"),
+                            onClick: openConfirmDeleteModal,
                         },
                     ]}
                     contentProps={{ className: "w-52" }}
                 />
             </header>
             <div
-                className='flex items-center justify-center relative max-h-[200px] aspect-square'
+                className='flex items-center justify-center relative max-h-[150px] aspect-square'
                 onClick={openViewDetailsDialog}
             >
                 <Image
@@ -159,6 +177,7 @@ const AudioCard = ({ audio }: {
 
 
             <Dialog open={isViewDetailsDialogOpen} onOpenChange={setIsViewDetailsDialogState}>
+                <DialogTitle className="sr-only">Details</DialogTitle>
                 <DialogContent className="bg-zinc-900 text-white max-w-md p-0 border-none !rounded-2xl">
                     <div className="rounded-2xl p-4">
                         <div className="rounded-2xl bg-background p-2.5">
@@ -506,6 +525,22 @@ const AudioCard = ({ audio }: {
                     </div>
                 </SheetContent>
             </Sheet>
+
+
+            <CustomAlertDialog
+                variant={"warning"}
+                open={isConfirmDeleteModalOpen}
+                onOpenChange={setConfirmDeleteModalState}
+                title={"Confirm Delete"}
+                description={"Are you sure you want to delete this audio track? This action cannot be undone."}
+                actionLabel={"Go ahead, delete"}
+                cancelLabel="Cancel"
+                onAction={handleDelete}
+                onCancel={closeConfirmDeleteModal}
+                showCancel={true}
+                showAction={true}
+                isPerformingAction={isDeletingMedia}
+            />
         </article>
     )
 }
@@ -520,7 +555,7 @@ export const AudioCardSkeleton = () => {
             <div className="absolute top-2 right-2 z-[3]">
                 <Skeleton className="w-8 h-8 rounded-full bg-gray-800" />
             </div>
-            <div className="h-full min-h-[150px] relative">
+            <div className="h-full min-h-[110px] relative">
                 <Skeleton className="w-full h-full rounded-xl bg-gray-800" />
             </div>
             <div className="px-2">

@@ -1,6 +1,6 @@
 import APIAxios from "@/utils/axios";
 import { TArtistMedia } from "./getArtisteMedias";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const updateSingleTrack = async (payload: Partial<TArtistMedia>) => {
 
@@ -18,10 +18,16 @@ export const updateSingleTrack = async (payload: Partial<TArtistMedia>) => {
 
 
 export const useUpdateMedia = () => {
+    const queryCLient = useQueryClient();
     return useMutation({
         mutationFn: updateSingleTrack,
-        onSuccess: (data) => {
-            console.log("Media updated successfully:", data);
+        onSuccess: () => {
+            queryCLient.invalidateQueries({
+                queryKey: ["getArtistMedias"],
+            });
+            queryCLient.invalidateQueries({
+                queryKey: ["getArtistVideos"],
+            });
         },
         onError: (error) => {
             console.error("Error updating media:", error);

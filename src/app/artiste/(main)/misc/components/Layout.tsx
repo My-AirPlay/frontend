@@ -14,6 +14,7 @@ interface LayoutProps {
 const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
   const pathname = usePathname();
 
+
   // Determine if we need full width (no padding) based on route
   const isFullWidth =
     pathname.startsWith('/artist-revenue') ||
