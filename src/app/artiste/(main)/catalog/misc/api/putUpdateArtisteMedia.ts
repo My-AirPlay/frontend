@@ -1,30 +1,33 @@
-import APIAxios from "@/utils/axios";
-import { TArtistMedia } from "./getArtisteMedias";
-import { useMutation } from "@tanstack/react-query";
+import APIAxios from '@/utils/axios';
+import { TArtistMedia } from './getArtisteMedias';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const updateSingleTrack = async (payload: Partial<TArtistMedia>) => {
+	if (!payload._id) return;
 
-    if (!payload._id) return;
+	const response = await APIAxios.put(`/media/update_media/${payload._id}`, payload, {
+		headers: {
+			'Content-Type': 'multipart/form-data'
+		}
+	});
 
-    const response = await APIAxios.put(`/media/update_media/${payload._id}`, payload, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
-
-    return response.data;
+	return response.data;
 };
 
-
-
 export const useUpdateMedia = () => {
-    return useMutation({
-        mutationFn: updateSingleTrack,
-        onSuccess: (data) => {
-            console.log("Media updated successfully:", data);
-        },
-        onError: (error) => {
-            console.error("Error updating media:", error);
-        },
-    })
-}
+	const queryCLient = useQueryClient();
+	return useMutation({
+		mutationFn: updateSingleTrack,
+		onSuccess: () => {
+			queryCLient.invalidateQueries({
+				queryKey: ['getArtistMedias']
+			});
+			queryCLient.invalidateQueries({
+				queryKey: ['getArtistVideos']
+			});
+		},
+		onError: error => {
+			console.error('Error updating media:', error);
+		}
+	});
+};
