@@ -1,7 +1,7 @@
 import React from 'react'
 import { toast } from 'sonner'
 import Image from 'next/image'
-import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight } from 'lucide-react'
+import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight, Music } from 'lucide-react'
 import { format } from 'date-fns'
 import { Musicnote } from 'iconsax-react'
 import { useForm } from 'react-hook-form'
@@ -20,6 +20,7 @@ import { SmallSpinner } from '@/components/icons'
 
 import { TArtisteAlbum } from '../api/getArtisteAlbums'
 import { useDeleteAlbum, useUpdateAlbum } from '../api'
+import AddSongToAlbumFromAlbumMenu from './AddSongToAlbumFromAlbumMenu'
 
 
 
@@ -99,6 +100,13 @@ const AlbumCard = ({ album }: {
     }
 
     const {
+        state: isAddSongToAlbumDialogOpen,
+        setTrue: openAddSongToAlbumModal,
+        setFalse: closeAddSongToAlbumModal,
+        setState: setIsAddSongToAlbumDialogState
+    } = useBooleanStateControl();
+
+    const {
         state: isConfirmDeleteModalOpen,
         setTrue: openConfirmDeleteModal,
         setFalse: closeConfirmDeleteModal,
@@ -137,6 +145,11 @@ const AlbumCard = ({ album }: {
                         </Button>
                     }
                     items={[
+                        {
+                            label: "Add a song",
+                            icon: <Music />,
+                            onClick: openAddSongToAlbumModal,
+                        },
                         {
                             label: "View Details",
                             icon: <Eye />,
@@ -525,6 +538,11 @@ const AlbumCard = ({ album }: {
                 showCancel={true}
                 showAction={true}
                 isPerformingAction={isDeletingAlbum}
+            />
+            <AddSongToAlbumFromAlbumMenu
+                album={album}
+                isAddSongToAlbumDialogOpen={isAddSongToAlbumDialogOpen}
+                setIsAddSongToAlbumDialogState={setIsAddSongToAlbumDialogState}
             />
         </article>
     )

@@ -14,7 +14,7 @@ const alertDialogWithVariantsVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-gray-200",
+        default: "border-t-8 border-t-primary",
         success: "border-t-8 border-t-green-500",
         error: "border-t-8 border-t-red-500",
         warning: "border-t-8 border-t-yellow-500",
@@ -86,14 +86,14 @@ const AlertDialogWithVariantsContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   AlertDialogWithVariantsContentProps
 >(({ className, variant, ...props }, ref) => (
-  <AlertDialogWithVariantsPortal>
+  <>
     <AlertDialogWithVariantsOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(alertDialogWithVariantsVariants({ variant }), className)}
       {...props}
     />
-  </AlertDialogWithVariantsPortal>
+  </>
 ))
 AlertDialogWithVariantsContent.displayName = AlertDialogPrimitive.Content.displayName
 
@@ -197,6 +197,7 @@ interface CustomAlertDialogProps extends VariantProps<typeof alertDialogWithVari
   onOpenChange?: (open: boolean) => void
   title: string
   description: string
+  customContent?: React.ReactNode
   actionLabel?: string
   cancelLabel?: string
   onAction?: () => void
@@ -210,6 +211,7 @@ const CustomAlertDialog = ({
   variant = "default",
   open,
   onOpenChange,
+  customContent,
   title,
   description,
   actionLabel = "Confirm",
@@ -226,6 +228,7 @@ const CustomAlertDialog = ({
         <AlertDialogWithVariantsHeader>
           <AlertDialogWithVariantsTitle variant={variant}>{title}</AlertDialogWithVariantsTitle>
           <AlertDialogWithVariantsDescription>{description}</AlertDialogWithVariantsDescription>
+          {customContent}
         </AlertDialogWithVariantsHeader>
         <AlertDialogWithVariantsFooter>
           {showCancel && (

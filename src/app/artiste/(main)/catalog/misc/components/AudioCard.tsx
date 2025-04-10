@@ -17,8 +17,9 @@ import { Input, SelectSimple } from '@/components/ui'
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext'
 import { SmallSpinner } from '@/components/icons'
 
-import { useDeleteMedia, useUpdateMedia } from '../api'
+import { useAddSongToAlbum, useDeleteMedia, useUpdateMedia } from '../api'
 import { TArtistMedia } from '../api/getArtisteMedias'
+import { TArtisteAlbum } from '../api/getArtisteAlbums'
 
 
 const mediaUpdateSchema = z.object({
@@ -40,8 +41,9 @@ type MediaUpdateFormValues = z.infer<typeof mediaUpdateSchema>
 
 
 
-const AudioCard = ({ audio }: {
+const AudioCard = ({ audio, album }: {
     audio: TArtistMedia,
+    album?: TArtisteAlbum
 }) => {
     const {
         state: isViewDetailsDialogOpen,
@@ -53,6 +55,13 @@ const AudioCard = ({ audio }: {
         state: isEditSheetOpen,
         setTrue: openEditSheet,
         setState: setIsEditSheetState
+    } = useBooleanStateControl()
+
+    const {
+        state: isConfirmAddToAlbumDialogOpen,
+        setTrue: openConfirmAddToAlbumDialog,
+        setState: setIsConfirmAddToAlbumDialogState,
+        setFalse: closeConfirmAddToAlbumDialog
     } = useBooleanStateControl()
 
     const [imageError, setImageError] = React.useState(false)
@@ -116,47 +125,85 @@ const AudioCard = ({ audio }: {
             }
         })
     }
+    const { mutate, isPending: isAddingToAlbum } = useAddSongToAlbum();
+    const handleConfirmAddToAblum = () => {
+        mutate({
+            album_id: album?._id || "",
+            media_id: audio._id,
+            position: 0
+        }, {
+            onSuccess() {
+                toast.success("Audio track added to album successfully")
+                setIsConfirmAddToAlbumDialogState(false)
+            },
+            onError() {
+                toast.error("Failed to add audio track to album")
+            }
+        })
+
+    }
 
 
     return (
-        <article className="relative flex flex-col gap-2.5 rounded-xl cursor-pointer p-1 border-[0.6px]">
-            <header className='absolute top-2 right-2 z-[3]'>
-                <ReusableDropdownMenu
-                    trigger={
-                        <Button
-                            variant="secondary"
-                            size="icon"
-                            onClick={(e) => {
-                                // Stop event propagation
-                                e.stopPropagation()
-                            }}
-                        >
-                            <Ellipsis size={16} className="text-white rotate-90" />
-                        </Button>
+        <article className="relative flex flex-col gap-2.5 rounded-xl cursor-pointer p-1 border-[0.6px]"
+            onClick={
+                () => {
+                    if (!!album) {
+                        openConfirmAddToAlbumDialog()
                     }
-                    items={[
-                        {
-                            label: "View Details",
-                            icon: <Eye />,
-                            onClick: openViewDetailsDialog,
-                        },
-                        {
-                            label: "Edit Details",
-                            icon: <Edit2 />,
-                            onClick: openEditSheet,
-                        },
-                        {
-                            label: "Delete",
-                            icon: <Trash />,
-                            onClick: openConfirmDeleteModal,
-                        },
-                    ]}
-                    contentProps={{ className: "w-52" }}
-                />
-            </header>
+                }
+            }
+        >
+            {
+                !album &&
+                <header className='absolute top-2 right-2 z-[3]'>
+                    <ReusableDropdownMenu
+                        trigger={
+                            <Button
+                                variant="secondary"
+                                size="icon"
+                                onClick={(e) => {
+                                    // Stop event propagation
+                                    e.stopPropagation()
+                                }}
+                            >
+                                <Ellipsis size={16} className="text-white rotate-90" />
+                            </Button>
+                        }
+                        items={[
+                            {
+                                label: "View Details",
+                                icon: <Eye />,
+                                onClick: openViewDetailsDialog,
+                            },
+                            {
+                                label: "Edit Details",
+                                icon: <Edit2 />,
+                                onClick: openEditSheet,
+                            },
+                            {
+                                label: "Delete",
+                                icon: <Trash />,
+                                onClick: openConfirmDeleteModal,
+                            },
+                        ]
+                        }
+                        contentProps={{ className: "w-52" }}
+                    />
+                </header>
+            }
             <div
                 className='flex items-center justify-center relative max-h-[150px] aspect-square'
-                onClick={openViewDetailsDialog}
+                onClick={
+                    () => {
+                        if (!!album) {
+                            openConfirmAddToAlbumDialog()
+                        }
+                        else {
+                            openViewDetailsDialog()
+                        }
+                    }
+                }
             >
                 <Image
                     src={audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'}
@@ -528,6 +575,20 @@ const AudioCard = ({ audio }: {
 
 
             <CustomAlertDialog
+                variant={"default"}
+                open={isConfirmAddToAlbumDialogOpen}
+                onOpenChange={setIsConfirmAddToAlbumDialogState}
+                title={"Confirm Add To album"}
+                description={"Are you sure you want to add this song to album" + " " + album?.title + "?"}
+                actionLabel={"Add to Album"}
+                cancelLabel="Cancel"
+                onAction={handleConfirmAddToAblum}
+                onCancel={closeConfirmAddToAlbumDialog}
+                showCancel={true}
+                showAction={true}
+                isPerformingAction={isAddingToAlbum}
+            />
+            <CustomAlertDialog
                 variant={"warning"}
                 open={isConfirmDeleteModalOpen}
                 onOpenChange={setConfirmDeleteModalState}
@@ -536,7 +597,10 @@ const AudioCard = ({ audio }: {
                 actionLabel={"Go ahead, delete"}
                 cancelLabel="Cancel"
                 onAction={handleDelete}
-                onCancel={closeConfirmDeleteModal}
+                onCancel={() => {
+                    setIsConfirmAddToAlbumDialogState(false);
+                    closeConfirmDeleteModal();
+                }}
                 showCancel={true}
                 showAction={true}
                 isPerformingAction={isDeletingMedia}
