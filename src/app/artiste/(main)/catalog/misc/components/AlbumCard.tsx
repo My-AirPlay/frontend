@@ -102,7 +102,6 @@ const AlbumCard = ({ album }: {
     const {
         state: isAddSongToAlbumDialogOpen,
         setTrue: openAddSongToAlbumModal,
-        setFalse: closeAddSongToAlbumModal,
         setState: setIsAddSongToAlbumDialogState
     } = useBooleanStateControl();
 
@@ -171,7 +170,6 @@ const AlbumCard = ({ album }: {
             </header>
             <div
                 className='flex items-center justify-center relative max-h-[150px] aspect-square'
-                onClick={openViewDetailsDialog}
             >
                 <Image
                     src={album.mediaDirCoverArtUrl}

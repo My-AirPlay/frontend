@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import Image from 'next/image'
 import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight } from 'lucide-react'
 import { format } from 'date-fns'
-import { Musicnote } from 'iconsax-react'
+import { Musicnote, TickCircle, } from 'iconsax-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -41,9 +41,10 @@ type MediaUpdateFormValues = z.infer<typeof mediaUpdateSchema>
 
 
 
-const AudioCard = ({ audio, album }: {
+const AudioCard = ({ audio, album, selected }: {
     audio: TArtistMedia,
     album?: TArtisteAlbum
+    selected?: boolean
 }) => {
     const {
         state: isViewDetailsDialogOpen,
@@ -154,6 +155,20 @@ const AudioCard = ({ audio, album }: {
                 }
             }
         >
+            {
+                selected &&
+                <aside className="flex flex-col items-center justify-center z-[10] absolute size-full top-0 left-0 bottom-0 right-0 bg-black/60">
+                    <TickCircle
+                        size={40}
+                        variant="Bold" fill="white"
+                        style={{ fill: "white" }}
+                    />
+                    <small className="font-medium text-sm text-white">
+                        Already in album
+                    </small>
+               </aside>
+            }
+
             {
                 !album &&
                 <header className='absolute top-2 right-2 z-[3]'>

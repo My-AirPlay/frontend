@@ -2,7 +2,6 @@ import React from 'react'
 import { TArtisteAlbum } from '../api/getArtisteAlbums';
 import { Button, Dialog, DialogContent, DialogTitle, SelectSimple } from '@/components/ui';
 import { Musicnote } from 'iconsax-react';
-import { Play } from 'lucide-react';
 import Image from 'next/image';
 import { formatDate } from 'date-fns';
 import { useGetAudios } from '../api';
@@ -26,7 +25,7 @@ const AddSongToAlbumFromAlbumMenu = ({ isAddSongToAlbumDialogOpen, setIsAddSongT
 
         <Dialog open={isAddSongToAlbumDialogOpen} onOpenChange={setIsAddSongToAlbumDialogState}>
             <DialogTitle className="sr-only">Details</DialogTitle>
-            <DialogContent className="bg-zinc-900 text-white max-w-xl p-0 border-none !rounded-2xl ">
+            <DialogContent className="bg-zinc-900 text-white max-w-5xl p-0 border-none !rounded-3xl ">
                 <div className="rounded-2xl p-4 h-[90vh] overflow-hidden flex flex-col">
                     <header className="rounded-2xl">
                         <div className="flex gap-6 mb-4 p-4">
@@ -72,11 +71,12 @@ const AddSongToAlbumFromAlbumMenu = ({ isAddSongToAlbumDialogOpen, setIsAddSongT
                                                 <AudioCardSkeleton key={`${_}${index}`} />
                                             ))
                                                 :
-                                                data?.data.filter(media => !album.fileIds.includes(media._id)).map((audio) => (
+                                                data?.data.map((audio) => (
                                                     <AudioCard
                                                         key={audio._id}
                                                         audio={audio}
                                                         album={album}
+                                                        selected={album.fileIds?.some((file) => file._id === audio._id) ?? false}
                                                     />
                                                 ))
                                         }

@@ -2,6 +2,7 @@ import React from 'react'
 import { useGetAlbums } from '../api';
 import AlbumCard, { AlbumCardSkeleton } from './AlbumCard';
 import { Button, SelectSimple } from '@/components/ui';
+import Link from 'next/link';
 
 const SectionAlbums = () => {
     const [itemsPerPage, setItemsPerPage] = React.useState(20);
@@ -34,13 +35,15 @@ const SectionAlbums = () => {
                                 ))
                                     :
                                     data?.data.map((album) => (
-                                        <AlbumCard
-                                            key={album._id}
-                                            album={album}
-                                        />
+                                        <Link href={`/artiste/catalog/album?albumId=${album._id}`} className="size-full" key={album._id}>
+                                            <AlbumCard
+                                                key={album._id}
+                                                album={album}
+                                            />
+                                        </Link>
                                     ))}
                         </div>
-                        }
+                }
             </section>
 
             <footer className="stickty top-0 gap-8 h-10 bg-background flex items-center justify-between mt-auto">

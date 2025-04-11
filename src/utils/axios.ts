@@ -1,4 +1,5 @@
-import Axios, { AxiosError } from 'axios';
+import Axios from 'axios';
+import { toast } from 'sonner';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL as string;
 
@@ -21,23 +22,42 @@ export const handleInactiveAccountRedirect = () => {
   }
 };
 
+
+
 APIAxios.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    console.log('Axios Error Response:', error.response);
-
-    if (error.response) {
-      const errorData = error.response.data as { error?: { summary?: string } };
-      const errorSummary = errorData.error?.summary;
-      
-      if (errorSummary === 'inactive account' || errorSummary === 'Invalid token' || errorSummary === 'Token has expired') {
-        console.log('Authentication Error:', errorSummary);
-        deleteAxiosDefaultToken();
-        handleInactiveAccountRedirect();
-      }
+  (error) => {
+    console.log(error, "ERROR");
+    if (error?.status == 500) {
+      toast.error(
+        "We are having a problem on our end -- SERVER ERROR PLACEHOLDER",
+        { duration: 10000, id: "900" }
+      );
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
+    if (error?.message === "Network Error" || error?.code == "ERR_NETWORK") {
+      toast.error(
+        "Check your internet connection -- NETWORK ERROR PLACEHOLDER",
+        { duration: 10000, id: "90009" }
+      );
+      return Promise.reject(error);
+    }
+    if ((error && error.status === 401) || error?.code == "token_not_valid") {
+      toast.error("Session Expired, Login in again to continue", {
+        duration: 10000,
+      });
+      deleteAxiosDefaultToken();
+      if (typeof window !== undefined) {
+        console.log('window location' );
+        window.location.href ='/';
+      }
+      return Promise.reject(error);
+    } else {
+      return Promise.reject(error);
+    }
   }
 );
 
 export default APIAxios;
+
+
