@@ -13,9 +13,6 @@ const SectionAudios = () => {
 
     return (
         <div className="relative flex flex-col h-full overflow-hidden">
-            <header>
-
-            </header>
 
 
             <section className='flex-1 overflow-y-auto'>

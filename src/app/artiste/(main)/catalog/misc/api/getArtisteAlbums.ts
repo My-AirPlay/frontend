@@ -1,5 +1,6 @@
 import APIAxios from "@/utils/axios";
 import { useQuery } from "@tanstack/react-query";
+import { TArtistMedia } from "./getArtisteMedias";
 
 type FetchOptions = {
     limit?: number;
@@ -32,7 +33,7 @@ export interface TArtisteAlbum {
     copyright: string;
     releaseDate: string;
     streamingPlatforms: string[];
-    fileIds: string[];
+    fileIds: TArtistMedia[];
     mediaDirCoverArtUrl: string;
     createdAt: string;
     updatedAt: string;
