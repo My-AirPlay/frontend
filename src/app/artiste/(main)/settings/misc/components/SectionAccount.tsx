@@ -28,7 +28,7 @@ export default function AccountSection() {
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, },
   } = form
 
   const onSubmit = (data: AccountDeletionFormValues) => {

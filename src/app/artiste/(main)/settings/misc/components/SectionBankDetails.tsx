@@ -30,7 +30,7 @@ export default function SectionBankDetails() {
 
     const {
         handleSubmit,
-        formState: { errors, isValid },
+        formState: { errors },
     } = form
 
     const onSubmit = (data: BankFormValues) => {

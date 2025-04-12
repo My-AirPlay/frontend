@@ -31,7 +31,7 @@ export default function SectionPassword() {
 
   const {
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors, },
     reset,
   } = form
 

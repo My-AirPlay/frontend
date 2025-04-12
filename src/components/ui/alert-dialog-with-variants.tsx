@@ -86,14 +86,14 @@ const AlertDialogWithVariantsContent = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Content>,
   AlertDialogWithVariantsContentProps
 >(({ className, variant, ...props }, ref) => (
-  <>
+  <AlertDialogWithVariantsPortal>
     <AlertDialogWithVariantsOverlay />
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(alertDialogWithVariantsVariants({ variant }), className)}
       {...props}
     />
-  </>
+  </AlertDialogWithVariantsPortal>
 ))
 AlertDialogWithVariantsContent.displayName = AlertDialogPrimitive.Content.displayName
 

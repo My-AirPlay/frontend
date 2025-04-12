@@ -36,7 +36,7 @@ const {artist} = useArtisteContext()
 
     const {
         handleSubmit,
-        formState: { errors, isValid },
+        formState: { errors, },
     } = form
 
     const onSubmit = (data: ProfileFormValues) => {
