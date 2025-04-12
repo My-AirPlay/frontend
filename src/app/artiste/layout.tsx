@@ -13,7 +13,7 @@ export default function ArtisteLayout({
 }) {
     return (
         <ArtistAuthProvider>
-            <>{children}</>
+            {children}
         </ArtistAuthProvider>
     );
 }
