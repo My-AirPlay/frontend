@@ -13,13 +13,17 @@ import SuccessModal from './misc/components/SuccessModal';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import useOnclickOutside from 'react-cool-onclickoutside';
+import { useAdminAnalyzeCsv } from '../catalogue/api/postAdminAnalyzeCsv';
+import { LoadingBox } from '@/components/ui/LoadingBox';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { currencySymbols } from '@/lib/types';
 
 type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist';
 
 interface DropdownOption {
 	id: string;
 	label: string;
-	checked?: boolean;
+	symbol: string;
 }
 
 // Function to map rawData?.Currency to DropdownOption[]
@@ -28,16 +32,15 @@ const mapCurrencyToOptions = (currencyData?: Record<string, string>): DropdownOp
 
 	return Object.keys(currencyData).map(key => ({
 		id: key, // Use the key as the ID (e.g., "USD")
-		label: key, // Use the key as the label (since values are identical in your example)
-		checked: false // Default to unchecked; customize this logic as needed
+		label: key, // Use the key as the label
+		symbol: currencySymbols[key] || key // Use the symbol if available, otherwise fall back to the currency code
 	}));
 };
 
-interface CurrencyState {
+interface CurrencyPair {
 	from: string | null;
 	to: string | null;
-	base: string | null;
-	compare: string | null;
+	rate: string;
 }
 
 const Sales: React.FC = () => {
@@ -45,21 +48,45 @@ const Sales: React.FC = () => {
 
 	const currencyOptions = mapCurrencyToOptions(rawData?.Currency);
 
-	const handleOptionChange = (dropdownKey: keyof CurrencyState) => (option: DropdownOption) => {
-		setCurrencyState(prev => ({
-			...prev,
-			[dropdownKey]: option.id // Store the selected currency ID
-		}));
-	};
-
-	const [currencyState, setCurrencyState] = useState<CurrencyState>({
-		from: 'EUR', // Default value for "From"
-		to: 'NGN', // Default value for "To"
-		base: null, // No default for "Base"
-		compare: null // No default for "Compare"
+	// Initialize react-hook-form with simplified CurrencyPair
+	const { control, watch } = useForm<{ currencyPairs: CurrencyPair[] }>({
+		defaultValues: {
+			currencyPairs: [
+				{
+					from: 'EUR',
+					to: 'NGN',
+					rate: '2300' // Default rate for the first pair
+				}
+			]
+		}
 	});
 
-	console.log('rawData', rawData);
+	// Use useFieldArray to manage the array of currency pairs
+	const { fields, append, remove } = useFieldArray({
+		control,
+		name: 'currencyPairs'
+	});
+
+	const currencyPairs = watch('currencyPairs');
+	console.log('currencyPairs', currencyPairs);
+
+	// Function to add a new currency pair (max 5)
+	const addCurrencyPair = () => {
+		if (fields.length < 5) {
+			append({
+				from: 'EUR',
+				to: 'NGN',
+				rate: '1800' // Default rate for new pairs
+			});
+		}
+	};
+
+	// Function to remove a currency pair (min 1)
+	const removeCurrencyPair = (index: number) => {
+		if (fields.length > 1) {
+			remove(index);
+		}
+	};
 
 	const [currentStep, setCurrentStep] = useState<SalesStep>('exchange-rate');
 	const [showExchangeRates, setShowExchangeRates] = useState(true);
@@ -67,9 +94,6 @@ const Sales: React.FC = () => {
 	const [csvUploaded, setCsvUploaded] = useState(false);
 	const [processingComplete, setProcessingComplete] = useState(false);
 
-	// Exchange rate values
-	const [euroRate, setEuroRate] = useState<string>('2300');
-	const [usdRate, setUsdRate] = useState<string>('1800');
 	const [processingSteps, setProcessingSteps] = useState({
 		uploadSuccessful: false,
 		sortingInformation: false,
@@ -120,8 +144,10 @@ const Sales: React.FC = () => {
 		}
 	};
 
+	const { mutate: analyzeCsv, isPending: isAnalyzeCsv } = useAdminAnalyzeCsv();
+
 	const handleFileSelected = (file: File) => {
-		console.log('File selected:', file.name);
+		analyzeCsv(file);
 		setCsvUploaded(true);
 	};
 
@@ -225,64 +251,55 @@ const Sales: React.FC = () => {
 							<div className="">
 								{currentStep === 'exchange-rate' ? (
 									<>
-										<div className="space-y-6 ">
-											<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-												<CustomDropdown label="From" buttonText={currencyState.from || 'Select Currency'} buttonIcon={<div className="bg-white text-black rounded-full w-6 h-6 flex items-center justify-center">$</div>} options={currencyOptions} onOptionChange={handleOptionChange('from')} buttonClassName="text-left" dropdownClassName="mt-2" optionClassName="cursor-pointer" />
-												<div className="flex items-center justify-center">
-													<div className="w-8 h-8 bg-white rounded-md flex items-center justify-center text-primary">
-														<ArrowLeftRight className=" " size={24} />
+										<div className="space-y-6">
+											{fields.map((field, index) => (
+												<div key={field.id} className="space-y-6 border-b border-gray-600 pb-6 last:border-b-0">
+													<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+														<Controller control={control} name={`currencyPairs.${index}.from`} render={({ field: { onChange, value } }) => <CustomDropdown label="From" buttonText={value || 'Select Currency'} buttonIcon={<div className="bg-white text-black rounded-full w-6 h-6 flex items-center justify-center">{currencySymbols[value || 'USD']}</div>} options={currencyOptions} onOptionChange={option => onChange(option.id)} buttonClassName="text-left" dropdownClassName="mt-2" optionClassName="cursor-pointer" />} />
+														<div className="flex items-center justify-center">
+															<div className="w-8 h-8 bg-white rounded-md flex items-center justify-center text-primary">
+																<ArrowLeftRight className="" size={24} />
+															</div>
+														</div>
+														<Controller control={control} name={`currencyPairs.${index}.to`} render={({ field: { onChange, value } }) => <CustomDropdown label="To" buttonText={value || 'Select Currency'} buttonIcon={<div className="bg-white text-black rounded-full w-6 h-6 flex items-center justify-center">{currencySymbols[value || 'USD']}</div>} options={currencyOptions} onOptionChange={option => onChange(option.id)} buttonClassName="text-left" dropdownClassName="mt-2" optionClassName="cursor-pointer" />} />
+													</div>
+
+													<Controller control={control} name={`currencyPairs.${index}.rate`} render={({ field: { onChange, value } }) => <AmountInput value={value} onChange={onChange} className="w-full rounded-md h-[4rem] text-center border-border p-3 focus:outline-none focus:ring-1 focus:ring-primary" />} />
+
+													{/* Add/Remove Buttons */}
+													<div className="flex justify-end gap-2 mt-4">
+														{fields.length > 1 && (
+															<Button variant="destructive" size="sm" onClick={() => removeCurrencyPair(index)}>
+																Remove
+															</Button>
+														)}
+														{index === fields.length - 1 && fields.length < 5 && (
+															<Button variant="outline" size="sm" onClick={addCurrencyPair}>
+																Add Another Pair
+															</Button>
+														)}
 													</div>
 												</div>
-
-												<CustomDropdown label="To" buttonText={currencyState.to || 'Select Currency'} buttonIcon={<div className="bg-white text-black rounded-full w-6 h-6 flex items-center justify-center">₦</div>} options={currencyOptions} onOptionChange={handleOptionChange('to')} buttonClassName="text-left" dropdownClassName="mt-2" optionClassName="cursor-pointer" />
-											</div>
-
-											<AmountInput value={euroRate} onChange={e => setEuroRate(e.target.value)} className="w-full rounded-md h-[4rem] text-center border-border p-3 focus:outline-none focus:ring-1 focus:ring-primary" />
-
-											<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-												<CustomDropdown label="From" buttonText={currencyState.base || 'Select Currency'} buttonIcon={<div className="bg-white text-black rounded-full w-6 h-6 flex items-center justify-center">$</div>} options={currencyOptions} onOptionChange={handleOptionChange('base')} buttonClassName="text-left" dropdownClassName="mt-2" optionClassName="cursor-pointer" />
-
-												<div className="flex items-center justify-center">
-													<div className="w-8 h-8 bg-white rounded-md flex items-center justify-center">
-														<ArrowLeftRight className="text-primary fill-primary" size={24} />
-													</div>
-												</div>
-
-												<CustomDropdown label="To" buttonText={currencyState.compare || 'Select Currency'} buttonIcon={<div className="bg-white text-black rounded-full w-6 h-6 flex items-center justify-center">₦</div>} options={currencyOptions} onOptionChange={handleOptionChange('compare')} buttonClassName="text-left" dropdownClassName="mt-2" optionClassName="cursor-pointer" />
-											</div>
-
-											<AmountInput value={usdRate} onChange={e => setUsdRate(e.target.value)} className="w-full rounded-md h-[4rem] text-center border-border p-3 focus:outline-none focus:ring-1 focus:ring-primary" />
+											))}
 										</div>
 									</>
 								) : (
 									<div className="space-y-6">
-										<div className="flex items-center justify-between mb-2">
-											<div className="flex items-center gap-4">
-												<div className="bg-primary rounded-full w-8 h-8 flex items-center justify-center text-white">€</div>
-												<span className="text-lg">1</span>
+										{currencyPairs.map((pair, index) => (
+											<div key={index} className="flex items-center justify-between mb-2">
+												<div className="flex items-center gap-4">
+													<div className="bg-primary rounded-full w-8 h-8 flex items-center justify-center text-white">{currencySymbols[pair.from || 'USD']}</div>
+													<span className="text-lg">1</span>
+												</div>
+												<div className="w-8 h-8 flex items-center justify-center">
+													<div className="w-4 h-4 text-muted">⇄</div>
+												</div>
+												<div className="flex items-center gap-4">
+													<div className="bg-primary rounded-full w-8 h-8 flex items-center justify-center text-white">{currencySymbols[pair.to || 'USD']}</div>
+													<span className="text-lg text-primary">{pair.rate}</span>
+												</div>
 											</div>
-											<div className="w-8 h-8 flex items-center justify-center">
-												<div className="w-4 h-4 text-muted">⇄</div>
-											</div>
-											<div className="flex items-center gap-4">
-												<div className="bg-primary rounded-full w-8 h-8 flex items-center justify-center text-white">₦</div>
-												<span className="text-lg text-primary">{euroRate}</span>
-											</div>
-										</div>
-
-										<div className="flex items-center justify-between">
-											<div className="flex items-center gap-4">
-												<div className="bg-primary rounded-full w-8 h-8 flex items-center justify-center text-white">$</div>
-												<span className="text-lg">1</span>
-											</div>
-											<div className="w-8 h-8 flex items-center justify-center">
-												<div className="w-4 h-4 text-muted">⇄</div>
-											</div>
-											<div className="flex items-center gap-4">
-												<div className="bg-primary rounded-full w-8 h-8 flex items-center justify-center text-white">₦</div>
-												<span className="text-lg text-primary">{usdRate}</span>
-											</div>
-										</div>
+										))}
 
 										<Button variant="link" className="text-primary p-0 h-auto" onClick={() => setShowExchangeRates(true)}>
 											Edit Rate
@@ -345,7 +362,13 @@ const Sales: React.FC = () => {
 					<div className="mt-8 mb-4 max-w-3xl">
 						<h2 className="text-lg font-medium mb-4">Upload CSV</h2>
 
-						<FileUploader onFileSelected={handleFileSelected} supportedFormats={['CSV']} icon={<Upload size={24} className="text-muted" />} id="csv-upload" />
+						{isAnalyzeCsv ? (
+							<div className="w-full px-6 py-4 flex justify-center items-center">
+								<LoadingBox size={42} />
+							</div>
+						) : (
+							<FileUploader onFileSelected={handleFileSelected} supportedFormats={['CSV']} icon={<Upload size={24} className="text-muted" />} id="csv-upload" />
+						)}
 					</div>
 				)}
 
@@ -385,7 +408,6 @@ const Sales: React.FC = () => {
 interface DropdownOption {
 	id: string;
 	label: string;
-	checked?: boolean;
 	value?: string;
 }
 
@@ -440,7 +462,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({ label, buttonText, butt
 											setIsOpen(val => !val);
 										}}
 									>
-										{option.label}
+										{`${option.symbol} ${option.label}`}
 									</div>
 								</li>
 							))}

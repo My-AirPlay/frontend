@@ -1,39 +1,32 @@
 import APIAxios from '@/utils/axios';
 import { useMutation } from '@tanstack/react-query';
 
-// Define the payload interface
+// Define the payload interface based on cURL inputs
 interface CreateArtistPayload {
-	name: string;
 	email: string;
-	bio?: string; // Optional field
-	profileImage?: File; // Optional file upload for artist profile image
+	artistName: string;
+	bankName: string;
+	accountName: string;
+	currency: string;
+	accountNumber: string;
 }
 
 export const createArtist = async (payload: CreateArtistPayload) => {
-	// Use FormData if there's a file, otherwise use JSON
-	const hasFile = !!payload.profileImage;
-	let body: FormData | CreateArtistPayload;
-	let headers = {};
+	// Use FormData for multipart/form-data as per cURL
+	const formData = new FormData();
+	formData.append('email', payload.email);
+	formData.append('artistName', payload.artistName);
+	formData.append('bankName', payload.bankName);
+	formData.append('accountName', payload.accountName);
+	formData.append('currency', payload.currency);
+	formData.append('accountNumber', payload.accountNumber);
 
-	if (hasFile) {
-		const formData = new FormData();
-		formData.append('name', payload.name);
-		formData.append('email', payload.email);
-		if (payload.bio) formData.append('bio', payload.bio);
-		if (payload.profileImage) formData.append('profileImage', payload.profileImage);
+	const response = await APIAxios.post(`/admin/create-artist`, formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data'
+		}
+	});
 
-		body = formData;
-		headers = { 'Content-Type': 'multipart/form-data' };
-	} else {
-		body = {
-			name: payload.name,
-			email: payload.email,
-			bio: payload.bio
-		};
-		headers = { 'Content-Type': 'application/json' };
-	}
-
-	const response = await APIAxios.post(`/admin/create-artist`, body, { headers });
 	return response.data;
 };
 
