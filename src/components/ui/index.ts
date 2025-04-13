@@ -23,4 +23,15 @@ export { default as FileUploader } from './file-uploader';
 export { ScrollArea, ScrollBar } from './scroll-area';
 export { Sheet, SheetPortal, SheetOverlay, SheetTrigger, SheetClose, SheetContent, SheetHeader, SheetFooter, SheetTitle, SheetDescription } from './sheet';
 
-export { Skeleton } from './skeleton';
+export { Skeleton } from './skeleton'
+
+export {
+  useFormField,
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
+} from './form'

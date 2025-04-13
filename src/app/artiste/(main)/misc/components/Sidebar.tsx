@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MusicSquare, Headphone, Category, Musicnote, UsdCoin, Chart, User } from 'iconsax-react'
+import { MusicSquare, Headphone, Category, Musicnote, UsdCoin, Setting2 } from 'iconsax-react'
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -34,20 +34,20 @@ const Sidebar = ({ className }: { className?: string }) => {
       icon: UsdCoin,
       label: "Report",
     },
-    {
-      href: "/artiste/analytics",
-      icon: Chart,
-      label: "Analytics",
-    },
+    // {
+    //   href: "/artiste/analytics",
+    //   icon: Chart,
+    //   label: "Analytics",
+    // },
     {
       href: "/artiste/support",
       icon: Headphone,
       label: "Support",
     },
     {
-      href: "/artiste/profile",
-      icon: User,
-      label: "Profile",
+      href: "/artiste/settings",
+      icon: Setting2,
+      label: "Settings",
     },
   ]
 

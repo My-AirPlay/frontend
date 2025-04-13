@@ -1,5 +1,7 @@
-import APIAxios from '@/utils/axios';
-import { useQuery } from '@tanstack/react-query';
+
+import APIAxios from "@/utils/axios";
+import { useQuery } from "@tanstack/react-query";
+import { TArtistMedia } from "./getArtisteMedias";
 
 type FetchOptions = {
 	limit?: number;
@@ -15,28 +17,29 @@ interface APIREsponse {
 }
 
 export interface TArtisteAlbum {
-	_id: string;
-	artistId: string;
-	title: string;
-	description: string;
-	dirType: string;
-	mainGenre: string;
-	secondaryGenres: string[];
-	artistName: string;
-	recordLabel: string;
-	publisher: string;
-	instruments: string[];
-	explicitContent: string;
-	universalProductCode: string;
-	releaseVersion: string;
-	copyright: string;
-	releaseDate: string;
-	streamingPlatforms: string[];
-	fileIds: string[];
-	mediaDirCoverArtUrl: string;
-	createdAt: string;
-	updatedAt: string;
-	__v: number;
+
+    _id: string;
+    artistId: string;
+    title: string;
+    description: string;
+    dirType: string;
+    mainGenre: string;
+    secondaryGenres: string[];
+    artistName: string;
+    recordLabel: string;
+    publisher: string;
+    instruments: string[];
+    explicitContent: string;
+    universalProductCode: string;
+    releaseVersion: string;
+    copyright: string;
+    releaseDate: string;
+    streamingPlatforms: string[];
+    fileIds: TArtistMedia[];
+    mediaDirCoverArtUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }
 
 const getAlbums = async (options: FetchOptions) => {
