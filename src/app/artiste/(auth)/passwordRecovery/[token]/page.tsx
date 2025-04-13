@@ -2,7 +2,6 @@
 import React from "react";
 import AuthWrapper from "../../misc/components/auth-wrapper";
 import Link from "next/link";
-import { urls } from "@/lib/constants";
 import AuthActions from "../../misc/components/auth-actions";
 
 import { useParams } from "next/navigation";
@@ -26,7 +25,7 @@ const ResetPasswordPage = () => {
         return;
       }
       toast.success(data.message);
-      replace(urls.login);
+      replace("/artiste/login");
     },
   });
   const formik = useFormik<InferType<typeof resetPasswordSchema>>({
@@ -50,7 +49,7 @@ const ResetPasswordPage = () => {
           <p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
             Not a member?{" "}
             <Link
-              href={urls.register}
+              href={"/artiste/register"}
               className="font-bold text-custom-primary"
             >
               Sign up
