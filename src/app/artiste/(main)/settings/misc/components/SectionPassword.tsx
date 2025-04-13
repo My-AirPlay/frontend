@@ -7,13 +7,14 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useArtisteContext } from "@/contexts/AuthContextArtist"
 
 import { useRequestResetPasswordOTP } from "../api"
+import { SmallSpinner } from "@/components/icons"
 
 
 
 export default function SectionPassword() {
   const { artist } = useArtisteContext()
 
-  const { mutate } = useRequestResetPasswordOTP()
+  const { mutate, isPending } = useRequestResetPasswordOTP()
   const handleRequestOTP = () => {
     if (!artist) return
     mutate({ email: artist.email },
@@ -43,6 +44,9 @@ export default function SectionPassword() {
               <p className="text-muted-foreground mb-4">Change your password to keep your account secure</p>
               <Button onClick={handleRequestOTP} className="px-8">
                 Request OTP to Change Password
+                {
+                  isPending && <SmallSpinner />
+                }
               </Button>
             </div>
           </div>
