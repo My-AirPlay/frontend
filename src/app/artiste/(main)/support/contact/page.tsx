@@ -54,7 +54,7 @@ export default function ContactPage() {
                 <div className="text-center mb-6">
                     <p className="text-gray-200 mb-4">
                         We value your interest and involvement in AirPlay community. Whether you have questions, need support, or
-                        want to get more involved, we're here to help.
+                        want to get more involved, we&apos;re here to help.
                     </p>
                     <p className="text-gray-200">
                         Contact Number : <span className="text-[#FF6B00]">+23456789089</span>

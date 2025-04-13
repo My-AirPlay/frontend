@@ -43,7 +43,7 @@ export default function AllIssuesPage() {
             <div className="bg-secondary rounded-md p-4">
               <div className="text-xs text-gray-400 mb-2">No image attached</div>
               <h4 className="font-medium mb-1">Distribution Issues</h4>
-              <p className="text-sm text-gray-400">I can't upload my music on the dashboard, it is Unresponsive</p>
+              <p className="text-sm text-gray-400">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
             </div>
           </div>
         </div>
