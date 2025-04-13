@@ -12,7 +12,7 @@ export default function SettingsPage() {
   const section = searchParams.get("section") || "profile"
   
   return (
-    <div className="container max-w-5xl mx-auto py-8 px-4">
+    <div className="container max-w-5xl mx-auto py-8 md:px-4">
       <div className="flex items-center gap-2 mb-8">
         <Cog className="h-6 w-6" />
         <h1 className="text-2xl font-semibold">Settings</h1>

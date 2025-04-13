@@ -8,18 +8,22 @@ import { toast } from "sonner"
 import { Input, Button, Card, CardContent, SelectSimple, Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui"
 
 import { type BankFormValues, bankSchema } from "../schemas"
+import { useArtisteContext } from "@/contexts/AuthContextArtist"
+import { useUpdateBankData } from "../api"
+import { SmallSpinner, Spinner } from "@/components/icons"
 
 export default function SectionBankDetails() {
     const [isEditing, setIsEditing] = useState(false)
+    const { artist, isLoading } = useArtisteContext()
 
     const defaultValues: BankFormValues = {
-        accountNumber: "090909090",
-        bankName: "First Bank",
-        accountName: "Mary Rose",
-        sortCode: "IBAN234",
-        swiftCode: "IBAN234",
-        payoutOption: "monthly",
-        currency: "naira",
+        accountNumber: artist?.bankDetails?.accountNumber.toString() || "",
+        bankName: artist?.bankDetails?.bankName || "",
+        accountName: artist?.bankDetails?.accountName || "",
+        sortCode: artist?.bankDetails?.sortCode || "",
+        swiftCode: artist?.bankDetails?.ibanSwiftCode || "",
+        payoutOption: artist?.bankDetails?.paymentOption || "monthly",
+        currency: artist?.bankDetails?.currency || "naira",
     }
 
     const form = useForm<BankFormValues>({
@@ -33,10 +37,17 @@ export default function SectionBankDetails() {
         formState: { errors },
     } = form
 
+    const { mutate, isPending } = useUpdateBankData();
     const onSubmit = (data: BankFormValues) => {
-        console.log("Form submitted with:", data)
-        toast.success("Bank details updated successfully")
-        setIsEditing(false)
+        mutate({ ...data, email: artist?.email || "" }, {
+            onSuccess: () => {
+                toast.success("Bank information updated successfully")
+                setIsEditing(false)
+            },
+            onError: (error) => {
+                toast.error(error.message || "Failed to update bank data")
+            },
+        })
     }
 
     const payoutOptions = [
@@ -53,6 +64,17 @@ export default function SectionBankDetails() {
         { label: "£ (GBP)", value: "gbp" },
     ]
 
+
+    if (isLoading) {
+        return (
+            <div className="size-full flex items-center justify-center">
+                <Spinner />
+            </div>
+        )
+    }
+
+
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -63,10 +85,15 @@ export default function SectionBankDetails() {
                             <Button variant="outline" onClick={() => setIsEditing(false)}>
                                 Cancel
                             </Button>
-                            <Button onClick={handleSubmit(onSubmit)}>Save Changes</Button>
+                            <Button onClick={handleSubmit(onSubmit)} disabled={isPending}>Save Changes</Button>
                         </>
                     ) : (
-                        <Button onClick={() => setIsEditing(true)}>Edit Bank Details</Button>
+                        <Button onClick={() => setIsEditing(true)} disabled={isPending}>
+                            Edit Bank Details
+                            {
+                                isPending && <SmallSpinner />
+                            }
+                        </Button>
                     )}
                 </div>
             </div>

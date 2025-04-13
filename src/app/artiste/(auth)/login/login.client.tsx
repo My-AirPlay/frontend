@@ -14,6 +14,8 @@ import { Input } from "@/components/ui";
 
 import AuthWrapper from "../misc/components/auth-wrapper";
 import AuthActions from "../misc/components/auth-actions";
+import { getArtistProfile } from "@/contexts/AuthContextArtist";
+import { redirect } from "next/navigation";
 
 
 const LoginPageClient = () => {
@@ -51,6 +53,22 @@ const LoginPageClient = () => {
       mutate(val);
     },
   });
+
+    React.useEffect(() => {
+      const fetchUser = async () => {
+        const user = await getArtistProfile();
+        if (user) {
+          redirect(
+            user.stage === userProfileStage.onboarding ?
+            "/artiste/onboarding" :
+            "/artiste/dashboard"
+          );
+        }
+      };
+      fetchUser();
+    }, []);
+
+
   return (
     <>
       <AuthWrapper

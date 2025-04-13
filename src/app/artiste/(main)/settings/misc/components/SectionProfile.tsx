@@ -10,16 +10,20 @@ import { Form, FormControl, FormField, FormItem, FormLabel, Card, CardContent, T
 
 import { type ProfileFormValues, profileSchema } from "../schemas"
 import { useArtisteContext } from "@/contexts/AuthContextArtist"
+import { SmallSpinner, Spinner } from "@/components/icons"
+import { useUpdateProfile } from "../api"
 
 export default function SectionProfile() {
     const [isEditing, setIsEditing] = useState(false)
-const {artist} = useArtisteContext()
+    const { artist, isLoading } = useArtisteContext()
+    
     const defaultValues: ProfileFormValues = {
-        fullName: artist?.artistName ||"Mary Rose",
-        stageName: "Rose",
-        phoneNumber: "+234567890",
-        email: "maryrose@gmail.com",
-        bio: "A very shy person",
+        firstName: artist?.firstName || "",
+        lastName: artist?.lastName || "",
+        artistName: artist?.artistName || "",
+        phoneNumber: artist?.email || "",
+        email: artist?.email || "",
+        bio: "",
         instagram: "",
         soundcloud: "",
         tiktok: "",
@@ -39,10 +43,25 @@ const {artist} = useArtisteContext()
         formState: { errors, },
     } = form
 
+    const { mutate, isPending } = useUpdateProfile();
     const onSubmit = (data: ProfileFormValues) => {
-        console.log("Form submitted with:", data)
-        toast.success("Profile information updated successfully")
-        setIsEditing(false)
+        mutate(data, {
+            onSuccess: () => {
+                toast.success("Profile information updated successfully")
+                setIsEditing(false)
+            },
+            onError: (error) => {
+                toast.error(error.message || "Failed to update profile")
+            },
+        }) 
+    }
+
+    if (isLoading) {
+        return (
+            <div className="size-full flex items-center justify-center">
+                <Spinner />
+            </div>
+        )
     }
 
     return (
@@ -52,10 +71,15 @@ const {artist} = useArtisteContext()
                 <div className="flex gap-2">
                     {isEditing ? (
                         <>
-                            <Button variant="outline" onClick={() => setIsEditing(false)}>
+                            <Button variant="outline" onClick={() => setIsEditing(false)} disabled={isPending}>
                                 Cancel
                             </Button>
-                            <Button onClick={handleSubmit(onSubmit)}>Save Changes</Button>
+                            <Button onClick={handleSubmit(onSubmit)} disabled={isPending}>
+                                Save Changes
+                                {
+                                    isPending && <SmallSpinner />
+                                }
+                            </Button>
                         </>
                     ) : (
                         <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
@@ -70,7 +94,7 @@ const {artist} = useArtisteContext()
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <FormField
                                     control={form.control}
-                                    name="fullName"
+                                    name="firstName"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
@@ -80,8 +104,27 @@ const {artist} = useArtisteContext()
                                                 <Input
                                                     {...field}
                                                     disabled={!isEditing}
-                                                    hasError={!!errors.fullName}
-                                                    errormessage={errors.fullName?.message}
+                                                    hasError={!!errors.firstName}
+                                                    errormessage={errors.firstName?.message}
+                                                />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="lastName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>
+                                                Full Name <span className="text-primary">*</span>
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    disabled={!isEditing}
+                                                    hasError={!!errors.lastName}
+                                                    errormessage={errors.lastName?.message}
                                                 />
                                             </FormControl>
                                         </FormItem>
@@ -90,7 +133,7 @@ const {artist} = useArtisteContext()
 
                                 <FormField
                                     control={form.control}
-                                    name="stageName"
+                                    name="artistName"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>
@@ -100,8 +143,8 @@ const {artist} = useArtisteContext()
                                                 <Input
                                                     {...field}
                                                     disabled={!isEditing}
-                                                    hasError={!!errors.stageName}
-                                                    errormessage={errors.stageName?.message}
+                                                    hasError={!!errors.artistName}
+                                                    errormessage={errors.artistName?.message}
                                                 />
                                             </FormControl>
                                         </FormItem>

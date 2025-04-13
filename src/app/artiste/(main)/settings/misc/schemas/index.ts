@@ -2,8 +2,9 @@ import * as z from "zod"
 
 // Profile Information Schema
 export const profileSchema = z.object({
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  stageName: z.string().min(1, "Stage name is required"),
+  firstName: z.string().min(2, "Full name must be at least 2 characters"),
+  lastName: z.string().min(2, "Full name must be at least 2 characters"),
+  artistName: z.string().min(1, "Stage name is required"),
   phoneNumber: z.string().min(6, "Phone number must be at least 6 characters"),
   email: z.string().email("Please enter a valid email address"),
   bio: z.string().optional(),
