@@ -4,40 +4,14 @@ import { useMutation } from "@tanstack/react-query";
 
 const updateProfile = async (profile: ProfileFormValues) => {
     const bioResponse = await APIAxios.post(
-        "/artist/add-biodata",
+        "/artist/update-bio",
         {
             userBioData: profile,
             email: profile.email,
         },
     );
-    const socialResponse = await APIAxios.post(
-        "/artist/add-social-links",
-        {
-            userBio: profile,
-            email: profile.email,
-        },
 
-    );
-    // const bankResponse = await APIAxios.post(
-    //     "/artist/add-bankdata",
-    //     {
-    //         userBankData: profile,
-    //         email: profile.email,
-    //     },
-    // );
-    // const response = await APIAxios.post(
-    //     "/artist/update_profile",
-    //     {
-    //         userBioData: profile,
-    //         email: profile.email,
-    //     },
-    // );
-    return {
-        bioResponse: bioResponse.data,
-        socialResponse: socialResponse.data,
-        // bankResponse: bankResponse.data,
-        // response: response.data,
-    };
+    return bioResponse.data;
 };
 
 export const useUpdateProfile = () => {
@@ -65,7 +39,7 @@ export const useRequestResetPasswordOTP = () => {
 const updateBankData = async (profile: BankFormValues & { email: string }) => {
 
     const bankResponse = await APIAxios.post(
-        "/artist/add-bankdata",
+        "/artist/update-bank-info",
         {
             userBankData: profile,
             email: profile.email,

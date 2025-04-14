@@ -82,17 +82,19 @@ export default function SectionBankDetails() {
                 <div className="flex gap-2">
                     {isEditing ? (
                         <>
-                            <Button variant="outline" onClick={() => setIsEditing(false)}>
+                            <Button variant="outline" onClick={() => setIsEditing(false)} disabled={isPending}>
                                 Cancel
                             </Button>
-                            <Button onClick={handleSubmit(onSubmit)} disabled={isPending}>Save Changes</Button>
+                            <Button onClick={handleSubmit(onSubmit)} disabled={isPending}>Save Changes
+
+                                {
+                                    isPending && <SmallSpinner />
+                                }
+                            </Button>
                         </>
                     ) : (
-                        <Button onClick={() => setIsEditing(true)} disabled={isPending}>
+                        <Button onClick={() => setIsEditing(true)} >
                             Edit Bank Details
-                            {
-                                isPending && <SmallSpinner />
-                            }
                         </Button>
                     )}
                 </div>
