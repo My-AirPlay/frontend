@@ -11,9 +11,17 @@ const SectionAudios = () => {
 		limit: itemsPerPage
 	});
 
-
-    return (
-        <div className="relative flex flex-col h-full overflow-hidden">
+	return (
+		<div className="relative flex flex-col h-full overflow-hidden">
+			<section className="flex-1 overflow-y-auto">
+				{!isLoading && data?.data.length === 0 ? (
+					<div className="flex items-center justify-center h-full w-full">
+						<h1 className="text-xl text-muted-foreground">No audios found</h1>
+					</div>
+				) : (
+					<div className="grid [grid-template-columns:repeat(auto-fill,minmax(200px,1fr))] gap-4 p-4">{isLoading ? Array.from({ length: 10 }).map((_, index) => <AudioCardSkeleton key={`${_}${index}`} />) : data?.data.map(audio => <AudioCard key={audio._id} audio={audio} />)}</div>
+				)}
+			</section>
 
 			<footer className="stickty top-0 gap-8 h-10 bg-background flex items-center justify-between mt-auto">
 				<div className="flex items-center gap-2">

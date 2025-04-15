@@ -28,7 +28,7 @@ const ReleaseDetails: React.FC = () => {
 				</div>
 			</div>
 
-			<TracksList albumId={release_id || '1'} album={album} />
+			<TracksList albumId={release_id || '1'} />
 		</div>
 	);
 };

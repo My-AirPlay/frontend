@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { Trash2, Pencil, Save } from 'lucide-react';
+import React from 'react';
+import { Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PreviousPageButton } from '@/components/ui';

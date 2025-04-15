@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useParams } from 'next/navigation';
 import { Input, PreviousPageButton, SelectSimple, Textarea } from '@/components/ui';
 import { TRUE_OR_FALSE_OPTIONS } from '@/constants';
-import { useGetMedia } from '../../api/GetOneMedia';
+import { useGetMedia } from '../../api/getOneMedia';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 
 const TrackDetails: React.FC = () => {
