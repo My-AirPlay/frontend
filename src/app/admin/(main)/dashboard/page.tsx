@@ -9,9 +9,9 @@ import Link from 'next/link';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { useMobile, useWindowWidth } from '@/hooks';
 import { useGetAdminMedia } from '../catalogue/api';
-import { SmallSpinner } from '@/components/icons';
 import moment from 'moment';
 import { useGetAllAlbums } from '../catalogue/api/getAdminGetAllAlbums';
+import { LoadingBox } from '@/components/ui/LoadingBox';
 
 const chartData = [
 	{ month: '17 Sun', this_week: 186, last_week: 80 },
@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
 
 	const { data: audio, isLoading: audioLoading } = useGetAdminMedia({ type: 'audio' });
 	const { data: video, isLoading: videoLoading } = useGetAdminMedia({ type: 'video' });
-	const { data: albums, isLoading: albumsLoading } = useGetAllAlbums();
+	const { data: albums, isLoading: albumsLoading } = useGetAllAlbums({});
 
 	// Mock data
 	const uploads = [
@@ -88,7 +88,7 @@ const Dashboard: React.FC = () => {
 						{audioLoading || videoLoading || albumsLoading ? (
 							<div className="w-full px-6 py-4 flex justify-center items-center">
 								{' '}
-								<SmallSpinner height={32} width={32} color="#fe6b02" />
+								<LoadingBox size={32} />
 							</div>
 						) : (
 							uploads?.map(upload => (

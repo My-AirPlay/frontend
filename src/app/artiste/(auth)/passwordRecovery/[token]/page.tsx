@@ -4,17 +4,18 @@ import AuthWrapper from "../../misc/components/auth-wrapper";
 import Link from "next/link";
 import AuthActions from "../../misc/components/auth-actions";
 
-import { useParams } from "next/navigation";
-import { useFormik } from "formik";
-import { resetPasswordSchema } from "@/lib/schemas";
-import { InferType } from "yup";
-import { useMutation } from "@tanstack/react-query";
-import { resetPassword } from "@/app/artiste/(auth)/misc/api/mutations/auth.mutations";
-import { handleClientError } from "@/lib/utils";
-import { toast } from "sonner";
-import { useRouter } from "nextjs-toploader/app";
-import { Input } from "@/components/ui";
+import { useParams } from 'next/navigation';
+import { useFormik } from 'formik';
+import { resetPasswordSchema } from '@/lib/schemas';
+import { InferType } from 'yup';
+import { useMutation } from '@tanstack/react-query';
+import { resetPassword } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
+import { handleClientError } from '@/lib/utils';
+import { toast } from 'sonner';
+import { useRouter } from 'nextjs-toploader/app';
+import { Input } from '@/components/ui';
 const ResetPasswordPage = () => {
+
   const { token } = useParams();
   const { replace } = useRouter();
   const { mutateAsync, status } = useMutation({
@@ -60,32 +61,15 @@ const ResetPasswordPage = () => {
         title="Reset your password"
         description="Enter your new password carefully. The password must be 8 characters
           long"
-      >
-        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
-          <Input
-            {...formik.getFieldProps("newPassword")}
-            hasError={!!formik.errors.newPassword}
-            errormessage={formik.touched.newPassword ? formik.errors.newPassword : ""}
-            placeholder="New password"
-          />
-          <Input
-            {...formik.getFieldProps("confirm_password")}
-            hasError={!!formik.errors.confirm_password}
-            errormessage={
-              formik.touched.confirm_password
-                ? formik.errors.confirm_password
-                : ""
-            }
-            placeholder="Repeat the password"
-          />
-          <AuthActions
-            btnText="Confirm"
-            isDisabled={!formik.isValid || status === "pending"}
-          />
-        </form>
-      </AuthWrapper>
-    </>
-  );
+			>
+				<form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
+					<Input {...formik.getFieldProps('newPassword')} hasError={!!formik.errors.newPassword} errormessage={formik.touched.newPassword ? formik.errors.newPassword : ''} placeholder="New password" />
+					<Input {...formik.getFieldProps('confirm_password')} hasError={!!formik.errors.confirm_password} errormessage={formik.touched.confirm_password ? formik.errors.confirm_password : ''} placeholder="Repeat the password" />
+					<AuthActions btnText="Confirm" isDisabled={!formik.isValid || status === 'pending'} />
+				</form>
+			</AuthWrapper>
+		</>
+	);
 };
 
 export default ResetPasswordPage;

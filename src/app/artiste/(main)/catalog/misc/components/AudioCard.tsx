@@ -1,3 +1,4 @@
+
 import React from 'react'
 import { toast } from 'sonner'
 import Image from 'next/image'
@@ -629,17 +630,17 @@ export default AudioCard
 
 
 export const AudioCardSkeleton = () => {
-    return (
-        <div className="relative flex flex-col gap-4 rounded-xl max-h-[280px]">
-            <div className="absolute top-2 right-2 z-[3]">
-                <Skeleton className="w-8 h-8 rounded-full bg-gray-800" />
-            </div>
-            <div className="h-full min-h-[110px] relative">
-                <Skeleton className="w-full h-full rounded-xl bg-gray-800" />
-            </div>
-            <div className="px-2">
-                <Skeleton className="h-5 w-3/4 bg-gray-800" />
-            </div>
-        </div>
-    )
-}
+	return (
+		<div className="relative flex flex-col gap-4 rounded-xl max-h-[280px]">
+			<div className="absolute top-2 right-2 z-[3]">
+				<Skeleton className="w-8 h-8 rounded-full bg-gray-800" />
+			</div>
+			<div className="h-full min-h-[110px] relative">
+				<Skeleton className="w-full h-full rounded-xl bg-gray-800" />
+			</div>
+			<div className="px-2">
+				<Skeleton className="h-5 w-3/4 bg-gray-800" />
+			</div>
+		</div>
+	);
+};
