@@ -122,7 +122,7 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 		const token = await getArtistAccessToken();
 		console.log('Token in checkAuthStatus:', token);
 		if (!token) {
-			router.push('/artiste/login');
+			router.replace('/artiste/login');
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 			return;
 		}
