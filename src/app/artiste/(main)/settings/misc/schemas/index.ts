@@ -38,7 +38,7 @@ export const bankSchema = z.object({
   bankName: z.string().min(2, "Bank name is required"),
   accountName: z.string().min(2, "Account name is required"),
   sortCode: z.string().optional(),
-  swiftCode: z.string().optional(),
+  ibanSwiftCode: z.string().optional(),
   payoutOption: z.string(),
   currency: z.string(),
 })

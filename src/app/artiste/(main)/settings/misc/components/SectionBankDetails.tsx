@@ -21,7 +21,7 @@ export default function SectionBankDetails() {
         bankName: artist?.bankDetails?.bankName || "",
         accountName: artist?.bankDetails?.accountName || "",
         sortCode: artist?.bankDetails?.sortCode || "",
-        swiftCode: artist?.bankDetails?.ibanSwiftCode || "",
+        ibanSwiftCode: artist?.bankDetails?.ibanSwiftCode || "",
         payoutOption: artist?.bankDetails?.paymentOption || "monthly",
         currency: artist?.bankDetails?.currency || "naira",
     }
@@ -185,7 +185,7 @@ export default function SectionBankDetails() {
 
                                 <FormField
                                     control={form.control}
-                                    name="swiftCode"
+                                    name="ibanSwiftCode"
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>IBAN Swift Code</FormLabel>
@@ -193,8 +193,8 @@ export default function SectionBankDetails() {
                                                 <Input
                                                     {...field}
                                                     disabled={!isEditing}
-                                                    hasError={!!errors.swiftCode}
-                                                    errormessage={errors.swiftCode?.message}
+                                                    hasError={!!errors.ibanSwiftCode}
+                                                    errormessage={errors.ibanSwiftCode?.message}
                                                 />
                                             </FormControl>
                                         </FormItem>
