@@ -1,0 +1,1 @@
+export { useGetAdminMedia } from './getAllAdminMedia';

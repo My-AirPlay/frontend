@@ -1,9 +1,7 @@
-
-import OnboardingClientPage from "./onboarding.client";
+import OnboardingClientPage from './onboarding.client';
 
 const OnboardingPage = async () => {
-
-  return <OnboardingClientPage/>;
+	return <OnboardingClientPage />;
 };
 
 export default OnboardingPage;
