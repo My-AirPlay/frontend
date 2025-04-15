@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import APIAxios from '@/utils/axios';
 import { UploadAlbumPayload, UploadTrackPayload } from '../types';
 import { MediaUploadInfo } from '../store/media';
@@ -7,7 +7,7 @@ import { MediaUploadInfo } from '../store/media';
 
 export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
   const formData = new FormData();
-  
+
 
   Object.entries(payload).forEach(([key, value]) => {
     if (key !== 'media' && key !== 'coverArt' && key !== 'streamingPlatforms') {
@@ -22,16 +22,16 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
   } else {
     formData.append("streamingPlatforms", payload.streamingPlatforms as unknown as string);
   }
-  
+
   formData.append("coverArt", payload.coverArt);
   formData.append("media", payload.media);
-  
+
   const response = await APIAxios.post(`/media/create-media`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
   });
-  
+
   return response.data;
 };
 
@@ -44,9 +44,9 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 
 export const uploadAlbum = async (payload: UploadAlbumPayload) => {
   const formData = new FormData();
-  
+
   formData.append("albumCover", payload.albumCover);
-  
+
   formData.append("description", payload.description);
   formData.append("title", payload.title);
   formData.append("artistName", payload.artistName);
@@ -58,37 +58,37 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
   formData.append("universalProductCode", payload.universalProductCode);
   formData.append("releaseVersion", payload.releaseVersion);
   formData.append("copyright", payload.copyright);
-  
+
   if (payload.secondaryGenres?.length) {
     payload.secondaryGenres.forEach((genre, i) => {
       formData.append(`secondaryGenres[${i}]`, genre);
     });
   }
-  
+
   if (payload.instruments?.length) {
     payload.instruments.forEach((instrument, i) => {
       formData.append(`instruments[${i}]`, instrument);
     });
   }
-  
+
   if (payload.streamingPlatforms?.length) {
     payload.streamingPlatforms.forEach((platform, i) => {
       formData.append(`streamingPlatforms[${i}]`, platform);
     });
   }
-  
+
   // Add media files
   if (payload.mediaFiles?.length) {
     payload.mediaFiles.forEach(file => {
       formData.append("mediaFiles", file);
     });
   }
-  
+
   // Add track info for each track
   if (payload.media?.length) {
     payload.media.forEach((track, i) => {
       Object.entries(track).forEach(([key, value]) => {
-        if(key == "fileId" ) return;
+        if (key == "fileId") return;
         if (!Array.isArray(value)) {
           formData.append(`media[${i}][${key}]`, value || '');
         } else if (key === 'secondaryGenres' || key === 'instruments' || key === 'streamingPlatforms') {
@@ -101,19 +101,34 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
   }
 
   console.log(formData.getAll('media'));
-  
+
   const response = await APIAxios.post(`/media/create-album`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
   });
-  
+
   return response.data;
 };
 
 export const useUploadTrack = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: uploadSingleTrack,
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["getArtistAlbums"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getArtistMedias"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getArtistVideos"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["getArtistAllMedia"],
+      });
+    },
     onError: (error) => {
       console.error("Failed to upload track:", error);
     }
