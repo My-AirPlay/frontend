@@ -51,6 +51,6 @@ export const useGetAlbums = (options: FetchOptions) => {
     return useQuery({
         queryKey: ["getArtistAlbums", options],
         queryFn: () => getAlbums(options),
-        staleTime: 1000 * 60 * 60,
+        // staleTime: 1000 * 60 * 60,
     })
 }
