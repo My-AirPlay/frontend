@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import APIAxios from '@/utils/axios';
 import { UploadAlbumPayload, UploadTrackPayload } from '../types';
 import { MediaUploadInfo } from '../store/media';
@@ -102,8 +102,23 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
 };
 
 export const useUploadTrack = () => {
+	const queryClient = useQueryClient();
 	return useMutation({
 		mutationFn: uploadSingleTrack,
+		onSuccess() {
+			queryClient.invalidateQueries({
+				queryKey: ['getArtistAlbums']
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['getArtistMedias']
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['getArtistVideos']
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['getArtistAllMedia']
+			});
+		},
 		onError: error => {
 			console.error('Failed to upload track:', error);
 		}

@@ -1,13 +1,12 @@
-'use client'
-import CustomAppLayout from "@/components/app-layout/app-layout";
+'use client';
+import CustomAppLayout from '@/components/app-layout/app-layout';
 
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 interface AuthLayoutProps {
 	children: ReactNode;
 }
 
-const AuthLayout =  ({ children }: AuthLayoutProps) => {
-
+const AuthLayout = ({ children }: AuthLayoutProps) => {
 	return <CustomAppLayout showIcons>{children}</CustomAppLayout>;
 };
 

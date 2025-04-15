@@ -9,23 +9,20 @@ import { buttonVariants } from '@/components/ui/button';
 import { SmallSpinner } from '../icons';
 
 // Variants for the Alert Dialog
-const alertDialogWithVariantsVariants = cva(
-  "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-  {
-    variants: {
-      variant: {
-        default: "border-t-8 border-t-primary",
-        success: "border-t-8 border-t-green-500",
-        error: "border-t-8 border-t-red-500",
-        warning: "border-t-8 border-t-yellow-500",
-        info: "border-t-8 border-t-blue-500",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
+const alertDialogWithVariantsVariants = cva('fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg', {
+	variants: {
+		variant: {
+			default: 'border-t-8 border-t-primary',
+			success: 'border-t-8 border-t-green-500',
+			error: 'border-t-8 border-t-red-500',
+			warning: 'border-t-8 border-t-yellow-500',
+			info: 'border-t-8 border-t-blue-500'
+		}
+	},
+	defaultVariants: {
+		variant: 'default'
+	}
+});
 
 // Primary button variants matching the dialog types
 const alertDialogWithVariantsActionVariants = cva(buttonVariants(), {
@@ -106,74 +103,47 @@ AlertDialogWithVariantsCancel.displayName = AlertDialogPrimitive.Cancel.displayN
 
 // Create reusable component with all props
 interface CustomAlertDialogProps extends VariantProps<typeof alertDialogWithVariantsVariants> {
-
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  title: string
-  description: string
-  customContent?: React.ReactNode
-  actionLabel?: string
-  cancelLabel?: string
-  onAction?: () => void
-  onCancel?: () => void
-  showCancel?: boolean
-  showAction?: boolean
-  isPerformingAction?:boolean
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
+	title: string;
+	description: string;
+	customContent?: React.ReactNode;
+	actionLabel?: string;
+	cancelLabel?: string;
+	onAction?: () => void;
+	onCancel?: () => void;
+	showCancel?: boolean;
+	showAction?: boolean;
+	isPerformingAction?: boolean;
 }
 
-const CustomAlertDialog = ({
-  variant = "default",
-  open,
-  onOpenChange,
-  customContent,
-  title,
-  description,
-  actionLabel = "Confirm",
-  cancelLabel = "Cancel",
-  onAction,
-  onCancel,
-  showCancel = true,
-  showAction = true,
-  isPerformingAction = false,
-}: CustomAlertDialogProps) => {
-  return (
-    <AlertDialogWithVariants open={open} onOpenChange={onOpenChange} >
-      <AlertDialogWithVariantsContent variant={variant} >
-        <AlertDialogWithVariantsHeader>
-          <AlertDialogWithVariantsTitle variant={variant}>{title}</AlertDialogWithVariantsTitle>
-          <AlertDialogWithVariantsDescription>{description}</AlertDialogWithVariantsDescription>
-          {customContent}
-        </AlertDialogWithVariantsHeader>
-        <AlertDialogWithVariantsFooter>
-          {showCancel && (
-            <AlertDialogWithVariantsCancel disabled={isPerformingAction} onClick={onCancel}>{cancelLabel}</AlertDialogWithVariantsCancel>
-          )}
-          {showAction && (
-            <AlertDialogWithVariantsAction disabled={isPerformingAction} variant={variant} onClick={onAction}>
-              {actionLabel}
-              {
-                isPerformingAction && <SmallSpinner className="ml-2" />
-              }
-            </AlertDialogWithVariantsAction>
-          )}
-        </AlertDialogWithVariantsFooter>
-      </AlertDialogWithVariantsContent>
-    </AlertDialogWithVariants>
-  )
-}
+const CustomAlertDialog = ({ variant = 'default', open, onOpenChange, customContent, title, description, actionLabel = 'Confirm', cancelLabel = 'Cancel', onAction, onCancel, showCancel = true, showAction = true, isPerformingAction = false }: CustomAlertDialogProps) => {
+	return (
+		<AlertDialogWithVariants open={open} onOpenChange={onOpenChange}>
+			<AlertDialogWithVariantsContent variant={variant}>
+				<AlertDialogWithVariantsHeader>
+					<AlertDialogWithVariantsTitle variant={variant}>{title}</AlertDialogWithVariantsTitle>
+					<AlertDialogWithVariantsDescription>{description}</AlertDialogWithVariantsDescription>
+					{customContent}
+				</AlertDialogWithVariantsHeader>
+				<AlertDialogWithVariantsFooter>
+					{showCancel && (
+						<AlertDialogWithVariantsCancel disabled={isPerformingAction} onClick={onCancel}>
+							{cancelLabel}
+						</AlertDialogWithVariantsCancel>
+					)}
+					{showAction && (
+						<AlertDialogWithVariantsAction disabled={isPerformingAction} variant={variant} onClick={onAction}>
+							{actionLabel}
+							{isPerformingAction && <SmallSpinner className="ml-2" />}
+						</AlertDialogWithVariantsAction>
+					)}
+				</AlertDialogWithVariantsFooter>
+			</AlertDialogWithVariantsContent>
+		</AlertDialogWithVariants>
+	);
+};
 
+const AlertDialogWithVariants = AlertDialogPrimitive.Root;
 
-const AlertDialogWithVariants = AlertDialogPrimitive.Root
-
-export {
-  AlertDialogWithVariants,
-  AlertDialogWithVariantsTrigger,
-  AlertDialogWithVariantsContent,
-  AlertDialogWithVariantsHeader,
-  AlertDialogWithVariantsFooter,
-  AlertDialogWithVariantsTitle,
-  AlertDialogWithVariantsDescription,
-  AlertDialogWithVariantsAction,
-  AlertDialogWithVariantsCancel,
-  CustomAlertDialog,
-}
+export { AlertDialogWithVariants, AlertDialogWithVariantsTrigger, AlertDialogWithVariantsContent, AlertDialogWithVariantsHeader, AlertDialogWithVariantsFooter, AlertDialogWithVariantsTitle, AlertDialogWithVariantsDescription, AlertDialogWithVariantsAction, AlertDialogWithVariantsCancel, CustomAlertDialog };
