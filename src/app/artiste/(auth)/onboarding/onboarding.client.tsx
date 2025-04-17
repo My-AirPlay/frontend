@@ -1,6 +1,6 @@
 'use client';
 
-import { onboardingStages, onboardingStagesKey, OnboardingSteps, urls, userProfileStage } from '@/lib/constants';
+import { onboardingStages, onboardingStagesKey, OnboardingSteps, userProfileStage } from '@/lib/constants';
 import OnboardingBasciDetail from './_components/basic-details/basic-details';
 import OnboardingBankDetail from './_components/bank-details/bank-details';
 import OnboardingSocialMedia from './_components/social-media-links/social-media-links';
@@ -32,11 +32,11 @@ const OnboardingClientPage = () => {
 	};
 
 	if (!artist) {
-		redirect(urls.login);
+		redirect('/artiste/login');
 	}
 
 	if (!onboardingStagesKey.includes(artist?.stage)) {
-		redirect(urls.dashboard);
+		redirect('/artiste/dashboard');
 	}
 	return <CustomAppLayout>{screens[currentStep]}</CustomAppLayout>;
 };

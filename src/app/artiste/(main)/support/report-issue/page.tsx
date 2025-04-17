@@ -10,7 +10,7 @@ import { Textarea, Button, Form, FormControl, FormField, FormItem, FormLabel } f
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 import { SelectSimple } from '@/components/ui';
 
-import { useReportIssue } from './misc/api';
+import { useReportIssue } from '../misc/api';
 import { SmallSpinner } from '@/components/icons';
 
 const formSchema = z.object({
@@ -37,8 +37,8 @@ export default function ReportIssuePage() {
 	const onSubmit = (data: ArtistReportIssueFormValues) => {
 		createComplaint(data, {
 			onSuccess: () => {
-				form.reset();
 				toast.success('Your complaint has been submitted successfully.');
+				form.reset();
 			},
 			onError: error => {
 				toast.error('An error occurred while submitting your complaint.');

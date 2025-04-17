@@ -1,56 +1,44 @@
-import APIAxios from "@/utils/axios";
-import { BankFormValues, ProfileFormValues } from "../schemas";
-import { useMutation } from "@tanstack/react-query";
+import APIAxios from '@/utils/axios';
+import { BankFormValues, ProfileFormValues } from '../schemas';
+import { useMutation } from '@tanstack/react-query';
 
 const updateProfile = async (profile: ProfileFormValues) => {
-    const bioResponse = await APIAxios.post(
-        "/artist/update-bio",
-        {
-            userBioData: profile,
-            email: profile.email,
-        },
-    );
+	const bioResponse = await APIAxios.post('/artist/update-bio', {
+		...profile
+	});
 
-    return bioResponse.data;
+	return bioResponse.data;
 };
 
 export const useUpdateProfile = () => {
-    return useMutation({
-        mutationFn: updateProfile,
-    });
+	return useMutation({
+		mutationFn: updateProfile
+	});
 };
 
-
-
 export const forgotPasswordRequestOTP = async ({ email }: { email: string }) => {
-    const { data } = await APIAxios.post("/artist/request-password-reset", {
-        email,
-    });
-    return data;
+	const { data } = await APIAxios.post('/artist/request-password-reset', {
+		email
+	});
+	return data;
 };
 
 export const useRequestResetPasswordOTP = () => {
-    return useMutation({
-        mutationFn: forgotPasswordRequestOTP,
-    });
-}
-
+	return useMutation({
+		mutationFn: forgotPasswordRequestOTP
+	});
+};
 
 const updateBankData = async (profile: BankFormValues & { email: string }) => {
+	const bankResponse = await APIAxios.post('/artist/update-bank-info', {
+		...profile
+	});
 
-    const bankResponse = await APIAxios.post(
-        "/artist/update-bank-info",
-        {
-            userBankData: profile,
-            email: profile.email,
-        },
-    );
-
-    return bankResponse.data;
+	return bankResponse.data;
 };
 
 export const useUpdateBankData = () => {
-    return useMutation({
-        mutationFn: updateBankData,
-    });
+	return useMutation({
+		mutationFn: updateBankData
+	});
 };
