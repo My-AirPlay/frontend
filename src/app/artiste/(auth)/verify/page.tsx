@@ -8,7 +8,6 @@ import { useMutation } from '@tanstack/react-query';
 import { verifyUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
 import { toast } from 'sonner';
 import { useRouter } from 'nextjs-toploader/app';
-import { urls } from '@/lib/constants';
 import { SmallSpinner } from '@/components/icons';
 
 // import AuthHeader from "@/components/auth-header/auth-header";
@@ -28,7 +27,7 @@ const VerifyPage = () => {
 			}
 			toast.success('Your account has been verified.');
 
-			router.replace(urls.login);
+			router.replace('/artiste/login');
 		}
 	});
 	const sendVerification = () => {

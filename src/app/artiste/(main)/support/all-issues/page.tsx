@@ -1,7 +1,26 @@
 'use client';
 import Link from 'next/link';
+import { useListAllIssue } from '../misc/api';
 
 export default function AllIssuesPage() {
+	const { data } = useListAllIssue();
+
+	// Filter issues by status
+	const pendingIssues = data?.data?.filter(issue => issue.status === 'Pending') || [];
+	const inProgressIssues = data?.data?.filter(issue => issue.status === 'In Progress') || [];
+	const completedIssues = data?.data?.filter(issue => issue.status === 'Completed') || [];
+
+	// Helper function to truncate text
+	interface TruncateTextParams {
+		text: string;
+		maxLength?: number;
+	}
+
+	const truncateText = ({ text, maxLength = 100 }: TruncateTextParams): string => {
+		if (!text) return '';
+		return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+	};
+
 	return (
 		<div>
 			<div className="flex items-center justify-between mb-6">
@@ -19,29 +38,20 @@ export default function AllIssuesPage() {
 					</div>
 
 					<div className="space-y-4 mt-4">
-						<div className="bg-secondary rounded-md p-4">
-							<div className="text-xs text-gray-400 mb-2">Image attached</div>
-							<h4 className="font-medium mb-1">Music Uploads</h4>
-							<p className="text-sm text-gray-400">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-						</div>
-
-						<div className="bg-secondary rounded-md p-4">
-							<div className="text-xs text-gray-400 mb-2">No image attached</div>
-							<h4 className="font-medium mb-1">Distribution Issues</h4>
-							<p className="text-sm text-gray-400">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-						</div>
-
-						<div className="bg-secondary rounded-md p-4">
-							<div className="text-xs text-gray-400 mb-2">Image attached</div>
-							<h4 className="font-medium mb-1">Music Uploads</h4>
-							<p className="text-sm text-gray-400">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-						</div>
-
-						<div className="bg-secondary rounded-md p-4">
-							<div className="text-xs text-gray-400 mb-2">No image attached</div>
-							<h4 className="font-medium mb-1">Distribution Issues</h4>
-							<p className="text-sm text-gray-400">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-						</div>
+						{pendingIssues.length > 0 ? (
+							pendingIssues.map(issue => (
+								<div key={issue._id} className="bg-secondary rounded-md p-4">
+									<div className="text-xs text-gray-400 mb-2">
+										{/* Assuming no image attachment info in the data */}
+										No image attached
+									</div>
+									<h4 className="font-medium mb-1">{issue.complaintType}</h4>
+									<p className="text-sm text-gray-400">{truncateText({ text: issue.complain })}</p>
+								</div>
+							))
+						) : (
+							<div className="bg-secondary rounded-md p-4 text-center text-gray-400">No pending issues</div>
+						)}
 					</div>
 				</div>
 
@@ -52,44 +62,24 @@ export default function AllIssuesPage() {
 					</div>
 
 					<div className="space-y-4 mt-4">
-						<div className="bg-secondary rounded-md p-4">
-							<div className="flex justify-between mb-2">
-								<div className="text-xs text-gray-400">Image attached</div>
-								<div className="text-xs bg-[#FF6B00] px-2 py-0.5 rounded text-white">Email sent</div>
-							</div>
-							<h4 className="font-medium mb-1">Service issue</h4>
-							<p className="text-sm text-gray-400 mb-2">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-							<div className="flex items-center text-xs text-gray-400">
-								<span className="inline-block w-3 h-3 bg-[#FF6B00] rounded-full mr-2"></span>
-								Customer Representative
-							</div>
-						</div>
-
-						<div className="bg-secondary rounded-md p-4">
-							<div className="flex justify-between mb-2">
-								<div className="text-xs text-gray-400">Image attached</div>
-								<div className="text-xs bg-[#FF6B00] px-2 py-0.5 rounded text-white">Email sent</div>
-							</div>
-							<h4 className="font-medium mb-1">Service issue</h4>
-							<p className="text-sm text-gray-400 mb-2">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-							<div className="flex items-center text-xs text-gray-400">
-								<span className="inline-block w-3 h-3 bg-[#FF6B00] rounded-full mr-2"></span>
-								Customer Representative
-							</div>
-						</div>
-
-						<div className="bg-secondary rounded-md p-4">
-							<div className="flex justify-between mb-2">
-								<div className="text-xs text-gray-400">Image attached</div>
-								<div className="text-xs bg-[#FF6B00] px-2 py-0.5 rounded text-white">Email sent</div>
-							</div>
-							<h4 className="font-medium mb-1">Service issue</h4>
-							<p className="text-sm text-gray-400 mb-2">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-							<div className="flex items-center text-xs text-gray-400">
-								<span className="inline-block w-3 h-3 bg-[#FF6B00] rounded-full mr-2"></span>
-								Customer Representative
-							</div>
-						</div>
+						{inProgressIssues.length > 0 ? (
+							inProgressIssues.map(issue => (
+								<div key={issue._id} className="bg-secondary rounded-md p-4">
+									<div className="flex justify-between mb-2">
+										<div className="text-xs text-gray-400">No image attached</div>
+										<div className="text-xs bg-[#FF6B00] px-2 py-0.5 rounded text-white">Email sent</div>
+									</div>
+									<h4 className="font-medium mb-1">{issue.complaintType}</h4>
+									<p className="text-sm text-gray-400 mb-2">{truncateText({ text: issue.complain })}</p>
+									<div className="flex items-center text-xs text-gray-400">
+										<span className="inline-block w-3 h-3 bg-[#FF6B00] rounded-full mr-2"></span>
+										Customer Representative
+									</div>
+								</div>
+							))
+						) : (
+							<div className="bg-secondary rounded-md p-4 text-center text-gray-400">No issues in progress</div>
+						)}
 					</div>
 				</div>
 
@@ -100,21 +90,19 @@ export default function AllIssuesPage() {
 					</div>
 
 					<div className="space-y-4 mt-4">
-						<div className="bg-secondary rounded-md p-4">
-							<div className="flex justify-between mb-2">
-								<div className="text-xs bg-green-500/20 px-2 py-0.5 rounded text-green-400">Resolved via mail</div>
-							</div>
-							<h4 className="font-medium mb-1">Royalties</h4>
-							<p className="text-sm text-gray-400">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-						</div>
-
-						<div className="bg-secondary rounded-md p-4">
-							<div className="flex justify-between mb-2">
-								<div className="text-xs bg-green-500/20 px-2 py-0.5 rounded text-green-400">Resolved via mail</div>
-							</div>
-							<h4 className="font-medium mb-1">Royalties</h4>
-							<p className="text-sm text-gray-400">I can&apos;t upload my music on the dashboard, it is Unresponsive</p>
-						</div>
+						{completedIssues.length > 0 ? (
+							completedIssues.map(issue => (
+								<div key={issue._id} className="bg-secondary rounded-md p-4">
+									<div className="flex justify-between mb-2">
+										<div className="text-xs bg-green-500/20 px-2 py-0.5 rounded text-green-400">Resolved via mail</div>
+									</div>
+									<h4 className="font-medium mb-1">{issue.complaintType}</h4>
+									<p className="text-sm text-gray-400">{truncateText({ text: issue.complain })}</p>
+								</div>
+							))
+						) : (
+							<div className="bg-secondary rounded-md p-4 text-center text-gray-400">No completed issues</div>
+						)}
 					</div>
 				</div>
 			</div>
