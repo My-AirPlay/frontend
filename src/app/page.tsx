@@ -134,10 +134,12 @@ export default function Home() {
 						<div className="mb-10 md:mb-0">
 							<h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-6 md:mb-12 max-w-md">Empower your Music...</h1>
 							<div className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-14">
-								<Button variant="outline" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full">
+								<Button variant="outline" size="lg" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full hidden sm:flex">
 									Request a Demo
 								</Button>
-								<Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">Get Started</Button>
+								<LinkButton href="/artiste/register" size="lg" className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">
+									Get Started
+								</LinkButton>
 							</div>
 							<div className="hidden md:block">
 								<Image src="/assets/circle-btn.svg" alt="Circle" width={80} height={80} />
