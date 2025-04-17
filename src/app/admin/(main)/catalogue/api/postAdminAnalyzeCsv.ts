@@ -1,10 +1,16 @@
 import APIAxios from '@/utils/axios';
 import { useMutation } from '@tanstack/react-query';
 
-export const analyzeCsv = async (file: File) => {
-	// Create FormData to handle file upload
+interface CurrencyPair {
+	fromCurrency: string | null;
+	toCurrency: string | null;
+	exchangeRate: string;
+}
+
+export const analyzeCsv = async (file: File, exchangeRates: CurrencyPair[]) => {
 	const payload = new FormData();
 	payload.append('file', file);
+	payload.append('exchangeRates', JSON.stringify(exchangeRates));
 
 	const response = await APIAxios.post(`/admin/analyze_csv`, payload, {
 		headers: {
@@ -17,7 +23,7 @@ export const analyzeCsv = async (file: File) => {
 
 export const useAdminAnalyzeCsv = () => {
 	return useMutation({
-		mutationFn: analyzeCsv,
+		mutationFn: ({ file, exchangeRates }: { file: File; exchangeRates: CurrencyPair[] }) => analyzeCsv(file, exchangeRates),
 		onSuccess: data => {
 			console.log('CSV analyzed successfully:', data);
 		},

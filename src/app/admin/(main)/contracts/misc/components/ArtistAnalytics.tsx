@@ -5,16 +5,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { ChevronDown } from 'lucide-react';
 import { DataTable } from '@/components/ui';
 import { Artist } from '@/lib/types';
+import { useGetOneArtistMedia } from '../../../catalogue/api/getOneArtistMedia';
+import { LoadingBox } from '@/components/ui/LoadingBox';
 
 interface ArtistAnalyticsProps {
 	artist: Artist;
 }
-// Sample data for the analytics
-const uploads = [
-	{ id: 1, name: 'Song Bird', category: 'Album', releaseDate: '12 Feb 2023', copyright: '12 Feb 2023' },
-	{ id: 2, name: 'Song Bird', category: 'EP', releaseDate: '12 Feb 2023', copyright: '12 Feb 2023' },
-	{ id: 3, name: 'Song Bird', category: 'Track', releaseDate: '12 Feb 2023', copyright: '12 Feb 2023' }
-];
 
 const revenueData = [
 	{ month: 'Jan', current: 10000, previous: 8000 },
@@ -31,7 +27,9 @@ const revenueData = [
 	{ month: 'Dec', current: 15070, previous: 10983 }
 ];
 
-const ArtistAnalytics: React.FC<ArtistAnalyticsProps> = () => {
+const ArtistAnalytics: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
+	const { data: uploads, isLoading: uploadsLoading } = useGetOneArtistMedia({ page: 1, limit: 100, artistId: artist?._id });
+
 	const uploadColumns = [
 		{
 			id: 'name',
@@ -66,10 +64,16 @@ const ArtistAnalytics: React.FC<ArtistAnalyticsProps> = () => {
 
 	return (
 		<div className="space-y-10">
-			<div className="space-y-4">
-				<h2 className="text-lg font-medium">Uploads</h2>
-				<DataTable data={uploads} columns={uploadColumns} pagination={true} defaultRowsPerPage={3} />
-			</div>
+			{uploadsLoading ? (
+				<div className="w-full px-6 py-4 flex justify-center items-center bg-custom-gradient min-h-[50vh]">
+					<LoadingBox size={62} />
+				</div>
+			) : (
+				<div className="space-y-4">
+					<h2 className="text-lg font-medium">Uploads</h2>
+					<DataTable data={uploads?.data} columns={uploadColumns} pagination={true} defaultRowsPerPage={50} />
+				</div>
+			)}
 
 			<div className="space-y-4">
 				<h2 className="text-lg font-medium">Revenue</h2>

@@ -5,8 +5,8 @@ export type API_RESPONSE_TYPE = [AxiosResponse, null] | [null, Error];
 interface ContractDetails {
 	startDate: string;
 	endDate: string;
-	contract: string; // URL to the contract file
-	status: 'ACTIVE' | 'INACTIVE' | 'PENDING'; // Assuming possible statuses
+	contract: string;
+	status: string;
 }
 
 interface RoyaltyConverted {

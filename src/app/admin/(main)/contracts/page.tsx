@@ -24,11 +24,20 @@ const Contracts = () => {
 
 	const columns = [
 		{
+			id: 'artistName',
+			header: 'Artist Name',
+			cell: (info: any) => (
+				<Link href={`/admin/contracts/${info.row.original._id}/overview`} className="text-admin-primary hover:underline">
+					{info.row.original?.artistName}
+				</Link>
+			)
+		},
+		{
 			id: 'name',
 			header: 'Name',
 			cell: (info: any) => (
 				<Link href={`/admin/contracts/${info.row.original._id}/overview`} className="text-admin-primary hover:underline">
-					{info.row.original?.artistName || `${info.row.original?.firstName || '-'} ${info.row.original?.lastName || ''}`}
+					{`${info.row.original?.firstName || '-'} ${info.row.original?.lastName || ''}`}
 				</Link>
 			)
 		},

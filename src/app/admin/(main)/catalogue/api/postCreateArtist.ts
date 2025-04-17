@@ -6,20 +6,32 @@ interface CreateArtistPayload {
 	email: string;
 	artistName: string;
 	bankName: string;
-	accountName: string;
-	currency: string;
+	fullName: string;
 	accountNumber: string;
+	currency: string;
+	rate: string;
+	dealType?: string;
+	contractDetails: {
+		startDate: Date;
+		endDate: Date;
+	};
+	contractFile?: File | undefined;
 }
 
 export const createArtist = async (payload: CreateArtistPayload) => {
 	// Use FormData for multipart/form-data as per cURL
 	const formData = new FormData();
-	formData.append('email', payload.email);
 	formData.append('artistName', payload.artistName);
+	formData.append('fullName', payload.fullName);
+	formData.append('email', payload.email);
 	formData.append('bankName', payload.bankName);
-	formData.append('accountName', payload.accountName);
-	formData.append('currency', payload.currency);
 	formData.append('accountNumber', payload.accountNumber);
+	formData.append('currency', payload.currency);
+	formData.append('rate', payload.rate);
+	if (payload.dealType) formData.append('dealType', payload.dealType);
+	formData.append('contractDetails[startDate]', payload.contractDetails.startDate.toISOString());
+	formData.append('contractDetails[endDate]', payload.contractDetails.endDate.toISOString());
+	if (payload.contractFile) formData.append('contractFile', payload.contractFile);
 
 	const response = await APIAxios.post(`/admin/create-artist`, formData, {
 		headers: {
@@ -37,7 +49,7 @@ export const useCreateArtist = () => {
 			console.log('Artist created successfully:', data);
 		},
 		onError: error => {
-			console.error('Error creating artist:', error);
+			console.log('Error creating artist:', error);
 		}
 	});
 };

@@ -90,7 +90,7 @@ export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading,
 			rowSelection
 		},
 		// manualPagination: !pagination,
-		pageCount: pageCount ? pageCount : pagination ? Math.ceil(data.length / paginationState.pageSize) : 1,
+		pageCount: pageCount ? pageCount : pagination ? Math.ceil(data?.length / paginationState.pageSize) : 1,
 		manualPagination: pagination // Enable manual pagination since the API handles it
 	});
 
