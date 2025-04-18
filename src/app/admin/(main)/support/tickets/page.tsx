@@ -43,7 +43,7 @@ const AllTicketsPage: React.FC = () => {
 		if (page > 1) updateQueryParams({ page: page - 1 });
 	};
 
-	const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const newLimit = Number(e.target.value);
 		if (newLimit > 0) {
 			updateQueryParams({ limit: newLimit, page: 1 }); // Reset to page 1 when limit changes
@@ -76,7 +76,7 @@ const AllTicketsPage: React.FC = () => {
 				</div>
 			)}
 			<div className="grid md:[grid-template-columns:repeat(auto-fill,minmax(350px,1fr))] gap-x-6 gap-y-5">
-				{tickets?.data?.map((ticket, index) => (
+				{tickets?.data?.map((ticket: { _id: string; complaintType: string; artistName: string; createdAt: string }, index: number) => (
 					<article key={index} className="flex flex-col gap-2 bg-custom-gradient px-5 py-4 rounded-lg overflow-hidden">
 						<LinkButton size="thin" href={`/admin/support/tickets/${ticket._id}`} className="rounded-full self-end">
 							View Ticket

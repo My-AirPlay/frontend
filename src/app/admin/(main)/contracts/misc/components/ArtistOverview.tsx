@@ -5,13 +5,17 @@ import { Save } from 'lucide-react';
 import React, { useState } from 'react';
 import { useUpdateArtistPaymentDetails } from '../../../catalogue/api/putArtistPaymentDetails';
 import { toast } from 'sonner';
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'; // Import necessary types
 
-interface ArtistAnalyticsProps {
+// Artist type is already imported from '@/lib/types'
+
+interface ArtistOverviewProps {
 	artist: Artist;
-	artistRefetch: void;
+	// Replace 'any' with the specific 'Artist' type
+	artistRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Artist, Error>>;
 }
 
-const ArtistOverview: React.FC<ArtistAnalyticsProps> = ({ artist, artistRefetch }) => {
+const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }) => {
 	const { mutate, isPending } = useUpdateArtistPaymentDetails();
 
 	// State to manage form inputs

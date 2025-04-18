@@ -3,6 +3,7 @@ import { Button, Tabs, TabsList, TabsTrigger, TabsContent, FileUploader, Input, 
 import { useCreateArtist } from '../../../catalogue/api/postCreateArtist';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { AxiosError } from 'axios'; // Import AxiosError
 
 interface CreateArtistFormProps {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -58,9 +59,17 @@ const CreateArtistForm: React.FC<CreateArtistFormProps> = ({ onSave }) => {
 			onSuccess: () => {
 				onSave(data); // Only call onSave if the mutation succeeds
 			},
-			onError: error => {
+			onError: (error: Error | AxiosError) => {
+				// Add type annotation
 				console.error('Failed to create artist:', error);
-				toast.error(error?.response?.data?.message?.[0] || 'Failed to create artist', { duration: 10000 });
+				let errorMessage = 'Failed to create artist';
+				// Check if it's an AxiosError and has the expected structure
+				if (error instanceof AxiosError && error.response?.data?.message?.[0]) {
+					errorMessage = error.response.data.message[0];
+				} else if (error.message) {
+					errorMessage = error.message; // Use generic error message if available
+				}
+				toast.error(errorMessage, { duration: 10000 });
 			}
 		});
 	};

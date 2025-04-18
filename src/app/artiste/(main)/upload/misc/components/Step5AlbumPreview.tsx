@@ -54,7 +54,7 @@ export default function Step5AlbumPreview() {
 		};
 
 		loadFiles();
-	}, [coverArtId, mediaFileIds, getCoverArtFile, getMediaFile, isDBInitialized]);
+	}, [coverArtId, mediaFileIds, getCoverArtFile, getMediaFile, isDBInitialized, initializeDB]);
 
 	useEffect(() => {
 		return () => {

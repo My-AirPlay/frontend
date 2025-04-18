@@ -8,10 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { toast } from 'sonner';
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'; // Import necessary types
 
-interface ArtistAnalyticsProps {
+// Artist type is already imported from '@/lib/types'
+
+interface ArtistContractProps {
 	artist: Artist;
-	artistRefetch: void;
+	// Replace 'any' with the specific 'Artist' type
+	artistRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Artist, Error>>;
 }
 
 interface UploadArtistContractPayload {
@@ -27,7 +31,7 @@ interface FileWithPreview {
 	previewUrl: string | null;
 }
 
-const ArtistContract: React.FC<ArtistAnalyticsProps> = ({ artist, artistRefetch }) => {
+const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }) => {
 	const [primaryFile, setPrimaryFile] = useState<FileWithPreview>({ file: null, previewUrl: null });
 	const [startDate, setStartDate] = useState<Date>(new Date(artist?.contractDetails?.startDate) || new Date());
 	const [endDate, setEndDate] = useState<Date>(new Date(artist?.contractDetails?.endDate) || new Date());

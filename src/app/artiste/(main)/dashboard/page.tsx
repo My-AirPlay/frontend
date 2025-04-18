@@ -5,6 +5,7 @@ import { Cloud, Users, BarChart2, AlertCircle } from 'lucide-react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { Button, LinkButton } from '@/components/ui';
 import { RoyaltiesChart } from './misc/components';
+import Image from 'next/image';
 
 // Mock mockData (will be replaced by API mockData)
 const mockData = {
@@ -158,7 +159,7 @@ const MusicDashboard = () => {
 							<p className="text-gray-400 mb-4">happy users</p>
 							<div className="flex justify-center mb-4">
 								{Array.from({ length: 3 }).map((_, idx) => (
-									<img key={idx} src={'/images/avatars/1.png'} alt="User avatar" className="w-8 h-8 rounded-full -ml-2" />
+									<Image key={idx} src={'/images/avatars/1.png'} alt="User avatar" className="w-8 h-8 rounded-full -ml-2" width={200} height={200} />
 								))}
 							</div>
 							<LinkButton href="/artiste/upload" size="lg">
