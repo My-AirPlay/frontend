@@ -51,7 +51,7 @@ const SingupPage = () => {
 				linkText={
 					<p className="font-plus-jakarta-sans text-custom-registration_link text-[0.9rem] font-normal">
 						Already a member?{' '}
-						<Link href={'/login'} className="font-bold text-primary">
+						<Link href={'/artiste/login'} className="font-bold text-primary">
 							Sign In
 						</Link>{' '}
 					</p>

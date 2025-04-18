@@ -126,7 +126,7 @@ const faqData = {
 		{
 			id: 'account-2',
 			question: 'How do I move my music to MyAirplay from another distributor?',
-			answerText: "Find all metadata and original files associated with the music you'd like to move to MyAirplay, including: ISRC codes, Artist name & track titles, Original audio files, Original artwork. Issue a takedown request with your current distributor. Re-upload your music to MyAirplay using the exact same ISRC codes, artist names, track titles, and original files. Contact myairplaydistro@gmail.com with the subject line 'Moving to MyAirplay' for assistance.",
+			answerText: "Find all metadata and original files associated with the music you'd like to move to MyAirplay, including: ISRC codes, Artist name & track titles, Original audio files, Original artwork. Issue a takedown request with your current distributor. Re-upload your music to MyAirplay using the exact same ISRC codes, artist names, track titles, and original files. Contact contact@airplay.com with the subject line 'Moving to MyAirplay' for assistance.",
 			answer: (
 				<>
 					<p>Find all metadata and original files associated with the music you&apos;d like to move to MyAirplay, including:</p>
@@ -138,7 +138,7 @@ const faqData = {
 					</ul>
 					<p className="mt-2">Issue a takedown request with your current distributor.</p>
 					<p className="mt-2">Re-upload your music to MyAirplay using the exact same ISRC codes, artist names, track titles, and original files.</p>
-					<p className="mt-2">Contact myairplaydistro@gmail.com with the subject line &quot;Moving to MyAirplay&quot; for assistance.</p>
+					<p className="mt-2">Contact contact@airplay.com with the subject line &quot;Moving to MyAirplay&quot; for assistance.</p>
 				</>
 			)
 		}
@@ -162,12 +162,12 @@ const faqData = {
 		{
 			id: 'music-1',
 			question: 'How do I remove a release from stores?',
-			answerText: 'You can remove your music from stores at any time. It usually takes 2-4 weeks for takedowns to be removed from stores. You can contact myairplaydistro@gmail.com for takedown initiation.',
+			answerText: 'You can remove your music from stores at any time. It usually takes 2-4 weeks for takedowns to be removed from stores. You can contact contact@airplay.com for takedown initiation.',
 			answer: (
 				<>
 					<p>You can remove your music from stores at any time.</p>
 					<p className="mt-2">It usually takes 2-4 weeks for takedowns to be removed from stores.</p>
-					<p className="mt-2">You can contact myairplaydistro@gmail.com for takedown initiation.</p>
+					<p className="mt-2">You can contact contact@airplay.com for takedown initiation.</p>
 				</>
 			)
 		},
@@ -286,7 +286,6 @@ export default function FAQsPage() {
 				<Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
 			</div>
 
-			{/* Search Results */}
 			{filteredFaqs && filteredFaqs.length > 0 && (
 				<div className="mb-8">
 					<h3 className="text-lg font-medium mb-4 text-gray-200">Search Results</h3>
@@ -294,14 +293,12 @@ export default function FAQsPage() {
 				</div>
 			)}
 
-			{/* Show "No results found" when search has no matches */}
 			{filteredFaqs && filteredFaqs.length === 0 && (
 				<div className="mb-8 p-4 bg-secondary rounded-lg border border-gray-700">
 					<p className="text-gray-400">No results found for &quot;{searchQuery}&quot;. Try a different search term.</p>
 				</div>
 			)}
 
-			{/* Only show tabs when not searching */}
 			{!filteredFaqs && (
 				<Tabs defaultValue="distribution" className="w-full">
 					<TabsList className="w-full bg-transparent border-b border-gray-800 justify-start space-x-6 rounded-none h-auto pb-2 overflow-x-auto">
@@ -395,12 +392,12 @@ export default function FAQsPage() {
 				<div className="bg-secondary rounded-lg p-4 border border-gray-700">
 					<p className="text-sm text-gray-400">
 						For help and more information about AirPlay send us an email here or click the{' '}
-						<Link href="mailto:myairplaydistro@gmail.com" className="text-[#FF6B00] hover:underline">
+						<Link href="mailto:contact@airplay.com" className="text-[#FF6B00] hover:underline">
 							link
 						</Link>{' '}
 						to drop your enquiries. Email:{' '}
-						<Link href="mailto:myairplaydistro@gmail.com" className="text-[#FF6B00] hover:underline">
-							myairplaydistro@gmail.com
+						<Link href="mailto:contact@airplay.com" className="text-[#FF6B00] hover:underline">
+							contact@airplay.com
 						</Link>
 					</p>
 				</div>
@@ -410,7 +407,10 @@ export default function FAQsPage() {
 				<h3 className="text-lg font-medium mb-4">Terms and Conditions</h3>
 				<div className="bg-secondary rounded-lg p-4 border border-gray-700">
 					<p className="text-sm text-gray-400">
-						Read our terms and conditions here: <span className="text-[#FF6B00] cursor-pointer hover:underline">terms and conditions</span>
+						Read our terms and conditions here:{' '}
+						<Link href="/policies/terms" className="text-[#FF6B00] cursor-pointer hover:underline">
+							terms and conditions
+						</Link>
 					</p>
 				</div>
 			</div>
@@ -419,7 +419,10 @@ export default function FAQsPage() {
 				<h3 className="text-lg font-medium mb-4">Privacy Policy</h3>
 				<div className="bg-secondary rounded-lg p-4 border border-gray-700">
 					<p className="text-sm text-gray-400">
-						Read our privacy policy here: <span className="text-[#FF6B00] cursor-pointer hover:underline">privacy Policy</span>
+						Read our privacy policy here:{' '}
+						<Link href="/policies/privacy" className="text-[#FF6B00] cursor-pointer hover:underline">
+							privacy Policy
+						</Link>
 					</p>
 				</div>
 			</div>
