@@ -1,12 +1,44 @@
-import { Input, SelectSimple } from '@/components/ui';
+import { Button, Input, SelectSimple } from '@/components/ui';
+import { LoadingBox } from '@/components/ui/LoadingBox';
 import { Artist } from '@/lib/types';
-import React from 'react';
+import { Save } from 'lucide-react';
+import React, { useState } from 'react';
+import { useUpdateArtistPaymentDetails } from '../../../catalogue/api/putArtistPaymentDetails';
+import { toast } from 'sonner';
 
 interface ArtistAnalyticsProps {
 	artist: Artist;
+	artistRefetch: void;
 }
 
-const ArtistOverview: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
+const ArtistOverview: React.FC<ArtistAnalyticsProps> = ({ artist, artistRefetch }) => {
+	const { mutate, isPending } = useUpdateArtistPaymentDetails();
+
+	// State to manage form inputs
+	const [dealType, setDealType] = useState<string>(artist?.bankDetails?.dealType || 'Net Receipts');
+	const [rate, setRate] = useState<number>(artist?.bankDetails?.rate || 80);
+	const [currency, setCurrency] = useState<string>(artist?.bankDetails?.currency || 'USD');
+
+	// Handle form submission
+	const handleSubmit = () => {
+		mutate(
+			{
+				artistId: artist._id, // Assuming artist._id exists
+				paymentCurrency: currency,
+				dealType,
+				rate
+			},
+			{
+				onSuccess: () => {
+					artistRefetch();
+				},
+				onError: error => {
+					toast.error(error.message || 'Failed to update deal');
+				}
+			}
+		);
+	};
+
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<div className="space-y-6">
@@ -14,26 +46,12 @@ const ArtistOverview: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
 
 				<Input label="Full Name" value={`${artist?.firstName || ''} ${artist?.lastName || ''}`} readOnly />
 
-				<SelectSimple
-					label="Payment Currency"
-					options={[
-						{ value: 'USD', label: 'USD' },
-						{ value: 'EUR', label: 'EUR' },
-						{ value: 'GBP', label: 'GBP' },
-						{ value: 'NGN', label: 'NGN' }
-					]}
-					valueKey="value"
-					labelKey="label"
-					defaultValue={artist?.bankDetails?.currency || ''}
-					placeholder="Select currency"
-					onChange={() => {}}
-				/>
-
 				<Input label="Email" value={artist?.email} readOnly type="email" />
 			</div>
 
 			<div className="space-y-6">
 				<Input label="Bank Name" value={artist?.bankDetails?.bankName} readOnly />
+				<Input label="Account Name" value={artist?.bankDetails?.accountName} readOnly />
 				<Input label="Account Number" value={artist?.bankDetails?.accountNumber} readOnly />
 
 				{/* <div className="space-y-4">
@@ -73,10 +91,42 @@ const ArtistOverview: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
 							valueKey="value"
 							labelKey="label"
 							placeholder="Select an option"
-							onChange={() => {}}
+							value={dealType}
+							onChange={value => setDealType(value as string)}
 						/>
 
-						<Input label="Rate %" value="80" readOnly />
+						<Input label="Rate %" value={rate.toString()} onChange={e => setRate(Number(e.target.value))} type="number" />
+					</div>
+
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+						<SelectSimple
+							label="Payment Currency"
+							options={[
+								{ value: 'USD', label: 'USD' },
+								{ value: 'EUR', label: 'EUR' },
+								{ value: 'GBP', label: 'GBP' },
+								{ value: 'NGN', label: 'NGN' }
+							]}
+							valueKey="value"
+							labelKey="label"
+							value={currency}
+							placeholder="Select currency"
+							onChange={value => setCurrency(value as string)}
+						/>
+					</div>
+
+					<div className="flex justify-end items-center">
+						<Button className="max-md:size-10 max-md:p-0 mt-[26px]" disabled={isPending} onClick={handleSubmit}>
+							{isPending ? (
+								<div className="flex items-center justify-center w-full h-full">
+									<LoadingBox size={24} color="white" />
+								</div>
+							) : (
+								<>
+									<Save size={16} className="md:mr-2" /> <span className="max-md:sr-only">Save</span>
+								</>
+							)}
+						</Button>
 					</div>
 				</div>
 			</div>

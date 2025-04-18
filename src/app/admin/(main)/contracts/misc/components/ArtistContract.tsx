@@ -3,9 +3,23 @@ import { SelectSimple, SingleDatePicker } from '@/components/ui';
 import { Artist } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useUpdateArtistContract, useUploadArtistContract } from '../../../catalogue/api/postAdminUploadArtistContract';
+import { Button } from '@/components/ui/button';
+import { Save } from 'lucide-react';
+import { LoadingBox } from '@/components/ui/LoadingBox';
+import { toast } from 'sonner';
 
 interface ArtistAnalyticsProps {
 	artist: Artist;
+	artistRefetch: void;
+}
+
+interface UploadArtistContractPayload {
+	contract: File | null; // Allow null to match your payload
+	email: string;
+	startDate: string;
+	endDate: string;
+	status: string;
 }
 
 interface FileWithPreview {
@@ -13,14 +27,50 @@ interface FileWithPreview {
 	previewUrl: string | null;
 }
 
-const ArtistContract: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
+const ArtistContract: React.FC<ArtistAnalyticsProps> = ({ artist, artistRefetch }) => {
 	const [primaryFile, setPrimaryFile] = useState<FileWithPreview>({ file: null, previewUrl: null });
+	const [startDate, setStartDate] = useState<Date>(new Date(artist?.contractDetails?.startDate) || new Date());
+	const [endDate, setEndDate] = useState<Date>(new Date(artist?.contractDetails?.endDate) || new Date());
+	const [status, setStatus] = useState<string>(artist?.contractDetails?.status || 'ACTIVE');
 
 	const handlePrimaryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			const previewUrl = URL.createObjectURL(file);
 			setPrimaryFile({ file, previewUrl });
+		}
+	};
+
+	const { mutate: mutateCreateContract, isPending } = useUploadArtistContract();
+	const { mutate: mutateUpdateContract, isPending: updateContractPending } = useUpdateArtistContract();
+
+	const handleSubmit = () => {
+		const payload: UploadArtistContractPayload = {
+			contract: primaryFile?.file,
+			email: artist?.email,
+			startDate: startDate.toISOString(),
+			endDate: endDate.toISOString(),
+			status
+		};
+
+		if (!artist?.contractDetails?.contract) {
+			mutateCreateContract(payload, {
+				onSuccess: () => {
+					artistRefetch();
+				},
+				onError: error => {
+					toast.error(error.message || 'Failed to update deal');
+				}
+			});
+		} else {
+			mutateUpdateContract(payload, {
+				onSuccess: () => {
+					artistRefetch();
+				},
+				onError: error => {
+					toast.error(error.message || 'Failed to update deal');
+				}
+			});
 		}
 	};
 
@@ -34,8 +84,24 @@ const ArtistContract: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
 	return (
 		<div className="space-y-8">
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<SingleDatePicker label="Start Date" defaultDate={new Date(artist?.contractDetails?.startDate) || new Date()} value={artist?.contractDetails?.startDate || new Date()} />
-				<SingleDatePicker label="End Date" defaultDate={new Date(artist?.contractDetails?.endDate) || new Date()} value={artist?.contractDetails?.endDate || new Date()} />
+				<SingleDatePicker label="Start Date" defaultDate={startDate} value={startDate} onChange={setStartDate} />
+				<SingleDatePicker label="End Date" defaultDate={endDate} value={endDate} onChange={setEndDate} />
+			</div>
+
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<SelectSimple
+					label="Payment Currency"
+					options={[
+						{ value: 'ACTIVE', label: 'ACTIVE' },
+						{ value: 'PENDING', label: 'PENDING' },
+						{ value: 'DEACTIVATED', label: 'DEACTIVATED' }
+					]}
+					valueKey="value"
+					labelKey="label"
+					defaultValue={artist?.contractDetails?.status || ''}
+					placeholder="Select currency"
+					onChange={setStatus}
+				/>
 			</div>
 
 			{artist?.contractDetails?.contract && (
@@ -45,20 +111,6 @@ const ArtistContract: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
 					<Link href={artist?.contractDetails?.contract} className="text-primary hover:underline" target="_blank">
 						Contract Preview
 					</Link>
-
-					<SelectSimple
-						label="Payment Currency"
-						options={[
-							{ value: 'ACTIVE', label: 'ACTIVE' },
-							{ value: 'PENDING', label: 'PENDING' },
-							{ value: 'DEACTIVATED', label: 'DEACTIVATED' }
-						]}
-						valueKey="value"
-						labelKey="label"
-						defaultValue={artist?.contractDetails?.status || ''}
-						placeholder="Select currency"
-						onChange={() => {}}
-					/>
 				</div>
 			)}
 			<div className="space-y-4">
@@ -96,6 +148,21 @@ const ArtistContract: React.FC<ArtistAnalyticsProps> = ({ artist }) => {
 					)}
 					<input type="file" className=" absolute z-[2] top-0 left-0 w-full h-full cursor-pointer opacity-0" accept="*image" onChange={handlePrimaryFileChange} />
 				</div>
+			</div>
+
+			<div className="flex justify-end items-center mt-8">
+				<Button className="max-md:size-10 max-md:p-0" disabled={isPending || updateContractPending} onClick={() => handleSubmit()}>
+					{isPending || updateContractPending ? (
+						<div className="flex items-center justify-center w-full h-full">
+							<LoadingBox size={24} color="white" />
+						</div>
+					) : (
+						<>
+							<Save size={16} className="md:mr-2" />
+							<span className="max-md:sr-only">Save</span>
+						</>
+					)}
+				</Button>
 			</div>
 		</div>
 	);

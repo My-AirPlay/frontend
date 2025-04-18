@@ -1,69 +1,59 @@
-
 import React from 'react';
 import { DataTable } from '@/components/ui';
-
-export interface MatchedArtist {
-  id: string;
-  name: string;
-  realName: string;
-  uploadedDate: string;
-  revenue: string;
-  status: 'completed' | 'pending';
-}
+import { Artist } from '@/lib/types';
 
 interface MatchedArtistsTableProps {
-  artists: MatchedArtist[];
+	artists: Artist[];
 }
 
 const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) => {
-  const columns = [
-    {
-      id: 'name',
-      header: 'Artist Name',
-      accessorKey: 'name',
-    },
-    {
-      id: 'realName',
-      header: 'Artist Real Name',
-      accessorKey: 'realName',
-    },
-    {
-      id: 'uploadedDate',
-      header: 'Month Uploaded',
-      accessorKey: 'uploadedDate',
-    },
-    {
-      id: 'revenue',
-      header: 'Revenue Generated',
-      accessorKey: 'revenue',
-    },
-    {
-      id: 'status',
-      header: 'Status',
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      cell: (info: any) => (
-        <div className={`${info.row.original.status === 'completed'
-            ? 'status-badge-completed'
-            : 'status-badge-pending'
-          }`}>
-          {info.row.original.status === 'completed' ? 'Completed' : 'Pending'}
-        </div>
-      ),
-    },
-  ];
+	console.log('artists prop', artists);
+	const columns = [
+		{
+			id: 'artistName',
+			header: 'Artist Name',
+			accessorKey: 'artistName'
+		},
 
-  return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-medium">Matched Artists</h3>
-      <DataTable
-        data={artists}
-        columns={columns}
-        pagination={true}
-        defaultRowsPerPage={3}
+		{
+			id: 'realName',
+			header: 'Track Title',
+			accessorKey: 'realName',
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cell: (info: any) => <p className="text-admin-primary hover:underline"> {info.row.original?.fullReports[0]?.trackTitle} </p>
+		},
+		{
+			id: 'activityperiod',
+			header: 'Activity Period',
+			accessorKey: 'activityperiod',
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.activityPeriod} </p>
+		},
+		{
+			id: 'totalroyalty',
+			header: 'Total Royalty',
+			accessorKey: 'totalroyalty',
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.totalRoyaltyUSD?.value?.toFixed(2)} </p>
+		},
+		{
+			id: 'catalogueId',
+			header: 'Catalogue ID',
+			accessorKey: 'catalogueId'
+		},
+		{
+			id: 'isrcCode',
+			header: 'ISRC Code ',
+			accessorKey: 'isrcCode'
+		}
+	];
 
-      />
-    </div>
-  );
+	return (
+		<div className="space-y-6">
+			<h3 className="text-lg font-medium">Matched Artists</h3>
+			<DataTable data={artists} columns={columns} pagination={false} defaultRowsPerPage={50} />
+		</div>
+	);
 };
 
 export default MatchedArtistsTable;

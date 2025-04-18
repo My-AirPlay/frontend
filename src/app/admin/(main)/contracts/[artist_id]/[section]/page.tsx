@@ -12,7 +12,7 @@ import { LoadingBox } from '@/components/ui/LoadingBox';
 
 const ArtistDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
-	const { data: artist, isLoading: artistLoading } = useGetOneArtist({ artistId: artist_id });
+	const { data: artist, isLoading: artistLoading, refetch: artistRefetch } = useGetOneArtist({ artistId: artist_id });
 
 	return (
 		<div className="space-y-6">
@@ -29,10 +29,10 @@ const ArtistDetails: React.FC = () => {
 						<Pencil size={16} className="md:mr-2" />
 						<span className="max-md:sr-only">Edit</span>
 					</Button> */}
-					<Button className="max-md:size-10 max-md:p-0">
+					{/* <Button className="max-md:size-10 max-md:p-0">
 						<Save size={16} className="md:mr-2" />
 						<span className="max-md:sr-only">Save</span>
-					</Button>
+					</Button> */}
 				</div>
 			</div>
 
@@ -63,15 +63,15 @@ const ArtistDetails: React.FC = () => {
 				) : (
 					<>
 						<TabsContent value="overview" className="mt-0">
-							<ArtistOverview artist={artist} />
+							<ArtistOverview artist={artist} artistRefetch={artistRefetch} />
 						</TabsContent>
 
 						<TabsContent value="contract" className="mt-0">
-							<ArtistContract artist={artist} />
+							<ArtistContract artist={artist} artistRefetch={artistRefetch} />
 						</TabsContent>
 
 						<TabsContent value="analytics" className="mt-0">
-							<ArtistAnalytics artist={artist} />
+							<ArtistAnalytics artist={artist} artistRefetch={artistRefetch} />
 						</TabsContent>
 					</>
 				)}

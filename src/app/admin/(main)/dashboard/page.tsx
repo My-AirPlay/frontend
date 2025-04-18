@@ -79,7 +79,7 @@ const Dashboard: React.FC = () => {
 				<article className="flex flex-col">
 					<header className="flex justify-between items-center mb-4">
 						<h2 className="text-xl font-normal">Uploads</h2>
-						<Link href="/uploads" className="text-sm text-white/70-foreground hover:text-foreground flex items-center">
+						<Link href="/admin/catalogue" className="text-sm text-white/70-foreground hover:text-foreground flex items-center">
 							View All <ChevronRight size={16} />
 						</Link>
 					</header>
