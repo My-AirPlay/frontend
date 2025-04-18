@@ -1,9 +1,9 @@
 import React from 'react';
 import { DataTable } from '@/components/ui';
-import { Artist } from '@/lib/types';
+import { ReportItem } from '@/lib/types'; // Changed Artist to ReportItem
 
 interface UnmatchedArtistsTableProps {
-	artists: Artist[];
+	artists: ReportItem[]; // Changed Artist[] to ReportItem[]
 	onArtistMatch: (artistId: string) => void;
 }
 

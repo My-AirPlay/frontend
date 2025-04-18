@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
-import { Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+// import { Save } from 'lucide-react';
+// import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PreviousPageButton } from '@/components/ui';
 import Link from 'next/link';
@@ -71,7 +71,8 @@ const ArtistDetails: React.FC = () => {
 						</TabsContent>
 
 						<TabsContent value="analytics" className="mt-0">
-							<ArtistAnalytics artist={artist} artistRefetch={artistRefetch} />
+							{/* Removed artistRefetch prop as it's not expected by ArtistAnalytics */}
+							<ArtistAnalytics artist={artist} />
 						</TabsContent>
 					</>
 				)}
