@@ -59,21 +59,20 @@ export const useGetAudios = (options: FetchOptions) => {
 	});
 };
 export const useGetVideos = (options: FetchOptions) => {
-
-    return useQuery({
-        queryKey: ["getArtistVideos", options],
-        queryFn: () => getMedias("video", options),
-        staleTime: 1000 * 60 * 60,
-    })
-}
+	return useQuery({
+		queryKey: ['getArtistVideos', options],
+		queryFn: () => getMedias('video', options),
+		staleTime: 1000 * 60 * 60
+	});
+};
 export const useGetAllMedia = (options: FetchOptions) => {
-    return useQuery({
-        queryKey: ["getArtistAllMedia", options],
-        queryFn: async() => {
-            const response = await APIAxios.get<APIResponse>(`/media/get_artist_audios_videos`, {
-                params: options,
-            });
-            return response.data;
-        },
-    })
-}
+	return useQuery({
+		queryKey: ['getArtistAllMedia', options],
+		queryFn: async () => {
+			const response = await APIAxios.get<APIResponse>(`/media/get_artist_audios_videos`, {
+				params: options
+			});
+			return response.data;
+		}
+	});
+};

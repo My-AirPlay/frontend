@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import { urls } from '@/lib/constants';
 
 import AuthWrapper from '../misc/components/auth-wrapper';
 import { Check } from 'lucide-react';
@@ -32,7 +31,7 @@ const SingupPage = () => {
 			toast.success('Your account has been created. Check your email to verify your acount');
 
 			setUserEmail(data.email);
-			router.push(urls.verification);
+			router.push('/artiste/verify');
 		}
 	});
 	const formik = useFormik<InferType<typeof registerSchema>>({

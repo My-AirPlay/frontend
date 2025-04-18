@@ -1,8 +1,8 @@
-"use client";
-import React from "react";
-import AuthWrapper from "../../misc/components/auth-wrapper";
-import Link from "next/link";
-import AuthActions from "../../misc/components/auth-actions";
+'use client';
+import React from 'react';
+import AuthWrapper from '../../misc/components/auth-wrapper';
+import Link from 'next/link';
+import AuthActions from '../../misc/components/auth-actions';
 
 import { useParams } from 'next/navigation';
 import { useFormik } from 'formik';
@@ -15,51 +15,47 @@ import { toast } from 'sonner';
 import { useRouter } from 'nextjs-toploader/app';
 import { Input } from '@/components/ui';
 const ResetPasswordPage = () => {
-
-  const { token } = useParams();
-  const { replace } = useRouter();
-  const { mutateAsync, status } = useMutation({
-    mutationFn: resetPassword,
-    onSuccess({ data, error }) {
-      if (error) {
-        handleClientError(error);
-        return;
-      }
-      toast.success(data.message);
-      replace("/artiste/login");
-    },
-  });
-  const formik = useFormik<InferType<typeof resetPasswordSchema>>({
-    initialValues: {
-      newPassword: "",
-      confirm_password: "",
-    },
-    onSubmit({ newPassword }) {
-      mutateAsync({
-        newPassword,
-        token: token as string,
-      });
-    },
-    validateOnMount: true,
-    validationSchema: resetPasswordSchema,
-  });
-  return (
-    <>
-      <AuthWrapper
-        linkText={
-          <p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
-            Not a member?{" "}
-            <Link
-              href={"/artiste/register"}
-              className="font-bold text-custom-primary"
-            >
-              Sign up
-            </Link>{" "}
-            now
-          </p>
-        }
-        title="Reset your password"
-        description="Enter your new password carefully. The password must be 8 characters
+	const { token } = useParams();
+	const { replace } = useRouter();
+	const { mutateAsync, status } = useMutation({
+		mutationFn: resetPassword,
+		onSuccess({ data, error }) {
+			if (error) {
+				handleClientError(error);
+				return;
+			}
+			toast.success(data.message);
+			replace('/artiste/login');
+		}
+	});
+	const formik = useFormik<InferType<typeof resetPasswordSchema>>({
+		initialValues: {
+			newPassword: '',
+			confirm_password: ''
+		},
+		onSubmit({ newPassword }) {
+			mutateAsync({
+				newPassword,
+				token: token as string
+			});
+		},
+		validateOnMount: true,
+		validationSchema: resetPasswordSchema
+	});
+	return (
+		<>
+			<AuthWrapper
+				linkText={
+					<p className="font-plus-jakarta-sans text-custom-registration_link text-lg font-normal">
+						Not a member?{' '}
+						<Link href={'/artiste/register'} className="font-bold text-custom-primary">
+							Sign up
+						</Link>{' '}
+						now
+					</p>
+				}
+				title="Reset your password"
+				description="Enter your new password carefully. The password must be 8 characters
           long"
 			>
 				<form onSubmit={formik.handleSubmit} className="flex flex-col gap-4">
