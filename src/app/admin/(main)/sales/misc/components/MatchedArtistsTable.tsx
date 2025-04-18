@@ -7,11 +7,12 @@ interface MatchedArtistsTableProps {
 }
 
 const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) => {
+	console.log('artists prop', artists);
 	const columns = [
 		{
-			id: 'artisteName',
+			id: 'artistName',
 			header: 'Artist Name',
-			accessorKey: 'artisteName'
+			accessorKey: 'artistName'
 		},
 
 		{
@@ -19,21 +20,21 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) =>
 			header: 'Track Title',
 			accessorKey: 'realName',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary hover:underline"> {info.row.original?.reports[0]?.trackTitle} </p>
+			cell: (info: any) => <p className="text-admin-primary hover:underline"> {info.row.original?.fullReports[0]?.trackTitle} </p>
 		},
 		{
 			id: 'activityperiod',
 			header: 'Activity Period',
 			accessorKey: 'activityperiod',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.reports[0]?.activityPeriod} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.activityPeriod} </p>
 		},
 		{
 			id: 'totalroyalty',
 			header: 'Total Royalty',
 			accessorKey: 'totalroyalty',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.reports[0]?.totalRoyaltyUSD?.value?.toFixed(2)} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.totalRoyaltyUSD?.value?.toFixed(2)} </p>
 		},
 		{
 			id: 'catalogueId',

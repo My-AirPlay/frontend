@@ -13,6 +13,7 @@ interface FormData {
 	email: string;
 	artistName: string;
 	bankName: string;
+	accountName: string;
 	fullName: string;
 	accountNumber: string;
 	currency: string;
@@ -35,6 +36,7 @@ const CreateArtistForm: React.FC<CreateArtistFormProps> = ({ onSave }) => {
 			fullName: '',
 			email: '',
 			bankName: '',
+			accountName: '',
 			accountNumber: '',
 			currency: 'USD',
 			rate: '',
@@ -103,6 +105,7 @@ const CreateArtistForm: React.FC<CreateArtistFormProps> = ({ onSave }) => {
 							/>
 							<Controller control={control} name="email" render={({ field }) => <Input label="Email" type="email" value={field.value} onChange={field.onChange} className="w-full" placeholder="Enter Email" />} />
 							<Controller control={control} name="bankName" render={({ field }) => <Input label="Bank Name" type="text" value={field.value} onChange={field.onChange} className="w-full" placeholder="Enter Bank Name" />} />
+							<Controller control={control} name="accountName" render={({ field }) => <Input label="Account Name" type="text" value={field.value} onChange={field.onChange} className="w-full" placeholder="Enter Account Name" />} />
 							<Controller control={control} name="accountNumber" render={({ field }) => <Input label="Account Number" type="text" value={field.value} onChange={field.onChange} className="w-full" placeholder="Enter Account Number" />} />
 
 							{/* <div className="col-span-1 md:col-span-2">

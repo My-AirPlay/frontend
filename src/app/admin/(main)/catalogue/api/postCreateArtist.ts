@@ -7,6 +7,7 @@ interface CreateArtistPayload {
 	artistName: string;
 	bankName: string;
 	fullName: string;
+	accountName: string;
 	accountNumber: string;
 	currency: string;
 	rate: string;
@@ -25,6 +26,7 @@ export const createArtist = async (payload: CreateArtistPayload) => {
 	formData.append('fullName', payload.fullName);
 	formData.append('email', payload.email);
 	formData.append('bankName', payload.bankName);
+	formData.append('accountName', payload.accountName);
 	formData.append('accountNumber', payload.accountNumber);
 	formData.append('currency', payload.currency);
 	formData.append('rate', payload.rate);

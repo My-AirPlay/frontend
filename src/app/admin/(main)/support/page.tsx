@@ -31,7 +31,7 @@ const Help: React.FC = () => {
 			<h1 className="text-2xl font-semibold">Help and Support</h1>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-[1350px] items-start">
-				<article className="bg-[#1B2128] rounded-lg p-6">
+				<article className="bg-[#1B2128] rounded-lg p-6 md:max-lg:col-span-2">
 					<div className="flex items-center gap-4 mb-4">
 						<div className="bg-[#2F363E] rounded-full p-2">
 							<Notepad2 variant="Bold" className="fill-white" size={30} />

@@ -51,6 +51,7 @@ const ArtistOverview: React.FC<ArtistAnalyticsProps> = ({ artist, artistRefetch 
 
 			<div className="space-y-6">
 				<Input label="Bank Name" value={artist?.bankDetails?.bankName} readOnly />
+				<Input label="Account Name" value={artist?.bankDetails?.accountName} readOnly />
 				<Input label="Account Number" value={artist?.bankDetails?.accountNumber} readOnly />
 
 				{/* <div className="space-y-4">
