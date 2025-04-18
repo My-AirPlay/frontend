@@ -51,15 +51,19 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew 
 					) : (
 						isDropdownOpen && (
 							<div className="absolute left-0 right-0 mt-1 max-h-80 overflow-y-auto bg-secondary border border-border rounded-md z-10 shadow-lg">
-								{artists?.data?.map(artist => (
-									<div key={artist._id} className="flex items-center space-x-3 p-3 hover:bg-accent/20 cursor-pointer" onClick={() => handleSelectArtist(artist)}>
-										<div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
-											<User size={16} />
+								{artists?.data?.map(
+									(
+										artist: Artist // Add type annotation Artist
+									) => (
+										<div key={artist._id} className="flex items-center space-x-3 p-3 hover:bg-accent/20 cursor-pointer" onClick={() => handleSelectArtist(artist)}>
+											<div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
+												<User size={16} />
+											</div>
+											<span className="flex-1">{artist.artistName || '-'}</span>
+											{artist?.isNew && <span className="bg-primary text-white text-xs px-2 py-1 rounded-sm">New</span>}
 										</div>
-										<span className="flex-1">{artist.artistName || '-'}</span>
-										{artist.isNew && <span className="bg-primary text-white text-xs px-2 py-1 rounded-sm">New</span>}
-									</div>
-								))}
+									)
+								)}
 
 								<div className="p-3 text-primary hover:bg-accent/20 cursor-pointer" onClick={onCreateNew}>
 									Add New Artist

@@ -63,6 +63,7 @@ interface BankDetails {
 }
 
 export interface Artist {
+	isNew: boolean;
 	_id: string;
 	email: string;
 	password: string;
