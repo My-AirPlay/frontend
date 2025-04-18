@@ -92,7 +92,7 @@ const LoginPageClient = () => {
 							Forgot your password?
 						</Link>
 					</div>
-					<AuthActions btnText="Sign In" isDisabled={!formik.isValid || status === 'pending'} />
+					<AuthActions btnText="Sign In" isDisabled={!formik.isValid || status === 'pending'} isBusy={status == 'pending'} />
 				</form>
 			</AuthWrapper>
 		</>

@@ -1,5 +1,6 @@
 'use client';
 
+import { AppLogo } from '@/components/icons';
 import { LinkButton } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { Star } from 'lucide-react';
@@ -75,7 +76,7 @@ const features = [
 ];
 
 // Artist images for explore section
-const exploreArtists = ['/images/artist/tulus.png', '/images/artist/raisa.png', '/images/artist/judika.png', '/images/artist/budi.png', '/images/artist/andmesh.png', '/images/artist/andriana.png', '/images/artist/citra.png', '/images/artist/fals.png', '/images/artist/iwan.png'];
+const exploreArtists = ['/images/artist/Magnito1.png', '/images/artist/Tesh Carter 1.jpeg.jpg', '/images/artist/Portable 1.jpg', '/images/artist/Tesh Carter 2.jpeg.jpg', '/images/artist/Magnito2.jpg', '/images/artist/Tesh Carter.jpeg.jpg', '/images/artist/iwan.png', '/images/artist/Portable.jpeg.jpg'];
 
 export default function Home() {
 	const [currentSlide, setCurrentSlide] = useState(0);
@@ -105,7 +106,7 @@ export default function Home() {
 					<nav className="flex justify-between items-center mb-12">
 						<div className="flex items-center gap-8">
 							<Link href="/" className="text-white">
-								<Image src="/assets/logo.svg" alt="Air Play" width={40} height={40} className="text-[#FF6B00]" />
+								<AppLogo />
 							</Link>
 							<div className="hidden md:flex gap-6">
 								<Link href="#" className="text-white hover:text-[#FF6B00] transition-colors">
@@ -123,7 +124,9 @@ export default function Home() {
 							<Button variant="outline" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full hidden sm:flex">
 								Request a Demo
 							</Button>
-							<Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">Get Started</Button>
+							<LinkButton href="/artiste/register" className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">
+								Get Started
+							</LinkButton>
 						</div>
 					</nav>
 				</div>
@@ -133,11 +136,13 @@ export default function Home() {
 					<div className="flex flex-col md:flex-row justify-between items-start">
 						<div className="mb-10 md:mb-0">
 							<h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-6 md:mb-12 max-w-md">Empower your Music...</h1>
-							<div className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-14">
-								<Button variant="outline" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full">
+							<div className="flex gap-4 mb-8 md:mb-14">
+								<Button variant="outline" size="lg" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full hidden sm:flex">
 									Request a Demo
 								</Button>
-								<Button className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">Get Started</Button>
+								<LinkButton href="/artiste/register" size="lg" className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">
+									Get Started
+								</LinkButton>
 							</div>
 							<div className="hidden md:block">
 								<Image src="/assets/circle-btn.svg" alt="Circle" width={80} height={80} />
@@ -257,7 +262,7 @@ export default function Home() {
 			</section>
 
 			{/* Footer */}
-			<footer className="py-16 bg-[#0A0A0A]">
+			<footer className="py-16 bg-secondary">
 				<div className="container mx-auto px-4 md:px-6">
 					<div className="flex flex-col md:flex-row justify-between mb-12">
 						<div className="mb-8 md:mb-0">
@@ -321,7 +326,7 @@ export default function Home() {
 
 					<div className="flex justify-center mt-12">
 						<Link href="/" className="text-white">
-							<Image src="/assets/logo.svg" alt="Air Play" width={40} height={40} />
+							<AppLogo />
 						</Link>
 					</div>
 				</div>
