@@ -7,8 +7,8 @@ export default function AllIssuesPage() {
 
 	// Filter issues by status
 	const pendingIssues = data?.data?.filter(issue => issue.status === 'Pending') || [];
-	const inProgressIssues = data?.data?.filter(issue => issue.status === 'In Progress') || [];
-	const completedIssues = data?.data?.filter(issue => issue.status === 'Completed') || [];
+	const inProgressIssues = data?.data?.filter(issue => issue.status === 'Deferred') || [];
+	const completedIssues = data?.data?.filter(issue => issue.status === 'Resolved') || [];
 
 	// Helper function to truncate text
 	interface TruncateTextParams {
