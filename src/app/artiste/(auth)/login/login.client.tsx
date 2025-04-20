@@ -7,7 +7,7 @@ import { useFormik } from 'formik';
 import { InferType } from 'yup';
 import { redirect } from 'next/navigation';
 
-import { urls, userProfileStage } from '@/lib/constants';
+import { userProfileStage } from '@/lib/constants';
 import { loginSchema } from '@/lib/schemas';
 import { useMutation } from '@tanstack/react-query';
 import { loginArtistUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
@@ -30,12 +30,12 @@ const LoginPageClient = () => {
 			}
 			if (data.user.stage === userProfileStage.verifyEmail) {
 				toast.success('Check your email to verify your acount');
-				router.push(urls.verification);
+				router.push('/artiste/verify');
 				return;
 			}
 			if (data.user.stage === userProfileStage.onboarding) {
 				toast.success('Welcome.');
-				router.replace(urls.onboarding);
+				router.replace('/artiste/onboarding');
 				return;
 			}
 			toast.success(`Welcome Back ${data.user.firstName}`);
@@ -69,7 +69,7 @@ const LoginPageClient = () => {
 				linkText={
 					<p className="font-plus-jakarta-sans text-custom-registration_link  font-normal">
 						Not a member?{' '}
-						<Link href={urls.register} className="font-bold text-primary">
+						<Link href={'/artiste/register'} className="font-bold text-primary">
 							Sign up
 						</Link>{' '}
 						now
@@ -88,7 +88,7 @@ const LoginPageClient = () => {
 					<Input type="email" placeholder="Email" inputSize={'authInput'} hasError={!!formik.errors.email} errormessage={formik.errors.email} {...formik.getFieldProps('email')} />
 					<div>
 						<Input type="password" placeholder="Password" inputSize={'authInput'} hasError={!!formik.errors.password} errormessage={formik.errors.password} {...formik.getFieldProps('password')} />
-						<Link href={urls.forgotPassword} className="text-primary text-14 font-plus-jakarta-sans font-medium">
+						<Link href={'/artiste/forgot-password'} className="text-primary text-14 font-plus-jakarta-sans font-medium">
 							Forgot your password?
 						</Link>
 					</div>
