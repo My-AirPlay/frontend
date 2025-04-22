@@ -126,7 +126,7 @@ const faqData = {
 		{
 			id: 'account-2',
 			question: 'How do I move my music to MyAirplay from another distributor?',
-			answerText: "Find all metadata and original files associated with the music you'd like to move to MyAirplay, including: ISRC codes, Artist name & track titles, Original audio files, Original artwork. Issue a takedown request with your current distributor. Re-upload your music to MyAirplay using the exact same ISRC codes, artist names, track titles, and original files. Contact contact@airplay.com with the subject line 'Moving to MyAirplay' for assistance.",
+			answerText: "Find all metadata and original files associated with the music you'd like to move to MyAirplay, including: ISRC codes, Artist name & track titles, Original audio files, Original artwork. Issue a takedown request with your current distributor. Re-upload your music to MyAirplay using the exact same ISRC codes, artist names, track titles, and original files. Contact info@myairplay.com with the subject line 'Moving to MyAirplay' for assistance.",
 			answer: (
 				<>
 					<p>Find all metadata and original files associated with the music you&apos;d like to move to MyAirplay, including:</p>
@@ -138,7 +138,7 @@ const faqData = {
 					</ul>
 					<p className="mt-2">Issue a takedown request with your current distributor.</p>
 					<p className="mt-2">Re-upload your music to MyAirplay using the exact same ISRC codes, artist names, track titles, and original files.</p>
-					<p className="mt-2">Contact contact@airplay.com with the subject line &quot;Moving to MyAirplay&quot; for assistance.</p>
+					<p className="mt-2">Contact info@myairplay.com with the subject line &quot;Moving to MyAirplay&quot; for assistance.</p>
 				</>
 			)
 		}
@@ -162,12 +162,12 @@ const faqData = {
 		{
 			id: 'music-1',
 			question: 'How do I remove a release from stores?',
-			answerText: 'You can remove your music from stores at any time. It usually takes 2-4 weeks for takedowns to be removed from stores. You can contact contact@airplay.com for takedown initiation.',
+			answerText: 'You can remove your music from stores at any time. It usually takes 2-4 weeks for takedowns to be removed from stores. You can contact info@myairplay.com for takedown initiation.',
 			answer: (
 				<>
 					<p>You can remove your music from stores at any time.</p>
 					<p className="mt-2">It usually takes 2-4 weeks for takedowns to be removed from stores.</p>
-					<p className="mt-2">You can contact contact@airplay.com for takedown initiation.</p>
+					<p className="mt-2">You can contact info@myairplay.com for takedown initiation.</p>
 				</>
 			)
 		},
@@ -392,12 +392,12 @@ export default function FAQsPage() {
 				<div className="bg-secondary rounded-lg p-4 border border-gray-700">
 					<p className="text-sm text-gray-400">
 						For help and more information about AirPlay send us an email here or click the{' '}
-						<Link href="mailto:contact@airplay.com" className="text-[#FF6B00] hover:underline">
+						<Link href="mailto:info@myairplay.com" className="text-[#FF6B00] hover:underline">
 							link
 						</Link>{' '}
 						to drop your enquiries. Email:{' '}
-						<Link href="mailto:contact@airplay.com" className="text-[#FF6B00] hover:underline">
-							contact@airplay.com
+						<Link href="mailto:info@myairplay.com" className="text-[#FF6B00] hover:underline">
+							info@myairplay.com
 						</Link>
 					</p>
 				</div>

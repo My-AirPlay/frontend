@@ -109,8 +109,8 @@ export default function PrivacyPolicyPage() {
 				<p className="text-gray-300">Last Updated: April 17, 2025</p>
 				<p className="text-gray-300 mt-3">
 					If you have any questions about our Privacy Policy, please contact us at{' '}
-					<a href="mailto:contact@airplay.com" className="text-[#FF6B00] hover:underline">
-						contact@airplay.com
+					<a href="mailto:info@myairplay.com" className="text-[#FF6B00] hover:underline">
+						info@myairplay.com
 					</a>
 					.
 				</p>

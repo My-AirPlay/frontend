@@ -28,12 +28,6 @@ const artistsSectionData = [
 		link: '/artiste/register'
 	},
 	{
-		image: '/images/artist/mangement.png',
-		title: 'Artist Management.',
-		description: 'Grow your artists brand',
-		link: '/artiste/register'
-	},
-	{
 		image: '/images/artist/owners.png',
 		title: 'Management Owners.',
 		description: 'Analyse royalties & reports',
@@ -179,12 +173,12 @@ export default function Home() {
 
 			{/* Artists Section */}
 			<section className="py-24 md:py-32">
-				<div className="w-[90vw] max-w-5xl  mx-auto px-4 md:px-6">
+				<div className="w-[90vw] max-w-3xl  mx-auto px-4 md:px-6">
 					<h2 className="text-center text-3xl lg:text-5xl font-semibold mb-16 max-w-3xl mx-auto">
 						<span className="bg-gradient-to-r from-white to-[#FF6B00] text-transparent bg-clip-text">Our Exclusive Offer Is Targeted Towards These Users</span>
 					</h2>
 
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
 						{artistsSectionData.map((artist, index) => (
 							<div key={index} className="bg-[#1A1A1A] rounded-lg overflow-hidden">
 								<div className="h-64 relative">
@@ -299,9 +293,20 @@ export default function Home() {
 										Our Team
 									</Link>
 								</li>
+
 								<li>
-									<Link href="#" className="text-[#9CA3AF] hover:text-[#FF6B00]">
-										Our Partners
+									<Link href="/policies/terms" className="text-[#9CA3AF] hover:text-[#FF6B00]">
+										Terms and Condition
+									</Link>
+								</li>
+								<li>
+									<Link href="/policies/privacy" className="text-[#9CA3AF] hover:text-[#FF6B00]">
+										Privacy Policy
+									</Link>
+								</li>
+								<li>
+									<Link href="/policies/cookies" className="text-[#9CA3AF] hover:text-[#FF6B00]">
+										Cookies Policy
 									</Link>
 								</li>
 							</ul>
@@ -316,8 +321,8 @@ export default function Home() {
 									</Link>
 								</li>
 								<li>
-									<Link href="mailto:contact@airplay.com" className="text-[#9CA3AF] hover:text-[#FF6B00]">
-										contact@airplay.com
+									<Link href="mailto:info@myairplay.com" className="text-[#9CA3AF] hover:text-[#FF6B00]">
+										info@myairplay.com
 									</Link>
 								</li>
 							</ul>
