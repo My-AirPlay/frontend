@@ -118,7 +118,7 @@ const Catalogue: React.FC = () => {
 							<LoadingBox size={62} />
 						</div>
 					) : (
-						<DataTable data={releases?.data} columns={releaseColumns} pagination={true} defaultRowsPerPage={Number(limit)} pageCount={releases?.totalPages} />
+						<DataTable data={releases?.data} columns={releaseColumns} pagination={true} showCheckbox={true} defaultRowsPerPage={Number(limit)} pageCount={releases?.totalPages} />
 					)}
 				</TabsContent>
 
@@ -128,7 +128,7 @@ const Catalogue: React.FC = () => {
 							<LoadingBox size={62} />
 						</div>
 					) : (
-						<DataTable data={tracks?.data} columns={trackColumns} pagination={true} defaultRowsPerPage={Number(limit)} pageCount={tracks?.totalPages} />
+						<DataTable data={tracks?.data} columns={trackColumns} pagination={true} showCheckbox={true} defaultRowsPerPage={Number(limit)} pageCount={tracks?.totalPages} />
 					)}
 				</TabsContent>
 			</Tabs>

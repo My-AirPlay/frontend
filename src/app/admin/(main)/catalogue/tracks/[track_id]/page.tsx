@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Trash2, Copy, Save } from 'lucide-react';
+import { Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,6 +10,8 @@ import { Input, PreviousPageButton, SelectSimple, Textarea } from '@/components/
 import { TRUE_OR_FALSE_OPTIONS } from '@/constants';
 import { useGetMedia } from '../../api/getOneMedia';
 import { LoadingBox } from '@/components/ui/LoadingBox';
+import moment from 'moment';
+import { useDownloadMedia } from '../../api/getDownloadMedia';
 
 const TrackDetails: React.FC = () => {
 	const { track_id } = useParams<{ track_id: string }>();
@@ -23,6 +25,24 @@ const TrackDetails: React.FC = () => {
 		mediaId: track_id
 	});
 
+	const { mutate, isPending } = useDownloadMedia();
+
+	const handleDownloadMedia = () => {
+		mutate([contract?.mediaUrl], {
+			onSuccess: data => {
+				const url = window.URL.createObjectURL(data);
+				const link = document.createElement('a');
+				link.href = url;
+				link.download = `${contract?.title}.mp4`; // Adjust filename as needed
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+				window.URL.revokeObjectURL(url);
+			},
+			onError: error => console.error('Download failed:', error)
+		});
+	};
+
 	return (
 		<div className="space-y-6">
 			<PreviousPageButton />
@@ -34,13 +54,17 @@ const TrackDetails: React.FC = () => {
 						<Trash2 size={16} className="mr-2" />
 						<span>Delete</span>
 					</Button>
-					<Button variant="outline" className="bg-secondary text-foreground border-border">
+					{/* <Button variant="outline" className="bg-secondary text-foreground border-border">
 						<Copy size={16} className="mr-2" />
 						<span>Copy</span>
-					</Button>
-					<Button className="admin-button-primary">
-						<Save size={16} className="mr-2" />
-						<span>Save</span>
+					</Button> */}
+					{/* <Button variant="outline" className="bg-secondary text-foreground border-border">
+						<Download size={16} className="mr-2" />
+						<span>Download</span>
+					</Button> */}
+					<Button className="admin-button-primary" disabled={isPending} onClick={() => handleDownloadMedia()}>
+						<Download size={16} className="mr-2" />
+						<span>Download</span>
 					</Button>
 				</div>
 			</div>
@@ -64,36 +88,38 @@ const TrackDetails: React.FC = () => {
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 							<div className="space-y-6">
 								<Input label="Song Title" value={contract?.title} />
-								<Input label="Artist Name" value="Hannah" />
-								<Input label="Publisher (Artist Real Name)" value="Hannah Tae" />
+								<Input label="Artist Name" value={contract?.artistName} />
+								<Input label="Publisher (Artist Real Name)" value={contract?.publisher} />
 
-								<Input label="Genre" value="Pop" />
+								<Input label="Genre" value={contract?.mainGenre} />
 
-								<Input label="Release Date" value="26 February 2025" />
+								<Input label="Release Date" value={moment(contract?.releaseDate).format('DD MMM, YYYY')} />
 							</div>
 
 							<div className="space-y-6">
-								<Input label="Record Label" value="Migos" />
+								<Input label="Record Label" value={contract?.recordLabel} />
 
 								<div className="space-y-4">
 									<label className="text-sm text-foreground font-medium block">Instrument Played</label>
 									<div className="space-y-2">
-										<div className="flex items-center space-x-2">
-											<Checkbox id="guitar" />
-											<label htmlFor="guitar" className="text-sm">
-												Guitar
-											</label>
-										</div>
-										<div className="flex items-center space-x-2">
-											<Checkbox id="drums" />
-											<label htmlFor="drums" className="text-sm">
-												Drums
-											</label>
-										</div>
+										{contract?.instruments?.length > 0 ? (
+											contract?.instruments?.map((instrument: string, i: number) => (
+												<div className="" key={i}>
+													<div className="flex items-center space-x-2">
+														<Checkbox id={instrument} />
+														<label htmlFor={instrument} className="text-sm">
+															{instrument}
+														</label>
+													</div>
+												</div>
+											))
+										) : (
+											<p className="text-sm text-white/70 text-center py-4">No Instrument on this track.</p>
+										)}
 									</div>
 								</div>
 
-								<Textarea label="Description/Notes" value="This Is A Beautiful Song" className="min-h-[120px]" />
+								<Textarea label="Description/Notes" value={contract?.description} className="min-h-[120px]" />
 							</div>
 						</div>
 					)}
