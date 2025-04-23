@@ -28,7 +28,7 @@ const CustomAppLayout = ({ children, showIcons }: AppLayoutProps) => {
 								</li>
 							</ul>
 						</nav>
-						<small className="text-white md:block hidden font-medium text-xs">Supported by AirPlay</small>
+						{/* <small className="text-white md:block hidden font-medium text-xs">Supported by AirPlay</small> */}
 					</footer>
 				)}
 			</div>
