@@ -218,12 +218,12 @@ export default function Step5MediaPreview() {
 				onOpenChange={setUploadStatusModalOpen}
 				title={status === 'success' ? 'Upload Successful' : 'Upload Failed'}
 				description={status === 'success' ? 'File upload completed successfully. Go to uploads to view uploaded content!' : 'There was an error uploading your content. Please try again.'}
-				actionLabel={status === 'success' ? 'Go to Uploads' : 'Retry'}
+				actionLabel={status === 'success' ? 'Go to Catalog' : 'Retry'}
 				cancelLabel="Back to Submit"
 				onAction={() => {
 					if (status === 'success') {
-						clearStore();
 						router.push('/artiste/catalog');
+						clearStore();
 						closeUploadStatusModal();
 					} else {
 						closeUploadStatusModal();

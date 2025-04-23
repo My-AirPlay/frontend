@@ -141,12 +141,12 @@ export default function FAQsPage() {
 				<div className="bg-secondary rounded-lg p-4 border border-gray-700">
 					<p className="text-sm text-gray-400">
 						For help and more information about AirPlay send us an email here or click the{' '}
-						<Link href="mailto:@contact@airplay.com" className="text-[#FF6B00]">
+						<Link href="mailto:@info@myairplay.com" className="text-[#FF6B00]">
 							link
 						</Link>{' '}
 						to drop your enquiries. Email:{' '}
-						<Link href="mailto:@contact@airplay.com" className="text-[#FF6B00]">
-							contact@airplay.com
+						<Link href="mailto:@info@myairplay.com" className="text-[#FF6B00]">
+							info@myairplay.com
 						</Link>
 					</p>
 				</div>

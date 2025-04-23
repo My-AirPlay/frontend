@@ -149,8 +149,8 @@ export default function TermsPage() {
 					<div className="space-y-3 text-gray-300 policy-content-text">
 						<p>
 							<strong className="text-white">a. Email:</strong> For general inquiries, support, or questions related to our Service, you can reach out to our support team via email at{' '}
-							<a href="mailto:contact@airplay.com" className="text-[#FF6B00] hover:underline">
-								contact@airplay.com
+							<a href="mailto:info@myairplay.com" className="text-[#FF6B00] hover:underline">
+								info@myairplay.com
 							</a>
 							.
 						</p>
