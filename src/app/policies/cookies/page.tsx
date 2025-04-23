@@ -72,8 +72,8 @@ export default function CookiePolicyPage() {
 					<h3 className="text-xl font-medium mb-4">6. Contact Us</h3>
 					<p className="text-gray-300 policy-content-text">
 						<strong className="text-white">a.</strong> If you have questions, concerns, or requests related to our use of cookies, you may contact us at{' '}
-						<a href="mailto:contact@airplay.com" className="text-[#FF6B00] hover:underline">
-							contact@airplay.com
+						<a href="mailto:info@myairplay.com" className="text-[#FF6B00] hover:underline">
+							info@myairplay.com
 						</a>
 						.
 					</p>

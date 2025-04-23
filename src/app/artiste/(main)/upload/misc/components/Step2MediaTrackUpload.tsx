@@ -97,7 +97,7 @@ export default function Step2MediaTrackUpload() {
 			toast.error('Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.');
 			return;
 		}
-		if (file.size > 35 * 1024 * 1024) {
+		if (file.size > 40 * 1024 * 1024) {
 			toast.error('File size exceeds the 35MB limit. Please upload a smaller file.');
 			return;
 		}
