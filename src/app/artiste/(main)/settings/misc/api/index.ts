@@ -42,3 +42,34 @@ export const useUpdateBankData = () => {
 		mutationFn: updateBankData
 	});
 };
+
+type deletAccountProps = {
+	password: string;
+	reason: string;
+};
+
+const deletAccount = async (data: deletAccountProps) => {
+	const bankResponse = await APIAxios.put('/artist/delete-account', {
+		...data
+	});
+
+	return bankResponse.data;
+};
+export const useDeleteAccount = () => {
+	return useMutation({
+		mutationFn: deletAccount
+	});
+};
+
+export const useUpdateProfilePicture = () => {
+	return useMutation({
+		mutationFn: async (formData: FormData) => {
+			const { data } = await APIAxios.post('/artist/update-profile-picture', formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			});
+			return data;
+		}
+	});
+};
