@@ -25,7 +25,9 @@ export const DSPBreakdownChart: React.FC<DSPBreakdownChartProps> = ({ data }) =>
 		'YouTube Streaming': '#FF0000',
 		'Amazon Music Unlimited': '#FF9900',
 		TIDAL: '#000000',
-		Deezer: '#EF5466'
+		// Deezer: '#EF5466',
+		Audiomack: '#FE6902',
+		Deezer: '#a238ff'
 	};
 
 	// Create a chartConfig object for the ChartStyle component
