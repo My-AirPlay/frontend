@@ -89,7 +89,7 @@ export default function Home() {
 			<section className="relative overflow-hidden min-h-dvh">
 				<div className="absolute inset-0 z-10 flex">
 					{heroImages.map((img, index) => (
-						<div key={index} className={`absolute inset-0 transition-opacity duration-500 ease-in ${currentSlide === index ? 'opacity-100' : 'opacity-0'}`}>
+						<div key={index} className={`absolute inset-0 transition-opacity duration-300 ease-in ${currentSlide === index ? 'opacity-100' : 'opacity-0'}`}>
 							<Image src={img || '/placeholder.svg'} alt={`Hero slide ${index + 1}`} fill className="object-cover" priority={index === 0} />
 						</div>
 					))}
