@@ -47,7 +47,7 @@ export type BankFormValues = z.infer<typeof bankSchema>;
 
 // Account Deletion Schema
 export const accountDeletionSchema = z.object({
-	deleteReason: z.string().min(1, 'Please select a reason'),
+	reason: z.string().min(1, 'Please select a reason'),
 	password: z.string().min(6, 'Password is required to confirm deletion')
 });
 
