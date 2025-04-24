@@ -3,9 +3,17 @@ import { BankFormValues, ProfileFormValues } from '../schemas';
 import { useMutation } from '@tanstack/react-query';
 
 const updateProfile = async (profile: ProfileFormValues) => {
-	const bioResponse = await APIAxios.post('/artist/update-bio', {
-		...profile
-	});
+	const bioResponse = await APIAxios.post(
+		'/artist/update-bio',
+		{
+			...profile
+		},
+		{
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			}
+		}
+	);
 
 	return bioResponse.data;
 };

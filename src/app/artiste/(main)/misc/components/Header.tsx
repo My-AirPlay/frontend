@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, Bell, Menu } from 'lucide-react';
+import { Settings, Menu } from 'lucide-react';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Sidebar from './Sidebar';
@@ -15,10 +15,6 @@ const Header: React.FC = () => {
 			<div className="flex items-center space-x-4 ml-auto">
 				<button className="text-white/60 hover:text-foreground">
 					<Settings size={20} />
-				</button>
-
-				<button className="text-white/60 hover:text-foreground">
-					<Bell size={20} />
 				</button>
 
 				<Avatar>

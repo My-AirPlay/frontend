@@ -3,10 +3,10 @@
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Cog, User, Lock, Wallet2, Bell, UserMinus } from 'lucide-react';
+import { Cog, User, Lock, Wallet2, UserMinus } from 'lucide-react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SectionAccount, SectionBankDetails, SectionNotifications, SectionPassword, SectionProfile } from './misc/components';
+import { SectionAccount, SectionBankDetails, SectionPassword, SectionProfile } from './misc/components';
 
 export default function SettingsPage() {
 	const searchParams = useSearchParams();
@@ -51,13 +51,6 @@ export default function SettingsPage() {
 							</TabsTrigger>
 						</Link>
 
-						<Link href="?section=notifications" replace>
-							<TabsTrigger value="notifications" className="flex gap-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4">
-								<Bell className="h-4 w-4" />
-								Notifications
-							</TabsTrigger>
-						</Link>
-
 						<Link href="?section=account" replace>
 							<TabsTrigger value="account" className="flex gap-2 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4">
 								<UserMinus className="h-4 w-4" />
@@ -76,10 +69,6 @@ export default function SettingsPage() {
 
 					<TabsContent value="bank" className="mt-0">
 						<SectionBankDetails />
-					</TabsContent>
-
-					<TabsContent value="notifications" className="mt-0">
-						<SectionNotifications />
 					</TabsContent>
 
 					<TabsContent value="account" className="mt-0">
