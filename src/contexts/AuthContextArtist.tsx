@@ -17,6 +17,7 @@ interface IArtistUser {
 	country: string;
 	firstName: string;
 	lastName: string;
+	phoneNumber: string;
 	bankDetails: BankDetails;
 }
 

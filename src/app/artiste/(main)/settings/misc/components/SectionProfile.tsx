@@ -20,7 +20,7 @@ export default function SectionProfile() {
 		firstName: artist?.firstName || '',
 		lastName: artist?.lastName || '',
 		artistName: artist?.artistName || '',
-		phoneNumber: artist?.email || '',
+		phoneNumber: artist?.phoneNumber || '',
 		email: artist?.email || '',
 		bio: '',
 		Instagram: '',
