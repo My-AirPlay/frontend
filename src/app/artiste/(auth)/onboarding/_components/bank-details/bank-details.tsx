@@ -32,11 +32,18 @@ const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailPro
 	});
 	const formik = useFormik({
 		validateOnChange: true,
+
 		validationSchema: onboardingBankDetailSchema,
 		initialValues: {
 			bankName: '',
 			accountName: '',
-			accountNumber: ''
+			accountNumber: '',
+			ibanSwiftCode: '',
+			bvn: '',
+			bankCode: '',
+			currency: 'NGN' as const,
+			sortCode: '',
+			paymentOption: 'Monthly'
 		},
 		onSubmit: value => {
 			mutateAsync({
@@ -68,12 +75,53 @@ const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailPro
 				props: {
 					placeholder: 'Account Name'
 				}
+			},
+			{
+				id: 'bvn',
+				label: 'BVN',
+				props: {
+					type: 'number',
+					placeholder: 'BVN'
+				}
+			},
+			{
+				id: 'bankCode',
+				label: 'Bank Code',
+				props: {
+					type: 'text',
+					placeholder: 'Bank Code'
+				}
+			},
+			{
+				id: 'ibanSwiftCode',
+				label: 'IBAN/SWIFT Code',
+				props: {
+					type: 'text',
+					placeholder: 'IBAN/SWIFT Code'
+				}
+			},
+			{
+				id: 'sortCode',
+				label: 'Sort Code (optional)',
+				props: {
+					type: 'text',
+					placeholder: 'Sort Code'
+				}
+			},
+			{
+				id: 'currency',
+				label: 'Currency ',
+				props: {
+					type: 'text',
+					placeholder: 'Currency'
+				}
 			}
 		];
 	}, []);
+	console.log(formik.errors);
 	return (
 		<FormStep formFields={fields} formik={formik} title="BANK DETAILS" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
-			<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={!formik.isValid || status === 'pending'}>
+			<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={status === 'pending'} isLoading={status === 'pending'}>
 				Continue <MoveRight />
 			</Button>
 		</FormStep>

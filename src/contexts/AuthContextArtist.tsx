@@ -114,9 +114,12 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 	const [state, dispatch] = useReducer(authReducer, initialAuthState);
 	const router = useRouter();
 
-	const logout = () => {
+	const logout = (reroute?: boolean) => {
 		clearArtistTokens();
 		dispatch({ type: 'LOGOUT' });
+		if (reroute) {
+			router.replace('/artiste/login');
+		}
 	};
 
 	const checkAuthStatus = React.useCallback(async () => {
