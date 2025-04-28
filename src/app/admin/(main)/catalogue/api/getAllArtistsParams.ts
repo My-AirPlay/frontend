@@ -5,21 +5,24 @@ import { useQuery } from '@tanstack/react-query';
 interface GetAllArtistsParams {
 	page: string;
 	limit: string;
+	status?: string;
+	stage?: string;
+	hasManagement?: boolean;
+	searchTerm?: string;
+	sortBy?: string;
+	sortOrder?: 'asc' | 'desc';
 }
 
-export const getAllArtists = async ({ page, limit }: GetAllArtistsParams) => {
+export const getAllArtists = async (apiParams: GetAllArtistsParams) => {
 	const response = await APIAxios.get(`/admin/get_all_artists`, {
-		params: {
-			page,
-			limit
-		}
+		params: apiParams
 	});
 	return response.data;
 };
 
 export const useGetAllArtists = (params: GetAllArtistsParams) => {
 	return useQuery({
-		queryKey: ['allArtists', params.page, params.limit], // Unique key for caching
+		queryKey: ['allArtists', params], // Unique key for caching
 		queryFn: () => getAllArtists(params)
 	});
 };

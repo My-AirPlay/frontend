@@ -58,8 +58,8 @@ export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [paginationState, router, searchParams]);
 
-	// This will prevent unnecessary re-renders, no actual proof of performance gain but we'll know when real data comes in
-	const tableData = useMemo(() => data, [data]);
+	// Ensure data is always an array, defaulting to empty if undefined/null
+	const tableData = useMemo(() => data || [], [data]);
 
 	// checkbox column if showCheckbox is true
 	const tableColumns = useMemo(() => {
@@ -90,7 +90,8 @@ export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading,
 			rowSelection
 		},
 		// manualPagination: !pagination,
-		pageCount: pageCount ? pageCount : pagination ? Math.ceil(data?.length / paginationState.pageSize) : 1,
+		// Use tableData.length here which is guaranteed to be an array
+		pageCount: pageCount ? pageCount : pagination ? Math.ceil(tableData.length / paginationState.pageSize) : 1,
 		manualPagination: pagination // Enable manual pagination since the API handles it
 	});
 
