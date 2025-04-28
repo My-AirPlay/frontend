@@ -10,6 +10,7 @@ import { useMutation } from '@tanstack/react-query';
 import { postOnbaordingBankDetail } from '@/app/artiste/(auth)/misc/api/mutations/onboarding.mutation';
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
+import { LinkButton } from '@/components/ui';
 
 interface OnboardingBankDetailProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
@@ -121,9 +122,14 @@ const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailPro
 	console.log(formik.errors);
 	return (
 		<FormStep formFields={fields} formik={formik} title="BANK DETAILS" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
-			<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={status === 'pending'} isLoading={status === 'pending'}>
-				Continue <MoveRight />
-			</Button>
+			<div className="flex items-center justify-between">
+				<LinkButton variant="link" className="text-sm" href={`/artiste/dashboard`}>
+					Skip
+				</LinkButton>
+				<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={status === 'pending'} isLoading={status === 'pending'}>
+					Continue <MoveRight />
+				</Button>
+			</div>
 		</FormStep>
 	);
 };
