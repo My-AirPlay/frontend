@@ -11,7 +11,7 @@ import { userProfileStage } from '@/lib/constants';
 import { loginSchema } from '@/lib/schemas';
 import { useMutation } from '@tanstack/react-query';
 import { loginArtistUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
-import { getArtistProfile } from '@/contexts/AuthContextArtist';
+import { getArtistProfile, useArtisteContext } from '@/contexts/AuthContextArtist';
 import { Input } from '@/components/ui';
 
 import AuthWrapper from '../misc/components/auth-wrapper';
@@ -19,9 +19,10 @@ import AuthActions from '../misc/components/auth-actions';
 
 const LoginPageClient = () => {
 	const router = useRouter();
+	const { checkAuthStatus } = useArtisteContext();
 	const { mutate, status } = useMutation({
 		mutationFn: loginArtistUser,
-		onSuccess({ data, error }) {
+		onSuccess: async ({ data, error }) => {
 			if (error) {
 				if (error.code === '500') return;
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,6 +40,7 @@ const LoginPageClient = () => {
 				return;
 			}
 			toast.success(`Welcome Back ${data.user.firstName}`);
+			await checkAuthStatus();
 			router.replace('/artiste/dashboard');
 		}
 	});
