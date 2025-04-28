@@ -23,6 +23,7 @@ const LoginPageClient = () => {
 	const { mutate, status } = useMutation({
 		mutationFn: loginArtistUser,
 		onSuccess: async ({ data, error }) => {
+			await checkAuthStatus();
 			if (error) {
 				if (error.code === '500') return;
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,16 +35,16 @@ const LoginPageClient = () => {
 				router.push('/artiste/verify');
 				return;
 			}
-			if (data.user.stage === userProfileStage.onboarding) {
+			if (data.user.stage === userProfileStage.onboarding || data.user.stage === 'Add bank info') {
 				toast.success('Welcome.');
 				router.replace('/artiste/onboarding');
 				return;
 			}
 			toast.success(`Welcome Back ${data.user.firstName}`);
-			await checkAuthStatus();
 			router.replace('/artiste/dashboard');
 		}
 	});
+
 	const formik = useFormik<InferType<typeof loginSchema>>({
 		initialValues: {
 			email: '',
