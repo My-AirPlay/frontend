@@ -5,17 +5,19 @@ import { Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Input, PreviousPageButton, SelectSimple, Textarea } from '@/components/ui';
 import { TRUE_OR_FALSE_OPTIONS } from '@/constants';
 import { useGetMedia } from '../../api/getOneMedia';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import moment from 'moment';
 import { useDownloadMedia } from '../../api/getDownloadMedia';
+import { toast } from 'sonner';
+import { useDeleteMedia } from '../../api/deleteMedia';
 
 const TrackDetails: React.FC = () => {
 	const { track_id } = useParams<{ track_id: string }>();
-	console.log(track_id);
+	const router = useRouter();
 
 	const {
 		data: contract,
@@ -26,21 +28,63 @@ const TrackDetails: React.FC = () => {
 	});
 
 	const { mutate, isPending } = useDownloadMedia();
+	const { mutate: deleteMutate, isPending: deletePending } = useDeleteMedia();
 
 	const handleDownloadMedia = () => {
-		mutate([contract?.mediaUrl], {
-			onSuccess: data => {
-				const url = window.URL.createObjectURL(data);
-				const link = document.createElement('a');
-				link.href = url;
-				link.download = `${contract?.title}.mp4`; // Adjust filename as needed
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-				window.URL.revokeObjectURL(url);
-			},
-			onError: error => console.error('Download failed:', error)
-		});
+		if (contract?.mediaUrl) {
+			mutate(
+				{ urls: [contract?.mediaUrl] },
+				{
+					onSuccess: async data => {
+						try {
+							const response = data as { downloadUrls: string[] };
+							if (!response?.downloadUrls?.length) {
+								toast.error('No download URLs received');
+								return;
+							}
+
+							for (const [index, url] of response.downloadUrls.entries()) {
+								try {
+									// Fetch the file as a blob to ensure download
+									const res = await fetch(url, { mode: 'cors' });
+									if (!res.ok) {
+										throw new Error(`Failed to fetch URL: ${res.statusText}`);
+									}
+									const blob = await res.blob();
+
+									// Extract filename from URL or use a fallback
+									const filename = url.split('/').pop()?.split('?')[0] || `media_${index + 1}.mp4`;
+
+									// Create a temporary URL for the blob
+									const blobUrl = window.URL.createObjectURL(blob);
+
+									// Create and trigger download
+									const link = document.createElement('a');
+									link.href = blobUrl;
+									link.download = filename;
+									document.body.appendChild(link);
+									link.click();
+
+									// Clean up
+									document.body.removeChild(link);
+									window.URL.revokeObjectURL(blobUrl);
+								} catch (error) {
+									console.error(`Error downloading file ${url}:`, error);
+									toast.error(`Failed to download file ${index + 1}`);
+								}
+							}
+						} catch (error) {
+							console.error('Error processing download URLs:', error);
+							toast.error('Error processing media downloads');
+						}
+					},
+					onError: error => {
+						console.error('Failed to fetch download URLs:', error);
+						toast.error('Error fetching media URLs');
+					}
+				}
+			);
+		}
 	};
 
 	return (
@@ -50,9 +94,27 @@ const TrackDetails: React.FC = () => {
 			<div className="flex justify-between items-center">
 				<h1 className="text-xl md:text-2xl font-semibold">Track Details</h1>
 				<div className="flex items-center space-x-2">
-					<Button variant="outline" className="bg-secondary text-foreground border-border">
+					<Button
+						variant="outline"
+						className="bg-secondary text-foreground border-border"
+						disabled={deletePending}
+						onClick={() =>
+							deleteMutate(
+								{ mediaId: track_id },
+								{
+									onSuccess() {
+										toast.success('Album track deleted successfully');
+										router.push(`/admin/catalogue`);
+									},
+									onError() {
+										toast.error('Failed to delete album track');
+									}
+								}
+							)
+						}
+					>
 						<Trash2 size={16} className="mr-2" />
-						<span>Delete</span>
+						{deletePending ? <LoadingBox size={16} color="white" /> : <span>Delete</span>}
 					</Button>
 					{/* <Button variant="outline" className="bg-secondary text-foreground border-border">
 						<Copy size={16} className="mr-2" />
@@ -64,7 +126,7 @@ const TrackDetails: React.FC = () => {
 					</Button> */}
 					<Button className="admin-button-primary" disabled={isPending} onClick={() => handleDownloadMedia()}>
 						<Download size={16} className="mr-2" />
-						<span>Download</span>
+						{isPending ? <LoadingBox size={16} color="white" /> : <span>Download</span>}
 					</Button>
 				</div>
 			</div>
@@ -106,8 +168,8 @@ const TrackDetails: React.FC = () => {
 											contract?.instruments?.map((instrument: string, i: number) => (
 												<div className="" key={i}>
 													<div className="flex items-center space-x-2">
-														<Checkbox id={instrument} />
-														<label htmlFor={instrument} className="text-sm">
+														<Checkbox id={instrument} disabled />
+														<label htmlFor={instrument} className="text-sm capitalize">
 															{instrument}
 														</label>
 													</div>
@@ -131,7 +193,8 @@ const TrackDetails: React.FC = () => {
 							<SelectSimple
 								label="Explicit Content"
 								options={TRUE_OR_FALSE_OPTIONS}
-								value={true}
+								value={contract?.explicitContent === 'Yes'}
+								disabled
 								labelKey="name"
 								valueKey="value"
 								placeholder="Select an option"
@@ -139,14 +202,14 @@ const TrackDetails: React.FC = () => {
 									//
 								}}
 							/>
-							<Input label="Universal product code(UPC) and ISRC(international standard recording code)" value="E4671572" />
-							<Input label="Release Version" value="Pop" />
-							<Input label="Copyright" value="26 February 2025" />
+							<Input label="Universal product code(UPC) and ISRC(international standard recording code)" value={contract?.universalProductCode} />
+							<Input label="Release Version" value={contract?.releaseVersion} />
+							<Input label="Copyright" value={contract?.copyright} />
 
 							<Input label="Copyright" value="26 February 2025" />
 						</div>
 
-						<Textarea label="Lyrics (Paste in lyrics box)" value="This Is A Beautiful Song" className="min-h-[300px]" />
+						<Textarea label="Lyrics (Paste in lyrics box)" value={contract?.lyrics} className="min-h-[300px]" />
 					</div>
 				</TabsContent>
 			</Tabs>

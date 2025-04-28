@@ -330,7 +330,7 @@ const Dashboard: React.FC = () => {
 				<article>
 					<header className="flex justify-between items-center mb-3">
 						<h2 className="text-xl font-normal">Recent Sales</h2>
-						<Link href="/sales" className="text-sm text-white/70 hover:text-foreground flex items-center">
+						<Link href="/admin/sales" className="text-sm text-white/70 hover:text-foreground flex items-center">
 							View All <ChevronRight size={16} />
 						</Link>
 					</header>

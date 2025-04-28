@@ -2,20 +2,17 @@
 import APIAxios from '@/utils/axios';
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 
-// Define the request body interface (array of URLs)
-type DownloadMediaBody = string[];
+// Define the request body interface
+interface DownloadMediaParams {
+	urls: string[];
+}
 
-// Define the response type as a Blob for media downloads
-type DownloadMediaResponse = Blob;
-
-export const downloadMedia = async (fileUrls: DownloadMediaBody): Promise<DownloadMediaResponse> => {
-	const response = await APIAxios.post(`/admin/download_media`, fileUrls, {
-		responseType: 'blob' // Handle binary data (e.g., MP4 file or archive)
-	});
+export const downloadMedia = async ({ urls }: DownloadMediaParams) => {
+	const response = await APIAxios.post(`/admin/download_media/`, urls);
 	return response.data;
 };
 
-export const useDownloadMedia = (): UseMutationResult<DownloadMediaResponse, Error, DownloadMediaBody> => {
+export const useDownloadMedia = (): UseMutationResult<unknown, Error, DownloadMediaParams> => {
 	return useMutation({
 		mutationFn: downloadMedia
 	});
