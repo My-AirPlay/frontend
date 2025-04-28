@@ -57,7 +57,7 @@ type deletAccountProps = {
 };
 
 const deletAccount = async (data: deletAccountProps) => {
-	const bankResponse = await APIAxios.put('/artist/delete-account', {
+	const bankResponse = await APIAxios.put('/artist/delete_account', {
 		...data
 	});
 

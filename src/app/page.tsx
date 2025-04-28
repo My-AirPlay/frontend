@@ -134,7 +134,7 @@ export default function Home() {
 								<Button variant="outline" size="lg" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full hidden sm:flex">
 									Request a Demo
 								</Button>
-								<LinkButton href="/artiste/register" size="lg" className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">
+								<LinkButton href="/artiste/login" size="lg" className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">
 									Get Started
 								</LinkButton>
 							</div>

@@ -21,7 +21,7 @@ export const onboardingBankDetailSchema = Yup.object({
 		.matches(/^[0-9]/gi, 'Must be a number')
 		.required('Field is required'),
 	paymentOption: Yup.string().required('Field is required'),
-	currency: Yup.string().oneOf(['NGN', 'USD', 'EUR', 'GBP'], 'Invalid currency, must be one of NGN, USD, EUR, GBP').required('Field is required'),
+	currency: Yup.string().oneOf(['naira', 'dollar', 'euro', 'pounds'], 'Invalid currency, must be one of NGN, USD, EUR, GBP').required('Field is required'),
 	bankCode: Yup.string().required('Field is required'),
 	ibanSwiftCode: Yup.string().optional(),
 	sortCode: Yup.string().optional()
