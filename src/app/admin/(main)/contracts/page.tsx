@@ -256,10 +256,10 @@ const Contracts = () => {
 						</DropdownMenuContent>
 					</DropdownMenu>
 
-					<Button className="max-md:size-10 max-md:p-0">
+					{/* <Button className="max-md:size-10 max-md:p-0">
 						<Download size={16} className="md:mr-2" />
 						<span className="max-md:sr-only">Download</span>
-					</Button>
+					</Button> */}
 				</div>
 			</div>
 

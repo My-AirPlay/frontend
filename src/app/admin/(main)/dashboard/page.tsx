@@ -148,8 +148,8 @@ const Dashboard: React.FC = () => {
 				return {
 					id: type, // Use type as a unique identifier
 					type: type, // Use the delivery type name (e.g., "Streaming", "UGC")
-					// Format the revenue amount with '₦' and two decimal places
-					amount: `₦${(data.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+					// Format the revenue amount with '$' and two decimal places
+					amount: `$${(data.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
 					date: mostRecentDate, // Use the determined most recent date
 					revenue: true, // Assuming all these are revenue entries
 					icon: getSaleIcon(type) // Get the appropriate icon
@@ -240,7 +240,7 @@ const Dashboard: React.FC = () => {
 						) : (
 							<>
 								<div className="mb-4 flex justify-between items-center gap-4">
-									<h3 className="text-2xl font-bold">₦{analysis?.totalRevenue?.toLocaleString() || 0}</h3>
+									<h3 className="text-2xl font-bold">${analysis?.totalRevenue?.toLocaleString() || 0}</h3>
 									<p className="text-sm text-white/70">All Revenue</p>
 								</div>
 
@@ -267,7 +267,7 @@ const Dashboard: React.FC = () => {
 														</div>
 														<div className="flex flex-col items-center">
 															<div className="w-6 h-6 flex items-center justify-center mb-1">{getDspIcon(topDSPs[currentDspIndex]?.name)}</div>
-															<span className="text-sm font-bold">₦{topDSPs[currentDspIndex]?.totalRevenue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</span>
+															<span className="text-sm font-bold">${topDSPs[currentDspIndex]?.totalRevenue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</span>
 														</div>
 													</div>
 												</motion.div>

@@ -31,61 +31,115 @@ const TrackDetails: React.FC = () => {
 	const { mutate: deleteMutate, isPending: deletePending } = useDeleteMedia();
 
 	const handleDownloadMedia = () => {
-		if (contract?.mediaUrl) {
-			mutate(
-				{ urls: [contract?.mediaUrl] },
-				{
-					onSuccess: async data => {
-						try {
-							const response = data as { downloadUrls: string[] };
-							if (!response?.downloadUrls?.length) {
-								toast.error('No download URLs received');
-								return;
-							}
-
-							for (const [index, url] of response.downloadUrls.entries()) {
-								try {
-									// Fetch the file as a blob to ensure download
-									const res = await fetch(url, { mode: 'cors' });
-									if (!res.ok) {
-										throw new Error(`Failed to fetch URL: ${res.statusText}`);
-									}
-									const blob = await res.blob();
-
-									// Extract filename from URL or use a fallback
-									const filename = url.split('/').pop()?.split('?')[0] || `media_${index + 1}.mp4`;
-
-									// Create a temporary URL for the blob
-									const blobUrl = window.URL.createObjectURL(blob);
-
-									// Create and trigger download
-									const link = document.createElement('a');
-									link.href = blobUrl;
-									link.download = filename;
-									document.body.appendChild(link);
-									link.click();
-
-									// Clean up
-									document.body.removeChild(link);
-									window.URL.revokeObjectURL(blobUrl);
-								} catch (error) {
-									console.error(`Error downloading file ${url}:`, error);
-									toast.error(`Failed to download file ${index + 1}`);
-								}
-							}
-						} catch (error) {
-							console.error('Error processing download URLs:', error);
-							toast.error('Error processing media downloads');
-						}
-					},
-					onError: error => {
-						console.error('Failed to fetch download URLs:', error);
-						toast.error('Error fetching media URLs');
-					}
-				}
-			);
+		// Determine the list of URLs to download
+		let urlsToDownload: string[] = [];
+		if (Array.isArray(contract?.mediaUrls) && contract.mediaUrls.length > 0) {
+			urlsToDownload = contract.mediaUrls;
+		} else if (Array.isArray(contract?.mediaUrl) && contract.mediaUrl.length > 0) {
+			// Handle case where mediaUrl itself might be an array (less common)
+			urlsToDownload = contract.mediaUrl;
+		} else if (typeof contract?.mediaUrl === 'string' && contract.mediaUrl) {
+			// Handle case where mediaUrl is a single string
+			urlsToDownload = [contract.mediaUrl];
 		}
-	};
+
+		if (urlsToDownload.length === 0) {
+			toast.error('No media URLs found for this track.');
+			return;
+		}
+
+		mutate(
+			{ urls: urlsToDownload },
+			{
+				onSuccess: async data => {
+					try {
+						const response = data as { downloadUrls: string[] };
+						if (!response?.downloadUrls?.length) {
+							toast.error('No download URLs received');
+							return;
+						}
+
+						for (const [index, url] of response.downloadUrls.entries()) {
+							let filename = `media_${index + 1}.unknown`; // Declare filename outside the inner try/catch
+							try {
+								// --- Improved Filename Extraction ---
+								const urlObject = new URL(url);
+								const urlParams = new URLSearchParams(urlObject.search);
+								// filename is already declared above
+								const disposition = urlParams.get('response-content-disposition');
+
+								if (disposition) {
+									const filenameMatch = disposition.match(/filename\*?=['"]?([^'";]+)['"]?/i); // More robust regex
+									if (filenameMatch && filenameMatch[1]) {
+										try {
+											// Decode URI component (handles %2F etc.)
+											const decodedName = decodeURIComponent(filenameMatch[1]); // Use const
+											// Check if the decoded name is itself a URL/path
+											if (decodedName.includes('/')) {
+												// Extract the part after the last slash
+												filename = decodedName.substring(decodedName.lastIndexOf('/') + 1);
+											} else {
+												filename = decodedName;
+											}
+										} catch (e) {
+											console.error('Error decoding filename from disposition:', filenameMatch[1], e);
+											// Fallback to extracting from the main URL path if decoding fails
+											filename = urlObject.pathname.substring(urlObject.pathname.lastIndexOf('/') + 1) || `media_${index + 1}.unknown_decode_error`;
+										}
+									} else {
+										// Fallback if filename pattern doesn't match in disposition
+										filename = urlObject.pathname.substring(urlObject.pathname.lastIndexOf('/') + 1) || `media_${index + 1}.unknown_no_match`;
+									}
+								} else {
+									// Fallback if no content-disposition param in URL
+									filename = urlObject.pathname.substring(urlObject.pathname.lastIndexOf('/') + 1) || `media_${index + 1}.unknown_no_disposition`;
+								}
+
+								// Ensure filename is not empty or just whitespace
+								if (!filename || !filename.trim()) {
+									filename = `media_${index + 1}.unknown_empty`;
+								}
+								// --- End Filename Extraction ---
+
+								// Fetch the file as a blob
+								const res = await fetch(url, { mode: 'cors' }); // Ensure CORS mode is set
+								if (!res.ok) {
+									throw new Error(`Failed to fetch URL (${res.status}): ${res.statusText}`);
+								}
+								const blob = await res.blob();
+
+								// Create a temporary URL for the blob
+								const blobUrl = window.URL.createObjectURL(blob);
+
+								// Create and trigger download using the blob URL
+								// Create and trigger download using the blob URL
+								const link = document.createElement('a');
+								link.href = blobUrl;
+								link.download = filename; // Use the extracted filename
+								link.target = '_blank'; // Attempt to open in new tab/window, might help bypass restrictions
+								document.body.appendChild(link);
+								link.click();
+
+								// Clean up
+								document.body.removeChild(link);
+								window.URL.revokeObjectURL(blobUrl); // Revoke blob URL after use
+							} catch (error) {
+								console.error(`Error processing download for URL ${url}:`, error);
+								toast.error(`Failed to download file ${index + 1}: ${filename || 'Unknown'}`);
+							}
+						}
+					} catch (error) {
+						console.error('Error processing download URLs:', error);
+						toast.error('Error processing media downloads');
+					}
+				},
+				onError: error => {
+					console.error('Failed to fetch download URLs:', error);
+					toast.error('Error fetching media URLs');
+				}
+			}
+		);
+	}; // End of handleDownloadMedia
 
 	return (
 		<div className="space-y-6">
@@ -124,7 +178,9 @@ const TrackDetails: React.FC = () => {
 						<Download size={16} className="mr-2" />
 						<span>Download</span>
 					</Button> */}
-					<Button className="admin-button-primary" disabled={isPending} onClick={() => handleDownloadMedia()}>
+					<Button className="admin-button-primary" disabled={isPending} onClick={handleDownloadMedia}>
+						{' '}
+						{/* Corrected onClick handler */}
 						<Download size={16} className="mr-2" />
 						{isPending ? <LoadingBox size={16} color="white" /> : <span>Download</span>}
 					</Button>
@@ -213,8 +269,8 @@ const TrackDetails: React.FC = () => {
 					</div>
 				</TabsContent>
 			</Tabs>
-		</div>
-	);
-};
+		</div> // Closing div for the main return
+	); // Closing parenthesis for the return statement
+}; // Closing brace for the TrackDetails component function
 
 export default TrackDetails;
