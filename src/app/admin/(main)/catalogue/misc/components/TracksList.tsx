@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useCallback } from 'react'; // Import useCallback
 import Link from 'next/link';
 import { DataTable } from '@/components/ui';
 import { useGetAlbumDetail } from '../../api/getAlbumDetail';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import moment from 'moment';
+// Removed unused RowSelectionState import
 
 interface TracksListProps {
 	albumId: string;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	onRowSelectionChange?: (selectedData: any[]) => void; // Add optional selection handler prop
 }
 
-const TracksList: React.FC<TracksListProps> = ({ albumId }) => {
+const TracksList: React.FC<TracksListProps> = ({ albumId, onRowSelectionChange }) => {
 	const {
 		data: album,
 		isLoading: albumLoading
@@ -62,6 +65,18 @@ const TracksList: React.FC<TracksListProps> = ({ albumId }) => {
 		}
 	];
 
+	// Wrap the handler in useCallback to stabilize its reference
+	const handleSelectionChange = useCallback(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(selectedData: any[]) => {
+			// DataTable passes the array of selected row data objects
+			if (onRowSelectionChange) {
+				onRowSelectionChange(selectedData); // Pass the data up to the parent
+			}
+		},
+		[onRowSelectionChange] // Dependency: only recreate if the parent handler changes
+	);
+
 	return (
 		<div className="space-y-6">
 			<h2 className="text-xl font-medium">Tracks</h2>
@@ -71,7 +86,14 @@ const TracksList: React.FC<TracksListProps> = ({ albumId }) => {
 					<LoadingBox size={62} />
 				</div>
 			) : (
-				<DataTable data={album?.fileIds || []} columns={trackColumns} showCheckbox={true} pagination={false} defaultRowsPerPage={50} />
+				<DataTable
+					data={album?.fileIds || []}
+					columns={trackColumns}
+					showCheckbox={true}
+					pagination={false}
+					defaultRowsPerPage={50}
+					onRowSelectionChange={handleSelectionChange} // Pass the handler
+				/>
 			)}
 		</div>
 	);

@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { Trash2, Download } from 'lucide-react';
+import React from 'react'; // Removed useState import
+import { Trash2, Download } from 'lucide-react'; // Removed LinkIcon import
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -15,9 +15,13 @@ import { useDownloadMedia } from '../../api/getDownloadMedia';
 import { toast } from 'sonner';
 import { useDeleteMedia } from '../../api/deleteMedia';
 
+// Helper function for delay
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 const TrackDetails: React.FC = () => {
 	const { track_id } = useParams<{ track_id: string }>();
 	const router = useRouter();
+	// Removed testLinkUrl state
 
 	const {
 		data: contract,
@@ -56,81 +60,36 @@ const TrackDetails: React.FC = () => {
 						const response = data as { downloadUrls: string[] };
 						if (!response?.downloadUrls?.length) {
 							toast.error('No download URLs received');
+							// Removed setTestLinkUrl(null) call
 							return;
 						}
 
+						// Removed test link logic
+
+						toast.success(`Generated ${response.downloadUrls.length} download links. Initiating downloads...`);
+
+						// Click a download link for each URL sequentially with a delay
 						for (const [index, url] of response.downloadUrls.entries()) {
-							let filename = `media_${index + 1}.unknown`; // Declare filename outside the inner try/catch
 							try {
-								// --- Improved Filename Extraction ---
-								const urlObject = new URL(url);
-								const urlParams = new URLSearchParams(urlObject.search);
-								// filename is already declared above
-								const disposition = urlParams.get('response-content-disposition');
-
-								if (disposition) {
-									const filenameMatch = disposition.match(/filename\*?=['"]?([^'";]+)['"]?/i); // More robust regex
-									if (filenameMatch && filenameMatch[1]) {
-										try {
-											// Decode URI component (handles %2F etc.)
-											const decodedName = decodeURIComponent(filenameMatch[1]); // Use const
-											// Check if the decoded name is itself a URL/path
-											if (decodedName.includes('/')) {
-												// Extract the part after the last slash
-												filename = decodedName.substring(decodedName.lastIndexOf('/') + 1);
-											} else {
-												filename = decodedName;
-											}
-										} catch (e) {
-											console.error('Error decoding filename from disposition:', filenameMatch[1], e);
-											// Fallback to extracting from the main URL path if decoding fails
-											filename = urlObject.pathname.substring(urlObject.pathname.lastIndexOf('/') + 1) || `media_${index + 1}.unknown_decode_error`;
-										}
-									} else {
-										// Fallback if filename pattern doesn't match in disposition
-										filename = urlObject.pathname.substring(urlObject.pathname.lastIndexOf('/') + 1) || `media_${index + 1}.unknown_no_match`;
-									}
-								} else {
-									// Fallback if no content-disposition param in URL
-									filename = urlObject.pathname.substring(urlObject.pathname.lastIndexOf('/') + 1) || `media_${index + 1}.unknown_no_disposition`;
-								}
-
-								// Ensure filename is not empty or just whitespace
-								if (!filename || !filename.trim()) {
-									filename = `media_${index + 1}.unknown_empty`;
-								}
-								// --- End Filename Extraction ---
-
-								// Fetch the file as a blob
-								const res = await fetch(url, { mode: 'cors' }); // Ensure CORS mode is set
-								if (!res.ok) {
-									throw new Error(`Failed to fetch URL (${res.status}): ${res.statusText}`);
-								}
-								const blob = await res.blob();
-
-								// Create a temporary URL for the blob
-								const blobUrl = window.URL.createObjectURL(blob);
-
-								// Create and trigger download using the blob URL
-								// Create and trigger download using the blob URL
 								const link = document.createElement('a');
-								link.href = blobUrl;
-								link.download = filename; // Use the extracted filename
-								link.target = '_blank'; // Attempt to open in new tab/window, might help bypass restrictions
+								link.href = url;
+								const simpleFilename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `download_${index + 1}`;
+								link.download = simpleFilename;
+								// No target="_blank"
 								document.body.appendChild(link);
 								link.click();
-
-								// Clean up
 								document.body.removeChild(link);
-								window.URL.revokeObjectURL(blobUrl); // Revoke blob URL after use
+								// Add delay
+								await delay(200);
 							} catch (error) {
-								console.error(`Error processing download for URL ${url}:`, error);
-								toast.error(`Failed to download file ${index + 1}: ${filename || 'Unknown'}`);
+								console.error(`Error trying to initiate download for URL ${url}:`, error);
+								toast.error(`Failed to initiate download for one of the files.`);
 							}
 						}
+						toast.info("Downloads initiated. Check your browser's download manager.", { duration: 5000 });
 					} catch (error) {
 						console.error('Error processing download URLs:', error);
-						toast.error('Error processing media downloads');
+						toast.error('Error initiating media downloads');
 					}
 				},
 				onError: error => {
@@ -184,6 +143,7 @@ const TrackDetails: React.FC = () => {
 						<Download size={16} className="mr-2" />
 						{isPending ? <LoadingBox size={16} color="white" /> : <span>Download</span>}
 					</Button>
+					{/* Removed test link button */}
 				</div>
 			</div>
 

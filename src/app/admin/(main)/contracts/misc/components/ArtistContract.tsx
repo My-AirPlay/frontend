@@ -159,7 +159,7 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 									{!artist?.contractDetails?.contract ? 'Upload' : 'Update'} or <span className="text-admin-primary">Browse</span>
 								</p>
 								<p className="text-xs text-admin-muted">Supported formats: PDF, MSDOC</p>
-								<p className="text-xs text-admin-muted">File Size: Not more tha 40MB</p>
+								<p className="text-xs text-admin-muted">File Size: Not more tha 15MB</p>
 							</div>
 						</div>
 					)}

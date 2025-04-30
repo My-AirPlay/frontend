@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react'; // Removed useRef
-import { Download, Filter, ArrowUp, ArrowDown } from 'lucide-react'; // Added ArrowUp, ArrowDown
+import { Filter, ArrowUp, ArrowDown } from 'lucide-react'; // Added ArrowUp, ArrowDown
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Badge, DataTable, PreviousPageButton, Input } from '@/components/ui'; // Added Input
@@ -270,7 +270,7 @@ const Contracts = () => {
 					<LoadingBox size={62} />
 				</div>
 			) : (
-				<DataTable data={contracts?.data} columns={columns} showCheckbox={true} pagination={true} defaultRowsPerPage={Number(limit)} pageCount={pageCount} />
+				<DataTable data={contracts?.data} columns={columns} showCheckbox={false} pagination={true} defaultRowsPerPage={Number(limit)} pageCount={pageCount} />
 			)}
 		</div>
 	);

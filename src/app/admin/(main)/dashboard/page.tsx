@@ -402,7 +402,7 @@ const Dashboard: React.FC = () => {
 							<>
 								<div className="flex justify-between items-center flex-wrap mb-4">
 									<div className="flex items-center">
-										<h3 className="md:text-lg font-medium">Weekly Comparison</h3>
+										<h3 className="md:text-lg font-medium">Monthly Comparison</h3>
 										<ChevronRight size={16} className="ml-1 text-white/70" />
 									</div>
 

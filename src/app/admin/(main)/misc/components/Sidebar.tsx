@@ -1,12 +1,12 @@
 import React from 'react';
-import { Document, Headphone, Category, User, Calculator, Edit2 } from 'iconsax-react';
+import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 interface SidebarProps {
 	className?: string;
-	onClose?: () => void; // Add onClose prop
+	onClose?: () => void;
 }
 
 const Sidebar = ({ className, onClose }: SidebarProps) => {
@@ -52,6 +52,16 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 		{
 			title: 'Organization',
 			items: [
+				{
+					href: '/policies/privacy',
+					icon: Lock1,
+					label: 'Privacy Policy'
+				},
+				{
+					href: '/policies/terms',
+					icon: ReceiptItem,
+					label: 'Terms of Services'
+				},
 				// {
 				//   href: "/admin/settings",
 				//   icon: Setting2,

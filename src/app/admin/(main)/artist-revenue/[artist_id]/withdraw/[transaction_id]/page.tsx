@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react'; // Removed duplicate React/useState, removed unused useEffect
-import { useParams } from 'next/navigation'; // Removed duplicate useParams/useRouter, removed unused useRouter
+import { useParams, useRouter } from 'next/navigation'; // Removed duplicate useParams/useRouter, removed unused useRouter
 import { Button } from '@/components/ui/button'; // Removed duplicate Button
 import { Input } from '@/components/ui/input'; // Removed duplicate Input
 import { User, Loader2, ChevronRight } from 'lucide-react'; // Removed unused AlertCircle
@@ -10,11 +10,13 @@ import { useGetOneArtist } from '../../../../catalogue/api/getOneArtist'; // Cor
 import { useUpdateWithdrawalSlip } from '../../../../catalogue/api/putUpdateWithdrawalSlip'; // Corrected path
 import { formatCurrency } from '@/utils/currency';
 import { PreviousPageButton } from '@/components/ui';
+import { toast } from 'sonner';
 // Removed formatCurrency import as slip details are removed
 // Removed formatDate import as slip details are removed
 // Removed unused PreviousPageButton import
 
 const WithdrawalUpdatePage: React.FC = () => {
+	const router = useRouter();
 	const params = useParams<{ artist_id: string; transaction_id: string }>();
 	const { artist_id, transaction_id } = params;
 
@@ -44,12 +46,43 @@ const WithdrawalUpdatePage: React.FC = () => {
 			return;
 		}
 
-		updateWithdrawalMutate({
-			artistId: artist_id,
-			transactionId: transaction_id,
-			finalAmount: amount
-			// Potentially add status update here if needed, e.g., status: 'Approved'
-		});
+		updateWithdrawalMutate(
+			{
+				artistId: artist_id,
+				transactionId: transaction_id,
+				finalAmount: amount
+			},
+			{
+				onSuccess: () => {
+					toast.success('Withdrawal amount updated successfully!');
+					setFinalAmount(''); // Clear input
+					// Navigate back to artist details page
+					router.push(`/admin/artist-revenue/${artist_id}/details`);
+				},
+				onError: (error: unknown) => {
+					console.error('Error updating withdrawal:', error);
+					let errorMessage = 'Failed to update withdrawal amount.';
+
+					// Define a type for the expected error structure
+					type ErrorWithMessage = {
+						response?: {
+							data?: {
+								message?: string;
+							};
+						};
+					};
+
+					// More robust type checking without 'as any'
+					if (typeof error === 'object' && error !== null && 'response' in error) {
+						const errorWithResponse = error as ErrorWithMessage; // Cast once after check
+						if (errorWithResponse.response && typeof errorWithResponse.response === 'object' && 'data' in errorWithResponse.response && errorWithResponse.response.data && typeof errorWithResponse.response.data === 'object' && 'message' in errorWithResponse.response.data && typeof errorWithResponse.response.data.message === 'string') {
+							errorMessage = errorWithResponse.response.data.message;
+						}
+					}
+					toast.error(errorMessage);
+				}
+			}
+		);
 	};
 
 	// Simplified Loading State
