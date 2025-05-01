@@ -11,12 +11,14 @@ import { postOnbaordingBankDetail } from '@/app/artiste/(auth)/misc/api/mutation
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
 import { LinkButton } from '@/components/ui';
+import { useArtisteContext } from '@/contexts/AuthContextArtist';
 
 interface OnboardingBankDetailProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 	email: string;
 }
 const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailProps) => {
+	const { checkAuthStatus } = useArtisteContext();
 	const { mutateAsync, status } = useMutation({
 		mutationFn: postOnbaordingBankDetail,
 		onSuccess(result) {
@@ -123,7 +125,7 @@ const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailPro
 	return (
 		<FormStep formFields={fields} formik={formik} title="BANK DETAILS" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
 			<div className="flex items-center justify-between">
-				<LinkButton variant="outline" className="text-sm" href={`/artiste/dashboard`}>
+				<LinkButton size="lg" variant="outline" className="text-sm" href={`/artiste/dashboard`} onClick={checkAuthStatus}>
 					Skip
 				</LinkButton>
 				<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={status === 'pending'} isLoading={status === 'pending'}>

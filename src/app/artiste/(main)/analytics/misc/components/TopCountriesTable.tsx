@@ -1,15 +1,10 @@
 import type React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/utils/currency';
-
-interface Country {
-	name: string;
-	totalStreams: number;
-	totalRevenue: number;
-}
+import { NamedPerformanceItem } from '../../../dashboard/misc/api';
 
 interface TopCountriesTableProps {
-	countryData: Country[];
+	countryData: NamedPerformanceItem[];
 }
 
 export const TopCountriesTable: React.FC<TopCountriesTableProps> = ({ countryData }) => {

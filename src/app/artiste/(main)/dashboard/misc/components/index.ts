@@ -3,5 +3,3 @@ export { CountryBreakdownMap } from './CountryBreakdownMap';
 export { DSPBreakdownChart } from './DSPBreakdownChart';
 export { RevenueHistoryChart } from './RevenueHistoryChart';
 export { StreamsHistoryChart } from './StreamHistoryChart';
-export { TopCountriesTable } from './TopCountriesTable';
-export { TopDSPsTable } from './TopDSPsTable';

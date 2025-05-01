@@ -1,15 +1,10 @@
 import type React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrency } from '@/utils/currency';
-
-interface DSP {
-	name: string;
-	totalStreams: number;
-	totalRevenue: number;
-}
+import { NamedPerformanceItem } from '../../../dashboard/misc/api';
 
 interface TopDSPsTableProps {
-	dspData: DSP[];
+	dspData: NamedPerformanceItem[];
 }
 
 export const TopDSPsTable: React.FC<TopDSPsTableProps> = ({ dspData }) => {

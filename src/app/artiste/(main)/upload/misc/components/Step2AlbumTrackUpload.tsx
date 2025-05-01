@@ -16,9 +16,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { SelectSimple } from '@/components/ui';
+import { Select, SelectContent, SelectItem, SelectSimple, SelectTrigger, SelectValue } from '@/components/ui';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
-import { AppLogo, Spinner } from '@/components/icons';
+import { Spinner } from '@/components/icons';
 import { getFileSize } from '@/utils/numbers';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 
@@ -30,6 +30,9 @@ import SelectMultipleCombo from '@/components/ui/select-multiple-combobox';
 type TrackFormValues = z.infer<typeof trackInfoSchema>;
 
 function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOptions, streamingPlatformOptions, isLoadingOptions }: { isOpen: boolean; onClose: () => void; track: AlbumTrackInfo | null; albumInfo: any; onSave: (data: TrackFormValues) => void; genreOptions: any[]; streamingPlatformOptions: { label: string; value: string }[]; isLoadingOptions: boolean }) {
+	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+	const [copyrightInputValue, setCopyrightInputValue] = useState<string>('');
+	const [copyrightError, setCopyrightError] = useState('');
 	const [sameAsAlbum, setSameAsAlbum] = useState<Record<string, boolean>>({
 		artistName: true,
 		mainGenre: true,
@@ -58,7 +61,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 			releaseVersion: '',
 			copyright: '',
 			fileType: 'audio',
-			streamingPlatforms: []
+			streamingPlatforms: ['7Digital', 'ACRCloud', 'Alibaba', 'Amazon', 'AMI Entertainment', 'Anghami', 'Apple Music', 'iTunes', 'Audible Magic', 'Audiomack', 'Beatsource', 'BMAT', 'Claro', 'ClicknClear', "d'Music", 'Deezer', 'Facebook / Instagram', 'Gracenote', 'iHeartRadio', 'JioSaavn', 'JOOX', 'Kan Music', 'KDM (K Digital Media)', 'KK Box', 'LiveOne', 'Medianet', 'Mixcloud', 'Mood Media', 'NetEase', 'Pandora', 'Peloton', 'Pretzel', 'Qobuz', 'Soundcloud', 'SoundExchange', 'Spotify', 'Tencent', 'Tidal', 'TikTok', 'TouchTunes', 'Trebel', 'Tuned Global', 'USEA', 'VL Group', 'YouSee / Telmore Musik', 'YouTube']
 		}
 	});
 
@@ -341,27 +344,76 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 								<FormField
 									control={form.control}
 									name="copyright"
-									render={({ field }) => (
-										<FormItem className="w-full">
-											<div className="flex items-center justify-between">
-												<FormLabel>Copyright</FormLabel>
-												<div className="flex items-center gap-2 ml-4">
-													<Checkbox id="sameCopyright" checked={sameAsAlbum.copyright} onCheckedChange={() => toggleSameAsAlbum('copyright')} />
-													<Label htmlFor="sameCopyright" className="text-[0.7rem] md:text-sm text-white/40">
-														Same as album
-													</Label>
+									render={({ field }) => {
+										const years = Array.from({ length: 6 }, (_, i) => new Date().getFullYear() + i);
+
+										const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+											const newValue = e.target.value;
+											setCopyrightInputValue(newValue);
+
+											if (!newValue.trim() && selectedYear) {
+												setCopyrightError('Please enter copyright information, not just a year');
+												field.onChange('');
+											} else if (newValue.trim() && !selectedYear) {
+												setCopyrightError('Please select a year');
+												field.onChange('');
+											} else {
+												setCopyrightError('');
+												field.onChange(newValue.trim() ? `${newValue.trim()} ${selectedYear}` : '');
+											}
+										};
+
+										interface HandleYearChangeProps {
+											year: string;
+										}
+
+										const handleYearChange = (year: HandleYearChangeProps['year']): void => {
+											setSelectedYear(Number(year));
+
+											if (!copyrightInputValue.trim() && year) {
+												setCopyrightError('Please enter copyright information, not just a year');
+												field.onChange('');
+											} else {
+												setCopyrightError('');
+												field.onChange(copyrightInputValue.trim() ? `${year} ${copyrightInputValue.trim()}` : '');
+											}
+										};
+										return (
+											<FormItem className="w-full">
+												<div className="flex items-center justify-between">
+													<FormLabel>Copyright</FormLabel>
+													<div className="flex items-center gap-2 ml-4">
+														<Checkbox id="sameCopyright" checked={sameAsAlbum.copyright} onCheckedChange={() => toggleSameAsAlbum('copyright')} />
+														<Label htmlFor="sameCopyright" className="text-[0.7rem] md:text-sm text-white/40">
+															Same as album
+														</Label>
+													</div>
 												</div>
-											</div>
-											<div className="flex items-center justify-between">
-												<div className="flex-grow">
-													<FormControl>
-														<Input {...field} disabled={sameAsAlbum.copyright} />
-													</FormControl>
-													<FormMessage />
+												<div className="flex items-center justify-between">
+													<div className="flex-grow">
+														<div className="flex gap-2">
+															<Select value={selectedYear.toString()} onValueChange={handleYearChange}>
+																<SelectTrigger className={`w-32 bg-[#383838] text-foreground rounded-md border border-border  !p-2 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-white/50 transition-all ${!selectedYear ? 'border-red-500' : ''}`}>
+																	<SelectValue placeholder="Year" />
+																</SelectTrigger>
+																<SelectContent>
+																	{years.map((year: number) => (
+																		<SelectItem key={year} value={year.toString()}>
+																			{year}
+																		</SelectItem>
+																	))}
+																</SelectContent>
+															</Select>
+															<FormControl>
+																<Input placeholder="Enter copyright information" hasError={!!copyrightError || !!form.formState.errors.copyright} errormessage={copyrightError || form.formState.errors.copyright?.message} value={copyrightInputValue} onChange={handleInputChange} className="flex-1" disabled={sameAsAlbum.copyright} />
+															</FormControl>
+														</div>
+														<FormMessage />
+													</div>
 												</div>
-											</div>
-										</FormItem>
-									)}
+											</FormItem>
+										);
+									}}
 								/>
 							</div>
 						</div>
@@ -665,7 +717,7 @@ export default function TrackUpload() {
 		<div className="w-[80vw] sm:w-[65vw] max-w-[600px] md:max-w-3xl mx-auto mt-16">
 			<section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
 				<div className="border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center">
-					<AppLogo width={150} height={150} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
+					<Music width={100} height={100} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
 				</div>
 				<div className="flex flex-col items-start justify-center">
 					<input type="file" className="hidden" ref={inputRef} onChange={handleFilesSelected} accept=".mp3,.mp4,.wav" multiple />
@@ -674,10 +726,8 @@ export default function TrackUpload() {
 						<h3 className="text-base font-semibold mb-4">Album upload requirements</h3>
 						<ul className="text-[0.9rem] text-white/70 space-y-1.5 text-left">
 							<li>• File format: MP3, MP4</li>
-							<li>• Size: at least 3000×3000 pixels</li>
-							<li>• File size: Image file size cannot be greater than 15 MB</li>
+							<li>File size: Files size cannot be greater than 35 MB</li>
 							<li>• Video mode: Best quality</li>
-							<li>• Resolution: 72 dpi</li>
 							<li>• Your track must not contain any logos, website address, release dates or advertisements of any kind.</li>
 						</ul>
 					</div>
