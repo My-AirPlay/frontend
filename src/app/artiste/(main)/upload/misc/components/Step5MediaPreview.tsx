@@ -13,6 +13,7 @@ import useBooleanStateControl from '@/hooks/useBooleanStateControl';
 import { useMediaUploadStore } from '../store';
 import { useUploadTrack } from '../api/upload';
 import Image from 'next/image';
+import { PlatformImage } from './Step4MediaDistributionPlatformCards';
 
 export default function Step5MediaPreview() {
 	const { state: isUploadStatusModalOpen, setTrue: openUploadStatusModal, setFalse: closeUploadStatusModal, setState: setUploadStatusModalOpen } = useBooleanStateControl();
@@ -162,9 +163,7 @@ export default function Step5MediaPreview() {
 									<p className="text-sm text-gray-400 mb-2">Streaming Platforms</p>
 									<div className="flex flex-wrap gap-2">
 										{streamingPlatforms.map((platform, index) => (
-											<span key={index} className="relative bg-gray-800 text-white rounded-full text-sm size-10 overflow-hidden">
-												<Image src={`/images/platform_logos/${platform.toLowerCase()}.svg`} alt={platform} fill className="text-[0rem] text-opacity-0 bg-gray-700 z-[2]" objectFit="cover" />
-											</span>
+											<PlatformImage label={platform} key={index} isSelected />
 										))}
 									</div>
 								</div>
@@ -224,7 +223,6 @@ export default function Step5MediaPreview() {
 					if (status === 'success') {
 						router.push('/artiste/catalog');
 						clearStore();
-						closeUploadStatusModal();
 					} else {
 						closeUploadStatusModal();
 					}

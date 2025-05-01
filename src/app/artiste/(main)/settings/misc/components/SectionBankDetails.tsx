@@ -20,7 +20,7 @@ export default function SectionBankDetails() {
 		accountNumber: artist?.bankDetails?.accountNumber.toString() || '',
 		bankName: artist?.bankDetails?.bankName || '',
 		accountName: artist?.bankDetails?.accountName || '',
-		sortCode: artist?.bankDetails?.sortCode || '',
+		sortCode: artist?.bankDetails?.sortCode.toString() || '',
 		ibanSwiftCode: artist?.bankDetails?.ibanSwiftCode || '',
 		payoutOption: artist?.bankDetails?.paymentOption || 'monthly',
 		currency: artist?.bankDetails?.currency || 'naira'

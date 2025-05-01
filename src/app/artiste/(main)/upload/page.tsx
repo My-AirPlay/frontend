@@ -139,7 +139,7 @@ export default function MediaTypeSelection() {
 				<Dialog open={showContinueDialog} onOpenChange={setShowContinueDialog}>
 					<DialogContent>
 						<DialogHeader>
-							<DialogTitle>Restar Upload?</DialogTitle>
+							<DialogTitle>Restart Upload?</DialogTitle>
 							<DialogDescription>You already have an {selectedType} ongoing upload. Would you like to start fresh or continue?</DialogDescription>
 						</DialogHeader>
 						<DialogFooter>
