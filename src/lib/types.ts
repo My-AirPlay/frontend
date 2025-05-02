@@ -206,14 +206,15 @@ interface FullReport {
 // Represents a single top-level item in the main data array
 export interface ReportItem {
 	_id: string;
-	userId: string | null; // Can be null
+	userId?: string | null; // Made optional to handle cases where it might be missing
 	artistId: string;
 	artistName: string;
 	activityPeriod: string; // e.g., "September 2023"
 	fullReports: FullReport[];
 	createdAt: string; // ISO Date String
 	updatedAt: string; // ISO Date String
-	__v: number; // MongoDB version key
+	__v?: number; // MongoDB version key (Made optional)
+	'**v'?: number; // Handle potential typo in source data
 }
 
 // Represents the entire structure of the placeholderParseData object

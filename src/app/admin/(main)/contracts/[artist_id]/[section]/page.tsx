@@ -72,7 +72,8 @@ const ArtistDetails: React.FC = () => {
 
 						<TabsContent value="analytics" className="mt-0">
 							{/* Removed artistRefetch prop as it's not expected by ArtistAnalytics */}
-							<ArtistAnalytics artist={artist} />
+							{/* Removed artist prop as it's not expected by ArtistAnalytics */}
+							<ArtistAnalytics />
 						</TabsContent>
 					</>
 				)}

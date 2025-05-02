@@ -107,11 +107,10 @@ const ArtistTransactions: React.FC = ({}) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [inputValue]);
 
-	// API response structure from user example: { data: WithdrawalSlipData[] }
-	const allWithdrawalSlipsRaw: WithdrawalSlipData[] = withdrawalsData?.data || [];
-
 	// Apply client-side filtering and sorting using useMemo
 	const allWithdrawalSlipsFilteredSorted = useMemo(() => {
+		// Moved definition inside useMemo to fix exhaustive-deps warning
+		const allWithdrawalSlipsRaw: WithdrawalSlipData[] = withdrawalsData?.data || [];
 		let filtered = allWithdrawalSlipsRaw;
 
 		// 1. Filter by searchTerm (checking relevant fields like activityPeriod, status, maybe amount)
@@ -153,7 +152,8 @@ const ArtistTransactions: React.FC = ({}) => {
 		});
 
 		return filtered;
-	}, [allWithdrawalSlipsRaw, searchTerm, sortBy, sortOrder]);
+		// Updated dependencies to reflect the change
+	}, [withdrawalsData, searchTerm, sortBy, sortOrder]);
 
 	// Filter based on status: Pending = Debit, Others = Credit (using the filtered/sorted list)
 	const allCreditTransactions = allWithdrawalSlipsFilteredSorted.filter(slip => slip.status !== 'Pending');
