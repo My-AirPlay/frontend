@@ -14,6 +14,7 @@ import { useUploadAlbum } from '../api';
 import { useAlbumUploadStore } from '../store';
 import useBooleanStateControl from '@/hooks/useBooleanStateControl';
 import { CustomAlertDialog } from '@/components/ui';
+import { PlatformImage } from './Step4MediaDistributionPlatformCards';
 
 export default function Step5AlbumPreview() {
 	const { state: isUploadStatusModalOpen, setTrue: openUploadStatusModal, setFalse: closeUploadStatusModal, setState: setUploadStatusModalOpen } = useBooleanStateControl();
@@ -179,9 +180,10 @@ export default function Step5AlbumPreview() {
 								<p className="text-sm text-gray-400 mb-2">Streaming Platforms</p>
 								<div className="flex flex-wrap gap-2">
 									{streamingPlatforms.map((platform, index) => (
-										<span key={index} className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm">
-											{platform}
-										</span>
+										// <span key={index} className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm">
+										// 	{platform}
+										// </span>
+										<PlatformImage label={platform} key={index} isSelected />
 									))}
 								</div>
 							</div>

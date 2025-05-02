@@ -160,12 +160,13 @@ const Step3AlbumCoverUpload = () => {
 					<div className="mb-6 text-left">
 						<h3 className="text-base font-semibold mb-4">Track upload requirements</h3>
 						<ul className="list-disc pl-6 space-y-2 text-[0.9rem] text-white/70 text-left">
-							<li>File format: MP3, MP4</li>
+							<li>File format: JPG, PNG, JPEG</li>
 							<li>Size: at least 3000×3000 pixels</li>
-							<li>File size: Image file size cannot be greater than 35 MB</li>
-							<li>Video mode: Best quality</li>
+							<li>File size: Image file size cannot be greater than 5 MB</li>
+							<li>Color mode: Best quality RGB (including black and white images)</li>
 							<li>Resolution: 72 dpi</li>
-							<li>Your track must not contain any logos, website address, release dates or advertisements of any kind.</li>
+							<li>No logos, URLs, release dates, or advertisements.</li>
+							<li> Artwork must not contain barcodes or social media handles.</li>
 						</ul>
 					</div>
 

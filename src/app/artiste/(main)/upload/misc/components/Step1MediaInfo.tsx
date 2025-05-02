@@ -7,15 +7,18 @@ import { Button } from '@/components/ui/button';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
-import { Input, SelectSimple } from '@/components/ui';
+import { Input, Select, SelectContent, SelectItem, SelectSimple, SelectTrigger, SelectValue } from '@/components/ui';
 
 import { MediaInfoFormValues, mediaInfoSchema } from '../schema';
 import { useMediaUploadStore } from '../store';
+import { useState } from 'react';
 
 export default function Step1MusicInfo() {
 	const { mediaInfo, updateMediaInfo, setCurrentStep } = useMediaUploadStore();
 	const { formattedData, isLoading } = useStaticAppInfo();
-
+	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+	const [copyrightInputValue, setCopyrightInputValue] = useState<string>(mediaInfo.copyright ? mediaInfo.copyright.replace(/^\d{4}\s*/, '') : '');
+	const [copyrightError, setCopyrightError] = useState('');
 	const defaultValues = {
 		title: mediaInfo.title,
 		artistName: mediaInfo.artistName || 'Artist Name',
@@ -24,7 +27,7 @@ export default function Step1MusicInfo() {
 		description: mediaInfo.description || 'This is a sample description for the track.',
 		recordLabel: mediaInfo.recordLabel || 'Sample Record Label',
 		publisher: mediaInfo.publisher || 'Sample Publisher',
-		copyright: mediaInfo.copyright || '© 2025 Copyright Owner',
+		copyright: mediaInfo.copyright || '2025 Copyright Owner',
 		explicitContent: mediaInfo.explicitContent || 'No',
 		lyrics: mediaInfo.lyrics || '',
 		universalProductCode: mediaInfo.universalProductCode,
@@ -193,9 +196,9 @@ export default function Step1MusicInfo() {
 							name="universalProductCode"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Universal Product Code (UPC) </FormLabel>
+									<FormLabel info="If you have one, enter it here. If not, we’ll generate one for you">Universal Product Code (UPC) (optional)</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter UPC" hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
+										<Input placeholder="Enter UPC(If you have one, enter it here. If not, we’ll generate one for you)" hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}
@@ -206,9 +209,9 @@ export default function Step1MusicInfo() {
 							name="releaseVersion"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Release Version </FormLabel>
+									<FormLabel info={'used for non-original release versions, e.g. Remastered, Live, Remixes, etc.'}>Release Version </FormLabel>
 									<FormControl>
-										<Input placeholder="Enter release version" hasError={!!errors.releaseVersion} errormessage={errors.releaseVersion?.message} {...field} />
+										<Input placeholder="Enter release version(used for non-original release versions, e.g. Remastered, Live, Remixes, etc.)" hasError={!!errors.releaseVersion} errormessage={errors.releaseVersion?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}
@@ -217,18 +220,68 @@ export default function Step1MusicInfo() {
 						<FormField
 							control={form.control}
 							name="copyright"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>
-										Copyright <span className="text-primary">*</span>
-									</FormLabel>
-									<FormControl>
-										<Input placeholder="Enter copyright information" hasError={!!errors.copyright} errormessage={errors.copyright?.message} {...field} />
-									</FormControl>
-								</FormItem>
-							)}
-						/>
+							render={({ field }) => {
+								const years = Array.from({ length: 6 }, (_, i) => new Date().getFullYear() + i);
 
+								const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+									const newValue = e.target.value;
+									setCopyrightInputValue(newValue);
+
+									if (!newValue.trim() && selectedYear) {
+										setCopyrightError('Please enter copyright information, not just a year');
+										field.onChange('');
+									} else if (newValue.trim() && !selectedYear) {
+										setCopyrightError('Please select a year');
+										field.onChange('');
+									} else {
+										setCopyrightError('');
+										field.onChange(newValue.trim() ? `${newValue.trim()} ${selectedYear}` : '');
+									}
+								};
+
+								interface HandleYearChangeProps {
+									year: string;
+								}
+
+								const handleYearChange = (year: HandleYearChangeProps['year']): void => {
+									setSelectedYear(Number(year));
+
+									if (!copyrightInputValue.trim() && year) {
+										setCopyrightError('Please enter copyright information, not just a year');
+										field.onChange('');
+									} else {
+										setCopyrightError('');
+										field.onChange(copyrightInputValue.trim() ? `${year} ${copyrightInputValue.trim()}` : '');
+									}
+								};
+
+								return (
+									<FormItem>
+										<FormLabel>
+											Copyright <span className="text-primary">*</span>
+										</FormLabel>
+										<div className="flex gap-2">
+											<Select value={selectedYear.toString()} onValueChange={handleYearChange}>
+												<SelectTrigger className={`w-32 bg-[#383838] text-foreground rounded-md border border-border  !p-2 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-white/50 transition-all ${!selectedYear ? 'border-red-500' : ''}`}>
+													<SelectValue placeholder="Year" />
+												</SelectTrigger>
+												<SelectContent>
+													{years.map((year: number) => (
+														<SelectItem key={year} value={year.toString()}>
+															{year}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+											<FormControl>
+												<Input placeholder="Enter copyright information" hasError={!!copyrightError || !!errors.copyright} errormessage={copyrightError || errors.copyright?.message} value={copyrightInputValue} onChange={handleInputChange} className="flex-1" />
+											</FormControl>
+										</div>
+										{(copyrightError || errors.copyright) && <p className="text-sm text-red-500 mt-1">{copyrightError || errors.copyright?.message}</p>}
+									</FormItem>
+								);
+							}}
+						/>
 						<FormField
 							control={form.control}
 							name="lyrics"

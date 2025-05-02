@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
 import { AppLogo } from '@/components/icons';
-
 interface IArtistUser {
 	_id: string;
 	email: string;
@@ -17,17 +16,44 @@ interface IArtistUser {
 	country: string;
 	firstName: string;
 	lastName: string;
+	phoneNumber: string;
 	bankDetails: BankDetails;
+	contractDetails: ContractDetails;
+	profilePicture: string;
+	bio: string;
+	socialLinks: SocialLinks;
+	totalRoyaltyUSD: number;
+	totalStreams: number;
+	paidRoyalty: number;
+}
+
+interface SocialLinks {
+	instagram: string | null;
+	facebook: string | null;
+	twitter: string | null;
+	tiktok: string | null;
+	soundCloud: string | null;
+	website: string | null;
+	youtube: string | null;
+}
+
+interface ContractDetails {
+	startDate: string;
+	endDate: string;
+	contract: string;
+	status: string;
 }
 
 interface BankDetails {
 	bankName: string;
 	accountName: string;
 	accountNumber: number;
-	ibanSwiftCode: string | null;
-	currency: string | null;
-	sortCode: string | null;
-	paymentOption: string | null;
+	ibanSwiftCode: string;
+	currency: string;
+	sortCode: number;
+	paymentOption: string;
+	dealType: string;
+	rate: number;
 }
 
 export interface ArtistAuthState {
@@ -113,14 +139,16 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 	const [state, dispatch] = useReducer(authReducer, initialAuthState);
 	const router = useRouter();
 
-	const logout = () => {
+	const logout = (reroute?: boolean) => {
 		clearArtistTokens();
 		dispatch({ type: 'LOGOUT' });
+		if (reroute) {
+			router.replace('/artiste/login');
+		}
 	};
 
 	const checkAuthStatus = React.useCallback(async () => {
 		const token = await getArtistAccessToken();
-		console.log('Token in checkAuthStatus:', token);
 		if (!token) {
 			router.replace('/artiste/login');
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
