@@ -35,10 +35,10 @@ export function getLocaleForCurrency(currency: SupportedCurrency): string {
 	}
 }
 export function formatCurrency(amount: number, currency?: SupportedCurrency): string {
-	const locale = getLocaleForCurrency(currency || 'NGN');
+	const locale = getLocaleForCurrency(currency || 'USD');
 	return new Intl.NumberFormat(locale, {
 		style: 'currency',
-		currency: currency || 'NGN',
+		currency: currency || 'USD',
 		minimumFractionDigits: 2
 	}).format(amount);
 }

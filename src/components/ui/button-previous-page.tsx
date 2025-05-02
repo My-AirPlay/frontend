@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { Button } from './button';
 
-const PreviousPageButton = ({ target = null }) => {
+const PreviousPageButton = ({ target = null }: { target?: string | null }) => {
+	// Added '?' to make prop optional
 	const router = useRouter();
 
 	return (

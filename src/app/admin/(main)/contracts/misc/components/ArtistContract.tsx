@@ -12,6 +12,19 @@ import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'; // 
 
 // Artist type is already imported from '@/lib/types'
 
+// Helper function to safely create a Date object
+const safeNewDate = (dateString?: string | null): Date => {
+	if (dateString) {
+		const date = new Date(dateString);
+		// Check if the date is valid
+		if (!isNaN(date.getTime())) {
+			return date;
+		}
+	}
+	// Fallback to current date if the input is invalid or missing
+	return new Date();
+};
+
 interface ArtistContractProps {
 	artist: Artist;
 	// Replace 'any' with the specific 'Artist' type
@@ -33,8 +46,8 @@ interface FileWithPreview {
 
 const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }) => {
 	const [primaryFile, setPrimaryFile] = useState<FileWithPreview>({ file: null, previewUrl: null });
-	const [startDate, setStartDate] = useState<Date>(new Date(artist?.contractDetails?.startDate) || new Date());
-	const [endDate, setEndDate] = useState<Date>(new Date(artist?.contractDetails?.endDate) || new Date());
+	const [startDate, setStartDate] = useState<Date>(safeNewDate(artist?.contractDetails?.startDate));
+	const [endDate, setEndDate] = useState<Date>(safeNewDate(artist?.contractDetails?.endDate));
 	const [status, setStatus] = useState<string>(artist?.contractDetails?.status || 'ACTIVE');
 
 	const handlePrimaryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,8 +101,8 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 	return (
 		<div className="space-y-8">
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<SingleDatePicker label="Start Date" defaultDate={startDate} value={startDate} onChange={setStartDate} />
-				<SingleDatePicker label="End Date" defaultDate={endDate} value={endDate} onChange={setEndDate} />
+				<SingleDatePicker label="Start Date" value={startDate} onChange={setStartDate} />
+				<SingleDatePicker label="End Date" value={endDate} onChange={setEndDate} />
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -146,7 +159,7 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 									{!artist?.contractDetails?.contract ? 'Upload' : 'Update'} or <span className="text-admin-primary">Browse</span>
 								</p>
 								<p className="text-xs text-admin-muted">Supported formats: PDF, MSDOC</p>
-								<p className="text-xs text-admin-muted">File Size: Not more tha 40MB</p>
+								<p className="text-xs text-admin-muted">File Size: Not more tha 15MB</p>
 							</div>
 						</div>
 					)}

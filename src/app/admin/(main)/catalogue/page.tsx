@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import React, { useState } from 'react';
-import { Download, Filter } from 'lucide-react';
+import React, { useState, useCallback } from 'react'; // Added useCallback
+import { Download, Filter, Loader2 } from 'lucide-react'; // Added Loader2
+import JSZip from 'jszip'; // Import JSZip
+import { saveAs } from 'file-saver'; // Import file-saver
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
@@ -10,22 +12,37 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { useGetAdminMedia } from './api';
 import { useGetAllAlbums } from './api/getAdminGetAllAlbums';
 import { LoadingBox } from '@/components/ui/LoadingBox';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation'; // Added useRouter, usePathname
-import { ArrowDown, ArrowUp } from 'lucide-react'; // Added sorting icons
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { ArrowDown, ArrowUp } from 'lucide-react';
+// import { useDownloadMedia } from './api/getDownloadMedia'; // Import download hook - REMOVED (unused)
+import { getMedia } from './api/getOneMedia'; // Import function to get single media details
+import { toast } from 'sonner'; // Import toast
+
+// Helper function for delay - REMOVED (unused)
+// const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Define interfaces for row data (adjust based on actual API response)
 
 const Catalogue: React.FC = () => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const [tab, setTab] = useState('releases');
+	const [tab, setTab] = useState<'releases' | 'tracks'>(searchParams.get('tab') === 'tracks' ? 'tracks' : 'releases'); // Default to releases or read from URL
 
 	// State for sorting
 	const [sortBy, setSortBy] = useState<string>(searchParams.get('sortBy') || 'title');
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>((searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc');
 
+	// State for selection
+	const [selectedRows, setSelectedRows] = useState<any[]>([]); // Store selected row data
+	const [isBulkDownloading, setIsBulkDownloading] = useState(false); // Loading state for bulk download
+
 	const page = searchParams.get('page') || '1';
 	const limit = searchParams.get('limit') || '20';
+
+	// Hook for triggering download URL generation (REMOVED - Not needed for JSZip approach)
+	// const { mutate: downloadMutate, isPending: isGeneratingDownloadUrls } = useDownloadMedia();
 
 	// Function to update URL search params for sorting
 	const updateSorting = (newSortBy: string, newSortOrder: 'asc' | 'desc') => {
@@ -37,6 +54,154 @@ const Catalogue: React.FC = () => {
 		// Reset page to 1 when sorting changes
 		params.set('page', '1');
 		router.push(`${pathname}?${params.toString()}`);
+	};
+
+	// Callback for DataTable selection change
+	const handleSelectionChange = useCallback((selectedData: any[]) => {
+		setSelectedRows(selectedData);
+	}, []); // Added dependency array
+
+	// Function to handle the bulk download logic using JSZip
+	const handleBulkDownload = async () => {
+		if (selectedRows.length === 0) {
+			toast.info('Please select items to download.');
+			return;
+		}
+
+		setIsBulkDownloading(true);
+		toast.info('Preparing files for download...');
+		const urlsToCollect: string[] = [];
+		const trackIdsToFetch: string[] = [];
+
+		try {
+			// 1. Collect Media URLs or Track IDs
+			selectedRows.forEach(row => {
+				if (tab === 'tracks' && typeof row.mediaUrl === 'string') {
+					urlsToCollect.push(row.mediaUrl);
+				} else if (tab === 'releases' && Array.isArray(row.fileIds)) {
+					trackIdsToFetch.push(...row.fileIds);
+				} else {
+					console.warn('Selected row does not match expected structure:', row);
+				}
+			});
+
+			// 2. Fetch Media URLs for Track IDs if necessary
+			if (trackIdsToFetch.length > 0) {
+				const uniqueTrackIds = [...new Set(trackIdsToFetch.filter(id => typeof id === 'string' && id.trim() !== ''))];
+				if (uniqueTrackIds.length > 0) {
+					toast.info(`Fetching details for ${uniqueTrackIds.length} tracks...`);
+					const trackDetailPromises = uniqueTrackIds.map(id => getMedia({ mediaId: id, config: { skipAuthRedirect: true } }));
+					const results = await Promise.allSettled(trackDetailPromises);
+
+					results.forEach((result, index) => {
+						if (result.status === 'fulfilled' && result.value?.mediaUrl) {
+							urlsToCollect.push(result.value.mediaUrl);
+						} else {
+							const reason = result.status === 'rejected' ? result.reason : 'No mediaUrl';
+							console.error(`Failed to fetch details for track ID: ${uniqueTrackIds[index]}`, reason);
+							toast.error(`Failed to get download details for track ID: ${uniqueTrackIds[index]}`);
+						}
+					});
+				}
+			}
+
+			const finalUrls = [...new Set(urlsToCollect)]; // Ensure unique URLs
+
+			if (finalUrls.length === 0) {
+				toast.error('No downloadable files found for the selected items.');
+				setIsBulkDownloading(false);
+				return;
+			}
+
+			console.log(`Attempting to fetch and zip ${finalUrls.length} files:`, finalUrls);
+			toast.info(`Fetching ${finalUrls.length} files to create a zip archive...`);
+
+			// 3. Fetch files and create ZIP
+			const zip = new JSZip();
+			let filesAdded = 0;
+			let fetchErrors = 0;
+
+			// Use Promise.allSettled to fetch all files concurrently
+			const fetchPromises = finalUrls.map(async (url, index) => {
+				try {
+					// IMPORTANT: Fetching requires the server hosting the mediaUrl
+					// to have permissive CORS headers (e.g., Access-Control-Allow-Origin: *)
+					// or be on the same origin. If not, this fetch will fail.
+					// Consider using a backend proxy if CORS is an issue.
+					const response = await fetch(url);
+					if (!response.ok) {
+						// Handle potential XML error responses like NoSuchKey
+						if (response.headers.get('content-type')?.includes('application/xml')) {
+							const errorText = await response.text();
+							console.error(`XML Error fetching URL #${index + 1} (${url}): Status ${response.status}`, errorText);
+							// Try to extract a meaningful message from XML if possible
+							const keyMatch = errorText.match(/<Key>(.*?)<\/Key>/);
+							const messageMatch = errorText.match(/<Message>(.*?)<\/Message>/);
+							const simpleFilename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `file_${index + 1}`;
+							toast.error(`Error fetching ${keyMatch ? keyMatch[1] : simpleFilename}: ${messageMatch ? messageMatch[1] : `HTTP ${response.status}`}`);
+						} else {
+							console.error(`HTTP Error fetching URL #${index + 1} (${url}): Status ${response.status}`);
+							toast.error(`Failed to fetch file #${index + 1} (HTTP ${response.status})`);
+						}
+						throw new Error(`HTTP error ${response.status}`);
+					}
+					const blob = await response.blob();
+					// Extract filename from URL, remove query params
+					const filename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `download_${index + 1}`;
+					zip.file(filename, blob);
+					return { status: 'fulfilled', index };
+				} catch (error) {
+					console.error(`Error fetching or adding file #${index + 1} (${url}):`, error);
+					// Toast error already handled inside the try block for HTTP errors
+					if (!(error instanceof Error && error.message.startsWith('HTTP error'))) {
+						toast.error(`Failed to process file #${index + 1}.`);
+					}
+					return { status: 'rejected', index, reason: error };
+				}
+			});
+
+			const results = await Promise.allSettled(fetchPromises);
+
+			results.forEach(result => {
+				if (result.status === 'fulfilled') {
+					filesAdded++;
+				} else {
+					fetchErrors++;
+				}
+			});
+
+			if (filesAdded === 0) {
+				toast.error('Failed to fetch any files. Cannot create zip archive.');
+				setIsBulkDownloading(false);
+				return;
+			}
+
+			if (fetchErrors > 0) {
+				toast.warning(`Could not fetch ${fetchErrors} out of ${finalUrls.length} files. Proceeding with the rest.`);
+			}
+
+			// 4. Generate and trigger ZIP download
+			toast.info(`Generating zip file with ${filesAdded} items...`);
+			try {
+				const zipBlob = await zip.generateAsync({
+					type: 'blob',
+					compression: 'DEFLATE', // Optional: specify compression
+					compressionOptions: {
+						level: 6 // Optional: compression level (1-9)
+					}
+				});
+				saveAs(zipBlob, `airplay-download-${Date.now()}.zip`); // Use file-saver
+				toast.success(`Successfully created zip file with ${filesAdded} items. Download started.`);
+			} catch (zipError) {
+				console.error('Error generating zip file:', zipError);
+				toast.error('Failed to create the zip file.');
+			}
+		} catch (error) {
+			console.error('Error during bulk download process:', error);
+			toast.error('An unexpected error occurred during the download process.');
+		} finally {
+			setIsBulkDownloading(false); // Ensure loading state is reset
+		}
 	};
 
 	// Construct parameters object for the API hooks including sorting
@@ -170,8 +335,9 @@ const Catalogue: React.FC = () => {
 							</DropdownMenuGroup>
 						</DropdownMenuContent>
 					</DropdownMenu>
-					<Button className="admin-button-primary max-md:size-10 max-md:p-0">
-						<Download size={16} className="md:mr-2" />
+					{/* Updated Download Button - Removed isGeneratingDownloadUrls from disabled check */}
+					<Button className="admin-button-primary max-md:size-10 max-md:p-0" onClick={handleBulkDownload} disabled={selectedRows.length === 0 || isBulkDownloading || (tab === 'tracks' ? tracksLoading : releasesLoading)}>
+						{isBulkDownloading ? <Loader2 size={16} className="animate-spin md:mr-2" /> : <Download size={16} className="md:mr-2" />}
 						<span className="max-md:sr-only">Download</span>
 					</Button>
 				</div>
@@ -180,11 +346,13 @@ const Catalogue: React.FC = () => {
 			<Tabs
 				defaultValue="releases"
 				value={tab}
-				onValueChange={newTab => {
-					setTab(newTab);
+				onValueChange={(newTab: string) => {
+					const validTab = newTab === 'tracks' ? 'tracks' : 'releases';
+					setTab(validTab);
+					setSelectedRows([]); // Clear selection when tab changes
 
 					// Determine sortable columns for the new tab
-					const newSortableColumns = newTab === 'releases' ? releaseSortableColumns : trackSortableColumns;
+					const newSortableColumns = validTab === 'releases' ? releaseSortableColumns : trackSortableColumns;
 					const isCurrentSortByValid = newSortableColumns.some(col => col.id === sortBy);
 
 					let newSortBy = sortBy;
@@ -198,8 +366,9 @@ const Catalogue: React.FC = () => {
 					// Update URL params
 					const params = new URLSearchParams(searchParams.toString());
 					params.set('sortBy', newSortBy);
-					params.set('sortOrder', sortOrder); // Keep existing sort order
-					params.set('page', '1'); // Reset page
+					params.set('sortOrder', sortOrder);
+					params.set('page', '1');
+					params.set('tab', validTab); // Add tab to URL params
 					router.push(`${pathname}?${params.toString()}`);
 				}}
 			>
@@ -218,7 +387,7 @@ const Catalogue: React.FC = () => {
 							<LoadingBox size={62} />
 						</div>
 					) : (
-						<DataTable data={releases?.data} columns={releaseColumns} pagination={true} showCheckbox={true} defaultRowsPerPage={Number(limit)} pageCount={releases?.totalPages} />
+						<DataTable data={releases?.data} columns={releaseColumns} pagination={true} showCheckbox={true} defaultRowsPerPage={Number(limit)} pageCount={releases?.totalPages} onRowSelectionChange={handleSelectionChange} />
 					)}
 				</TabsContent>
 
@@ -228,7 +397,7 @@ const Catalogue: React.FC = () => {
 							<LoadingBox size={62} />
 						</div>
 					) : (
-						<DataTable data={tracks?.data} columns={trackColumns} pagination={true} showCheckbox={true} defaultRowsPerPage={Number(limit)} pageCount={tracks?.totalPages} />
+						<DataTable data={tracks?.data} columns={trackColumns} pagination={true} showCheckbox={true} defaultRowsPerPage={Number(limit)} pageCount={tracks?.totalPages} onRowSelectionChange={handleSelectionChange} />
 					)}
 				</TabsContent>
 			</Tabs>

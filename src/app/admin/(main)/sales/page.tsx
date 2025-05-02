@@ -111,25 +111,25 @@ const Sales: React.FC = () => {
 	// Add default _id to mock data items if missing
 	const [matchedArtists, setMatchedArtists] = useState<ReportItem[]>(
 		placeholderParseData?.data
-			?.filter(x => x?.userId)
+			?.filter(x => x?.artistId) // Filter based on artistId presence
 			.map((item, index) => ({
 				...item,
 				_id: item._id || `matched-${index}`,
 				createdAt: item.createdAt || new Date().toISOString(), // Add default createdAt
 				updatedAt: item.updatedAt || new Date().toISOString(), // Add default updatedAt
-				__v: item.__v || 0 // Add default __v
+				__v: item?.['**v'] || 0 // Add default __v
 			})) || []
 	);
 
 	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>(
 		placeholderParseData?.data
-			?.filter(x => !x?.userId)
+			?.filter(x => !x?.artistId) // Filter based on artistId absence
 			.map((item, index) => ({
 				...item,
 				_id: item._id || `unmatched-${index}`,
 				createdAt: item.createdAt || new Date().toISOString(), // Add default createdAt
 				updatedAt: item.updatedAt || new Date().toISOString(), // Add default updatedAt
-				__v: item.__v || 0 // Add default __v
+				__v: item?.['**v'] || 0 // Add default __v
 			})) || []
 	);
 
@@ -418,7 +418,7 @@ const Sales: React.FC = () => {
 					</div>
 				)}
 
-				{currentStep === 'match-artist' && <MatchArtistForm onMatch={handleMatchArtist} onCreateNew={handleCreateNewArtist} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName} />}
+				{currentStep === 'match-artist' && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={placeholderParseData?.data?.filter(x => x.artistName === unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName)} onCreateNew={handleCreateNewArtist} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName} />}
 
 				{currentStep === 'create-artist' && <CreateArtistForm onSave={handleSaveArtist} />}
 
