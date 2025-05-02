@@ -11,15 +11,17 @@ import { postSocialLinks } from '@/app/artiste/(auth)/misc/api/mutations/onboard
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
 import { useRouter } from 'nextjs-toploader/app';
+import { useArtisteContext } from '@/contexts/AuthContextArtist';
 interface OnboardingSocialMedialProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 	email: string;
 }
 const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
 	const { replace } = useRouter();
+	const { checkAuthStatus } = useArtisteContext();
 	const { mutateAsync, status } = useMutation({
 		mutationFn: postSocialLinks,
-		onSuccess(result) {
+		onSuccess: async result => {
 			if (!result) {
 				toast.error('Something went wrong. Try again');
 				return;
@@ -28,6 +30,7 @@ const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
 				handleClientError(result.error);
 				return;
 			}
+			await checkAuthStatus();
 			replace('/artiste/dashboard');
 		}
 	});
