@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import { FormField } from '../form-step/form-step.interface';
 import FormStep from '../form-step/form-step';
 import { Button } from '@/components/ui/button';
-import { OnboardingSteps, urls } from '@/lib/constants';
+import { OnboardingSteps } from '@/lib/constants';
 import { useMutation } from '@tanstack/react-query';
 import { postSocialLinks } from '@/app/artiste/(auth)/misc/api/mutations/onboarding.mutation';
 import { toast } from 'sonner';
@@ -28,7 +28,7 @@ const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
 				handleClientError(result.error);
 				return;
 			}
-			replace(urls.dashboard);
+			replace('/artiste/dashboard');
 		}
 	});
 	const formik = useFormik({
