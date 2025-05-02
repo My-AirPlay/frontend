@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'; // Removed useState import
+import React, { useState } from 'react'; // Added useState import
 import { Trash2, Download } from 'lucide-react'; // Removed LinkIcon import
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,17 +11,19 @@ import { TRUE_OR_FALSE_OPTIONS } from '@/constants';
 import { useGetMedia } from '../../api/getOneMedia';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import moment from 'moment';
-import { useDownloadMedia } from '../../api/getDownloadMedia';
+import JSZip from 'jszip'; // Import JSZip
+import { saveAs } from 'file-saver'; // Import file-saver
+import { Loader2 } from 'lucide-react'; // Import Loader2
 import { toast } from 'sonner';
 import { useDeleteMedia } from '../../api/deleteMedia';
 
-// Helper function for delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Helper function for delay - REMOVED
+// const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const TrackDetails: React.FC = () => {
 	const { track_id } = useParams<{ track_id: string }>();
 	const router = useRouter();
-	// Removed testLinkUrl state
+	const [isDownloading, setIsDownloading] = useState(false); // Add downloading state
 
 	const {
 		data: contract,
@@ -31,74 +33,90 @@ const TrackDetails: React.FC = () => {
 		mediaId: track_id
 	});
 
-	const { mutate, isPending } = useDownloadMedia();
+	// const { mutate, isPending } = useDownloadMedia(); // REMOVED
 	const { mutate: deleteMutate, isPending: deletePending } = useDeleteMedia();
 
-	const handleDownloadMedia = () => {
-		// Determine the list of URLs to download
-		let urlsToDownload: string[] = [];
-		if (Array.isArray(contract?.mediaUrls) && contract.mediaUrls.length > 0) {
-			urlsToDownload = contract.mediaUrls;
-		} else if (Array.isArray(contract?.mediaUrl) && contract.mediaUrl.length > 0) {
-			// Handle case where mediaUrl itself might be an array (less common)
-			urlsToDownload = contract.mediaUrl;
-		} else if (typeof contract?.mediaUrl === 'string' && contract.mediaUrl) {
-			// Handle case where mediaUrl is a single string
-			urlsToDownload = [contract.mediaUrl];
+	// Determine the direct download URL (still useful for checking availability)
+	let directDownloadUrl: string | null = null;
+	if (contract) {
+		if (typeof contract.mediaUrl === 'string' && contract.mediaUrl) {
+			directDownloadUrl = contract.mediaUrl;
+		} else if (Array.isArray(contract.mediaUrls) && contract.mediaUrls.length > 0 && typeof contract.mediaUrls[0] === 'string') {
+			directDownloadUrl = contract.mediaUrls[0]; // Use the first URL if it's an array
+		} else if (Array.isArray(contract.mediaUrl) && contract.mediaUrl.length > 0 && typeof contract.mediaUrl[0] === 'string') {
+			// Handle less common case where mediaUrl itself is an array
+			directDownloadUrl = contract.mediaUrl[0];
 		}
+	}
 
-		if (urlsToDownload.length === 0) {
-			toast.error('No media URLs found for this track.');
+	// Extract filename from URL for the download attribute
+	const downloadFilename = directDownloadUrl ? directDownloadUrl.substring(directDownloadUrl.lastIndexOf('/') + 1).split('?')[0] || 'download' : 'download';
+
+	// Function to handle single track download using JSZip
+	const handleDownload = async () => {
+		if (!directDownloadUrl) {
+			toast.error('Download URL is not available for this track.');
+			return;
+		}
+		if (!contract?.title) {
+			toast.error('Track title is missing, cannot name download file.');
 			return;
 		}
 
-		mutate(
-			{ urls: urlsToDownload },
-			{
-				onSuccess: async data => {
-					try {
-						const response = data as { downloadUrls: string[] };
-						if (!response?.downloadUrls?.length) {
-							toast.error('No download URLs received');
-							// Removed setTestLinkUrl(null) call
-							return;
-						}
+		setIsDownloading(true);
+		toast.info(`Preparing download for "${contract.title}"...`);
 
-						// Removed test link logic
+		const zip = new JSZip();
+		let fileAdded = false; // Track if the single file was added
 
-						toast.success(`Generated ${response.downloadUrls.length} download links. Initiating downloads...`);
+		try {
+			// Fetch the single file
+			const url = directDownloadUrl;
+			const response = await fetch(url);
 
-						// Click a download link for each URL sequentially with a delay
-						for (const [index, url] of response.downloadUrls.entries()) {
-							try {
-								const link = document.createElement('a');
-								link.href = url;
-								const simpleFilename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `download_${index + 1}`;
-								link.download = simpleFilename;
-								// No target="_blank"
-								document.body.appendChild(link);
-								link.click();
-								document.body.removeChild(link);
-								// Add delay
-								await delay(200);
-							} catch (error) {
-								console.error(`Error trying to initiate download for URL ${url}:`, error);
-								toast.error(`Failed to initiate download for one of the files.`);
-							}
-						}
-						toast.info("Downloads initiated. Check your browser's download manager.", { duration: 5000 });
-					} catch (error) {
-						console.error('Error processing download URLs:', error);
-						toast.error('Error initiating media downloads');
-					}
-				},
-				onError: error => {
-					console.error('Failed to fetch download URLs:', error);
-					toast.error('Error fetching media URLs');
+			if (!response.ok) {
+				// Handle potential XML error responses like NoSuchKey
+				if (response.headers.get('content-type')?.includes('application/xml')) {
+					const errorText = await response.text();
+					console.error(`XML Error fetching URL (${url}): Status ${response.status}`, errorText);
+					const keyMatch = errorText.match(/<Key>(.*?)<\/Key>/);
+					const messageMatch = errorText.match(/<Message>(.*?)<\/Message>/);
+					toast.error(`Error fetching ${keyMatch ? keyMatch[1] : downloadFilename}: ${messageMatch ? messageMatch[1] : `HTTP ${response.status}`}`);
+				} else {
+					console.error(`HTTP Error fetching URL (${url}): Status ${response.status}`);
+					toast.error(`Failed to fetch file (HTTP ${response.status})`);
 				}
+				throw new Error(`HTTP error ${response.status}`);
 			}
-		);
-	}; // End of handleDownloadMedia
+
+			const blob = await response.blob();
+			// Use the determined filename
+			zip.file(downloadFilename, blob);
+			fileAdded = true; // Mark file as added
+
+			// IMPORTANT: Check if the file was actually added before zipping
+			if (!fileAdded) {
+				// This case should ideally be caught by fetch errors above, but added as a safeguard
+				toast.error('Failed to fetch the track file. Cannot create zip archive.');
+				setIsDownloading(false);
+				return;
+			}
+
+			// Generate and trigger ZIP download
+			toast.info(`Generating zip file...`);
+			const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+			saveAs(zipBlob, `airplay-${contract.title.replace(/[^a-z0-9]/gi, '_')}.zip`); // Use track title in filename
+			toast.success(`Successfully created zip file for "${contract.title}". Download started.`);
+		} catch (error) {
+			console.error('Error during single track download process:', error);
+			// Specific fetch errors are toasted inside the try block
+			if (!(error instanceof Error && error.message.startsWith('HTTP error'))) {
+				toast.error('An unexpected error occurred during the download.');
+			}
+		} finally {
+			setIsDownloading(false);
+		}
+	};
 
 	return (
 		<div className="space-y-6">
@@ -137,13 +155,12 @@ const TrackDetails: React.FC = () => {
 						<Download size={16} className="mr-2" />
 						<span>Download</span>
 					</Button> */}
-					<Button className="admin-button-primary" disabled={isPending} onClick={handleDownloadMedia}>
-						{' '}
-						{/* Corrected onClick handler */}
-						<Download size={16} className="mr-2" />
-						{isPending ? <LoadingBox size={16} color="white" /> : <span>Download</span>}
+					{/* --- Updated Download Button --- */}
+					<Button className="admin-button-primary" disabled={contractLoading || !directDownloadUrl || isDownloading} onClick={handleDownload}>
+						{isDownloading ? <Loader2 size={16} className="animate-spin mr-2" /> : <Download size={16} className="mr-2" />}
+						<span>{contractLoading ? 'Loading...' : isDownloading ? 'Downloading...' : 'Download'}</span>
 					</Button>
-					{/* Removed test link button */}
+					{/* --- End Updated Download Button --- */}
 				</div>
 			</div>
 

@@ -6,12 +6,14 @@ import TracksList from '../../misc/components/TracksList';
 import { PreviousPageButton, Button } from '@/components/ui';
 import { useGetAlbumDetail } from '../../api/getAlbumDetail';
 import { useDeleteAlbum } from '../../api/deleteAlbum';
-import { useDownloadMedia } from '../../api/getDownloadMedia'; // Import download hook
+// import { useDownloadMedia } from '../../api/getDownloadMedia'; // REMOVED - Using JSZip
+import JSZip from 'jszip'; // Import JSZip
+import { saveAs } from 'file-saver'; // Import file-saver
 import { toast } from 'sonner';
 import { Trash2, Download, Loader2 } from 'lucide-react';
 
-// Helper function for delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Helper function for delay - REMOVED
+// const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const ReleaseDetails: React.FC = () => {
 	const { release_id } = useParams<{ release_id: string }>();
@@ -29,8 +31,8 @@ const ReleaseDetails: React.FC = () => {
 	const [selectedRows, setSelectedRows] = useState<any[]>([]); // Store selected row data
 	const [isBulkDownloading, setIsBulkDownloading] = useState(false); // Loading state for bulk download
 
-	// Hook for triggering download URL generation
-	const { mutate: downloadMutate, isPending: isGeneratingDownloadUrls } = useDownloadMedia();
+	// Hook for triggering download URL generation - REMOVED
+	// const { mutate: downloadMutate, isPending: isGeneratingDownloadUrls } = useDownloadMedia();
 
 	// Delete mutation
 	const { mutate: deleteMutate, isPending: isDeleting } = useDeleteAlbum();
@@ -61,7 +63,7 @@ const ReleaseDetails: React.FC = () => {
 		}
 	};
 
-	// Function to handle the bulk download logic for tracks within this release
+	// Function to handle the bulk download logic using JSZip
 	const handleBulkDownload = async () => {
 		if (selectedRows.length === 0) {
 			toast.info('Please select tracks to download.');
@@ -69,10 +71,11 @@ const ReleaseDetails: React.FC = () => {
 		}
 
 		setIsBulkDownloading(true);
+		toast.info('Preparing files for download...');
 		const urlsToCollect: string[] = [];
 
 		try {
-			// Collect mediaUrl from selected rows
+			// 1. Collect Media URLs from selected rows
 			selectedRows.forEach(row => {
 				if (typeof row.mediaUrl === 'string' && row.mediaUrl.trim() !== '') {
 					urlsToCollect.push(row.mediaUrl);
@@ -82,70 +85,94 @@ const ReleaseDetails: React.FC = () => {
 				}
 			});
 
-			const finalUrls = [...new Set(urlsToCollect)]; // Ensure final list is unique
+			const finalUrls = [...new Set(urlsToCollect)]; // Ensure unique URLs
 
 			if (finalUrls.length === 0) {
-				toast.error('No downloadable media URLs found for the selected tracks.');
+				toast.error('No downloadable files found for the selected tracks.');
 				setIsBulkDownloading(false);
 				return;
 			}
 
-			console.log(`Collected ${finalUrls.length} unique media URLs to request download links for:`, finalUrls);
-			toast.info(`Preparing download links for ${finalUrls.length} tracks...`);
+			console.log(`Attempting to fetch and zip ${finalUrls.length} files:`, finalUrls);
+			toast.info(`Fetching ${finalUrls.length} files to create a zip archive...`);
 
-			// Use the download hook to get signed URLs
-			downloadMutate(
-				{ urls: finalUrls },
-				{
-					onSuccess: async data => {
-						const response = data as { downloadUrls: string[] };
-						console.log(`Received ${response?.downloadUrls?.length || 0} signed download URLs from backend:`, response?.downloadUrls);
+			// 2. Fetch files and create ZIP
+			const zip = new JSZip();
+			let filesAdded = 0;
+			let fetchErrors = 0;
 
-						if (!response?.downloadUrls?.length) {
-							toast.error('Failed to generate download links.');
-							return;
+			// Use Promise.allSettled to fetch all files concurrently
+			const fetchPromises = finalUrls.map(async (url, index) => {
+				try {
+					// IMPORTANT: Fetching requires the server hosting the mediaUrl
+					// to have permissive CORS headers (e.g., Access-Control-Allow-Origin: *)
+					// or be on the same origin. If not, this fetch will fail.
+					const response = await fetch(url);
+					if (!response.ok) {
+						// Handle potential XML error responses like NoSuchKey
+						if (response.headers.get('content-type')?.includes('application/xml')) {
+							const errorText = await response.text();
+							console.error(`XML Error fetching URL #${index + 1} (${url}): Status ${response.status}`, errorText);
+							const keyMatch = errorText.match(/<Key>(.*?)<\/Key>/);
+							const messageMatch = errorText.match(/<Message>(.*?)<\/Message>/);
+							const simpleFilename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `file_${index + 1}`;
+							toast.error(`Error fetching ${keyMatch ? keyMatch[1] : simpleFilename}: ${messageMatch ? messageMatch[1] : `HTTP ${response.status}`}`);
+						} else {
+							console.error(`HTTP Error fetching URL #${index + 1} (${url}): Status ${response.status}`);
+							toast.error(`Failed to fetch file #${index + 1} (HTTP ${response.status})`);
 						}
-
-						toast.success(`Generated ${response.downloadUrls.length} download links. Initiating downloads...`);
-
-						let downloadsInitiated = 0;
-						for (const [index, url] of response.downloadUrls.entries()) {
-							try {
-								const link = document.createElement('a');
-								link.href = url;
-								console.log(`Attempting to trigger download for URL #${index + 1}: ${url}`);
-								const simpleFilename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `download_${index + 1}`;
-								link.download = simpleFilename;
-								document.body.appendChild(link);
-								link.click();
-								document.body.removeChild(link);
-								downloadsInitiated++;
-								await delay(300); // Delay between downloads
-							} catch (error) {
-								console.error(`Error trying to initiate download for URL #${index + 1} (${url}):`, error);
-								toast.error(`Failed to initiate download for track #${index + 1}.`);
-							}
-						}
-
-						if (downloadsInitiated < response.downloadUrls.length) {
-							toast.warning(`Attempted to initiate ${response.downloadUrls.length} downloads, but some may have been blocked. Check your browser settings.`, { duration: 10000 });
-						} else if (downloadsInitiated > 0) {
-							toast.info(`Initiated ${downloadsInitiated} downloads. Check your browser's download manager.`, { duration: 5000 });
-						}
-					},
-					onError: error => {
-						console.error('Failed to generate download URLs:', error);
-						toast.error('Error generating download links.');
-					},
-					onSettled: () => {
-						setIsBulkDownloading(false); // Ensure loading state is reset
+						throw new Error(`HTTP error ${response.status}`);
 					}
+					const blob = await response.blob();
+					const filename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `download_${index + 1}`;
+					zip.file(filename, blob);
+					return { status: 'fulfilled', index };
+				} catch (error) {
+					console.error(`Error fetching or adding file #${index + 1} (${url}):`, error);
+					if (!(error instanceof Error && error.message.startsWith('HTTP error'))) {
+						toast.error(`Failed to process file #${index + 1}.`);
+					}
+					return { status: 'rejected', index, reason: error };
 				}
-			);
+			});
+
+			const results = await Promise.allSettled(fetchPromises);
+
+			results.forEach(result => {
+				if (result.status === 'fulfilled') {
+					filesAdded++;
+				} else {
+					fetchErrors++;
+				}
+			});
+
+			if (filesAdded === 0) {
+				toast.error('Failed to fetch any files. Cannot create zip archive.');
+				setIsBulkDownloading(false);
+				return;
+			}
+
+			if (fetchErrors > 0) {
+				toast.warning(`Could not fetch ${fetchErrors} out of ${finalUrls.length} files. Proceeding with the rest.`);
+			}
+
+			// 3. Generate and trigger ZIP download
+			toast.info(`Generating zip file with ${filesAdded} items...`);
+			try {
+				const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
+				// Use album title in filename if available, otherwise use release_id
+				const zipFilename = album?.title ? `airplay-${album.title.replace(/[^a-z0-9]/gi, '_')}-download.zip` : `airplay-release-${release_id}-download.zip`;
+				saveAs(zipBlob, zipFilename);
+				toast.success(`Successfully created zip file with ${filesAdded} items. Download started.`);
+			} catch (zipError) {
+				console.error('Error generating zip file:', zipError);
+				toast.error('Failed to create the zip file.');
+			}
 		} catch (error) {
-			console.error('Error during bulk download preparation:', error);
-			toast.error('An unexpected error occurred during download preparation.');
-			setIsBulkDownloading(false); // Ensure loading state is reset on unexpected error
+			console.error('Error during bulk download process:', error);
+			toast.error('An unexpected error occurred during the download process.');
+		} finally {
+			setIsBulkDownloading(false); // Ensure loading state is reset
 		}
 	};
 
@@ -165,19 +192,14 @@ const ReleaseDetails: React.FC = () => {
 
 				{/* Right Side: Action Buttons */}
 				<div className="flex items-center space-x-2 flex-shrink-0">
-					{/* Download Button */}
-					<Button variant="outline" onClick={handleBulkDownload} disabled={selectedRows.length === 0 || isBulkDownloading || isGeneratingDownloadUrls || albumLoading} size="sm" className="bg-secondary text-foreground border-border">
-						{isBulkDownloading || isGeneratingDownloadUrls ? <Loader2 size={16} className="animate-spin mr-2" /> : <Download size={16} className="mr-2" />}
-						{isBulkDownloading || isGeneratingDownloadUrls ? 'Downloading...' : 'Download'}
+					{/* Download Button - Updated */}
+					<Button className="admin-button-primary" onClick={handleBulkDownload} disabled={selectedRows.length === 0 || isBulkDownloading || albumLoading} size="sm">
+						{isBulkDownloading ? <Loader2 size={16} className="animate-spin mr-2" /> : <Download size={16} className="mr-2" />}
+						{isBulkDownloading ? 'Zipping...' : `Download`}
 					</Button>
 
 					{/* Delete Button */}
-					<Button
-						variant="destructive" // Changed variant for delete
-						onClick={handleDelete}
-						disabled={isDeleting || albumLoading || !album}
-						size="sm"
-					>
+					<Button variant="outline" className="bg-secondary text-foreground border-border" onClick={handleDelete} disabled={isDeleting || albumLoading || !album}>
 						<Trash2 size={16} className="mr-2" />
 						{isDeleting ? 'Deleting...' : 'Delete'}
 					</Button>

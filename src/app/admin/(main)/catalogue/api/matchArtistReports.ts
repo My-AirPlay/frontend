@@ -66,7 +66,7 @@ interface MatchArtistReportsResponse {
 	data?: unknown; // Replace 'any' with a specific type if known
 }
 
-export const matchArtistReports = async ({ artistId, artistName = true, reports }: MatchArtistReportsParams) => {
+export const matchArtistReports = async ({ artistId, artistName = false, reports }: MatchArtistReportsParams) => {
 	const response = await APIAxios.post(`/admin/match/${artistId}`, reports, {
 		params: {
 			artistName

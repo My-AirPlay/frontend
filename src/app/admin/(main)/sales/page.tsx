@@ -418,7 +418,7 @@ const Sales: React.FC = () => {
 					</div>
 				)}
 
-				{currentStep === 'match-artist' && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={placeholderParseData[0]} onCreateNew={handleCreateNewArtist} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName} />}
+				{currentStep === 'match-artist' && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={placeholderParseData?.data?.filter(x => x.artistName === unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName)} onCreateNew={handleCreateNewArtist} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName} />}
 
 				{currentStep === 'create-artist' && <CreateArtistForm onSave={handleSaveArtist} />}
 

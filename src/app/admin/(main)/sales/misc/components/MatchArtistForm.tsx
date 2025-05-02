@@ -92,6 +92,7 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 		setIsDropdownOpen(false);
 
 		// Trigger the mutation on selection
+		console.log('unmatchedReports', unmatchedReports);
 		matchArtist(
 			{ artistId: artist._id, reports: unmatchedReports },
 			{

@@ -205,16 +205,14 @@ interface FullReport {
 
 // Represents a single top-level item in the main data array
 export interface ReportItem {
+	_id: string;
 	userId: string | null; // Can be null
+	artistId: string;
 	artistName: string;
-	upcCode: string;
-	isrcCode: string;
-	catalogueId: string;
-	activityPeriod: string; // e.g., 'Sep-23'
+	activityPeriod: string; // e.g., "September 2023"
 	fullReports: FullReport[];
-	_id: string; // Likely MongoDB ObjectId as string
-	createdAt: string; // ISO Date string
-	updatedAt: string; // ISO Date string
+	createdAt: string; // ISO Date String
+	updatedAt: string; // ISO Date String
 	__v: number; // MongoDB version key
 }
 
