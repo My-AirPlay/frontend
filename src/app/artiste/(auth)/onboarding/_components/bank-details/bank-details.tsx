@@ -10,12 +10,15 @@ import { useMutation } from '@tanstack/react-query';
 import { postOnbaordingBankDetail } from '@/app/artiste/(auth)/misc/api/mutations/onboarding.mutation';
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
+import { LinkButton } from '@/components/ui';
+import { useArtisteContext } from '@/contexts/AuthContextArtist';
 
 interface OnboardingBankDetailProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 	email: string;
 }
 const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailProps) => {
+	const { checkAuthStatus } = useArtisteContext();
 	const { mutateAsync, status } = useMutation({
 		mutationFn: postOnbaordingBankDetail,
 		onSuccess(result) {
@@ -32,11 +35,18 @@ const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailPro
 	});
 	const formik = useFormik({
 		validateOnChange: true,
+
 		validationSchema: onboardingBankDetailSchema,
 		initialValues: {
 			bankName: '',
 			accountName: '',
-			accountNumber: ''
+			accountNumber: '',
+			ibanSwiftCode: '',
+			bvn: '',
+			bankCode: '',
+			currency: 'naira' as const,
+			sortCode: '',
+			paymentOption: 'Monthly'
 		},
 		onSubmit: value => {
 			mutateAsync({
@@ -68,14 +78,60 @@ const OnboardingBankDetail = ({ setCurrentStep, email }: OnboardingBankDetailPro
 				props: {
 					placeholder: 'Account Name'
 				}
+			},
+			{
+				id: 'bvn',
+				label: 'BVN',
+				props: {
+					type: 'number',
+					placeholder: 'BVN'
+				}
+			},
+			{
+				id: 'bankCode',
+				label: 'Bank Code',
+				props: {
+					type: 'text',
+					placeholder: 'Bank Code'
+				}
+			},
+			{
+				id: 'ibanSwiftCode',
+				label: 'IBAN/SWIFT Code',
+				props: {
+					type: 'text',
+					placeholder: 'IBAN/SWIFT Code'
+				}
+			},
+			{
+				id: 'sortCode',
+				label: 'Sort Code (optional)',
+				props: {
+					type: 'text',
+					placeholder: 'Sort Code'
+				}
+			},
+			{
+				id: 'currency',
+				label: 'Currency ',
+				props: {
+					type: 'text',
+					placeholder: 'Currency'
+				}
 			}
 		];
 	}, []);
+	console.log(formik.errors);
 	return (
 		<FormStep formFields={fields} formik={formik} title="BANK DETAILS" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
-			<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={!formik.isValid || status === 'pending'}>
-				Continue <MoveRight />
-			</Button>
+			<div className="flex items-center justify-between">
+				<LinkButton size="lg" variant="outline" className="text-sm" href={`/artiste/dashboard`} onClick={checkAuthStatus}>
+					Skip
+				</LinkButton>
+				<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={status === 'pending'} isLoading={status === 'pending'}>
+					Continue <MoveRight />
+				</Button>
+			</div>
 		</FormStep>
 	);
 };

@@ -7,7 +7,6 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -15,6 +14,7 @@ import { SingleDatePicker } from '@/components/ui';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { useAlbumUploadStore } from '../store';
+import Step4MediaDistributionPlatformCard from './Step4MediaDistributionPlatformCards';
 
 const releaseDateFormSchema = z
 	.object({
@@ -212,19 +212,7 @@ export default function Step4AlbumDistributionDetails() {
 
 			<h6 className="text-lg text-primary font-semibold mb-4 mt-10">Store Distribution</h6>
 
-			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-				{formattedData?.StreamingPlatform.map((platform, index) => (
-					<Card key={index} className={`p-4 cursor-pointer text-center transition-all ${selectedPlatforms.includes(platform.value) ? 'border-primary bg-black/50' : 'border-gray-600 hover:border-gray-400'}`} onClick={() => handleToggle(platform.value)}>
-						<div className="flex flex-col items-center">
-							<div className="relative w-12 h-12 rounded-full bg-gray-700 mb-3 flex items-center justify-center">
-								<Image src={`/images/platform_logos/${platform.value.toLowerCase()}.svg`} alt={platform.label} className="rounded-full text-[0rem] text-opacity-0 bg-gray-700 z-[2]" fill objectFit="cover" style={{ filter: selectedPlatforms.includes(platform.value) ? 'none' : 'grayscale(1)' }} />
-								<span className="text-xl font-bold">{platform.label.charAt(0)}</span>
-							</div>
-							<p className="text-sm font-medium">{platform.label}</p>
-						</div>
-					</Card>
-				))}
-			</div>
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">{formattedData?.StreamingPlatform.map((platform, index) => <Step4MediaDistributionPlatformCard index={index} key={index} platform={platform} handleToggle={handleToggle} selectedPlatforms={selectedPlatforms} />)}</div>
 
 			<div className="flex justify-between items-center">
 				<Button onClick={() => setCurrentStep('coverArt')} size="lg" variant={'outline'} className="rounded-full">

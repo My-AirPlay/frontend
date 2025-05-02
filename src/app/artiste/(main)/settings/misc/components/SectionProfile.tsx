@@ -20,15 +20,15 @@ export default function SectionProfile() {
 		firstName: artist?.firstName || '',
 		lastName: artist?.lastName || '',
 		artistName: artist?.artistName || '',
-		phoneNumber: artist?.email || '',
+		phoneNumber: artist?.phoneNumber || '',
 		email: artist?.email || '',
-		bio: '',
-		Instagram: '',
-		soundcloud: '',
-		tiktok: '',
-		twitter: '',
-		facebook: '',
-		website: ''
+		bio: artist?.bio || '',
+		Instagram: artist?.socialLinks?.instagram || '',
+		soundcloud: artist?.socialLinks?.soundCloud || '',
+		tiktok: artist?.socialLinks?.tiktok || '',
+		twitter: artist?.socialLinks?.twitter || '',
+		facebook: artist?.socialLinks?.facebook || '',
+		website: artist?.socialLinks?.website || ''
 	};
 
 	const form = useForm<ProfileFormValues>({

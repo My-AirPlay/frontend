@@ -13,7 +13,7 @@ const FormStep = ({ title, description, formFields, formik, children }: FormStep
 				<div className="grid grid-cols-1 md:grid-cols-2 md:gap-8 gap-[26px] mb-[26px] md:mb-[56px] ">
 					{formFields.map(field => (
 						<fieldset key={field.id} className="flex flex-col gap-5">
-							<Input label={field.label} inputSize={'authInput'} id={field.id} {...field.props} {...formik.getFieldProps(field.id)} errormessage={formik.touched[field.id] ? (formik.errors[field.id] as string) : ''} />
+							<Input label={field.label} inputSize={'authInput'} id={field.id} {...field.props} {...formik.getFieldProps(field.id)} hasError={!!(formik.touched[field.id] && formik.errors[field.id])} errormessage={formik.touched[field.id] ? (formik.errors[field.id] as string) : ''} />
 						</fieldset>
 					))}
 				</div>

@@ -15,48 +15,48 @@ export const useGetDashboardData = () => {
 };
 
 // Core data types
-interface PeriodMetrics {
+export interface PeriodMetrics {
 	totalStreams: number;
 	totalRevenue: number;
 }
 
-interface StreamRevenue {
+export interface StreamRevenue {
 	streams: number;
 	revenue: number;
 }
 
 // Period data
-interface PeriodData {
+export interface PeriodData {
 	[period: string]: StreamRevenue;
 }
 
-interface PeriodSummary {
+export interface PeriodSummary {
 	[period: string]: PeriodMetrics;
 }
 
 // Performance data
-interface PerformanceItem {
+export interface PerformanceItem {
 	totalStreams: number;
 	totalRevenue: number;
 	periodBreakdown: PeriodData;
 }
 
-interface TrackPerformance extends PerformanceItem {
+export interface TrackPerformance extends PerformanceItem {
 	trackTitle: string;
 }
 
-interface NamedPerformanceItem extends PerformanceItem {
+export interface NamedPerformanceItem extends PerformanceItem {
 	name: string;
 }
 
 // History data
-interface HistoryItem {
+export interface HistoryItem {
 	period: string;
 	value: number;
 }
 
 // Main API response
-interface APIResponse {
+export interface APIResponse {
 	// Summary metrics
 	totalStreams: number;
 	totalRevenue: number;

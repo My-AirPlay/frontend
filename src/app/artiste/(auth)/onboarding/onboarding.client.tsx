@@ -6,13 +6,13 @@ import OnboardingBankDetail from './_components/bank-details/bank-details';
 import OnboardingSocialMedia from './_components/social-media-links/social-media-links';
 import PreviewOnboarding from './_components/preview-onboarding/preview-onboarding';
 import React, { useState } from 'react';
-import CustomAppLayout from '@/components/app-layout/app-layout';
 import { useArtisteContext } from '@/contexts/AuthContextArtist';
 import { getArtistProfile } from '@/contexts/AuthContextArtist';
 import { redirect } from 'next/navigation';
+import { Spinner } from '@/components/icons';
 
 const OnboardingClientPage = () => {
-	const { artist } = useArtisteContext();
+	const { artist, isLoading } = useArtisteContext();
 	React.useEffect(() => {
 		const fetchUser = async () => {
 			const user = await getArtistProfile();
@@ -30,15 +30,21 @@ const OnboardingClientPage = () => {
 		[OnboardingSteps.SOCIAL_LINK]: <OnboardingSocialMedia email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
 		[OnboardingSteps.PREVIEW]: <PreviewOnboarding setCurrentStep={setCurrentStep} />
 	};
-
-	if (!artist) {
+	if (isLoading) {
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<Spinner />
+			</div>
+		);
+	}
+	if (!isLoading && !artist) {
 		redirect('/artiste/login');
 	}
 
-	if (!onboardingStagesKey.includes(artist?.stage)) {
+	if (!!artist && !onboardingStagesKey.includes(artist?.stage)) {
 		redirect('/artiste/dashboard');
 	}
-	return <CustomAppLayout>{screens[currentStep]}</CustomAppLayout>;
+	return <>{screens[currentStep]}</>;
 };
 
 export default OnboardingClientPage;

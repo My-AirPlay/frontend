@@ -17,7 +17,7 @@ export const deleteAxiosDefaultToken = () => {
 
 export const handleInactiveAccountRedirect = () => {
 	if (typeof window !== 'undefined') {
-		window.location.href = '/login';
+		window.location.href = '/artiste/login';
 	}
 };
 
@@ -38,16 +38,11 @@ APIAxios.interceptors.response.use(
 				duration: 10000
 			});
 			deleteAxiosDefaultToken();
-			// Check for a custom flag in the request config to skip redirect
-			const skipRedirect = error.config?.skipAuthRedirect;
-			if (typeof window !== undefined && !skipRedirect) {
-				// Only redirect if skipRedirect is not true
-				console.log('window location redirecting due to 401');
+			if (typeof window !== undefined) {
+				console.log('window location');
 				window.location.href = '/';
-			} else if (skipRedirect) {
-				console.log('Skipping redirect for 401 due to skipAuthRedirect flag.');
 			}
-			return Promise.reject(error); // Always reject the promise for 401
+			return Promise.reject(error);
 		} else {
 			return Promise.reject(error);
 		}

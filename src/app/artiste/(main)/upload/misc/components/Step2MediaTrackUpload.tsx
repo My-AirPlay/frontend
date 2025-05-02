@@ -7,14 +7,14 @@ import { MoveLeft, MoveRight, Music } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { AppLogo } from '@/components/icons';
 import { getFileSize } from '@/utils/numbers';
 import { cn } from '@/lib/utils';
 
 import { useMediaUploadStore } from '../store';
 
 export default function Step2MediaTrackUpload() {
-	const { setMediaFile, setCurrentStep, mediaFileId, getMediaFile, initializeDB, isDBInitialized } = useMediaUploadStore();
+	const { setMediaFile, setCurrentStep, mediaFileId, getMediaFile, initializeDB, isDBInitialized, mediaType } = useMediaUploadStore();
+	const isAudio = mediaType === 'Track' || mediaType === 'PlayBack';
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 	const [uploadProgress, setUploadProgress] = useState(0);
 	const [isDragging, setIsDragging] = useState(false);
@@ -43,7 +43,7 @@ export default function Step2MediaTrackUpload() {
 		if (!file) return;
 
 		// Validate file type
-		const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'video/mp4'];
+		const validTypes = isAudio ? ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'] : ['video/mp4'];
 		if (!validTypes.includes(file.type)) {
 			toast.error('Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.');
 			return;
@@ -92,7 +92,8 @@ export default function Step2MediaTrackUpload() {
 		const file = e.dataTransfer.files?.[0];
 		if (!file) return;
 
-		const validTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'video/mp4'];
+		const validTypes = isAudio ? ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'] : ['video/mp4'];
+
 		if (!validTypes.includes(file.type)) {
 			toast.error('Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.');
 			return;
@@ -120,21 +121,22 @@ export default function Step2MediaTrackUpload() {
 		<div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto ">
 			<section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
 				<label className={cn('border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-h-[300px]', isDragging ? 'border-solid border-3' : 'border-primary')} onDragEnter={handleDrag} onDragOver={handleDrag} onDragLeave={handleDrag} onDrop={handleDrop} id="track-upload-input ">
-					<AppLogo width={150} height={150} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
-					<p className="text-white/30 mb-6 text-xs max-w-[30ch]">Drag and drop your audio file here, or click the button below</p>
+					<Music width={100} height={100} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
+					<p className="text-white/30 mb-6 text-xs max-w-[30ch] text-center text-balance">Drag and drop your audio file here, or click the button below</p>
 				</label>
 				<div className="flex flex-col items-start justify-center">
-					<input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange} accept=".mp3,.mp4,.wav,.ogg" id="track-upload-input " />
+					<input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange} accept={isAudio ? '.mp3,.wav,.ogg,.flac' : '.mp4'} id="track-upload-input" />
 
 					<div className="mb-6 text-left">
 						<h3 className="text-base font-semibold mb-4">Track upload requirements</h3>
 						<ul className="list-disc pl-6 space-y-2 text-[0.9rem] text-white/70 text-left">
-							<li>File format: MP3, MP4</li>
-							<li>Size: at least 3000×3000 pixels</li>
-							<li>File size: Image file size cannot be greater than 35 MB</li>
-							<li>Video mode: Best quality</li>
-							<li>Resolution: 72 dpi</li>
-							<li>Your track must not contain any logos, website address, release dates or advertisements of any kind.</li>
+							<li>
+								File format:
+								{isAudio ? 'MP3, WAV, OGG, FLAC' : 'MP4'}
+							</li>
+							{isAudio && <li>Audio quality: 44.1kHz or greater, 16-bit stereo or 24-bit stereo</li>}
+							{!isAudio && <li>Video mode: Best quality</li>}
+							<li>File size: File size cannot be greater than 35 MB</li>
 						</ul>
 					</div>
 
