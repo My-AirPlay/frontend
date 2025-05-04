@@ -218,7 +218,7 @@ const ArtistRevenue: React.FC = () => {
 						<LoadingBox size={62} />
 					</div>
 				) : (
-					<DataTable data={artists?.data || []} columns={artistsColumns} showCheckbox={true} pagination={true} defaultRowsPerPage={Number(limit)} pageCount={pageCount} />
+					<DataTable data={artists?.data || []} columns={artistsColumns} showCheckbox={false} pagination={true} defaultRowsPerPage={Number(limit)} pageCount={pageCount} />
 					// Updated DataTable props: added default data [], used Number(limit), pageCount
 				)}
 			</div>

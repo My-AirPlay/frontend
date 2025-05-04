@@ -186,13 +186,13 @@ const Dashboard: React.FC = () => {
 
 	return (
 		<div className="space-y-8">
-			<div className="flex justify-between">
+			{/* <div className="flex justify-between">
 				<div></div>
 				<Button variant="outline" className="flex items-center gap-2 bg-secondary border-border text-foreground hover:bg-accent/50">
 					<Filter size={16} />
 					<span className="max-sm:hidden">Filter</span>
 				</Button>
-			</div>
+			</div> */}
 
 			<section className="grid md:[grid-template-columns:repeat(auto-fill,minmax(375px,1fr))] gap-x-8 gap-y-5 md:items-stretch">
 				<article className="flex flex-col">

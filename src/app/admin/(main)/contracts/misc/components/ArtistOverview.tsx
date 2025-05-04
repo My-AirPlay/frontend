@@ -35,6 +35,7 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }
 			{
 				onSuccess: () => {
 					artistRefetch();
+					toast.success('Artist deal updated');
 				},
 				onError: error => {
 					toast.error(error.message || 'Failed to update deal');
