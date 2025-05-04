@@ -116,6 +116,26 @@ interface Tracks {
 	__v: number;
 }
 
+// Interface for Withdrawal Slip Data
+export interface WithdrawalSlipData {
+	_id: string;
+	artistId: string;
+	status: string; // e.g., 'Pending', 'Approved', 'Rejected', 'Paid'
+	payoutCurrency: string; // e.g., 'USD', 'NGN'
+	dealType: string; // e.g., 'Fixed', 'Percentage'
+	rate?: number; // Optional, relevant for Percentage deals
+	proposedAmount: number; // Amount initially proposed/calculated
+	requestedAmount: number; // Amount requested by the artist
+	finalAmountSent?: number; // Actual amount sent after processing/fees
+	notes?: string; // Admin notes or reasons
+	activityPeriod: string; // e.g., "September 2023"
+	createdAt: string; // ISO Date String
+	updatedAt: string; // ISO Date String
+	__v?: number; // MongoDB version key
+	totalRoyalty?: number | string; // Added based on usage in artist-revenue page
+	// Add other relevant fields like artist details if nested
+}
+
 // Interface for the main directory (album/collection)
 export interface Album {
 	_id: string;
