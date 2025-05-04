@@ -1,30 +1,11 @@
 import APIAxios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { WithdrawalSlipData } from '@/lib/types'; // Import the type
 
 // Define the query parameters interface
 interface GetOneWithdrawalSlipParams {
 	transactionId: string;
 	artistId: string; // Include artistId if needed by the endpoint
-}
-
-// Define the expected API response structure (adjust based on actual data)
-// Reusing the interface from ArtistTransactions might work if the structure is identical
-interface WithdrawalSlipData {
-	_id: string;
-	artistId: string;
-	status: string;
-	payoutCurrency: string;
-	dealType: string;
-	rate: number;
-	proposedAmount: number;
-	requestedAmount: number;
-	finalAmountSent?: number; // Add fields relevant to the update page
-	notes?: string;
-	activityPeriod: string;
-	createdAt: string;
-	updatedAt: string;
-	__v?: number;
-	// Add other relevant fields like artist details if nested
 }
 
 interface GetOneWithdrawalSlipResponse {
