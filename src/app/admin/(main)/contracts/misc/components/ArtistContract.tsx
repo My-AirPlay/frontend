@@ -74,18 +74,20 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 			mutateCreateContract(payload, {
 				onSuccess: () => {
 					artistRefetch();
+					toast.success('Artist contract created');
 				},
 				onError: error => {
-					toast.error(error.message || 'Failed to update deal');
+					toast.error(error.message || 'Failed to create contract');
 				}
 			});
 		} else {
 			mutateUpdateContract(payload, {
 				onSuccess: () => {
 					artistRefetch();
+					toast.success('Artist contract updated');
 				},
 				onError: error => {
-					toast.error(error.message || 'Failed to update deal');
+					toast.error(error.message || 'Failed to update contract');
 				}
 			});
 		}

@@ -214,7 +214,6 @@ export interface ReportItem {
 	createdAt: string; // ISO Date String
 	updatedAt: string; // ISO Date String
 	__v?: number; // MongoDB version key (Made optional)
-	'**v'?: number; // Handle potential typo in source data
 }
 
 // Represents the entire structure of the placeholderParseData object
