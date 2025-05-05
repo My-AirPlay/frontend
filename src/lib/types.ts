@@ -116,6 +116,26 @@ interface Tracks {
 	__v: number;
 }
 
+// Interface for Withdrawal Slip Data
+export interface WithdrawalSlipData {
+	_id: string;
+	artistId: string;
+	status: string; // e.g., 'Pending', 'Approved', 'Rejected', 'Paid'
+	payoutCurrency: string; // e.g., 'USD', 'NGN'
+	dealType: string; // e.g., 'Fixed', 'Percentage'
+	rate?: number; // Optional, relevant for Percentage deals
+	proposedAmount: number; // Amount initially proposed/calculated
+	requestedAmount: number; // Amount requested by the artist
+	finalAmountSent?: number; // Actual amount sent after processing/fees
+	notes?: string; // Admin notes or reasons
+	activityPeriod: string; // e.g., "September 2023"
+	createdAt: string; // ISO Date String
+	updatedAt: string; // ISO Date String
+	__v?: number; // MongoDB version key
+	totalRoyalty?: number | string; // Added based on usage in artist-revenue page
+	// Add other relevant fields like artist details if nested
+}
+
 // Interface for the main directory (album/collection)
 export interface Album {
 	_id: string;
@@ -205,17 +225,15 @@ interface FullReport {
 
 // Represents a single top-level item in the main data array
 export interface ReportItem {
-	userId: string | null; // Can be null
+	_id: string;
+	userId?: string | null; // Made optional to handle cases where it might be missing
+	artistId: string;
 	artistName: string;
-	upcCode: string;
-	isrcCode: string;
-	catalogueId: string;
-	activityPeriod: string; // e.g., 'Sep-23'
+	activityPeriod: string; // e.g., "September 2023"
 	fullReports: FullReport[];
-	_id: string; // Likely MongoDB ObjectId as string
-	createdAt: string; // ISO Date string
-	updatedAt: string; // ISO Date string
-	__v: number; // MongoDB version key
+	createdAt: string; // ISO Date String
+	updatedAt: string; // ISO Date String
+	__v?: number; // MongoDB version key (Made optional)
 }
 
 // Represents the entire structure of the placeholderParseData object
@@ -226,11029 +244,142 @@ export interface PlaceholderParseData {
 export const placeholderParseData = {
 	data: [
 		{
-			userId: '67a0d183125b32b4b96b8e34',
+			_id: '680d1dbc2f3e4681ec7748ca',
+			artistId: '67a0d183125b32b4b96b8e34',
 			artistName: 'Xtofa',
-			upcCode: '197077506990',
-			isrcCode: 'QZTV32204282',
-			catalogueId: 'CAT700264',
-			activityPeriod: 'Sep-23',
+			activityPeriod: 'September 2023',
 			fullReports: [
 				{
 					trackTitle: 'Simple and Sweet Refix',
+					upcCode: '197077506990',
+					isrcCode: 'QZTV32204282',
+					catalogueId: 'CAT700264',
 					totalRoyaltyUSD: {
 						name: 'Total Royalty in USD',
-						value: -7.397930400000005,
+						value: 80.9349685,
 						royaltyConverted: [
 							{
-								amount: -6.288240840000005,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -11836.688640000008,
-								rate: 1600,
+								amount: 113349.42338425,
+								rate: 1400.5,
 								fromCurrency: 'USD',
 								toCurrency: 'NGN'
+							},
+							{
+								amount: 72.84147165,
+								rate: 0.9,
+								fromCurrency: 'USD',
+								toCurrency: 'GBP'
 							}
 						]
 					},
-					totalStreams: 42,
+					totalStreams: 31460,
 					dspData: [
 						{
 							name: 'Spotify',
-							streams: 42,
+							streams: 30197,
 							royalty: {
 								name: 'Spotify',
-								value: -7.397930400000005,
+								value: 75.4326837,
 								royaltyConverted: [
 									{
-										amount: -6.288240840000005,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11836.688640000008,
-										rate: 1600,
+										amount: 105643.47352185,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'JAM',
-							streams: 3,
-							royalty: {
-								name: 'JAM',
-								value: -0.009602,
-								royaltyConverted: [
-									{
-										amount: -0.0081617,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -15.363199999999999,
-										rate: 1600,
+										amount: 67.88941533,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'ZMB',
+							name: 'Apple Music',
+							streams: 946,
+							royalty: {
+								name: 'Apple Music',
+								value: 3.7293000000000003,
+								royaltyConverted: [
+									{
+										amount: 5222.88465,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.3563700000000005,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'YouTube Streaming',
+							streams: 282,
+							royalty: {
+								name: 'YouTube Streaming',
+								value: 1.1349464,
+								royaltyConverted: [
+									{
+										amount: 1589.4924332,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.0214517600000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Amazon Music Unlimited',
 							streams: 25,
 							royalty: {
-								name: 'ZMB',
-								value: -0.007621,
+								name: 'Amazon Music Unlimited',
+								value: 0.20667970000000002,
 								royaltyConverted: [
 									{
-										amount: -0.00647785,
-										rate: 0.85,
+										amount: 289.45491985,
+										rate: 1400.5,
 										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -12.1936,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 2,
-							royalty: {
-								name: 'BWA',
-								value: -0.004012,
-								royaltyConverted: [
-									{
-										amount: -0.0034102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.4192,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 1,
-							royalty: {
-								name: 'GEO',
-								value: -0.003817,
-								royaltyConverted: [
-									{
-										amount: -0.00324445,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.1072,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 11,
-							royalty: {
-								name: 'NAM',
-								value: -0.000042,
-								royaltyConverted: [
-									{
-										amount: -0.0000357,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0672,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 42,
-							royalty: {
-								name: 'Streaming',
-								value: -7.397930400000005,
-								royaltyConverted: [
-									{
-										amount: -6.288240840000005,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11836.688640000008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			],
-			_id: '67ffa831bb691d68c4468af8',
-			createdAt: '2025-04-16T12:53:05.384Z',
-			updatedAt: '2025-04-16T12:53:05.384Z',
-			__v: 0
-		},
-		{
-			userId: '67a0d183125b32b4b96b8e34',
-			artistName: 'Xtofa',
-			upcCode: '197077506990',
-			isrcCode: 'QZTV32204282',
-			catalogueId: 'CAT700264',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Simple and Sweet Refix',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -7.397930400000005,
-						royaltyConverted: [
-							{
-								amount: -6.288240840000005,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -11836.688640000008,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 42,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 42,
-							royalty: {
-								name: 'Spotify',
-								value: -7.397930400000005,
-								royaltyConverted: [
-									{
-										amount: -6.288240840000005,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11836.688640000008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'JAM',
-							streams: 3,
-							royalty: {
-								name: 'JAM',
-								value: -0.009602,
-								royaltyConverted: [
-									{
-										amount: -0.0081617,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -15.363199999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 25,
-							royalty: {
-								name: 'ZMB',
-								value: -0.007621,
-								royaltyConverted: [
-									{
-										amount: -0.00647785,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -12.1936,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 2,
-							royalty: {
-								name: 'BWA',
-								value: -0.004012,
-								royaltyConverted: [
-									{
-										amount: -0.0034102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.4192,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 1,
-							royalty: {
-								name: 'GEO',
-								value: -0.003817,
-								royaltyConverted: [
-									{
-										amount: -0.00324445,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.1072,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 11,
-							royalty: {
-								name: 'NAM',
-								value: -0.000042,
-								royaltyConverted: [
-									{
-										amount: -0.0000357,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0672,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 42,
-							royalty: {
-								name: 'Streaming',
-								value: -7.397930400000005,
-								royaltyConverted: [
-									{
-										amount: -6.288240840000005,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11836.688640000008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: '67cefb10ccf45e5ddef7447a',
-			artistName: 'Magnito',
-			upcCode: '197077639230',
-			isrcCode: 'QZWDD2203348',
-			catalogueId: 'CAT707423',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'E.T.C',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -4.354489500000002,
-						royaltyConverted: [
-							{
-								amount: -3.701316075000002,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -6967.183200000004,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 97,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 96,
-							royalty: {
-								name: 'Spotify',
-								value: -4.354502500000002,
-								royaltyConverted: [
-									{
-										amount: -3.701327125000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6967.204000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: -0.626205,
-								royaltyConverted: [
-									{
-										amount: -0.53227425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -1001.928,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 45,
-							royalty: {
-								name: 'ZMB',
-								value: -0.010094,
-								royaltyConverted: [
-									{
-										amount: -0.0085799,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -16.1504,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 9,
-							royalty: {
-								name: 'MLT',
-								value: -0.004992,
-								royaltyConverted: [
-									{
-										amount: -0.0042432,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -7.9872,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 4,
-							royalty: {
-								name: 'GEO',
-								value: -0.004543,
-								royaltyConverted: [
-									{
-										amount: -0.00386155,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -7.268800000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 6,
-							royalty: {
-								name: 'NAM',
-								value: -0.004103,
-								royaltyConverted: [
-									{
-										amount: -0.00348755,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.5648,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 16,
-							royalty: {
-								name: 'CIV',
-								value: -0.003573,
-								royaltyConverted: [
-									{
-										amount: -0.00303705,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -5.716799999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MOZ',
-							streams: 9,
-							royalty: {
-								name: 'MOZ',
-								value: -0.003561,
-								royaltyConverted: [
-									{
-										amount: -0.0030268499999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -5.6975999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BGD',
-							streams: 1,
-							royalty: {
-								name: 'BGD',
-								value: -0.003079,
-								royaltyConverted: [
-									{
-										amount: -0.00261715,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9264,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ARM',
-							streams: 1,
-							royalty: {
-								name: 'ARM',
-								value: -0.003085,
-								royaltyConverted: [
-									{
-										amount: -0.00262225,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.936,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 3,
-							royalty: {
-								name: 'BWA',
-								value: -0.000012,
-								royaltyConverted: [
-									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'AZE',
-							streams: 2,
-							royalty: {
-								name: 'AZE',
-								value: -0.000007,
-								royaltyConverted: [
-									{
-										amount: -0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 97,
-							royalty: {
-								name: 'Streaming',
-								value: -4.354489500000002,
-								royaltyConverted: [
-									{
-										amount: -3.701316075000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6967.183200000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Girl Problem',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -2.550402499999999,
-						royaltyConverted: [
-							{
-								amount: -2.167842124999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -4080.643999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 73,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 73,
-							royalty: {
-								name: 'Spotify',
-								value: -2.550402499999999,
-								royaltyConverted: [
-									{
-										amount: -2.167842124999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4080.643999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'BWA',
-							streams: 7,
-							royalty: {
-								name: 'BWA',
-								value: -0.007124,
-								royaltyConverted: [
-									{
-										amount: -0.0060554,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11.3984,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 21,
-							royalty: {
-								name: 'ZMB',
-								value: -0.006922,
-								royaltyConverted: [
-									{
-										amount: -0.0058837,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11.0752,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 4,
-							royalty: {
-								name: 'NAM',
-								value: -0.004095,
-								royaltyConverted: [
-									{
-										amount: -0.0034807499999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.552,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'JAM',
-							streams: 1,
-							royalty: {
-								name: 'JAM',
-								value: -0.003094,
-								royaltyConverted: [
-									{
-										amount: -0.0026298999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9504,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BLR',
-							streams: 22,
-							royalty: {
-								name: 'BLR',
-								value: -0.00009,
-								royaltyConverted: [
-									{
-										amount: -0.0000765,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.14400000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 10,
-							royalty: {
-								name: 'CIV',
-								value: -0.00004,
-								royaltyConverted: [
-									{
-										amount: -0.000034,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 4,
-							royalty: {
-								name: 'GEO',
-								value: -0.00001,
-								royaltyConverted: [
-									{
-										amount: -0.0000085,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 3,
-							royalty: {
-								name: 'MUS',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ARM',
-							streams: 1,
-							royalty: {
-								name: 'ARM',
-								value: 0.000012,
-								royaltyConverted: [
-									{
-										amount: 0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 73,
-							royalty: {
-								name: 'Streaming',
-								value: -2.550402499999999,
-								royaltyConverted: [
-									{
-										amount: -2.167842124999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4080.643999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Philomina [Episode 1]',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.06218450000000001,
-						royaltyConverted: [
-							{
-								amount: -0.05285682500000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -99.49520000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'If I Get Money Eh',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000008,
-						royaltyConverted: [
-							{
-								amount: -0.000006799999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.012799999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000008,
-								royaltyConverted: [
-									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GEO',
-							streams: 3,
-							royalty: {
-								name: 'GEO',
-								value: -0.000008,
-								royaltyConverted: [
-									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000008,
-								royaltyConverted: [
-									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'If To Say I Be Girl Ehn',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Problem',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Shanowole',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'GOAT',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Phakama',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Pandemic',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Beginning',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Yama',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Relationship Be Like',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000023,
-						royaltyConverted: [
-							{
-								amount: 0.00001955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0368,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Nack Me',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Meaning of Love',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Girls',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Shatawalle',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'My Boo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Dem Go Hear Word',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			],
-			_id: '67ffa832bb691d68c4468afc',
-			createdAt: '2025-04-16T12:53:06.041Z',
-			updatedAt: '2025-04-16T12:53:06.041Z',
-			__v: 0
-		},
-		{
-			userId: '67cefb10ccf45e5ddef7447a',
-			artistName: 'Magnito',
-			upcCode: '197077639230',
-			isrcCode: 'QZWDD2203348',
-			catalogueId: 'CAT707423',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'E.T.C',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -4.354489500000002,
-						royaltyConverted: [
-							{
-								amount: -3.701316075000002,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -6967.183200000004,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 97,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 96,
-							royalty: {
-								name: 'Spotify',
-								value: -4.354502500000002,
-								royaltyConverted: [
-									{
-										amount: -3.701327125000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6967.204000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: -0.626205,
-								royaltyConverted: [
-									{
-										amount: -0.53227425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -1001.928,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 45,
-							royalty: {
-								name: 'ZMB',
-								value: -0.010094,
-								royaltyConverted: [
-									{
-										amount: -0.0085799,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -16.1504,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 9,
-							royalty: {
-								name: 'MLT',
-								value: -0.004992,
-								royaltyConverted: [
-									{
-										amount: -0.0042432,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -7.9872,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 4,
-							royalty: {
-								name: 'GEO',
-								value: -0.004543,
-								royaltyConverted: [
-									{
-										amount: -0.00386155,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -7.268800000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 6,
-							royalty: {
-								name: 'NAM',
-								value: -0.004103,
-								royaltyConverted: [
-									{
-										amount: -0.00348755,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.5648,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 16,
-							royalty: {
-								name: 'CIV',
-								value: -0.003573,
-								royaltyConverted: [
-									{
-										amount: -0.00303705,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -5.716799999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MOZ',
-							streams: 9,
-							royalty: {
-								name: 'MOZ',
-								value: -0.003561,
-								royaltyConverted: [
-									{
-										amount: -0.0030268499999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -5.6975999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BGD',
-							streams: 1,
-							royalty: {
-								name: 'BGD',
-								value: -0.003079,
-								royaltyConverted: [
-									{
-										amount: -0.00261715,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9264,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ARM',
-							streams: 1,
-							royalty: {
-								name: 'ARM',
-								value: -0.003085,
-								royaltyConverted: [
-									{
-										amount: -0.00262225,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.936,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 3,
-							royalty: {
-								name: 'BWA',
-								value: -0.000012,
-								royaltyConverted: [
-									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'AZE',
-							streams: 2,
-							royalty: {
-								name: 'AZE',
-								value: -0.000007,
-								royaltyConverted: [
-									{
-										amount: -0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 97,
-							royalty: {
-								name: 'Streaming',
-								value: -4.354489500000002,
-								royaltyConverted: [
-									{
-										amount: -3.701316075000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6967.183200000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Girl Problem',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -2.550402499999999,
-						royaltyConverted: [
-							{
-								amount: -2.167842124999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -4080.643999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 73,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 73,
-							royalty: {
-								name: 'Spotify',
-								value: -2.550402499999999,
-								royaltyConverted: [
-									{
-										amount: -2.167842124999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4080.643999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'BWA',
-							streams: 7,
-							royalty: {
-								name: 'BWA',
-								value: -0.007124,
-								royaltyConverted: [
-									{
-										amount: -0.0060554,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11.3984,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 21,
-							royalty: {
-								name: 'ZMB',
-								value: -0.006922,
-								royaltyConverted: [
-									{
-										amount: -0.0058837,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -11.0752,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 4,
-							royalty: {
-								name: 'NAM',
-								value: -0.004095,
-								royaltyConverted: [
-									{
-										amount: -0.0034807499999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.552,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'JAM',
-							streams: 1,
-							royalty: {
-								name: 'JAM',
-								value: -0.003094,
-								royaltyConverted: [
-									{
-										amount: -0.0026298999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9504,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BLR',
-							streams: 22,
-							royalty: {
-								name: 'BLR',
-								value: -0.00009,
-								royaltyConverted: [
-									{
-										amount: -0.0000765,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.14400000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 10,
-							royalty: {
-								name: 'CIV',
-								value: -0.00004,
-								royaltyConverted: [
-									{
-										amount: -0.000034,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 4,
-							royalty: {
-								name: 'GEO',
-								value: -0.00001,
-								royaltyConverted: [
-									{
-										amount: -0.0000085,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 3,
-							royalty: {
-								name: 'MUS',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ARM',
-							streams: 1,
-							royalty: {
-								name: 'ARM',
-								value: 0.000012,
-								royaltyConverted: [
-									{
-										amount: 0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 73,
-							royalty: {
-								name: 'Streaming',
-								value: -2.550402499999999,
-								royaltyConverted: [
-									{
-										amount: -2.167842124999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4080.643999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Philomina [Episode 1]',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.06218450000000001,
-						royaltyConverted: [
-							{
-								amount: -0.05285682500000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -99.49520000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'If I Get Money Eh',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000008,
-						royaltyConverted: [
-							{
-								amount: -0.000006799999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.012799999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000008,
-								royaltyConverted: [
-									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GEO',
-							streams: 3,
-							royalty: {
-								name: 'GEO',
-								value: -0.000008,
-								royaltyConverted: [
-									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000008,
-								royaltyConverted: [
-									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'If To Say I Be Girl Ehn',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Problem',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Shanowole',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'GOAT',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Phakama',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Pandemic',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Beginning',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Yama',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Relationship Be Like',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000023,
-						royaltyConverted: [
-							{
-								amount: 0.00001955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0368,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Nack Me',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Meaning of Love',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Girls',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Shatawalle',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'My Boo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Dem Go Hear Word',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Portable',
-			upcCode: '197773557203',
-			isrcCode: 'QZTV32368799',
-			catalogueId: 'CAT891956',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'My Testimony',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -2.6686491,
-						royaltyConverted: [
-							{
-								amount: -2.268351735,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -4269.83856,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 84,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 84,
-							royalty: {
-								name: 'Spotify',
-								value: -2.6686491,
-								royaltyConverted: [
-									{
-										amount: -2.268351735,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4269.83856,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 18,
-							royalty: {
-								name: 'ZMB',
-								value: -0.007612,
-								royaltyConverted: [
-									{
-										amount: -0.0064702,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -12.1792,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 50,
-							royalty: {
-								name: 'CIV',
-								value: -0.006797,
-								royaltyConverted: [
-									{
-										amount: -0.00577745,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -10.8752,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 1,
-							royalty: {
-								name: 'GEO',
-								value: -0.003817,
-								royaltyConverted: [
-									{
-										amount: -0.00324445,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -6.1072,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ALB',
-							streams: 1,
-							royalty: {
-								name: 'ALB',
-								value: -0.003081,
-								royaltyConverted: [
-									{
-										amount: -0.00261885,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9296,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 2,
-							royalty: {
-								name: 'MUS',
-								value: -0.0030919999999999997,
-								royaltyConverted: [
-									{
-										amount: -0.0026282,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9472,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 3,
-							royalty: {
-								name: 'KAZ',
-								value: -0.003082,
-								royaltyConverted: [
-									{
-										amount: -0.0026197,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9312000000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 6,
-							royalty: {
-								name: 'MLT',
-								value: -0.000023,
-								royaltyConverted: [
-									{
-										amount: -0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 3,
-							royalty: {
-								name: 'BWA',
-								value: -0.000012,
-								royaltyConverted: [
-									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 84,
-							royalty: {
-								name: 'Streaming',
-								value: -2.6686491,
-								royaltyConverted: [
-									{
-										amount: -2.268351735,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4269.83856,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Azaman',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00064,
-						royaltyConverted: [
-							{
-								amount: -0.000544,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -1.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 179,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 179,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00064,
-								royaltyConverted: [
-									{
-										amount: -0.000544,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -1.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 115,
-							royalty: {
-								name: 'CIV',
-								value: -0.000449,
-								royaltyConverted: [
-									{
-										amount: -0.00038165,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.7184,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 21,
-							royalty: {
-								name: 'ZMB',
-								value: -0.00005,
-								royaltyConverted: [
-									{
-										amount: -0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 12,
-							royalty: {
-								name: 'MLT',
-								value: -0.000046,
-								royaltyConverted: [
-									{
-										amount: -0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MOZ',
-							streams: 9,
-							royalty: {
-								name: 'MOZ',
-								value: -0.000037,
-								royaltyConverted: [
-									{
-										amount: -0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUN',
-							streams: 7,
-							royalty: {
-								name: 'TUN',
-								value: -0.000028,
-								royaltyConverted: [
-									{
-										amount: -0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 7,
-							royalty: {
-								name: 'BWA',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 2,
-							royalty: {
-								name: 'GEO',
-								value: -0.000005,
-								royaltyConverted: [
-									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'JAM',
-							streams: 4,
-							royalty: {
-								name: 'JAM',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 2,
-							royalty: {
-								name: 'MUS',
-								value: 0.000004,
-								royaltyConverted: [
-									{
-										amount: 0.0000033999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0063999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 179,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00064,
-								royaltyConverted: [
-									{
-										amount: -0.000544,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -1.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Am Not a Prisoner',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00033399999999999993,
-						royaltyConverted: [
-							{
-								amount: -0.00028389999999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.5343999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 127,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 125,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0003599999999999999,
-								royaltyConverted: [
-									{
-										amount: -0.0003059999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.5759999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 2,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000026,
-								royaltyConverted: [
-									{
-										amount: 0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 76,
-							royalty: {
-								name: 'CIV',
-								value: -0.000296,
-								royaltyConverted: [
-									{
-										amount: -0.0002516,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.47359999999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 26,
-							royalty: {
-								name: 'ZMB',
-								value: -0.00006,
-								royaltyConverted: [
-									{
-										amount: -0.000051,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.096,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 9,
-							royalty: {
-								name: 'NAM',
-								value: -0.000035,
-								royaltyConverted: [
-									{
-										amount: -0.000029749999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.055999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 7,
-							royalty: {
-								name: 'MLT',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 1,
-							royalty: {
-								name: 'GEO',
-								value: -0.000004,
-								royaltyConverted: [
-									{
-										amount: -0.0000033999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0063999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 2,
-							royalty: {
-								name: 'MUS',
-								value: 0.000004,
-								royaltyConverted: [
-									{
-										amount: 0.0000033999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0063999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ARM',
-							streams: 1,
-							royalty: {
-								name: 'ARM',
-								value: 0.000012,
-								royaltyConverted: [
-									{
-										amount: 0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BGD',
-							streams: 1,
-							royalty: {
-								name: 'BGD',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'UKR',
-							streams: 2,
-							royalty: {
-								name: 'UKR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 2,
-							royalty: {
-								name: 'NGA',
-								value: 0.000026,
-								royaltyConverted: [
-									{
-										amount: 0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 127,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00033399999999999993,
-								royaltyConverted: [
-									{
-										amount: -0.00028389999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.5343999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Apostle',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000275,
-						royaltyConverted: [
-							{
-								amount: -0.00023375000000000002,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.44,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 102,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 101,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000288,
-								royaltyConverted: [
-									{
-										amount: -0.0002448,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.4608,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 71,
-							royalty: {
-								name: 'CIV',
-								value: -0.000277,
-								royaltyConverted: [
-									{
-										amount: -0.00023545,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.44320000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 11,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 6,
-							royalty: {
-								name: 'NAM',
-								value: -0.000023,
-								royaltyConverted: [
-									{
-										amount: -0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 3,
-							royalty: {
-								name: 'MLT',
-								value: -0.000012,
-								royaltyConverted: [
-									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 2,
-							royalty: {
-								name: 'BWA',
-								value: -0.000007,
-								royaltyConverted: [
-									{
-										amount: -0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 1,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 4,
-							royalty: {
-								name: 'MUS',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BGD',
-							streams: 1,
-							royalty: {
-								name: 'BGD',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'UKR',
-							streams: 2,
-							royalty: {
-								name: 'UKR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 102,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000275,
-								royaltyConverted: [
-									{
-										amount: -0.00023375000000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.44,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Money Before You Love',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00024599999999999996,
-						royaltyConverted: [
-							{
-								amount: -0.00020909999999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.39359999999999995,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 93,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 91,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000271,
-								royaltyConverted: [
-									{
-										amount: -0.00023034999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.4336,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 2,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 66,
-							royalty: {
-								name: 'CIV',
-								value: -0.000257,
-								royaltyConverted: [
-									{
-										amount: -0.00021845,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.4112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUN',
-							streams: 5,
-							royalty: {
-								name: 'TUN',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 7,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000016,
-								royaltyConverted: [
-									{
-										amount: -0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.025599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 4,
-							royalty: {
-								name: 'MLT',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 1,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 6,
-							royalty: {
-								name: 'MUS',
-								value: 0.00001,
-								royaltyConverted: [
-									{
-										amount: 0.0000085,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 2,
-							royalty: {
-								name: 'MAR',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 2,
-							royalty: {
-								name: 'NGA',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 93,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00024599999999999996,
-								royaltyConverted: [
-									{
-										amount: -0.00020909999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.39359999999999995,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Clear',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00014100000000000004,
-						royaltyConverted: [
-							{
-								amount: -0.00011985000000000003,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.22560000000000005,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 70,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 70,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00014100000000000004,
-								royaltyConverted: [
-									{
-										amount: -0.00011985000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.22560000000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 48,
-							royalty: {
-								name: 'CIV',
-								value: -0.000187,
-								royaltyConverted: [
-									{
-										amount: -0.00015895,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.29919999999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 7,
-							royalty: {
-								name: 'MLT',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 2,
-							royalty: {
-								name: 'GEO',
-								value: -0.000005,
-								royaltyConverted: [
-									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 2,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000005,
-								royaltyConverted: [
-									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 4,
-							royalty: {
-								name: 'MUS',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 2,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ARM',
-							streams: 1,
-							royalty: {
-								name: 'ARM',
-								value: 0.000012,
-								royaltyConverted: [
-									{
-										amount: 0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BGD',
-							streams: 1,
-							royalty: {
-								name: 'BGD',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'UKR',
-							streams: 2,
-							royalty: {
-								name: 'UKR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 70,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00014100000000000004,
-								royaltyConverted: [
-									{
-										amount: -0.00011985000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.22560000000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Neighbor',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00006199999999999999,
-						royaltyConverted: [
-							{
-								amount: -0.00005269999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.09919999999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 33,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 33,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00006199999999999999,
-								royaltyConverted: [
-									{
-										amount: -0.00005269999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.09919999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 24,
-							royalty: {
-								name: 'CIV',
-								value: -0.000095,
-								royaltyConverted: [
-									{
-										amount: -0.00008075,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.152,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 5,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000012,
-								royaltyConverted: [
-									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 4,
-							royalty: {
-								name: 'LUX',
-								value: 0.000045,
-								royaltyConverted: [
-									{
-										amount: 0.00003825,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07200000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 33,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00006199999999999999,
-								royaltyConverted: [
-									{
-										amount: -0.00005269999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.09919999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Plan B',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000032000000000000005,
-						royaltyConverted: [
-							{
-								amount: -0.000027200000000000004,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.05120000000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 19,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 19,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000032000000000000005,
-								royaltyConverted: [
-									{
-										amount: -0.000027200000000000004,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.05120000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 15,
-							royalty: {
-								name: 'CIV',
-								value: -0.000059,
-								royaltyConverted: [
-									{
-										amount: -0.00005015,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0944,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 2,
-							royalty: {
-								name: 'LUX',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 19,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000032000000000000005,
-								royaltyConverted: [
-									{
-										amount: -0.000027200000000000004,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.05120000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Kosalabaro',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000011999999999999994,
-						royaltyConverted: [
-							{
-								amount: -0.000010199999999999994,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.019199999999999988,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 22,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 22,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000011999999999999994,
-								royaltyConverted: [
-									{
-										amount: -0.000010199999999999994,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019199999999999988,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 15,
-							royalty: {
-								name: 'CIV',
-								value: -0.000059,
-								royaltyConverted: [
-									{
-										amount: -0.00005015,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0944,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 2,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000005,
-								royaltyConverted: [
-									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 4,
-							royalty: {
-								name: 'LUX',
-								value: 0.000045,
-								royaltyConverted: [
-									{
-										amount: 0.00003825,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07200000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 22,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000011999999999999994,
-								royaltyConverted: [
-									{
-										amount: -0.000010199999999999994,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019199999999999988,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Oro owo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000009999999999999996,
-						royaltyConverted: [
-							{
-								amount: -0.000008499999999999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.015999999999999993,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 19,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 17,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000035999999999999994,
-								royaltyConverted: [
-									{
-										amount: -0.00003059999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.05759999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 2,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000026,
-								royaltyConverted: [
-									{
-										amount: 0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 15,
-							royalty: {
-								name: 'CIV',
-								value: -0.000059,
-								royaltyConverted: [
-									{
-										amount: -0.00005015,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0944,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 2,
-							royalty: {
-								name: 'LUX',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 2,
-							royalty: {
-								name: 'NGA',
-								value: 0.000026,
-								royaltyConverted: [
-									{
-										amount: 0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 19,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000009999999999999996,
-								royaltyConverted: [
-									{
-										amount: -0.000008499999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.015999999999999993,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Ogo Forever',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000027,
-						royaltyConverted: [
-							{
-								amount: 0.00002295,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.043199999999999995,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 25,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 25,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000027,
-								royaltyConverted: [
-									{
-										amount: 0.00002295,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.043199999999999995,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 13,
-							royalty: {
-								name: 'CIV',
-								value: -0.000051,
-								royaltyConverted: [
-									{
-										amount: -0.000043349999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 3,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000007,
-								royaltyConverted: [
-									{
-										amount: -0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 4,
-							royalty: {
-								name: 'EGY',
-								value: 0.000029,
-								royaltyConverted: [
-									{
-										amount: 0.00002465,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0464,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 4,
-							royalty: {
-								name: 'LUX',
-								value: 0.000045,
-								royaltyConverted: [
-									{
-										amount: 0.00003825,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07200000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 25,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000027,
-								royaltyConverted: [
-									{
-										amount: 0.00002295,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.043199999999999995,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Woto Woto',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000035999999999999994,
-						royaltyConverted: [
-							{
-								amount: -0.00003059999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.05759999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 13,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 13,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000035999999999999994,
-								royaltyConverted: [
-									{
-										amount: -0.00003059999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.05759999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 12,
-							royalty: {
-								name: 'CIV',
-								value: -0.000047,
-								royaltyConverted: [
-									{
-										amount: -0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 1,
-							royalty: {
-								name: 'LUX',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 13,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000035999999999999994,
-								royaltyConverted: [
-									{
-										amount: -0.00003059999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.05759999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Bye to Sapa Nation',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000065,
-						royaltyConverted: [
-							{
-								amount: 0.000055249999999999994,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.104,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 19,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 17,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000039999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.00003399999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 2,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 11,
-							royalty: {
-								name: 'CIV',
-								value: -0.000043,
-								royaltyConverted: [
-									{
-										amount: -0.00003655,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0688,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KHM',
-							streams: 1,
-							royalty: {
-								name: 'KHM',
-								value: 0.000016,
-								royaltyConverted: [
-									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.025599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 2,
-							royalty: {
-								name: 'MAR',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 2,
-							royalty: {
-								name: 'NGA',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 19,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000065,
-								royaltyConverted: [
-									{
-										amount: 0.000055249999999999994,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.104,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Get Money First',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000049,
-						royaltyConverted: [
-							{
-								amount: 0.000041649999999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0784,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 16,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 16,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000049,
-								royaltyConverted: [
-									{
-										amount: 0.000041649999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0784,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 11,
-							royalty: {
-								name: 'CIV',
-								value: -0.000043,
-								royaltyConverted: [
-									{
-										amount: -0.00003655,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0688,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 4,
-							royalty: {
-								name: 'LUX',
-								value: 0.000045,
-								royaltyConverted: [
-									{
-										amount: 0.00003825,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07200000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 16,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000049,
-								royaltyConverted: [
-									{
-										amount: 0.000041649999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0784,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Tambolo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000022000000000000003,
-						royaltyConverted: [
-							{
-								amount: -0.0000187,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.0352,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 12,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 12,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000022000000000000003,
-								royaltyConverted: [
-									{
-										amount: -0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 10,
-							royalty: {
-								name: 'CIV',
-								value: -0.00004,
-								royaltyConverted: [
-									{
-										amount: -0.000034,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 1,
-							royalty: {
-								name: 'LUX',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 12,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000022000000000000003,
-								royaltyConverted: [
-									{
-										amount: -0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Prayer',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000005999999999999997,
-						royaltyConverted: [
-							{
-								amount: 0.000005099999999999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.009599999999999994,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 13,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 13,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000005999999999999997,
-								royaltyConverted: [
-									{
-										amount: 0.000005099999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.009599999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 10,
-							royalty: {
-								name: 'CIV',
-								value: -0.00004,
-								royaltyConverted: [
-									{
-										amount: -0.000034,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 2,
-							royalty: {
-								name: 'LUX',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 13,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000005999999999999997,
-								royaltyConverted: [
-									{
-										amount: 0.000005099999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.009599999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Kuku Do Ritual',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000041,
-						royaltyConverted: [
-							{
-								amount: 0.00003485,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0656,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 16,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 14,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000005000000000000003,
-								royaltyConverted: [
-									{
-										amount: -0.0000042500000000000025,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008000000000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000033,
-								royaltyConverted: [
-									{
-										amount: 0.00002805,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.05280000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 10,
-							royalty: {
-								name: 'CIV',
-								value: -0.00004,
-								royaltyConverted: [
-									{
-										amount: -0.000034,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 1,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 2,
-							royalty: {
-								name: 'LUX',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LBY',
-							streams: 1,
-							royalty: {
-								name: 'LBY',
-								value: 0.000033,
-								royaltyConverted: [
-									{
-										amount: 0.00002805,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.05280000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 16,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Shakara Oloje',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0000060000000000000035,
-						royaltyConverted: [
-							{
-								amount: -0.000005100000000000003,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.009600000000000006,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 13,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 13,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0000060000000000000035,
-								royaltyConverted: [
-									{
-										amount: -0.000005100000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.009600000000000006,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 10,
-							royalty: {
-								name: 'CIV',
-								value: -0.00004,
-								royaltyConverted: [
-									{
-										amount: -0.000034,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 3,
-							royalty: {
-								name: 'LUX',
-								value: 0.000034,
-								royaltyConverted: [
-									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0544,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 13,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0000060000000000000035,
-								royaltyConverted: [
-									{
-										amount: -0.000005100000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.009600000000000006,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Expensive OG',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000023,
-						royaltyConverted: [
-							{
-								amount: 0.00001955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0368,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 16,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 16,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 9,
-							royalty: {
-								name: 'CIV',
-								value: -0.000036,
-								royaltyConverted: [
-									{
-										amount: -0.0000306,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0576,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 2,
-							royalty: {
-								name: 'LUX',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 3,
-							royalty: {
-								name: 'MAR',
-								value: 0.000032,
-								royaltyConverted: [
-									{
-										amount: 0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 16,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Omo Olohun Wahala',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000057999999999999994,
-						royaltyConverted: [
-							{
-								amount: 0.00004929999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0928,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 14,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 13,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000044999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.000038249999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.072,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 9,
-							royalty: {
-								name: 'CIV',
-								value: -0.000036,
-								royaltyConverted: [
-									{
-										amount: -0.0000306,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0576,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 3,
-							royalty: {
-								name: 'LUX',
-								value: 0.000034,
-								royaltyConverted: [
-									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0544,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 14,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000057999999999999994,
-								royaltyConverted: [
-									{
-										amount: 0.00004929999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0928,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Jagaban',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000010999999999999998,
-						royaltyConverted: [
-							{
-								amount: 0.000009349999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.017599999999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 12,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 11,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000002000000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.0000017000000000000009,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.003200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 9,
-							royalty: {
-								name: 'CIV',
-								value: -0.000036,
-								royaltyConverted: [
-									{
-										amount: -0.0000306,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0576,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 1,
-							royalty: {
-								name: 'LUX',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 12,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000010999999999999998,
-								royaltyConverted: [
-									{
-										amount: 0.000009349999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.017599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Agbara',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000039999999999999996,
-						royaltyConverted: [
-							{
-								amount: 0.00003399999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.064,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 13,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 12,
-							royalty: {
-								name: 'Spotify',
-								value: 0.0000029999999999999984,
-								royaltyConverted: [
-									{
-										amount: 0.0000025499999999999985,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.004799999999999997,
-										rate: 1600,
+										amount: 0.18601173000000001,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
 						{
-							name: 'CIV',
+							name: 'YouTube Content ID',
 							streams: 8,
 							royalty: {
-								name: 'CIV',
-								value: -0.000032,
+								name: 'YouTube Content ID',
+								value: 0.0329627,
 								royaltyConverted: [
 									{
-										amount: -0.000027199999999999997,
-										rate: 0.85,
+										amount: 46.16426135,
+										rate: 1400.5,
 										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 3,
-							royalty: {
-								name: 'LUX',
-								value: 0.000034,
-								royaltyConverted: [
-									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0544,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'SEN',
-							streams: 1,
-							royalty: {
-								name: 'SEN',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 13,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000039999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.00003399999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.064,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Gasolo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000032,
-						royaltyConverted: [
-							{
-								amount: -0.000027199999999999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.051199999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 8,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 8,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000032,
-								royaltyConverted: [
-									{
-										amount: -0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 8,
-							royalty: {
-								name: 'CIV',
-								value: -0.000032,
-								royaltyConverted: [
-									{
-										amount: -0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 8,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000032,
-								royaltyConverted: [
-									{
-										amount: -0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Cruise Lanje',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000018,
-						royaltyConverted: [
-							{
-								amount: 0.0000153,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0288,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 11,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 10,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000008999999999999999,
-								royaltyConverted: [
-									{
-										amount: -0.000007649999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.014399999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000027,
-								royaltyConverted: [
-									{
-										amount: 0.00002295,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.043199999999999995,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 8,
-							royalty: {
-								name: 'CIV',
-								value: -0.000032,
-								royaltyConverted: [
-									{
-										amount: -0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 2,
-							royalty: {
-								name: 'LUX',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KEN',
-							streams: 1,
-							royalty: {
-								name: 'KEN',
-								value: 0.000027,
-								royaltyConverted: [
-									{
-										amount: 0.00002295,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.043199999999999995,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 11,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000018,
-								royaltyConverted: [
-									{
-										amount: 0.0000153,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0288,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Ika',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000022999999999999997,
-						royaltyConverted: [
-							{
-								amount: 0.000019549999999999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.03679999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000022999999999999997,
-								royaltyConverted: [
-									{
-										amount: 0.000019549999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.03679999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 6,
-							royalty: {
-								name: 'CIV',
-								value: -0.000024,
-								royaltyConverted: [
-									{
-										amount: -0.0000204,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.038400000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000022999999999999997,
-								royaltyConverted: [
-									{
-										amount: 0.000019549999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.03679999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Grateful',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00002,
-						royaltyConverted: [
-							{
-								amount: -0.000017,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.032,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 5,
-							royalty: {
-								name: 'CIV',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Werey Alasho',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000009000000000000002,
-						royaltyConverted: [
-							{
-								amount: -0.000007650000000000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.014400000000000003,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000009000000000000002,
-								royaltyConverted: [
-									{
-										amount: -0.000007650000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.014400000000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 5,
-							royalty: {
-								name: 'CIV',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000009000000000000002,
-								royaltyConverted: [
-									{
-										amount: -0.000007650000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.014400000000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Odogwu Bitters',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000068,
-						royaltyConverted: [
-							{
-								amount: 0.000057799999999999995,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.1088,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 11,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 11,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000068,
-								royaltyConverted: [
-									{
-										amount: 0.000057799999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.1088,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 5,
-							royalty: {
-								name: 'CIV',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 2,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000005,
-								royaltyConverted: [
-									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 2,
-							royalty: {
-								name: 'LUX',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 11,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000068,
-								royaltyConverted: [
-									{
-										amount: 0.000057799999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.1088,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Adura',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000001999999999999998,
-						royaltyConverted: [
-							{
-								amount: 0.0000016999999999999981,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0031999999999999963,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000001999999999999998,
-								royaltyConverted: [
-									{
-										amount: 0.0000016999999999999981,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0031999999999999963,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 5,
-							royalty: {
-								name: 'CIV',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 2,
-							royalty: {
-								name: 'MAR',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000001999999999999998,
-								royaltyConverted: [
-									{
-										amount: 0.0000016999999999999981,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0031999999999999963,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Wonmo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00002,
-						royaltyConverted: [
-							{
-								amount: -0.000017,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.032,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 5,
-							royalty: {
-								name: 'CIV',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Street ti Take Over',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000015,
-						royaltyConverted: [
-							{
-								amount: -0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Gberatan',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000093,
-						royaltyConverted: [
-							{
-								amount: 0.00007905,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.1488,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 10,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000042999999999999995,
-								royaltyConverted: [
-									{
-										amount: 0.000036549999999999994,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.06879999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 4,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 1,
-							royalty: {
-								name: 'LUX',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 4,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 10,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000093,
-								royaltyConverted: [
-									{
-										amount: 0.00007905,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.1488,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Mosa Funaiye',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000008000000000000001,
-						royaltyConverted: [
-							{
-								amount: -0.000006800000000000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.012800000000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000008000000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.000006800000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012800000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000008000000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.000006800000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012800000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Hello Baby',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000015,
-						royaltyConverted: [
-							{
-								amount: -0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Ojabo kofo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000013,
-						royaltyConverted: [
-							{
-								amount: 0.00001105,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0208,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Kayamanta',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000011999999999999999,
-						royaltyConverted: [
-							{
-								amount: 0.000010199999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0192,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000004000000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.0000034000000000000005,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.006400000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000016,
-								royaltyConverted: [
-									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.025599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000016,
-								royaltyConverted: [
-									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.025599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000011999999999999999,
-								royaltyConverted: [
-									{
-										amount: 0.000010199999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0192,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Oluwa Where You Dey',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000015,
-						royaltyConverted: [
-							{
-								amount: -0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.024,
-										rate: 1600,
+										amount: 0.029666429999999997,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Anonymous Eyon Pablo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000002000000000000001,
-						royaltyConverted: [
-							{
-								amount: -0.0000017000000000000009,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.003200000000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
@@ -11258,9243 +389,41 @@ export const placeholderParseData = {
 							streams: 1,
 							royalty: {
 								name: 'TIDAL',
-								value: 0.000013,
+								value: 0.011396,
 								royaltyConverted: [
 									{
-										amount: 0.00001105,
-										rate: 0.85,
+										amount: 15.960098,
+										rate: 1400.5,
 										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.024,
-										rate: 1600,
+										amount: 0.0102564,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000002000000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.0000017000000000000009,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.003200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'All Eyes On Me',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000007,
-						royaltyConverted: [
-							{
-								amount: 0.00000595,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0112,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Papangolo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: "O'Blow Cruise Beat",
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Folohunsho',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Soro Soro',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
 						{
-							name: 'Streaming',
+							name: 'iTunes',
 							streams: 1,
 							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
+								name: 'iTunes',
+								value: 0.387,
 								royaltyConverted: [
 									{
-										amount: 0.00001275,
-										rate: 0.85,
+										amount: 541.9935,
+										rate: 1400.5,
 										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'My way',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
 									{
-										amount: 0.0000238,
-										rate: 0.85,
+										amount: 0.3483,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Amaka',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000046,
-						royaltyConverted: [
-							{
-								amount: 0.0000391,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0736,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 2,
-							royalty: {
-								name: 'TUR',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'sexyshay',
-			upcCode: '197077637090',
-			isrcCode: 'QZWDD2202906',
-			catalogueId: 'CAT707166',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Format',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.4599793000000001,
-						royaltyConverted: [
-							{
-								amount: -0.3909824050000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -735.9668800000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: -0.4599793000000001,
-								royaltyConverted: [
-									{
-										amount: -0.3909824050000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -735.9668800000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 3,
-							royalty: {
-								name: 'MAR',
-								value: 0.000032,
-								royaltyConverted: [
-									{
-										amount: 0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: -0.4599793000000001,
-								royaltyConverted: [
-									{
-										amount: -0.3909824050000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -735.9668800000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Reflex Soundz, Oga Sabinus',
-			upcCode: '197077528817',
-			isrcCode: 'QZTV32222050',
-			catalogueId: 'CAT701439',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Rubberband',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.4441549000000001,
-						royaltyConverted: [
-							{
-								amount: -0.37753166500000007,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -710.6478400000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 12,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 12,
-							royalty: {
-								name: 'Spotify',
-								value: -0.4441549000000001,
-								royaltyConverted: [
-									{
-										amount: -0.37753166500000007,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -710.6478400000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 8,
-							royalty: {
-								name: 'ZMB',
-								value: -0.007923,
-								royaltyConverted: [
-									{
-										amount: -0.00673455,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -12.6768,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KHM',
-							streams: 1,
-							royalty: {
-								name: 'KHM',
-								value: -0.003084,
-								royaltyConverted: [
-									{
-										amount: -0.0026214,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9344,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 2,
-							royalty: {
-								name: 'EGY',
-								value: -0.003085,
-								royaltyConverted: [
-									{
-										amount: -0.00262225,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.936,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: -0.003093,
-								royaltyConverted: [
-									{
-										amount: -0.00262905,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.948799999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 12,
-							royalty: {
-								name: 'Streaming',
-								value: -0.4441549000000001,
-								royaltyConverted: [
-									{
-										amount: -0.37753166500000007,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -710.6478400000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Mamame, Portable',
-			upcCode: '197077101102',
-			isrcCode: 'GBWUL2215437',
-			catalogueId: 'CAT668652',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Shalaye',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.24588240000000003,
-						royaltyConverted: [
-							{
-								amount: -0.20900004000000003,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -393.41184000000004,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 21,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 21,
-							royalty: {
-								name: 'Spotify',
-								value: -0.24588240000000003,
-								royaltyConverted: [
-									{
-										amount: -0.20900004000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -393.41184000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 16,
-							royalty: {
-								name: 'CIV',
-								value: -0.003573,
-								royaltyConverted: [
-									{
-										amount: -0.00303705,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -5.716799999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KHM',
-							streams: 1,
-							royalty: {
-								name: 'KHM',
-								value: 0.000016,
-								royaltyConverted: [
-									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.025599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 4,
-							royalty: {
-								name: 'LUX',
-								value: 0.000045,
-								royaltyConverted: [
-									{
-										amount: 0.00003825,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07200000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 21,
-							royalty: {
-								name: 'Streaming',
-								value: -0.24588240000000003,
-								royaltyConverted: [
-									{
-										amount: -0.20900004000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -393.41184000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Agaga',
-			upcCode: '195729710108',
-			isrcCode: 'USLZJ2283257',
-			catalogueId: 'CAT633432',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: "One Assignment 'Owo'",
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.20701050000000001,
-						royaltyConverted: [
-							{
-								amount: -0.17595892500000002,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -331.21680000000003,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: -0.20701050000000001,
-								royaltyConverted: [
-									{
-										amount: -0.17595892500000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -331.21680000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: -0.003079,
-								royaltyConverted: [
-									{
-										amount: -0.00261715,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9264,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 6,
-							royalty: {
-								name: 'CIV',
-								value: -0.000024,
-								royaltyConverted: [
-									{
-										amount: -0.0000204,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.038400000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: -0.20701050000000001,
-								royaltyConverted: [
-									{
-										amount: -0.17595892500000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -331.21680000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Emilokan',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Ijo Cruise',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Badoo Na Baba',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Jaa',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00008099999999999999,
-						royaltyConverted: [
-							{
-								amount: 0.00006884999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.1296,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000035,
-								royaltyConverted: [
-									{
-										amount: 0.000029749999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.055999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000035,
-								royaltyConverted: [
-									{
-										amount: 0.000029749999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.055999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 2,
-							royalty: {
-								name: 'TUR',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00008099999999999999,
-								royaltyConverted: [
-									{
-										amount: 0.00006884999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.1296,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Agaga',
-			upcCode: '195729710108',
-			isrcCode: 'USLZJ2283257',
-			catalogueId: 'CAT633432',
-			activityPeriod: 'Jul-23',
-			fullReports: [
-				{
-					trackTitle: "One Assignment 'Owo'",
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000003,
-						royaltyConverted: [
-							{
-								amount: 0.00000255,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0048000000000000004,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Soundcloud Subscription',
-							streams: 1,
-							royalty: {
-								name: 'Soundcloud Subscription',
-								value: 0.000003,
-								royaltyConverted: [
-									{
-										amount: 0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ESP',
-							streams: 1,
-							royalty: {
-								name: 'ESP',
-								value: 0.000003,
-								royaltyConverted: [
-									{
-										amount: 0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000003,
-								royaltyConverted: [
-									{
-										amount: 0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: '2tboyz',
-			upcCode: '197077702347',
-			isrcCode: 'QZWDD2227541',
-			catalogueId: 'CAT712684',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Carry Me Dey Go',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.23259120000000003,
-						royaltyConverted: [
-							{
-								amount: -0.19770252000000002,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -372.14592000000005,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 8,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 8,
-							royalty: {
-								name: 'Spotify',
-								value: -0.23259120000000003,
-								royaltyConverted: [
-									{
-										amount: -0.19770252000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -372.14592000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: -0.0030830000000000002,
-								royaltyConverted: [
-									{
-										amount: -0.00262055,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9328,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 3,
-							royalty: {
-								name: 'EGY',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 8,
-							royalty: {
-								name: 'Streaming',
-								value: -0.23259120000000003,
-								royaltyConverted: [
-									{
-										amount: -0.19770252000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -372.14592000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Ty Tizzle',
-			upcCode: '197077424485',
-			isrcCode: 'QZTRX2267826',
-			catalogueId: 'CAT694030',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Owo Epo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.1858251,
-						royaltyConverted: [
-							{
-								amount: -0.157951335,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -297.32016,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: -0.1858251,
-								royaltyConverted: [
-									{
-										amount: -0.157951335,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -297.32016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: -0.0030700000000000002,
-								royaltyConverted: [
-									{
-										amount: -0.0026095000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.912000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: -0.1858251,
-								royaltyConverted: [
-									{
-										amount: -0.157951335,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -297.32016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Spirit Okooku',
-			upcCode: '197077305869',
-			isrcCode: 'GBWUL2298360',
-			catalogueId: 'CAT684298',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Egbon Kogbagidi',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.1291079,
-						royaltyConverted: [
-							{
-								amount: -0.10974171499999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -206.57264,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.1291079,
-								royaltyConverted: [
-									{
-										amount: -0.10974171499999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -206.57264,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.1291079,
-								royaltyConverted: [
-									{
-										amount: -0.10974171499999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -206.57264,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Time',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.011415000000000002,
-						royaltyConverted: [
-							{
-								amount: -0.009702750000000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -18.264000000000003,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Happiness Is Free Beat',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000012,
-						royaltyConverted: [
-							{
-								amount: 0.0000102,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.019200000000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000012,
-								royaltyConverted: [
-									{
-										amount: 0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000012,
-								royaltyConverted: [
-									{
-										amount: 0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Expensive Mixtape',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000001,
-						royaltyConverted: [
-							{
-								amount: -8.499999999999999e-7,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.0015999999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'JAM',
-							streams: 1,
-							royalty: {
-								name: 'JAM',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Oriyomi Nba',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000013,
-						royaltyConverted: [
-							{
-								amount: 0.00001105,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0208,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Street OT',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Big Vibes Mixtape Volume 2',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Online Lowa',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000051,
-						royaltyConverted: [
-							{
-								amount: 0.000043349999999999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0816,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000051,
-								royaltyConverted: [
-									{
-										amount: 0.000043349999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000051,
-								royaltyConverted: [
-									{
-										amount: 0.000043349999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Pay Day',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000037,
-						royaltyConverted: [
-							{
-								amount: 0.00003145,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.059199999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'SEN',
-							streams: 1,
-							royalty: {
-								name: 'SEN',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Lezcout Wrld',
-			upcCode: '197368881065',
-			isrcCode: 'GBRKQ2386118',
-			catalogueId: 'CAT831016',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Abacha',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.21890800000000005,
-						royaltyConverted: [
-							{
-								amount: -0.18607180000000004,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -350.2528000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: -0.21890800000000005,
-								royaltyConverted: [
-									{
-										amount: -0.18607180000000004,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -350.2528000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'JAM',
-							streams: 1,
-							royalty: {
-								name: 'JAM',
-								value: -0.007894,
-								royaltyConverted: [
-									{
-										amount: -0.0067098999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -12.6304,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MDA',
-							streams: 2,
-							royalty: {
-								name: 'MDA',
-								value: -0.003077,
-								royaltyConverted: [
-									{
-										amount: -0.0026154499999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9232,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: -0.21890800000000005,
-								royaltyConverted: [
-									{
-										amount: -0.18607180000000004,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -350.2528000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Love Yourself',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0030548,
-						royaltyConverted: [
-							{
-								amount: -0.00259658,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -4.88768,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Olamzzy',
-			upcCode: '197368155180',
-			isrcCode: 'QZ5FN2331299',
-			catalogueId: 'CAT758832',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Omo Lile',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.16385090000000005,
-						royaltyConverted: [
-							{
-								amount: -0.13927326500000003,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -262.1614400000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: -0.16385090000000005,
-								royaltyConverted: [
-									{
-										amount: -0.13927326500000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -262.1614400000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 3,
-							royalty: {
-								name: 'EGY',
-								value: -0.003073,
-								royaltyConverted: [
-									{
-										amount: -0.0026120500000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9168,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: -0.16385090000000005,
-								royaltyConverted: [
-									{
-										amount: -0.13927326500000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -262.1614400000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Orin Hallelujah',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0978779,
-						royaltyConverted: [
-							{
-								amount: -0.083196215,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -156.60464000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0978779,
-								royaltyConverted: [
-									{
-										amount: -0.083196215,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -156.60464000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.003439,
-								royaltyConverted: [
-									{
-										amount: -0.0029231500000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -5.502400000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0978779,
-								royaltyConverted: [
-									{
-										amount: -0.083196215,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -156.60464000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'No Forget',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00009999999999999999,
-						royaltyConverted: [
-							{
-								amount: 0.00008499999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.15999999999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00009999999999999999,
-								royaltyConverted: [
-									{
-										amount: 0.00008499999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.15999999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 3,
-							royalty: {
-								name: 'MAR',
-								value: 0.000032,
-								royaltyConverted: [
-									{
-										amount: 0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 2,
-							royalty: {
-								name: 'TUR',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00009999999999999999,
-								royaltyConverted: [
-									{
-										amount: 0.00008499999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.15999999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Sure Guy',
-			upcCode: '197773106944',
-			isrcCode: 'GBWUL2373526',
-			catalogueId: 'CAT854103',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Marital Status',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.12816969999999997,
-						royaltyConverted: [
-							{
-								amount: -0.10894424499999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -205.07151999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: -0.12818269999999998,
-								royaltyConverted: [
-									{
-										amount: -0.10895529499999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -205.09231999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: -0.012627,
-								royaltyConverted: [
-									{
-										amount: -0.01073295,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -20.2032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: -0.0030859999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.0026230999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9376,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 1,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 1,
-							royalty: {
-								name: 'LUX',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: -0.12816969999999997,
-								royaltyConverted: [
-									{
-										amount: -0.10894424499999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -205.07151999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'S Brown',
-			upcCode: '197077899993',
-			isrcCode: 'QZWDD2296469',
-			catalogueId: 'CAT732198',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Wokilumo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.07473649999999998,
-						royaltyConverted: [
-							{
-								amount: -0.06352602499999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -119.57839999999997,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Abuga',
-			upcCode: '197077983081',
-			isrcCode: 'QZWDE2235319',
-			catalogueId: 'CAT739980',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Werey Onijo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.07727780000000002,
-						royaltyConverted: [
-							{
-								amount: -0.06568613000000002,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -123.64448000000003,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.07728580000000002,
-								royaltyConverted: [
-									{
-										amount: -0.06569293000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -123.65728000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000008,
-								royaltyConverted: [
-									{
-										amount: 0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000008,
-								royaltyConverted: [
-									{
-										amount: 0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: -0.07727780000000002,
-								royaltyConverted: [
-									{
-										amount: -0.06568613000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -123.64448000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Ise Olohun',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000029,
-						royaltyConverted: [
-							{
-								amount: 0.00002465,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0464,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000029,
-								royaltyConverted: [
-									{
-										amount: 0.00002465,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0464,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000029,
-								royaltyConverted: [
-									{
-										amount: 0.00002465,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0464,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Alimi',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000074,
-						royaltyConverted: [
-							{
-								amount: 0.0000629,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.11839999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 5,
-							royalty: {
-								name: 'EGY',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ASM',
-							streams: 1,
-							royalty: {
-								name: 'ASM',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000074,
-								royaltyConverted: [
-									{
-										amount: 0.0000629,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.11839999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'MOB',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000041,
-						royaltyConverted: [
-							{
-								amount: 0.00003485,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0656,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUN',
-							streams: 1,
-							royalty: {
-								name: 'TUN',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Kamba',
-			upcCode: '197773055082',
-			isrcCode: 'GBWUL2349052',
-			catalogueId: 'CAT848050',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Sapa',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0679393,
-						royaltyConverted: [
-							{
-								amount: -0.057748404999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -108.70288,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Agaga, Qdot, Elelpdbeat',
-			upcCode: '197077403121',
-			isrcCode: 'QZTRX2246904',
-			catalogueId: 'CAT692336',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Jaa',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0887711,
-						royaltyConverted: [
-							{
-								amount: -0.075455435,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -142.03376,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'DZA',
-							streams: 1,
-							royalty: {
-								name: 'DZA',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0887711,
-								royaltyConverted: [
-									{
-										amount: -0.075455435,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -142.03376,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Byncon Ghizzle',
-			upcCode: '197368516080',
-			isrcCode: 'USLZJ2365984',
-			catalogueId: 'CAT797520',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Gbo Nkan Nkan (Can�t hear)',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0975175,
-						royaltyConverted: [
-							{
-								amount: -0.08288987499999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -156.028,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Topshine',
-			upcCode: '197077702439',
-			isrcCode: 'QZWDD2227554',
-			catalogueId: 'CAT712695',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'AFSA',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.1694823,
-						royaltyConverted: [
-							{
-								amount: -0.144059955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -271.17168,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: -0.1694823,
-								royaltyConverted: [
-									{
-										amount: -0.144059955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -271.17168,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: -0.0030629999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.0026035499999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.900799999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 6,
-							royalty: {
-								name: 'ZMB',
-								value: -0.003109,
-								royaltyConverted: [
-									{
-										amount: -0.00264265,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.974399999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: -0.1694823,
-								royaltyConverted: [
-									{
-										amount: -0.144059955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -271.17168,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Winner Circle',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.01579,
-						royaltyConverted: [
-							{
-								amount: -0.013421499999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -25.263999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Time',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0284333,
-						royaltyConverted: [
-							{
-								amount: -0.024168305,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -45.493280000000006,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Smart BTC',
-			upcCode: '197773031888',
-			isrcCode: 'GBWUL2340398',
-			catalogueId: 'CAT845336',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Olopa Tinbor',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.1467774,
-						royaltyConverted: [
-							{
-								amount: -0.12476079,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -234.84384,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: -0.1467774,
-								royaltyConverted: [
-									{
-										amount: -0.12476079,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -234.84384,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'UKR',
-							streams: 1,
-							royalty: {
-								name: 'UKR',
-								value: -0.0030859999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.0026230999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9376,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: -0.1467774,
-								royaltyConverted: [
-									{
-										amount: -0.12476079,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -234.84384,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Young God',
-			upcCode: '197368492728',
-			isrcCode: 'USLZJ2353954',
-			catalogueId: 'CAT794979',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Unlimited',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.10826409999999999,
-						royaltyConverted: [
-							{
-								amount: -0.09202448499999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -173.22256,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Run Am',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.1015856,
-						royaltyConverted: [
-							{
-								amount: -0.08634776,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -162.53696,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Aye',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0642033,
-						royaltyConverted: [
-							{
-								amount: -0.054572805,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -102.72528000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0642033,
-								royaltyConverted: [
-									{
-										amount: -0.054572805,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -102.72528000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0642033,
-								royaltyConverted: [
-									{
-										amount: -0.054572805,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -102.72528000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Fizzy Mayur',
-			upcCode: '197077912937',
-			isrcCode: 'QZWDE2201962',
-			catalogueId: 'CAT733411',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Ajeh',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0653835,
-						royaltyConverted: [
-							{
-								amount: -0.05557597499999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -104.61359999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Oluwaplenty',
-			upcCode: '197077455298',
-			isrcCode: 'QZTRX2280106',
-			catalogueId: 'CAT696843',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Ika',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.04650310000000001,
-						royaltyConverted: [
-							{
-								amount: -0.03952763500000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -74.40496000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Pure Gold',
-			upcCode: '197368217598',
-			isrcCode: 'QZ5FN2351559',
-			catalogueId: 'CAT765081',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Okwe (The Game)',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.10064960000000002,
-						royaltyConverted: [
-							{
-								amount: -0.08555216000000002,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -161.03936000000004,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: -0.10064960000000002,
-								royaltyConverted: [
-									{
-										amount: -0.08555216000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -161.03936000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: -0.0030700000000000002,
-								royaltyConverted: [
-									{
-										amount: -0.0026095000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.912000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 2,
-							royalty: {
-								name: 'BWA',
-								value: -0.000007,
-								royaltyConverted: [
-									{
-										amount: -0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BGD',
-							streams: 1,
-							royalty: {
-								name: 'BGD',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: -0.10064960000000002,
-								royaltyConverted: [
-									{
-										amount: -0.08555216000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -161.03936000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'DJ OP Dot',
-			upcCode: '197773418900',
-			isrcCode: 'QZTV32306252',
-			catalogueId: 'CAT881239',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: '1 Hour Amapiano',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.019524,
-						royaltyConverted: [
-							{
-								amount: -0.0165954,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -31.2384,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: -0.019524,
-								royaltyConverted: [
-									{
-										amount: -0.0165954,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -31.2384,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: -0.019524,
-								royaltyConverted: [
-									{
-										amount: -0.0165954,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -31.2384,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Best Of Seyi Vibez 2.0',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000041,
-						royaltyConverted: [
-							{
-								amount: 0.00003485,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0656,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 6,
-							royalty: {
-								name: 'EGY',
-								value: 0.000044,
-								royaltyConverted: [
-									{
-										amount: 0.0000374,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0704,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Best Of Asake, Ajesings, Seyi Vibez',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000043,
-						royaltyConverted: [
-							{
-								amount: 0.00003655,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0688,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00003,
-								royaltyConverted: [
-									{
-										amount: 0.0000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.048,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 2,
-							royalty: {
-								name: 'EGY',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000043,
-								royaltyConverted: [
-									{
-										amount: 0.00003655,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0688,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Best Of Otega',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000049999999999999996,
-						royaltyConverted: [
-							{
-								amount: 0.000042499999999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.07999999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000049999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.000042499999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 3,
-							royalty: {
-								name: 'EGY',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000049999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.000042499999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Mazanjiyabaah',
-			upcCode: '195729862562',
-			isrcCode: 'GBRKQ2232906',
-			catalogueId: 'CAT647345',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Wetin Dey Occur',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0516269,
-						royaltyConverted: [
-							{
-								amount: -0.043882865,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -82.60304000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0516269,
-								royaltyConverted: [
-									{
-										amount: -0.043882865,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -82.60304000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: -0.0030830000000000002,
-								royaltyConverted: [
-									{
-										amount: -0.00262055,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9328,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0516269,
-								royaltyConverted: [
-									{
-										amount: -0.043882865,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -82.60304000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Reflex Soundz',
-			upcCode: '649964949644',
-			isrcCode: 'UK3AZ1922747',
-			catalogueId: 'CAT620461',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Dangote',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.015653,
-						royaltyConverted: [
-							{
-								amount: -0.01330505,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -25.044800000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.015653,
-								royaltyConverted: [
-									{
-										amount: -0.01330505,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -25.044800000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.015653,
-								royaltyConverted: [
-									{
-										amount: -0.01330505,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -25.044800000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Emi Lo Kan (Baba wey no well)',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.030763799999999997,
-						royaltyConverted: [
-							{
-								amount: -0.026149229999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -49.22208,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Agbado Riddim',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000041,
-						royaltyConverted: [
-							{
-								amount: 0.00003485,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0656,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 3,
-							royalty: {
-								name: 'GHA',
-								value: 0.000044,
-								royaltyConverted: [
-									{
-										amount: 0.0000374,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0704,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000041,
-								royaltyConverted: [
-									{
-										amount: 0.00003485,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0656,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Ketchup',
-			upcCode: '632181480441',
-			isrcCode: 'UK3AZ1513096',
-			catalogueId: 'CAT829492',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Baby Paulina',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0733459,
-						royaltyConverted: [
-							{
-								amount: -0.062344015,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -117.35344,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0733459,
-								royaltyConverted: [
-									{
-										amount: -0.062344015,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -117.35344,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MOZ',
-							streams: 5,
-							royalty: {
-								name: 'MOZ',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0733459,
-								royaltyConverted: [
-									{
-										amount: -0.062344015,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -117.35344,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Influence',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0697334,
-						royaltyConverted: [
-							{
-								amount: -0.05927339,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -111.57344,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Big Daddy',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.057559000000000006,
-						royaltyConverted: [
-							{
-								amount: -0.04892515,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -92.09440000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.057559000000000006,
-								royaltyConverted: [
-									{
-										amount: -0.04892515,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -92.09440000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: -0.003093,
-								royaltyConverted: [
-									{
-										amount: -0.00262905,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.948799999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.057559000000000006,
-								royaltyConverted: [
-									{
-										amount: -0.04892515,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -92.09440000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Trippin',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.03429189999999999,
-						royaltyConverted: [
-							{
-								amount: -0.029148114999999992,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -54.86703999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Enjoy Yourself',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.042659,
-						royaltyConverted: [
-							{
-								amount: -0.03626015,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -68.2544,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Holy Mic',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.033151999999999994,
-						royaltyConverted: [
-							{
-								amount: -0.028179199999999995,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -53.04319999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: -0.033151999999999994,
-								royaltyConverted: [
-									{
-										amount: -0.028179199999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -53.04319999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: -0.033151999999999994,
-								royaltyConverted: [
-									{
-										amount: -0.028179199999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -53.04319999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Alakoba',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.018288,
-						royaltyConverted: [
-							{
-								amount: -0.0155448,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -29.260799999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Pam Pam',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00006300000000000001,
-						royaltyConverted: [
-							{
-								amount: -0.00005355000000000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.10080000000000003,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 60,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 60,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00006300000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.00005355000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.10080000000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 21,
-							royalty: {
-								name: 'ZMB',
-								value: -0.00005,
-								royaltyConverted: [
-									{
-										amount: -0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BWA',
-							streams: 9,
-							royalty: {
-								name: 'BWA',
-								value: -0.000033,
-								royaltyConverted: [
-									{
-										amount: -0.00002805,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.05280000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CUW',
-							streams: 5,
-							royalty: {
-								name: 'CUW',
-								value: -0.000013,
-								royaltyConverted: [
-									{
-										amount: -0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'JAM',
-							streams: 21,
-							royalty: {
-								name: 'JAM',
-								value: -0.000011,
-								royaltyConverted: [
-									{
-										amount: -0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GEO',
-							streams: 1,
-							royalty: {
-								name: 'GEO',
-								value: -0.000004,
-								royaltyConverted: [
-									{
-										amount: -0.0000033999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0063999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 1,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'BGD',
-							streams: 2,
-							royalty: {
-								name: 'BGD',
-								value: 0.000043,
-								royaltyConverted: [
-									{
-										amount: 0.00003655,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0688,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 60,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00006300000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.00005355000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.10080000000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Pam Pam (Ugandan Remix)',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000019999999999999998,
-						royaltyConverted: [
-							{
-								amount: -0.000016999999999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.032,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 8,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 8,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000019999999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.000016999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 5,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000012,
-								royaltyConverted: [
-									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'CUW',
-							streams: 3,
-							royalty: {
-								name: 'CUW',
-								value: -0.000008,
-								royaltyConverted: [
-									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 8,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000019999999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.000016999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'She Issa Flirt',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00007400000000000001,
-						royaltyConverted: [
-							{
-								amount: 0.00006290000000000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.11840000000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00007400000000000001,
-								royaltyConverted: [
-									{
-										amount: 0.00006290000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.11840000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 2,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000005,
-								royaltyConverted: [
-									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'PAK',
-							streams: 1,
-							royalty: {
-								name: 'PAK',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00007400000000000001,
-								royaltyConverted: [
-									{
-										amount: 0.00006290000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.11840000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Coco Banana',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000021,
-						royaltyConverted: [
-							{
-								amount: 0.00001785,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0336,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000021,
-								royaltyConverted: [
-									{
-										amount: 0.00001785,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0336,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 2,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000005,
-								royaltyConverted: [
-									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 2,
-							royalty: {
-								name: 'EGY',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000021,
-								royaltyConverted: [
-									{
-										amount: 0.00001785,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0336,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Sweet',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000003,
-						royaltyConverted: [
-							{
-								amount: -0.00000255,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.0048000000000000004,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Bedroom Calypso',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000037,
-						royaltyConverted: [
-							{
-								amount: 0.00003145,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.059199999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NIC',
-							streams: 1,
-							royalty: {
-								name: 'NIC',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Baby Oh',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Skibodeh',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Snazzygrin',
-			upcCode: '197077176285',
-			isrcCode: 'GBWUL2244674',
-			catalogueId: 'CAT675180',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Who be your Guy',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.023645899999999997,
-						royaltyConverted: [
-							{
-								amount: -0.020099014999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -37.833439999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: -0.023645899999999997,
-								royaltyConverted: [
-									{
-										amount: -0.020099014999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -37.833439999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 3,
-							royalty: {
-								name: 'GHA',
-								value: -0.003061,
-								royaltyConverted: [
-									{
-										amount: -0.0026018499999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.8976,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: -0.023645899999999997,
-								royaltyConverted: [
-									{
-										amount: -0.020099014999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -37.833439999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Wavy',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0201908,
-						royaltyConverted: [
-							{
-								amount: -0.01716218,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -32.305279999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Honestly',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000023,
-						royaltyConverted: [
-							{
-								amount: 0.00001955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0368,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'How Many Songs',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Calm Down',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Gossip (refix)',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Iju Tiger',
-			upcCode: '197077788853',
-			isrcCode: 'QZWDD2263856',
-			catalogueId: 'CAT721406',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Owo Ope',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.007321,
-						royaltyConverted: [
-							{
-								amount: -0.00622285,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -11.7136,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				},
-				{
-					trackTitle: 'Odogwu Mara',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000029,
-						royaltyConverted: [
-							{
-								amount: 0.00002465,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0464,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000029,
-								royaltyConverted: [
-									{
-										amount: 0.00002465,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0464,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'PAK',
-							streams: 1,
-							royalty: {
-								name: 'PAK',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 3,
-							royalty: {
-								name: 'EGY',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000029,
-								royaltyConverted: [
-									{
-										amount: 0.00002465,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0464,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Tansho',
-			upcCode: '197368988863',
-			isrcCode: 'GBWUL2321683',
-			catalogueId: 'CAT841289',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Odomi Cruise Beat',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0181271,
-						royaltyConverted: [
-							{
-								amount: -0.015408035,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -29.00336,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0181271,
-								royaltyConverted: [
-									{
-										amount: -0.015408035,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -29.00336,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: -0.0030830000000000002,
-								royaltyConverted: [
-									{
-										amount: -0.00262055,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9328,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0181271,
-								royaltyConverted: [
-									{
-										amount: -0.015408035,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -29.00336,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Ghost Street Freebeat',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000124,
-						royaltyConverted: [
-							{
-								amount: 0.0001054,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.19840000000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 15,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 13,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000049,
-								royaltyConverted: [
-									{
-										amount: 0.000041649999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0784,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 2,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000075,
-								royaltyConverted: [
-									{
-										amount: 0.00006374999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.12,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 6,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000014,
-								royaltyConverted: [
-									{
-										amount: -0.0000119,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0224,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 3,
-							royalty: {
-								name: 'MLT',
-								value: -0.000012,
-								royaltyConverted: [
-									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MDA',
-							streams: 1,
-							royalty: {
-								name: 'MDA',
-								value: 0.00001,
-								royaltyConverted: [
-									{
-										amount: 0.0000085,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 2,
-							royalty: {
-								name: 'MAR',
-								value: 0.000039,
-								royaltyConverted: [
-									{
-										amount: 0.00003315,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0624,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZWE',
-							streams: 1,
-							royalty: {
-								name: 'ZWE',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 15,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000124,
-								royaltyConverted: [
-									{
-										amount: 0.0001054,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.19840000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'New Year Mixtape',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000009999999999999999,
-						royaltyConverted: [
-							{
-								amount: 0.000008499999999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.016,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000009999999999999999,
-								royaltyConverted: [
-									{
-										amount: 0.000008499999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Amapiano Freestyle Vibes',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Hustler Gees',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Grateful',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Road To 2023',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Turn Up Party',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Ending Of The Year Party',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000037,
-						royaltyConverted: [
-							{
-								amount: 0.00003145,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.059199999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TZA',
-							streams: 1,
-							royalty: {
-								name: 'TZA',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Tansho',
-			upcCode: '197773053958',
-			isrcCode: 'GBWUL2348871',
-			catalogueId: 'CAT847887',
-			activityPeriod: 'Jul-23',
-			fullReports: [
-				{
-					trackTitle: 'Mara Pupo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.0000021,
-						royaltyConverted: [
-							{
-								amount: 0.0000017849999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0033599999999999997,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Soundcloud Subscription',
-							streams: 1,
-							royalty: {
-								name: 'Soundcloud Subscription',
-								value: 0.0000021,
-								royaltyConverted: [
-									{
-										amount: 0.0000017849999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0033599999999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
@@ -20503,8013 +432,6222 @@ export const placeholderParseData = {
 					countryData: [
 						{
 							name: 'USA',
-							streams: 1,
+							streams: 7589,
 							royalty: {
 								name: 'USA',
-								value: 0.0000021,
+								value: 18.5634435,
 								royaltyConverted: [
 									{
-										amount: 0.0000017849999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0033599999999999997,
-										rate: 1600,
+										amount: 25998.102621750004,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.0000021,
-								royaltyConverted: [
-									{
-										amount: 0.0000017849999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.0033599999999999997,
-										rate: 1600,
+										amount: 16.70709915,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Bode Messiah',
-			upcCode: '197077066838',
-			isrcCode: 'GBWUL2203662',
-			catalogueId: 'CAT666266',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Akoi Grace',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.0230551,
-						royaltyConverted: [
-							{
-								amount: -0.019596835,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -36.88816,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.0230551,
-								royaltyConverted: [
-									{
-										amount: -0.019596835,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -36.88816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'UKR',
-							streams: 1,
-							royalty: {
-								name: 'UKR',
-								value: -0.0030859999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.0026230999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -4.9376,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.0230551,
-								royaltyConverted: [
-									{
-										amount: -0.019596835,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -36.88816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'manny monie',
-			upcCode: '197368109596',
-			isrcCode: 'QZ5FN2316874',
-			catalogueId: 'CAT753562',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Terminator (Bonus Track)',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.003216,
-						royaltyConverted: [
-							{
-								amount: -0.0027336,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -5.1456,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 0,
-					dspData: [],
-					countryData: [],
-					deliveryData: []
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Poco Lee, Portable',
-			upcCode: '8720623969516',
-			isrcCode: 'NLRD52045971',
-			catalogueId: 'CAT784043',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'ZaZoo Zehh',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000496,
-						royaltyConverted: [
-							{
-								amount: -0.0004216,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.7936000000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 177,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 175,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000534,
-								royaltyConverted: [
-									{
-										amount: -0.0004539,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.8543999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'TIDAL',
-							streams: 1,
+							name: 'GBR',
+							streams: 3559,
 							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
+								name: 'GBR',
+								value: 16.894138,
 								royaltyConverted: [
 									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
+										amount: 23660.240269,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 15.204724200000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'Apple DJ Mixes',
-							streams: 1,
+							name: 'NLD',
+							streams: 1894,
 							royalty: {
-								name: 'Apple DJ Mixes',
-								value: 0.000025,
+								name: 'NLD',
+								value: 6.233165,
 								royaltyConverted: [
 									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
+										amount: 8729.5475825,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 84,
-							royalty: {
-								name: 'CIV',
-								value: -0.000328,
-								royaltyConverted: [
-									{
-										amount: -0.0002788,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.5248,
-										rate: 1600,
+										amount: 5.6098485,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'ZMB',
-							streams: 49,
+							name: 'DEU',
+							streams: 1889,
 							royalty: {
-								name: 'ZMB',
-								value: -0.000113,
+								name: 'DEU',
+								value: 4.9111959999999995,
 								royaltyConverted: [
 									{
-										amount: -0.00009604999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.1808,
-										rate: 1600,
+										amount: 6878.129997999999,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 4.420076399999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'NAM',
-							streams: 27,
+							name: 'CAN',
+							streams: 1617,
 							royalty: {
-								name: 'NAM',
-								value: -0.000102,
+								name: 'CAN',
+								value: 3.380494,
 								royaltyConverted: [
 									{
-										amount: -0.00008669999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.1632,
-										rate: 1600,
+										amount: 4734.381847000001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.0424446,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MOZ',
-							streams: 5,
+							name: 'SWE',
+							streams: 1438,
 							royalty: {
-								name: 'MOZ',
-								value: -0.00002,
+								name: 'SWE',
+								value: 4.939563,
 								royaltyConverted: [
 									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
+										amount: 6917.857981499999,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 4.4456067,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'BWA',
-							streams: 3,
+							name: 'AUS',
+							streams: 1431,
 							royalty: {
-								name: 'BWA',
-								value: -0.000012,
+								name: 'AUS',
+								value: 3.611202,
 								royaltyConverted: [
 									{
-										amount: -0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.019200000000000002,
-										rate: 1600,
+										amount: 5057.488401,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.2500818000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'GEO',
-							streams: 3,
+							name: 'PHL',
+							streams: 1187,
 							royalty: {
-								name: 'GEO',
-								value: -0.000008,
+								name: 'PHL',
+								value: 0.493084,
 								royaltyConverted: [
 									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
+										amount: 690.5641420000001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'JAM',
-							streams: 1,
-							royalty: {
-								name: 'JAM',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
+										amount: 0.44377560000000005,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
 							name: 'NGA',
-							streams: 1,
+							streams: 1014,
 							royalty: {
 								name: 'NGA',
-								value: 0.000013,
+								value: 0.271202,
 								royaltyConverted: [
 									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
+										amount: 379.818401,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.24408180000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'TZA',
-							streams: 1,
+							name: 'NOR',
+							streams: 900,
 							royalty: {
-								name: 'TZA',
-								value: 0.000025,
+								name: 'NOR',
+								value: 3.9062010000000003,
 								royaltyConverted: [
 									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
+										amount: 5470.6345005,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.5155809000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'KHM',
-							streams: 3,
+							name: 'FRA',
+							streams: 845,
 							royalty: {
-								name: 'KHM',
-								value: 0.00005,
+								name: 'FRA',
+								value: 2.399426,
 								royaltyConverted: [
 									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
+										amount: 3360.3961130000002,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 177,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000496,
-								royaltyConverted: [
-									{
-										amount: -0.0004216,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.7936000000000001,
-										rate: 1600,
+										amount: 2.1594834,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Shugavybz, Roger Lino, King Bernard',
-			upcCode: '197773127390',
-			isrcCode: 'GBWUL2385189',
-			catalogueId: 'CAT856202',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Kele',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00027299999999999997,
-						royaltyConverted: [
-							{
-								amount: -0.00023204999999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.43679999999999997,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 108,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 108,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00027299999999999997,
-								royaltyConverted: [
-									{
-										amount: -0.00023204999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.43679999999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NAM',
-							streams: 65,
-							royalty: {
-								name: 'NAM',
-								value: -0.000247,
-								royaltyConverted: [
-									{
-										amount: -0.00020994999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.3952,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'ZMB',
-							streams: 26,
+							name: 'ZAF',
+							streams: 632,
 							royalty: {
-								name: 'ZMB',
-								value: -0.00006,
+								name: 'ZAF',
+								value: 0.610511,
 								royaltyConverted: [
 									{
-										amount: -0.000051,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.096,
-										rate: 1600,
+										amount: 855.0206555000001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.5494599,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'BWA',
-							streams: 8,
+							name: 'DNK',
+							streams: 518,
 							royalty: {
-								name: 'BWA',
-								value: -0.00003,
+								name: 'DNK',
+								value: 2.200149,
 								royaltyConverted: [
 									{
-										amount: -0.0000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.048,
-										rate: 1600,
+										amount: 3081.3086745,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.9801341000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'GEO',
-							streams: 1,
+							name: 'BRA',
+							streams: 483,
 							royalty: {
-								name: 'GEO',
-								value: -0.000004,
+								name: 'BRA',
+								value: 0.534734,
 								royaltyConverted: [
 									{
-										amount: -0.0000033999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0063999999999999994,
-										rate: 1600,
+										amount: 748.8949670000001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 1,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.008,
-										rate: 1600,
+										amount: 0.48126060000000004,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 4,
-							royalty: {
-								name: 'EGY',
-								value: 0.000029,
-								royaltyConverted: [
-									{
-										amount: 0.00002465,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0464,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'UKR',
-							streams: 3,
-							royalty: {
-								name: 'UKR',
-								value: 0.000034,
-								royaltyConverted: [
-									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0544,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 108,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00027299999999999997,
-								royaltyConverted: [
-									{
-										amount: -0.00023204999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.43679999999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Bella Shmurda',
-			upcCode: '683332597617',
-			isrcCode: 'UK3AZ1926272',
-			catalogueId: 'CAT627373',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Only You',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00014099999999999998,
-						royaltyConverted: [
-							{
-								amount: -0.00011984999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.22559999999999997,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 54,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 54,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00014099999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.00011984999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.22559999999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 36,
-							royalty: {
-								name: 'CIV',
-								value: -0.00014,
-								royaltyConverted: [
-									{
-										amount: -0.00011899999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.22399999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 10,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000024,
-								royaltyConverted: [
-									{
-										amount: -0.0000204,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.038400000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MLT',
-							streams: 4,
-							royalty: {
-								name: 'MLT',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KAZ',
-							streams: 1,
-							royalty: {
-								name: 'KAZ',
-								value: 0.000005,
-								royaltyConverted: [
-									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'KHM',
-							streams: 2,
-							royalty: {
-								name: 'KHM',
-								value: 0.000032,
-								royaltyConverted: [
-									{
-										amount: 0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 54,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00014099999999999998,
-								royaltyConverted: [
-									{
-										amount: -0.00011984999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.22559999999999997,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'One Touch',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00002,
-						royaltyConverted: [
-							{
-								amount: -0.000017,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.032,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 5,
-							royalty: {
-								name: 'CIV',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Dangbana Orisa',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Lawy',
-			upcCode: '197368476803',
-			isrcCode: 'USLZJ2343755',
-			catalogueId: 'CAT793414',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Big March Mix',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.00007400000000000001,
-						royaltyConverted: [
-							{
-								amount: -0.00006290000000000001,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.11840000000000002,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 32,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 32,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00007400000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.00006290000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.11840000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 28,
-							royalty: {
-								name: 'CIV',
-								value: -0.00011,
-								royaltyConverted: [
-									{
-										amount: -0.0000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.17600000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MDA',
-							streams: 1,
-							royalty: {
-								name: 'MDA',
-								value: 0.00001,
-								royaltyConverted: [
-									{
-										amount: 0.0000085,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 1,
-							royalty: {
-								name: 'LUX',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 2,
-							royalty: {
-								name: 'EGY',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 32,
-							royalty: {
-								name: 'Streaming',
-								value: -0.00007400000000000001,
-								royaltyConverted: [
-									{
-										amount: -0.00006290000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.11840000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'The Verified Vol 2',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000056999999999999996,
-						royaltyConverted: [
-							{
-								amount: -0.00004845,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.09119999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 34,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 34,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000056999999999999996,
-								royaltyConverted: [
-									{
-										amount: -0.00004845,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.09119999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 25,
-							royalty: {
-								name: 'CIV',
-								value: -0.000097,
-								royaltyConverted: [
-									{
-										amount: -0.00008245,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.1552,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NAM',
-							streams: 4,
-							royalty: {
-								name: 'NAM',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MDA',
-							streams: 1,
-							royalty: {
-								name: 'MDA',
-								value: 0.00001,
-								royaltyConverted: [
-									{
-										amount: 0.0000085,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'LUX',
-							streams: 4,
-							royalty: {
-								name: 'LUX',
-								value: 0.000045,
-								royaltyConverted: [
-									{
-										amount: 0.00003825,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07200000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 34,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000056999999999999996,
-								royaltyConverted: [
-									{
-										amount: -0.00004845,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.09119999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: "Lawy's Delight House Mix",
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000016,
-						royaltyConverted: [
-							{
-								amount: 0.000013599999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.025599999999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000036,
-								royaltyConverted: [
-									{
-										amount: 0.0000306,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0576,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 5,
-							royalty: {
-								name: 'CIV',
-								value: -0.00002,
-								royaltyConverted: [
-									{
-										amount: -0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
 							name: 'IND',
-							streams: 1,
+							streams: 410,
 							royalty: {
 								name: 'IND',
-								value: 0.000036,
+								value: 0.22198600000000002,
 								royaltyConverted: [
 									{
-										amount: 0.0000306,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0576,
-										rate: 1600,
+										amount: 310.89139300000005,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000016,
-								royaltyConverted: [
-									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.025599999999999998,
-										rate: 1600,
+										amount: 0.19978740000000003,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Verified Island Mix',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000016,
-						royaltyConverted: [
-							{
-								amount: 0.000013599999999999999,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.025599999999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 7,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000016,
-								royaltyConverted: [
-									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.025599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'UKR',
-							streams: 1,
-							royalty: {
-								name: 'UKR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 7,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000016,
-								royaltyConverted: [
-									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.025599999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Lawy',
-			upcCode: '197368476803',
-			isrcCode: 'USLZJ2343755',
-			catalogueId: 'CAT793414',
-			activityPeriod: 'Jul-23',
-			fullReports: [
-				{
-					trackTitle: 'Big March Mix',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000001,
-						royaltyConverted: [
-							{
-								amount: 8.499999999999999e-7,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0015999999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Soundcloud Subscription',
-							streams: 1,
-							royalty: {
-								name: 'Soundcloud Subscription',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
 						{
 							name: 'CHE',
-							streams: 1,
+							streams: 394,
 							royalty: {
 								name: 'CHE',
-								value: 0.000001,
+								value: 1.600847,
 								royaltyConverted: [
 									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
+										amount: 2241.9862235,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
+										amount: 1.4407623,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Geekaydon',
-			upcCode: '197773512349',
-			isrcCode: 'QZTV32345713',
-			catalogueId: 'CAT888390',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Ikebe',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000028000000000000003,
-						royaltyConverted: [
-							{
-								amount: -0.000023800000000000003,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.044800000000000006,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 24,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 24,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000028000000000000003,
-								royaltyConverted: [
-									{
-										amount: -0.000023800000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.044800000000000006,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUN',
-							streams: 20,
-							royalty: {
-								name: 'TUN',
-								value: -0.000079,
-								royaltyConverted: [
-									{
-										amount: -0.00006714999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.12639999999999998,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'EGY',
-							streams: 1,
+							name: 'NZL',
+							streams: 385,
 							royalty: {
-								name: 'EGY',
-								value: 0.000007,
+								name: 'NZL',
+								value: 1.1224770000000002,
 								royaltyConverted: [
 									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
+										amount: 1572.0290385000003,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.0102293000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'GHA',
-							streams: 3,
+							name: 'IDN',
+							streams: 309,
 							royalty: {
-								name: 'GHA',
-								value: 0.000044,
+								name: 'IDN',
+								value: 0.109793,
 								royaltyConverted: [
 									{
-										amount: 0.0000374,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0704,
-										rate: 1600,
+										amount: 153.7650965,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 24,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000028000000000000003,
-								royaltyConverted: [
-									{
-										amount: -0.000023800000000000003,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.044800000000000006,
-										rate: 1600,
+										amount: 0.0988137,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Femzy Jay, Portable',
-			upcCode: '197999018861',
-			isrcCode: 'QZWDE2351774',
-			catalogueId: 'CAT920353',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: '99 Spirit',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000026,
-						royaltyConverted: [
-							{
-								amount: -0.0000221,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.0416,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 11,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 11,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 8,
-							royalty: {
-								name: 'CIV',
-								value: -0.000032,
-								royaltyConverted: [
-									{
-										amount: -0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'ZMB',
-							streams: 2,
+							name: 'ESP',
+							streams: 299,
 							royalty: {
-								name: 'ZMB',
-								value: -0.000005,
+								name: 'ESP',
+								value: 0.524829,
 								royaltyConverted: [
 									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
+										amount: 735.0230144999999,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.4723461,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MAR',
-							streams: 1,
+							name: 'IRL',
+							streams: 296,
 							royalty: {
-								name: 'MAR',
-								value: 0.000011,
+								name: 'IRL',
+								value: 1.188142,
 								royaltyConverted: [
 									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
+										amount: 1663.9928710000002,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 11,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.0416,
-										rate: 1600,
+										amount: 1.0693278000000002,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Obidi',
-			upcCode: '197368339573',
-			isrcCode: 'QZ5FN2392886',
-			catalogueId: 'CAT778720',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Finish Me',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000026,
-						royaltyConverted: [
-							{
-								amount: -0.0000221,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.0416,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 11,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 11,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 11,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 11,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000026,
-								royaltyConverted: [
-									{
-										amount: -0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0416,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Lyno Casino',
-			upcCode: '197077737844',
-			isrcCode: 'QZWDD2242704',
-			catalogueId: 'CAT716053',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Baller',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000024999999999999998,
-						royaltyConverted: [
-							{
-								amount: 0.000021249999999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.039999999999999994,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 10,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 10,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000024999999999999998,
-								royaltyConverted: [
-									{
-										amount: 0.000021249999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.039999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NAM',
-							streams: 5,
-							royalty: {
-								name: 'NAM',
-								value: -0.000019,
-								royaltyConverted: [
-									{
-										amount: -0.00001615,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.030400000000000003,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'EGY',
-							streams: 3,
+							name: 'BEL',
+							streams: 290,
 							royalty: {
-								name: 'EGY',
-								value: 0.000022,
+								name: 'BEL',
+								value: 0.910252,
 								royaltyConverted: [
 									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
+										amount: 1274.807926,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.8192267999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MAR',
-							streams: 2,
+							name: 'PRT',
+							streams: 289,
 							royalty: {
-								name: 'MAR',
-								value: 0.000022,
+								name: 'PRT',
+								value: 0.49129100000000003,
 								royaltyConverted: [
 									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
+										amount: 688.0530455,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.44216190000000005,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					],
-					deliveryData: [
+						},
 						{
-							name: 'Streaming',
-							streams: 10,
+							name: 'ITA',
+							streams: 271,
 							royalty: {
-								name: 'Streaming',
-								value: 0.000024999999999999998,
+								name: 'ITA',
+								value: 0.601792,
 								royaltyConverted: [
 									{
-										amount: 0.000021249999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.039999999999999994,
-										rate: 1600,
+										amount: 842.809696,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.5416128,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Happy',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000023,
-						royaltyConverted: [
-							{
-								amount: 0.00001955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0368,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
+						},
 						{
-							name: 'Spotify',
-							streams: 1,
+							name: 'AUT',
+							streams: 268,
 							royalty: {
-								name: 'Spotify',
-								value: 0.000023,
+								name: 'AUT',
+								value: 0.81074,
 								royaltyConverted: [
 									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
+										amount: 1135.44137,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.729666,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					],
-					countryData: [
+						},
+						{
+							name: 'POL',
+							streams: 263,
+							royalty: {
+								name: 'POL',
+								value: 0.288419,
+								royaltyConverted: [
+									{
+										amount: 403.93080949999995,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.2595771,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MEX',
+							streams: 236,
+							royalty: {
+								name: 'MEX',
+								value: 0.21946900000000003,
+								royaltyConverted: [
+									{
+										amount: 307.36633450000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.19752210000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ARE',
+							streams: 175,
+							royalty: {
+								name: 'ARE',
+								value: 0.475012,
+								royaltyConverted: [
+									{
+										amount: 665.254306,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.4275108,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SGP',
+							streams: 143,
+							royalty: {
+								name: 'SGP',
+								value: 0.22989300000000001,
+								royaltyConverted: [
+									{
+										amount: 321.9651465,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.20690370000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
 						{
 							name: 'TUR',
-							streams: 1,
+							streams: 137,
 							royalty: {
 								name: 'TUR',
-								value: 0.000023,
+								value: 0.032183,
 								royaltyConverted: [
 									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
+										amount: 45.072291500000006,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.0368,
-										rate: 1600,
+										amount: 0.028964700000000003,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Dialo',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000046,
-						royaltyConverted: [
-							{
-								amount: 0.0000391,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0736,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 2,
-							royalty: {
-								name: 'TUR',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj 4kerty',
-			upcCode: '197368834931',
-			isrcCode: 'GBRKQ2368457',
-			catalogueId: 'CAT826245',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Mara Pupo Mixtape',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.0000029999999999999984,
-						royaltyConverted: [
-							{
-								amount: 0.0000025499999999999985,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.004799999999999997,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 9,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 7,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000023,
-								royaltyConverted: [
-									{
-										amount: -0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'TIDAL',
-							streams: 2,
+							name: 'COL',
+							streams: 134,
 							royalty: {
-								name: 'TIDAL',
-								value: 0.000026,
+								name: 'COL',
+								value: 0.063891,
 								royaltyConverted: [
 									{
-										amount: 0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0416,
-										rate: 1600,
+										amount: 89.47934550000001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'CIV',
-							streams: 4,
-							royalty: {
-								name: 'CIV',
-								value: -0.000015,
-								royaltyConverted: [
-									{
-										amount: -0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.024,
-										rate: 1600,
+										amount: 0.0575019,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'GEO',
-							streams: 3,
+							name: 'KEN',
+							streams: 125,
 							royalty: {
-								name: 'GEO',
-								value: -0.000008,
+								name: 'KEN',
+								value: 0.435778,
 								royaltyConverted: [
 									{
-										amount: -0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.012799999999999999,
-										rate: 1600,
+										amount: 610.307089,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.3922002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'NGA',
-							streams: 2,
+							name: 'MYS',
+							streams: 120,
 							royalty: {
-								name: 'NGA',
-								value: 0.000026,
+								name: 'MYS',
+								value: 0.07894400000000001,
 								royaltyConverted: [
 									{
-										amount: 0.0000221,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0416,
-										rate: 1600,
+										amount: 110.56107200000002,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 9,
-							royalty: {
-								name: 'Streaming',
-								value: 0.0000029999999999999984,
-								royaltyConverted: [
-									{
-										amount: 0.0000025499999999999985,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.004799999999999997,
-										rate: 1600,
+										amount: 0.07104960000000002,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Party Till 4:30',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000059,
-						royaltyConverted: [
-							{
-								amount: 0.00005015,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0944,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000019999999999999998,
-								royaltyConverted: [
-									{
-										amount: 0.000016999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'YouTube Streaming',
-							streams: 1,
+							name: 'CZE',
+							streams: 98,
 							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000039,
+								name: 'CZE',
+								value: 0.129577,
 								royaltyConverted: [
 									{
-										amount: 0.00003315,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0624,
-										rate: 1600,
+										amount: 181.4725885,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
+										amount: 0.1166193,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'UKR',
-							streams: 2,
+							name: 'ISR',
+							streams: 93,
 							royalty: {
-								name: 'UKR',
-								value: 0.000023,
+								name: 'ISR',
+								value: 0.205433,
 								royaltyConverted: [
 									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
+										amount: 287.7089165,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.18488970000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MYT',
-							streams: 1,
+							name: 'SVK',
+							streams: 86,
 							royalty: {
-								name: 'MYT',
-								value: 0.000039,
+								name: 'SVK',
+								value: 0.143233,
 								royaltyConverted: [
 									{
-										amount: 0.00003315,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0624,
-										rate: 1600,
+										amount: 200.5978165,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000059,
-								royaltyConverted: [
-									{
-										amount: 0.00005015,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.0944,
-										rate: 1600,
+										amount: 0.12890970000000002,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'KINGP',
-			upcCode: '195729938335',
-			isrcCode: 'GBRKQ2258732',
-			catalogueId: 'CAT654972',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Commoner',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000044999999999999996,
-						royaltyConverted: [
-							{
-								amount: 0.000038249999999999995,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.072,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 10,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 10,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000044999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.000038249999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.072,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 3,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000007,
-								royaltyConverted: [
-									{
-										amount: -0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'GEO',
-							streams: 1,
+							name: 'LUX',
+							streams: 84,
 							royalty: {
-								name: 'GEO',
-								value: -0.000004,
+								name: 'LUX',
+								value: 0.352439,
 								royaltyConverted: [
 									{
-										amount: -0.0000033999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0063999999999999994,
-										rate: 1600,
+										amount: 493.5908195,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.3171951,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'JAM',
-							streams: 1,
+							name: 'EST',
+							streams: 82,
 							royalty: {
-								name: 'JAM',
-								value: -0.000001,
+								name: 'EST',
+								value: 0.17835900000000002,
 								royaltyConverted: [
 									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
+										amount: 249.79177950000002,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.16052310000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'EGY',
-							streams: 1,
+							name: 'FIN',
+							streams: 74,
 							royalty: {
-								name: 'EGY',
-								value: 0.000007,
+								name: 'FIN',
+								value: 0.258081,
 								royaltyConverted: [
 									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
+										amount: 361.44244050000003,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.2322729,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MAR',
-							streams: 1,
+							name: 'ROM',
+							streams: 74,
 							royalty: {
-								name: 'MAR',
-								value: 0.000011,
+								name: 'ROM',
+								value: 0.152161,
 								royaltyConverted: [
 									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
+										amount: 213.10148049999998,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.1369449,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'KHM',
-							streams: 1,
+							name: 'ARG',
+							streams: 70,
 							royalty: {
-								name: 'KHM',
-								value: 0.000016,
+								name: 'ARG',
+								value: 0.023375,
 								royaltyConverted: [
 									{
-										amount: 0.000013599999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.025599999999999998,
-										rate: 1600,
+										amount: 32.7366875,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0210375,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'UKR',
-							streams: 2,
+							name: 'THA',
+							streams: 64,
 							royalty: {
-								name: 'UKR',
-								value: 0.000023,
+								name: 'THA',
+								value: 0.031498,
 								royaltyConverted: [
 									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
+										amount: 44.112949,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 10,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000044999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.000038249999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.072,
-										rate: 1600,
+										amount: 0.0283482,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'K-Adel',
-			upcCode: '197077705133',
-			isrcCode: 'QZWDD2228280',
-			catalogueId: 'CAT713007',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Zanotti',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000037,
-						royaltyConverted: [
-							{
-								amount: 0.00003145,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.059199999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'BWA',
-							streams: 2,
-							royalty: {
-								name: 'BWA',
-								value: -0.000007,
-								royaltyConverted: [
-									{
-										amount: -0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
 							name: 'GRC',
-							streams: 1,
+							streams: 58,
 							royalty: {
 								name: 'GRC',
-								value: 0.000047,
+								value: 0.103173,
 								royaltyConverted: [
 									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
+										amount: 144.4937865,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0928557,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					],
-					deliveryData: [
+						},
 						{
-							name: 'Streaming',
-							streams: 4,
+							name: 'UGA',
+							streams: 58,
 							royalty: {
-								name: 'Streaming',
-								value: 0.000037,
+								name: 'UGA',
+								value: 0.040027,
 								royaltyConverted: [
 									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
+										amount: 56.0578135,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0360243,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Ike Exclusive',
-			upcCode: '195729964563',
-			isrcCode: 'GBRKQ2268714',
-			catalogueId: 'CAT657533',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Lekki',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000034,
-						royaltyConverted: [
-							{
-								amount: 0.000028899999999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0544,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
+						},
 						{
-							name: 'Spotify',
-							streams: 5,
+							name: 'CHL',
+							streams: 55,
 							royalty: {
-								name: 'Spotify',
-								value: 0.000034,
+								name: 'CHL',
+								value: 0.037555,
 								royaltyConverted: [
 									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0544,
-										rate: 1600,
+										amount: 52.5957775,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.033799499999999996,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					],
-					countryData: [
+						},
+						{
+							name: 'GHA',
+							streams: 55,
+							royalty: {
+								name: 'GHA',
+								value: 0.025833000000000002,
+								royaltyConverted: [
+									{
+										amount: 36.1791165,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0232497,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'JPN',
+							streams: 52,
+							royalty: {
+								name: 'JPN',
+								value: 0.10642299999999999,
+								royaltyConverted: [
+									{
+										amount: 149.04541149999997,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0957807,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
 						{
 							name: 'ZMB',
-							streams: 2,
+							streams: 48,
 							royalty: {
 								name: 'ZMB',
-								value: -0.000005,
+								value: 0.016725999999999998,
 								royaltyConverted: [
 									{
-										amount: -0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.008,
-										rate: 1600,
+										amount: 23.424763,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.015053399999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MAR',
-							streams: 1,
+							name: 'HUN',
+							streams: 47,
 							royalty: {
-								name: 'MAR',
-								value: 0.000011,
+								name: 'HUN',
+								value: 0.057990999999999994,
 								royaltyConverted: [
 									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
+										amount: 81.21639549999999,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.05219189999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'GHA',
-							streams: 2,
+							name: 'CRI',
+							streams: 44,
 							royalty: {
-								name: 'GHA',
-								value: 0.000028,
+								name: 'CRI',
+								value: 0.043793,
 								royaltyConverted: [
 									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
+										amount: 61.3320965,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000034,
-								royaltyConverted: [
-									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.0544,
-										rate: 1600,
+										amount: 0.0394137,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Toxic',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000042,
-						royaltyConverted: [
-							{
-								amount: 0.0000357,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0672,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000042,
-								royaltyConverted: [
-									{
-										amount: 0.0000357,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0672,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MUS',
-							streams: 1,
+							name: 'SVN',
+							streams: 43,
 							royalty: {
-								name: 'MUS',
-								value: 0.000001,
+								name: 'SVN',
+								value: 0.05542,
 								royaltyConverted: [
 									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
+										amount: 77.61570999999999,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.049878,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'GHA',
-							streams: 3,
+							name: 'TWN',
+							streams: 37,
 							royalty: {
-								name: 'GHA',
-								value: 0.000044,
+								name: 'TWN',
+								value: 0.026807000000000004,
 								royaltyConverted: [
 									{
-										amount: 0.0000374,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0704,
-										rate: 1600,
+										amount: 37.543203500000004,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000042,
-								royaltyConverted: [
-									{
-										amount: 0.0000357,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.0672,
-										rate: 1600,
+										amount: 0.024126300000000003,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Gbas Gbos',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000007,
-						royaltyConverted: [
-							{
-								amount: 0.00000595,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0112,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Young Duu',
-			upcCode: '197773213079',
-			isrcCode: 'QZTRX2319959',
-			catalogueId: 'CAT864937',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'E Gbemi',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000049,
-						royaltyConverted: [
-							{
-								amount: 0.000041649999999999996,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0784,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 8,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 5,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000012,
-								royaltyConverted: [
-									{
-										amount: 0.0000102,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.019200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'TIDAL',
-							streams: 3,
+							name: 'HKG',
+							streams: 36,
 							royalty: {
-								name: 'TIDAL',
-								value: 0.000037,
+								name: 'HKG',
+								value: 0.07347400000000001,
 								royaltyConverted: [
 									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
+										amount: 102.90033700000002,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GEO',
-							streams: 1,
-							royalty: {
-								name: 'GEO',
-								value: -0.000004,
-								royaltyConverted: [
-									{
-										amount: -0.0000033999999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: -0.0063999999999999994,
-										rate: 1600,
+										amount: 0.06612660000000001,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'MUS',
-							streams: 3,
+							name: 'SAU',
+							streams: 36,
 							royalty: {
-								name: 'MUS',
-								value: 0.000005,
+								name: 'SAU',
+								value: 0.07424700000000001,
 								royaltyConverted: [
 									{
-										amount: 0.00000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.008,
-										rate: 1600,
+										amount: 103.98292350000001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.06682230000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 3,
-							royalty: {
-								name: 'NGA',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 8,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000049,
-								royaltyConverted: [
-									{
-										amount: 0.000041649999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0784,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Sho Sho Sho',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000030999999999999995,
-						royaltyConverted: [
-							{
-								amount: 0.000026349999999999993,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.04959999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 6,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 6,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000030999999999999995,
-								royaltyConverted: [
-									{
-										amount: 0.000026349999999999993,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04959999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 3,
-							royalty: {
-								name: 'EGY',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 6,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000030999999999999995,
-								royaltyConverted: [
-									{
-										amount: 0.000026349999999999993,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04959999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Kunfayafun',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000051000000000000006,
-						royaltyConverted: [
-							{
-								amount: 0.00004335,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0816,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 5,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000026000000000000002,
-								royaltyConverted: [
-									{
-										amount: 0.000022100000000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.041600000000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 2,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 2,
-							royalty: {
-								name: 'EGY',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 2,
-							royalty: {
-								name: 'NGA',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 5,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000051000000000000006,
-								royaltyConverted: [
-									{
-										amount: 0.00004335,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Kilowa',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000039,
-						royaltyConverted: [
-							{
-								amount: 0.00003315,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0624,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000026000000000000002,
-								royaltyConverted: [
-									{
-										amount: 0.000022100000000000002,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.041600000000000005,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 2,
-							royalty: {
-								name: 'EGY',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000039,
-								royaltyConverted: [
-									{
-										amount: 0.00003315,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0624,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Ransome',
-			upcCode: '197077882315',
-			isrcCode: 'QZWDD2291911',
-			catalogueId: 'CAT729821',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Afia',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000032000000000000005,
-						royaltyConverted: [
-							{
-								amount: 0.000027200000000000004,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.05120000000000001,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000007000000000000001,
-								royaltyConverted: [
-									{
-										amount: 0.000005950000000000001,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.011200000000000002,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TIDAL',
-							streams: 2,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MDA',
-							streams: 1,
-							royalty: {
-								name: 'MDA',
-								value: 0.00001,
-								royaltyConverted: [
-									{
-										amount: 0.0000085,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.016,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'NGA',
-							streams: 2,
-							royalty: {
-								name: 'NGA',
-								value: 0.000025,
-								royaltyConverted: [
-									{
-										amount: 0.00002125,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.04,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000032000000000000005,
-								royaltyConverted: [
-									{
-										amount: 0.000027200000000000004,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.05120000000000001,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Local Boy',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000046,
-						royaltyConverted: [
-							{
-								amount: 0.0000391,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0736,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 2,
-							royalty: {
-								name: 'TUR',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000046,
-								royaltyConverted: [
-									{
-										amount: 0.0000391,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0736,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: "Ijim N'oru",
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Obidi, MJQSoundz',
-			upcCode: '197773349099',
-			isrcCode: 'QZTRX2378104',
-			catalogueId: 'CAT876737',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Ova You',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000003,
-						royaltyConverted: [
-							{
-								amount: -0.00000255,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.0048000000000000004,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Woman Leader',
-			upcCode: '197368980188',
-			isrcCode: 'GBWUL2319112',
-			catalogueId: 'CAT840404',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Going Higher',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000014,
-						royaltyConverted: [
-							{
-								amount: 0.0000119,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0224,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 4,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000014,
-								royaltyConverted: [
-									{
-										amount: 0.0000119,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0224,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ZMB',
-							streams: 1,
-							royalty: {
-								name: 'ZMB',
-								value: -0.000003,
-								royaltyConverted: [
-									{
-										amount: -0.00000255,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0048000000000000004,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'JAM',
-							streams: 1,
-							royalty: {
-								name: 'JAM',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000014,
-								royaltyConverted: [
-									{
-										amount: 0.0000119,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0224,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Lord Sky',
-			upcCode: '197773939719',
-			isrcCode: 'QZWDE2301515',
-			catalogueId: 'CAT913946',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Money',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: -0.000001,
-						royaltyConverted: [
-							{
-								amount: -8.499999999999999e-7,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: -0.0015999999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'JAM',
-							streams: 1,
-							royalty: {
-								name: 'JAM',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: -0.000001,
-								royaltyConverted: [
-									{
-										amount: -8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: -0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Spinoff',
-			upcCode: '197077912975',
-			isrcCode: 'QZWDE2202230',
-			catalogueId: 'CAT733416',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Ika Of Africa Mixtape',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000044999999999999996,
-						royaltyConverted: [
-							{
-								amount: 0.000038249999999999995,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.072,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000008,
-								royaltyConverted: [
-									{
-										amount: 0.000006799999999999999,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.012799999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'YouTube Streaming',
-							streams: 2,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 1,
-							royalty: {
-								name: 'EGY',
-								value: 0.000007,
-								royaltyConverted: [
-									{
-										amount: 0.00000595,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0112,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000044999999999999996,
-								royaltyConverted: [
-									{
-										amount: 0.000038249999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.072,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Naija Old Skool [Mixtape]',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000035,
-						royaltyConverted: [
-							{
-								amount: 0.000029749999999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.055999999999999994,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'EGY',
-							streams: 3,
-							royalty: {
-								name: 'EGY',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 4,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000035,
-								royaltyConverted: [
-									{
-										amount: 0.000029749999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.055999999999999994,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: '2023 Worry Worry Dj Mixtape',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'OT Vibezz',
-			upcCode: '197368938738',
-			isrcCode: 'GBWUL2304804',
-			catalogueId: 'CAT836163',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'If To Say',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000001,
-						royaltyConverted: [
-							{
-								amount: 8.499999999999999e-7,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0015999999999999999,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MUS',
-							streams: 1,
-							royalty: {
-								name: 'MUS',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000001,
-								royaltyConverted: [
-									{
-										amount: 8.499999999999999e-7,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0015999999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Magnito, Mazanjiyabaah',
-			upcCode: '197077579048',
-			isrcCode: 'QZTV32246209',
-			catalogueId: 'CAT704138',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Sanu',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000034,
-						royaltyConverted: [
-							{
-								amount: 0.000028899999999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0544,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000034,
-								royaltyConverted: [
-									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0544,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MAR',
-							streams: 1,
-							royalty: {
-								name: 'MAR',
-								value: 0.000011,
-								royaltyConverted: [
-									{
-										amount: 0.00000935,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0176,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000034,
-								royaltyConverted: [
-									{
-										amount: 0.000028899999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0544,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'HoodCelebrity1k',
-			upcCode: '197077368840',
-			isrcCode: 'QZTRX2228979',
-			catalogueId: 'CAT689509',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Greatness',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000013,
-						royaltyConverted: [
-							{
-								amount: 0.00001105,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0208,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Time & Money',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000013,
-						royaltyConverted: [
-							{
-								amount: 0.00001105,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0208,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Spirit Okooku, Portable',
-			upcCode: '197773907770',
-			isrcCode: 'QZWDD2386598',
-			catalogueId: 'CAT911572',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Akoi Hookup',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000083,
-						royaltyConverted: [
-							{
-								amount: 0.00007055,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.1328,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00007,
-								royaltyConverted: [
-									{
-										amount: 0.000059499999999999996,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.11199999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GRC',
-							streams: 1,
-							royalty: {
-								name: 'GRC',
-								value: 0.000047,
-								royaltyConverted: [
-									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000083,
-								royaltyConverted: [
-									{
-										amount: 0.00007055,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.1328,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Lisa Viola',
-			upcCode: '197077011913',
-			isrcCode: 'TCAFR2119069',
-			catalogueId: 'CAT662154',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Lagos',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000013,
-						royaltyConverted: [
-							{
-								amount: 0.00001105,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0208,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'TIDAL',
-							streams: 1,
-							royalty: {
-								name: 'TIDAL',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000013,
-								royaltyConverted: [
-									{
-										amount: 0.00001105,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0208,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Kisses',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000022,
-						royaltyConverted: [
-							{
-								amount: 0.0000187,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0352,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'BGD',
-							streams: 1,
-							royalty: {
-								name: 'BGD',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000022,
-								royaltyConverted: [
-									{
-										amount: 0.0000187,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0352,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Edu Oliver De Coque',
-			upcCode: '197077757842',
-			isrcCode: 'QZWDD2252032',
-			catalogueId: 'CAT718163',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Arusi Ego Ezeobi  Asaba ( Already Made Dibia AMD ) Special',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'OZD',
-			upcCode: '197077254020',
-			isrcCode: 'GBWUL2272340',
-			catalogueId: 'CAT680471',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Pose',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Pray',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Aza',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000028,
-						royaltyConverted: [
-							{
-								amount: 0.0000238,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0448,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 2,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 2,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 2,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Spirit Okooku, Yung Effissy',
-			upcCode: '197077089325',
-			isrcCode: 'GBWUL2212120',
-			catalogueId: 'CAT667839',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Ayefele',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'ICE-K ArtQuake',
-			upcCode: '197773916802',
-			isrcCode: 'QZWDD2389170',
-			catalogueId: 'CAT912574',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Amazingly (Ire)',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000015,
-						royaltyConverted: [
-							{
-								amount: 0.00001275,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.024,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'GHA',
-							streams: 1,
-							royalty: {
-								name: 'GHA',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000015,
-								royaltyConverted: [
-									{
-										amount: 0.00001275,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.024,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Kogbagidi Lavish Funds, Dj Spirit Okooku',
-			upcCode: '197077958140',
-			isrcCode: 'QZWDE2224831',
-			catalogueId: 'CAT737098',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Sufficient Mixtape Vol 2',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00002,
-						royaltyConverted: [
-							{
-								amount: 0.000017,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.032,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00002,
-								royaltyConverted: [
-									{
-										amount: 0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'ALB',
-							streams: 1,
-							royalty: {
-								name: 'ALB',
-								value: 0.00002,
-								royaltyConverted: [
-									{
-										amount: 0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00002,
-								royaltyConverted: [
-									{
-										amount: 0.000017,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.032,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Portable, Seriki',
-			upcCode: '8720765832235',
-			isrcCode: 'NLRD52202797',
-			catalogueId: 'CAT8720765832235',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Blow',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000051,
-						royaltyConverted: [
-							{
-								amount: 0.000043349999999999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0816,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000051,
-								royaltyConverted: [
-									{
-										amount: 0.000043349999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						},
-						{
-							name: 'GHA',
-							streams: 2,
-							royalty: {
-								name: 'GHA',
-								value: 0.000028,
-								royaltyConverted: [
-									{
-										amount: 0.0000238,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0448,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000051,
-								royaltyConverted: [
-									{
-										amount: 0.000043349999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0816,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Chief Imo',
-			upcCode: '197999065056',
-			isrcCode: 'QZWDE2373753',
-			catalogueId: 'CAT922895',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Nneoma',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000023,
-						royaltyConverted: [
-							{
-								amount: 0.00001955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0368,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TUR',
-							streams: 1,
-							royalty: {
-								name: 'TUR',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Spirit Okooku, Spending',
-			upcCode: '197773173052',
-			isrcCode: 'QZTRX2301460',
-			catalogueId: 'CAT860454',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Spending Agege',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000023,
-						royaltyConverted: [
-							{
-								amount: 0.00001955,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0368,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
 						{
 							name: 'PER',
-							streams: 1,
+							streams: 35,
 							royalty: {
 								name: 'PER',
-								value: 0.000023,
+								value: 0.013925000000000002,
 								royaltyConverted: [
 									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0368,
-										rate: 1600,
+										amount: 19.5019625,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000023,
-								royaltyConverted: [
-									{
-										amount: 0.00001955,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.0368,
-										rate: 1600,
+										amount: 0.012532500000000002,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'John Frog',
-			upcCode: '197077111996',
-			isrcCode: 'GBWUL2219780',
-			catalogueId: 'CAT669583',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Beledi',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000032,
-						royaltyConverted: [
-							{
-								amount: 0.000027199999999999997,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.051199999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 3,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000032,
-								royaltyConverted: [
-									{
-										amount: 0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'MAR',
-							streams: 3,
-							royalty: {
-								name: 'MAR',
-								value: 0.000032,
-								royaltyConverted: [
-									{
-										amount: 0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 3,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000032,
-								royaltyConverted: [
-									{
-										amount: 0.000027199999999999997,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.051199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Billz',
-			upcCode: '197368339627',
-			isrcCode: 'QZ5FN2392895',
-			catalogueId: 'CAT778725',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Get Drilled',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000037,
-						royaltyConverted: [
-							{
-								amount: 0.00003145,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.059199999999999996,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'DOM',
-							streams: 1,
-							royalty: {
-								name: 'DOM',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000037,
-								royaltyConverted: [
-									{
-										amount: 0.00003145,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.059199999999999996,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Lahboceery',
-			upcCode: '197368927985',
-			isrcCode: 'GBWUL2303839',
-			catalogueId: 'CAT835547',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'AA Mixtape',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.000042,
-						royaltyConverted: [
-							{
-								amount: 0.0000357,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.0672,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'YouTube Streaming',
-							streams: 1,
-							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000042,
-								royaltyConverted: [
-									{
-										amount: 0.0000357,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0672,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'TZA',
-							streams: 1,
-							royalty: {
-								name: 'TZA',
-								value: 0.000042,
-								royaltyConverted: [
-									{
-										amount: 0.0000357,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0672,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.000042,
-								royaltyConverted: [
-									{
-										amount: 0.0000357,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0672,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Domestic Secrets',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dullar Boi',
-			upcCode: '197368858579',
-			isrcCode: 'GBRKQ2378964',
-			catalogueId: 'CAT828736',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Wajadina',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00009099999999999999,
-						royaltyConverted: [
-							{
-								amount: 0.00007734999999999998,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.14559999999999998,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 4,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 3,
-							royalty: {
-								name: 'Spotify',
-								value: 0.000044,
-								royaltyConverted: [
-									{
-										amount: 0.0000374,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0704,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
-							name: 'YouTube Streaming',
-							streams: 1,
+							name: 'MAR',
+							streams: 33,
 							royalty: {
-								name: 'YouTube Streaming',
-								value: 0.000047,
+								name: 'MAR',
+								value: 0.019199,
 								royaltyConverted: [
 									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
+										amount: 26.888199500000002,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.017279100000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					],
-					countryData: [
+						},
 						{
-							name: 'GHA',
-							streams: 3,
+							name: 'ETH',
+							streams: 32,
 							royalty: {
-								name: 'GHA',
-								value: 0.000044,
+								name: 'ETH',
+								value: 0.0017010000000000003,
 								royaltyConverted: [
 									{
-										amount: 0.0000374,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.0704,
-										rate: 1600,
+										amount: 2.3822505000000005,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0015309000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ISL',
+							streams: 28,
+							royalty: {
+								name: 'ISL',
+								value: 0.111922,
+								royaltyConverted: [
+									{
+										amount: 156.746761,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.1007298,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LKA',
+							streams: 26,
+							royalty: {
+								name: 'LKA',
+								value: 0.0019430000000000003,
+								royaltyConverted: [
+									{
+										amount: 2.7211715000000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0017487000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'EGY',
+							streams: 25,
+							royalty: {
+								name: 'EGY',
+								value: 0.009486999999999999,
+								royaltyConverted: [
+									{
+										amount: 13.286543499999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.008538299999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'VNM',
+							streams: 23,
+							royalty: {
+								name: 'VNM',
+								value: 0.0033030000000000004,
+								royaltyConverted: [
+									{
+										amount: 4.6258515000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0029727000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'JOR',
+							streams: 22,
+							royalty: {
+								name: 'JOR',
+								value: 0.029011,
+								royaltyConverted: [
+									{
+										amount: 40.6299055,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0261099,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ECU',
+							streams: 20,
+							royalty: {
+								name: 'ECU',
+								value: 0.012568,
+								royaltyConverted: [
+									{
+										amount: 17.601484,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0113112,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'TZA',
+							streams: 19,
+							royalty: {
+								name: 'TZA',
+								value: 0.007566,
+								royaltyConverted: [
+									{
+										amount: 10.596183,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0068094,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MWI',
+							streams: 19,
+							royalty: {
+								name: 'MWI',
+								value: 0.016916999999999998,
+								royaltyConverted: [
+									{
+										amount: 23.692258499999998,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.015225299999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'TTO',
+							streams: 18,
+							royalty: {
+								name: 'TTO',
+								value: 0.014419999999999999,
+								royaltyConverted: [
+									{
+										amount: 20.19521,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.012978,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KOR',
+							streams: 16,
+							royalty: {
+								name: 'KOR',
+								value: 0.039360000000000006,
+								royaltyConverted: [
+									{
+										amount: 55.12368000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.035424000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GTM',
+							streams: 15,
+							royalty: {
+								name: 'GTM',
+								value: 0.0032639999999999995,
+								royaltyConverted: [
+									{
+										amount: 4.571231999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0029376,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LTU',
+							streams: 15,
+							royalty: {
+								name: 'LTU',
+								value: 0.033563,
+								royaltyConverted: [
+									{
+										amount: 47.00498150000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.030206700000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'JAM',
+							streams: 14,
+							royalty: {
+								name: 'JAM',
+								value: 0.020516,
+								royaltyConverted: [
+									{
+										amount: 28.732658,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0184644,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'QAT',
+							streams: 13,
+							royalty: {
+								name: 'QAT',
+								value: 0.012074,
+								royaltyConverted: [
+									{
+										amount: 16.909637,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0108666,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LVA',
+							streams: 13,
+							royalty: {
+								name: 'LVA',
+								value: 0.017447999999999998,
+								royaltyConverted: [
+									{
+										amount: 24.435923999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0157032,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CYP',
+							streams: 12,
+							royalty: {
+								name: 'CYP',
+								value: 0.012468,
+								royaltyConverted: [
+									{
+										amount: 17.461434,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0112212,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PAK',
+							streams: 12,
+							royalty: {
+								name: 'PAK',
+								value: -0.0021850000000000003,
+								royaltyConverted: [
+									{
+										amount: -3.0600925000000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0019665000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NAM',
+							streams: 12,
+							royalty: {
+								name: 'NAM',
+								value: 0.001448,
+								royaltyConverted: [
+									{
+										amount: 2.027924,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0013032,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HRV',
+							streams: 10,
+							royalty: {
+								name: 'HRV',
+								value: 0.012198000000000002,
+								royaltyConverted: [
+									{
+										amount: 17.083299000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.010978200000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SLV',
+							streams: 10,
+							royalty: {
+								name: 'SLV',
+								value: 0.004748,
+								royaltyConverted: [
+									{
+										amount: 6.649573999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0042732,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						},
 						{
 							name: 'DZA',
-							streams: 1,
+							streams: 10,
 							royalty: {
 								name: 'DZA',
-								value: 0.000047,
+								value: 0.005546,
 								royaltyConverted: [
 									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
+										amount: 7.767173,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0049914,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
-						}
-					],
-					deliveryData: [
+						},
 						{
-							name: 'Streaming',
+							name: 'SRB',
+							streams: 9,
+							royalty: {
+								name: 'SRB',
+								value: -0.0016330000000000008,
+								royaltyConverted: [
+									{
+										amount: -2.287016500000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0014697000000000006,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'OMN',
+							streams: 9,
+							royalty: {
+								name: 'OMN',
+								value: 0.005057,
+								royaltyConverted: [
+									{
+										amount: 7.0823285,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0045513,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BGR',
+							streams: 9,
+							royalty: {
+								name: 'BGR',
+								value: 0.011714,
+								royaltyConverted: [
+									{
+										amount: 16.405457000000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.010542600000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'RWA',
+							streams: 9,
+							royalty: {
+								name: 'RWA',
+								value: 0.005338000000000001,
+								royaltyConverted: [
+									{
+										amount: 7.475869000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004804200000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MLT',
+							streams: 7,
+							royalty: {
+								name: 'MLT',
+								value: 0.010527000000000002,
+								royaltyConverted: [
+									{
+										amount: 14.743063500000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.009474300000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PAN',
+							streams: 7,
+							royalty: {
+								name: 'PAN',
+								value: 0.003497000000000001,
+								royaltyConverted: [
+									{
+										amount: 4.897548500000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.003147300000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BIH',
+							streams: 7,
+							royalty: {
+								name: 'BIH',
+								value: -0.0006390000000000002,
+								royaltyConverted: [
+									{
+										amount: -0.8949195000000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0005751000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BOL',
+							streams: 7,
+							royalty: {
+								name: 'BOL',
+								value: 0.0013099999999999995,
+								royaltyConverted: [
+									{
+										amount: 1.8346549999999993,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0011789999999999997,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GEO',
+							streams: 7,
+							royalty: {
+								name: 'GEO',
+								value: 0.010393,
+								royaltyConverted: [
+									{
+										amount: 14.555396499999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0093537,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MUS',
+							streams: 6,
+							royalty: {
+								name: 'MUS',
+								value: -0.00013700000000000084,
+								royaltyConverted: [
+									{
+										amount: -0.19186850000000116,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.00012330000000000075,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'UKR',
+							streams: 6,
+							royalty: {
+								name: 'UKR',
+								value: 0.004816999999999999,
+								royaltyConverted: [
+									{
+										amount: 6.746208499999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004335299999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PRY',
+							streams: 5,
+							royalty: {
+								name: 'PRY',
+								value: -0.004478,
+								royaltyConverted: [
+									{
+										amount: -6.271439,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0040302,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ZWE',
+							streams: 5,
+							royalty: {
+								name: 'ZWE',
+								value: 0.0019649999999999997,
+								royaltyConverted: [
+									{
+										amount: 2.7519824999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0017684999999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'AGO',
 							streams: 4,
 							royalty: {
-								name: 'Streaming',
-								value: 0.00009099999999999999,
+								name: 'AGO',
+								value: -0.0054670000000000005,
 								royaltyConverted: [
 									{
-										amount: 0.00007734999999999998,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.14559999999999998,
-										rate: 1600,
+										amount: -7.656533500000001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.004920300000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'DOM',
+							streams: 4,
+							royalty: {
+								name: 'DOM',
+								value: 0.0006970000000000006,
+								royaltyConverted: [
+									{
+										amount: 0.9761485000000008,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0006273000000000006,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BWA',
+							streams: 4,
+							royalty: {
+								name: 'BWA',
+								value: -0.001275,
+								royaltyConverted: [
+									{
+										amount: -1.7856375000000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0011475,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MAC',
+							streams: 4,
+							royalty: {
+								name: 'MAC',
+								value: 0.0013840000000000002,
+								royaltyConverted: [
+									{
+										amount: 1.9382920000000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0012456000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CMR',
+							streams: 4,
+							royalty: {
+								name: 'CMR',
+								value: 0.004486,
+								royaltyConverted: [
+									{
+										amount: 6.282643,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004037400000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BHR',
+							streams: 4,
+							royalty: {
+								name: 'BHR',
+								value: 0.005086,
+								royaltyConverted: [
+									{
+										amount: 7.122943,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0045774000000000006,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NIC',
+							streams: 3,
+							royalty: {
+								name: 'NIC',
+								value: -0.0044080000000000005,
+								royaltyConverted: [
+									{
+										amount: -6.173404000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.003967200000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BGD',
+							streams: 3,
+							royalty: {
+								name: 'BGD',
+								value: -0.003224,
+								royaltyConverted: [
+									{
+										amount: -4.515212,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0029016,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MKD',
+							streams: 3,
+							royalty: {
+								name: 'MKD',
+								value: 0.0013059999999999999,
+								royaltyConverted: [
+									{
+										amount: 1.8290529999999998,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0011753999999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SYC',
+							streams: 3,
+							royalty: {
+								name: 'SYC',
+								value: 0.002953999999999999,
+								royaltyConverted: [
+									{
+										amount: 4.137076999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0026585999999999992,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MOZ',
+							streams: 3,
+							royalty: {
+								name: 'MOZ',
+								value: -0.000029999999999999645,
+								royaltyConverted: [
+									{
+										amount: -0.042014999999999504,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.00002699999999999968,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'URY',
+							streams: 3,
+							royalty: {
+								name: 'URY',
+								value: 0.0007069999999999997,
+								royaltyConverted: [
+									{
+										amount: 0.9901534999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0006362999999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BLZ',
+							streams: 3,
+							royalty: {
+								name: 'BLZ',
+								value: -0.001947,
+								royaltyConverted: [
+									{
+										amount: -2.7267734999999997,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0017523,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GRD',
+							streams: 3,
+							royalty: {
+								name: 'GRD',
+								value: -0.001421,
+								royaltyConverted: [
+									{
+										amount: -1.9901105,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0012789,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BEN',
+							streams: 3,
+							royalty: {
+								name: 'BEN',
+								value: -0.002474,
+								royaltyConverted: [
+									{
+										amount: -3.464837,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0022266,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KWT',
+							streams: 2,
+							royalty: {
+								name: 'KWT',
+								value: -0.004734,
+								royaltyConverted: [
+									{
+										amount: -6.629967000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.004260600000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PNG',
+							streams: 2,
+							royalty: {
+								name: 'PNG',
+								value: 0.0006350000000000001,
+								royaltyConverted: [
+									{
+										amount: 0.8893175000000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0005715000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BRB',
+							streams: 2,
+							royalty: {
+								name: 'BRB',
+								value: -0.00016299999999999995,
+								royaltyConverted: [
+									{
+										amount: -0.22828149999999994,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.00014669999999999996,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KAZ',
+							streams: 2,
+							royalty: {
+								name: 'KAZ',
+								value: -0.0017009999999999998,
+								royaltyConverted: [
+									{
+										amount: -2.3822504999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0015309,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BDI',
+							streams: 2,
+							royalty: {
+								name: 'BDI',
+								value: 0.000471,
+								royaltyConverted: [
+									{
+										amount: 0.6596355,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0004239,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KGZ',
+							streams: 2,
+							royalty: {
+								name: 'KGZ',
+								value: 0.00079,
+								royaltyConverted: [
+									{
+										amount: 1.106395,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.000711,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LBN',
+							streams: 2,
+							royalty: {
+								name: 'LBN',
+								value: 0.002817,
+								royaltyConverted: [
+									{
+										amount: 3.9452085,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0025353000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MDA',
+							streams: 2,
+							royalty: {
+								name: 'MDA',
+								value: 0.003472,
+								royaltyConverted: [
+									{
+										amount: 4.8625359999999995,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0031248,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'FJI',
+							streams: 2,
+							royalty: {
+								name: 'FJI',
+								value: 0.00531,
+								royaltyConverted: [
+									{
+										amount: 7.436654999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004778999999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MCO',
+							streams: 1,
+							royalty: {
+								name: 'MCO',
+								value: -0.0016899999999999997,
+								royaltyConverted: [
+									{
+										amount: -2.3668449999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0015209999999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BRN',
+							streams: 1,
+							royalty: {
+								name: 'BRN',
+								value: -0.0011520000000000002,
+								royaltyConverted: [
+									{
+										amount: -1.6133760000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0010368000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MNG',
+							streams: 1,
+							royalty: {
+								name: 'MNG',
+								value: -0.0014980000000000002,
+								royaltyConverted: [
+									{
+										amount: -2.0979490000000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0013482000000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MNE',
+							streams: 1,
+							royalty: {
+								name: 'MNE',
+								value: -0.0011650000000000002,
+								royaltyConverted: [
+									{
+										amount: -1.6315825000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0010485000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CIV',
+							streams: 1,
+							royalty: {
+								name: 'CIV',
+								value: -0.0024400000000000003,
+								royaltyConverted: [
+									{
+										amount: -3.4172200000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0021960000000000005,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'COM',
+							streams: 1,
+							royalty: {
+								name: 'COM',
+								value: -0.002944,
+								royaltyConverted: [
+									{
+										amount: -4.123072,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0026496000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HTI',
+							streams: 1,
+							royalty: {
+								name: 'HTI',
+								value: -0.002944,
+								royaltyConverted: [
+									{
+										amount: -4.123072,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0026496000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LSO',
+							streams: 1,
+							royalty: {
+								name: 'LSO',
+								value: -0.002944,
+								royaltyConverted: [
+									{
+										amount: -4.123072,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0026496000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NPL',
+							streams: 1,
+							royalty: {
+								name: 'NPL',
+								value: 0.000236,
+								royaltyConverted: [
+									{
+										amount: 0.330518,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.00021239999999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BHS',
+							streams: 1,
+							royalty: {
+								name: 'BHS',
+								value: 0.002324,
+								royaltyConverted: [
+									{
+										amount: 3.2547620000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0020916000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'COD',
+							streams: 1,
+							royalty: {
+								name: 'COD',
+								value: 0.00283,
+								royaltyConverted: [
+									{
+										amount: 3.963415,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0025470000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MDV',
+							streams: 1,
+							royalty: {
+								name: 'MDV',
+								value: 0.003072,
+								royaltyConverted: [
+									{
+										amount: 4.302336,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0027648,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						}
+					],
+					deliveryData: [
+						{
+							name: 'Streaming',
+							streams: 31451,
+							royalty: {
+								name: 'Streaming',
+								value: 80.5150058,
+								royaltyConverted: [
+									{
+										amount: 112761.2656229,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 72.46350522,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'UGC',
+							streams: 8,
+							royalty: {
+								name: 'UGC',
+								value: 0.0329627,
+								royaltyConverted: [
+									{
+										amount: 46.16426135,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.029666429999999997,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Download',
+							streams: 1,
+							royalty: {
+								name: 'Download',
+								value: 0.387,
+								royaltyConverted: [
+									{
+										amount: 541.9935,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.3483,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						}
 					]
 				}
-			]
+			],
+			createdAt: '2025-04-26T17:54:04.803Z',
+			updatedAt: '2025-04-26T17:54:04.803Z',
+			'**v': 0
 		},
 		{
-			userId: null,
-			artistName: 'More Naira',
-			upcCode: '197077169119',
-			isrcCode: 'TCAGI2247453',
-			catalogueId: 'CAT674519',
-			activityPeriod: 'Sep-23',
+			_id: '680d1dc62f3e4681ec7748cf',
+			artistId: '67a0d183125b32b4b96b8e34',
+			artistName: 'Xtofa',
+			activityPeriod: 'July 2023',
 			fullReports: [
 				{
-					trackTitle: 'Warri Boy',
+					trackTitle: 'Simple and Sweet Refix',
+					upcCode: '197077506990',
+					isrcCode: 'QZTV32204282',
+					catalogueId: 'CAT700264',
 					totalRoyaltyUSD: {
 						name: 'Total Royalty in USD',
-						value: 0.000047,
+						value: 0.3958857,
 						royaltyConverted: [
 							{
-								amount: 0.000039949999999999995,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.07519999999999999,
-								rate: 1600,
+								amount: 554.4379228500001,
+								rate: 1400.5,
 								fromCurrency: 'USD',
 								toCurrency: 'NGN'
+							},
+							{
+								amount: 0.35629713,
+								rate: 0.9,
+								fromCurrency: 'USD',
+								toCurrency: 'GBP'
 							}
 						]
 					},
-					totalStreams: 1,
+					totalStreams: 148,
 					dspData: [
 						{
-							name: 'Spotify',
-							streams: 1,
+							name: 'Audiomack',
+							streams: 70,
 							royalty: {
-								name: 'Spotify',
-								value: 0.000047,
+								name: 'Audiomack',
+								value: 0.0335517,
 								royaltyConverted: [
 									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
+										amount: 46.989155849999996,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.03019653,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Deezer',
+							streams: 66,
+							royalty: {
+								name: 'Deezer',
+								value: 0.310247,
+								royaltyConverted: [
+									{
+										amount: 434.5009235,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.2792223,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Soundcloud Subscription',
+							streams: 10,
+							royalty: {
+								name: 'Soundcloud Subscription',
+								value: 0.051503,
+								royaltyConverted: [
+									{
+										amount: 72.1299515,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.046352700000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Soundcloud Ad Monetization',
+							streams: 2,
+							royalty: {
+								name: 'Soundcloud Ad Monetization',
+								value: 0.000584,
+								royaltyConverted: [
+									{
+										amount: 0.817892,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0005256,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						}
 					],
 					countryData: [
+						{
+							name: 'USA',
+							streams: 70,
+							royalty: {
+								name: 'USA',
+								value: 0.0335517,
+								royaltyConverted: [
+									{
+										amount: 46.989155849999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.03019653,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BRA',
+							streams: 17,
+							royalty: {
+								name: 'BRA',
+								value: 0.019657,
+								royaltyConverted: [
+									{
+										amount: 27.5296285,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0176913,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'FRA',
+							streams: 16,
+							royalty: {
+								name: 'FRA',
+								value: 0.083276,
+								royaltyConverted: [
+									{
+										amount: 116.628038,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0749484,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HRV',
+							streams: 16,
+							royalty: {
+								name: 'HRV',
+								value: 0.14356,
+								royaltyConverted: [
+									{
+										amount: 201.05578,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.12920399999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CAN',
+							streams: 9,
+							royalty: {
+								name: 'CAN',
+								value: 0.02414,
+								royaltyConverted: [
+									{
+										amount: 33.80807,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.021726000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ISR',
+							streams: 7,
+							royalty: {
+								name: 'ISR',
+								value: 0.034908,
+								royaltyConverted: [
+									{
+										amount: 48.888654,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0314172,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'COL',
+							streams: 3,
+							royalty: {
+								name: 'COL',
+								value: 0.004384,
+								royaltyConverted: [
+									{
+										amount: 6.139792,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0039456,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'DEU',
+							streams: 3,
+							royalty: {
+								name: 'DEU',
+								value: 0.010301,
+								royaltyConverted: [
+									{
+										amount: 14.4265505,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0092709,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NLD',
+							streams: 2,
+							royalty: {
+								name: 'NLD',
+								value: 0.000584,
+								royaltyConverted: [
+									{
+										amount: 0.817892,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0005256,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ZAF',
+							streams: 2,
+							royalty: {
+								name: 'ZAF',
+								value: 0.004796,
+								royaltyConverted: [
+									{
+										amount: 6.716798,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0043164,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SLV',
+							streams: 2,
+							royalty: {
+								name: 'SLV',
+								value: 0.009365,
+								royaltyConverted: [
+									{
+										amount: 13.1156825,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0084285,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GBR',
+							streams: 1,
+							royalty: {
+								name: 'GBR',
+								value: 0.027363,
+								royaltyConverted: [
+									{
+										amount: 38.321881499999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.024626699999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						}
+					],
+					deliveryData: [
+						{
+							name: 'Streaming',
+							streams: 148,
+							royalty: {
+								name: 'Streaming',
+								value: 0.3958857,
+								royaltyConverted: [
+									{
+										amount: 554.4379228500001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.35629713,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						}
+					]
+				}
+			],
+			createdAt: '2025-04-26T17:54:14.275Z',
+			updatedAt: '2025-04-26T17:54:14.275Z',
+			'**v': 0
+		},
+		{
+			_id: '680d1dbc2f3e4681ec7748ca',
+			artistId: '67a0d183125b32b4b96b8e34',
+			artistName: 'Xtofa',
+			activityPeriod: 'September 2023',
+			fullReports: [
+				{
+					trackTitle: 'Simple and Sweet Refix',
+					upcCode: '197077506990',
+					isrcCode: 'QZTV32204282',
+					catalogueId: 'CAT700264',
+					totalRoyaltyUSD: {
+						name: 'Total Royalty in USD',
+						value: 80.9349685,
+						royaltyConverted: [
+							{
+								amount: 113349.42338425,
+								rate: 1400.5,
+								fromCurrency: 'USD',
+								toCurrency: 'NGN'
+							},
+							{
+								amount: 72.84147165,
+								rate: 0.9,
+								fromCurrency: 'USD',
+								toCurrency: 'GBP'
+							}
+						]
+					},
+					totalStreams: 31460,
+					dspData: [
+						{
+							name: 'Spotify',
+							streams: 30197,
+							royalty: {
+								name: 'Spotify',
+								value: 75.4326837,
+								royaltyConverted: [
+									{
+										amount: 105643.47352185,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 67.88941533,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Apple Music',
+							streams: 946,
+							royalty: {
+								name: 'Apple Music',
+								value: 3.7293000000000003,
+								royaltyConverted: [
+									{
+										amount: 5222.88465,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.3563700000000005,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'YouTube Streaming',
+							streams: 282,
+							royalty: {
+								name: 'YouTube Streaming',
+								value: 1.1349464,
+								royaltyConverted: [
+									{
+										amount: 1589.4924332,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.0214517600000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Amazon Music Unlimited',
+							streams: 25,
+							royalty: {
+								name: 'Amazon Music Unlimited',
+								value: 0.20667970000000002,
+								royaltyConverted: [
+									{
+										amount: 289.45491985,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.18601173000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'YouTube Content ID',
+							streams: 8,
+							royalty: {
+								name: 'YouTube Content ID',
+								value: 0.0329627,
+								royaltyConverted: [
+									{
+										amount: 46.16426135,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.029666429999999997,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'TIDAL',
+							streams: 1,
+							royalty: {
+								name: 'TIDAL',
+								value: 0.011396,
+								royaltyConverted: [
+									{
+										amount: 15.960098,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0102564,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'iTunes',
+							streams: 1,
+							royalty: {
+								name: 'iTunes',
+								value: 0.387,
+								royaltyConverted: [
+									{
+										amount: 541.9935,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.3483,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						}
+					],
+					countryData: [
+						{
+							name: 'USA',
+							streams: 7589,
+							royalty: {
+								name: 'USA',
+								value: 18.5634435,
+								royaltyConverted: [
+									{
+										amount: 25998.102621750004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 16.70709915,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GBR',
+							streams: 3559,
+							royalty: {
+								name: 'GBR',
+								value: 16.894138,
+								royaltyConverted: [
+									{
+										amount: 23660.240269,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 15.204724200000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NLD',
+							streams: 1894,
+							royalty: {
+								name: 'NLD',
+								value: 6.233165,
+								royaltyConverted: [
+									{
+										amount: 8729.5475825,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 5.6098485,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'DEU',
+							streams: 1889,
+							royalty: {
+								name: 'DEU',
+								value: 4.9111959999999995,
+								royaltyConverted: [
+									{
+										amount: 6878.129997999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 4.420076399999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CAN',
+							streams: 1617,
+							royalty: {
+								name: 'CAN',
+								value: 3.380494,
+								royaltyConverted: [
+									{
+										amount: 4734.381847000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.0424446,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SWE',
+							streams: 1438,
+							royalty: {
+								name: 'SWE',
+								value: 4.939563,
+								royaltyConverted: [
+									{
+										amount: 6917.857981499999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 4.4456067,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'AUS',
+							streams: 1431,
+							royalty: {
+								name: 'AUS',
+								value: 3.611202,
+								royaltyConverted: [
+									{
+										amount: 5057.488401,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.2500818000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PHL',
+							streams: 1187,
+							royalty: {
+								name: 'PHL',
+								value: 0.493084,
+								royaltyConverted: [
+									{
+										amount: 690.5641420000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.44377560000000005,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NGA',
+							streams: 1014,
+							royalty: {
+								name: 'NGA',
+								value: 0.271202,
+								royaltyConverted: [
+									{
+										amount: 379.818401,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.24408180000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NOR',
+							streams: 900,
+							royalty: {
+								name: 'NOR',
+								value: 3.9062010000000003,
+								royaltyConverted: [
+									{
+										amount: 5470.6345005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 3.5155809000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'FRA',
+							streams: 845,
+							royalty: {
+								name: 'FRA',
+								value: 2.399426,
+								royaltyConverted: [
+									{
+										amount: 3360.3961130000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 2.1594834,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ZAF',
+							streams: 632,
+							royalty: {
+								name: 'ZAF',
+								value: 0.610511,
+								royaltyConverted: [
+									{
+										amount: 855.0206555000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.5494599,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'DNK',
+							streams: 518,
+							royalty: {
+								name: 'DNK',
+								value: 2.200149,
+								royaltyConverted: [
+									{
+										amount: 3081.3086745,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.9801341000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BRA',
+							streams: 483,
+							royalty: {
+								name: 'BRA',
+								value: 0.534734,
+								royaltyConverted: [
+									{
+										amount: 748.8949670000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.48126060000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'IND',
+							streams: 410,
+							royalty: {
+								name: 'IND',
+								value: 0.22198600000000002,
+								royaltyConverted: [
+									{
+										amount: 310.89139300000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.19978740000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CHE',
+							streams: 394,
+							royalty: {
+								name: 'CHE',
+								value: 1.600847,
+								royaltyConverted: [
+									{
+										amount: 2241.9862235,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.4407623,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NZL',
+							streams: 385,
+							royalty: {
+								name: 'NZL',
+								value: 1.1224770000000002,
+								royaltyConverted: [
+									{
+										amount: 1572.0290385000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.0102293000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'IDN',
+							streams: 309,
+							royalty: {
+								name: 'IDN',
+								value: 0.109793,
+								royaltyConverted: [
+									{
+										amount: 153.7650965,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0988137,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ESP',
+							streams: 299,
+							royalty: {
+								name: 'ESP',
+								value: 0.524829,
+								royaltyConverted: [
+									{
+										amount: 735.0230144999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.4723461,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'IRL',
+							streams: 296,
+							royalty: {
+								name: 'IRL',
+								value: 1.188142,
+								royaltyConverted: [
+									{
+										amount: 1663.9928710000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 1.0693278000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BEL',
+							streams: 290,
+							royalty: {
+								name: 'BEL',
+								value: 0.910252,
+								royaltyConverted: [
+									{
+										amount: 1274.807926,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.8192267999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PRT',
+							streams: 289,
+							royalty: {
+								name: 'PRT',
+								value: 0.49129100000000003,
+								royaltyConverted: [
+									{
+										amount: 688.0530455,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.44216190000000005,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ITA',
+							streams: 271,
+							royalty: {
+								name: 'ITA',
+								value: 0.601792,
+								royaltyConverted: [
+									{
+										amount: 842.809696,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.5416128,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'AUT',
+							streams: 268,
+							royalty: {
+								name: 'AUT',
+								value: 0.81074,
+								royaltyConverted: [
+									{
+										amount: 1135.44137,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.729666,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'POL',
+							streams: 263,
+							royalty: {
+								name: 'POL',
+								value: 0.288419,
+								royaltyConverted: [
+									{
+										amount: 403.93080949999995,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.2595771,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MEX',
+							streams: 236,
+							royalty: {
+								name: 'MEX',
+								value: 0.21946900000000003,
+								royaltyConverted: [
+									{
+										amount: 307.36633450000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.19752210000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ARE',
+							streams: 175,
+							royalty: {
+								name: 'ARE',
+								value: 0.475012,
+								royaltyConverted: [
+									{
+										amount: 665.254306,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.4275108,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SGP',
+							streams: 143,
+							royalty: {
+								name: 'SGP',
+								value: 0.22989300000000001,
+								royaltyConverted: [
+									{
+										amount: 321.9651465,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.20690370000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'TUR',
+							streams: 137,
+							royalty: {
+								name: 'TUR',
+								value: 0.032183,
+								royaltyConverted: [
+									{
+										amount: 45.072291500000006,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.028964700000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'COL',
+							streams: 134,
+							royalty: {
+								name: 'COL',
+								value: 0.063891,
+								royaltyConverted: [
+									{
+										amount: 89.47934550000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0575019,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KEN',
+							streams: 125,
+							royalty: {
+								name: 'KEN',
+								value: 0.435778,
+								royaltyConverted: [
+									{
+										amount: 610.307089,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.3922002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MYS',
+							streams: 120,
+							royalty: {
+								name: 'MYS',
+								value: 0.07894400000000001,
+								royaltyConverted: [
+									{
+										amount: 110.56107200000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.07104960000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CZE',
+							streams: 98,
+							royalty: {
+								name: 'CZE',
+								value: 0.129577,
+								royaltyConverted: [
+									{
+										amount: 181.4725885,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.1166193,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ISR',
+							streams: 93,
+							royalty: {
+								name: 'ISR',
+								value: 0.205433,
+								royaltyConverted: [
+									{
+										amount: 287.7089165,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.18488970000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SVK',
+							streams: 86,
+							royalty: {
+								name: 'SVK',
+								value: 0.143233,
+								royaltyConverted: [
+									{
+										amount: 200.5978165,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.12890970000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LUX',
+							streams: 84,
+							royalty: {
+								name: 'LUX',
+								value: 0.352439,
+								royaltyConverted: [
+									{
+										amount: 493.5908195,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.3171951,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'EST',
+							streams: 82,
+							royalty: {
+								name: 'EST',
+								value: 0.17835900000000002,
+								royaltyConverted: [
+									{
+										amount: 249.79177950000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.16052310000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'FIN',
+							streams: 74,
+							royalty: {
+								name: 'FIN',
+								value: 0.258081,
+								royaltyConverted: [
+									{
+										amount: 361.44244050000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.2322729,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ROM',
+							streams: 74,
+							royalty: {
+								name: 'ROM',
+								value: 0.152161,
+								royaltyConverted: [
+									{
+										amount: 213.10148049999998,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.1369449,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ARG',
+							streams: 70,
+							royalty: {
+								name: 'ARG',
+								value: 0.023375,
+								royaltyConverted: [
+									{
+										amount: 32.7366875,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0210375,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'THA',
+							streams: 64,
+							royalty: {
+								name: 'THA',
+								value: 0.031498,
+								royaltyConverted: [
+									{
+										amount: 44.112949,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0283482,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
 						{
 							name: 'GRC',
-							streams: 1,
+							streams: 58,
 							royalty: {
 								name: 'GRC',
-								value: 0.000047,
+								value: 0.103173,
 								royaltyConverted: [
 									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
+										amount: 144.4937865,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0928557,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'UGA',
+							streams: 58,
+							royalty: {
+								name: 'UGA',
+								value: 0.040027,
+								royaltyConverted: [
+									{
+										amount: 56.0578135,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0360243,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CHL',
+							streams: 55,
+							royalty: {
+								name: 'CHL',
+								value: 0.037555,
+								royaltyConverted: [
+									{
+										amount: 52.5957775,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.033799499999999996,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GHA',
+							streams: 55,
+							royalty: {
+								name: 'GHA',
+								value: 0.025833000000000002,
+								royaltyConverted: [
+									{
+										amount: 36.1791165,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0232497,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'JPN',
+							streams: 52,
+							royalty: {
+								name: 'JPN',
+								value: 0.10642299999999999,
+								royaltyConverted: [
+									{
+										amount: 149.04541149999997,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0957807,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ZMB',
+							streams: 48,
+							royalty: {
+								name: 'ZMB',
+								value: 0.016725999999999998,
+								royaltyConverted: [
+									{
+										amount: 23.424763,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.015053399999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HUN',
+							streams: 47,
+							royalty: {
+								name: 'HUN',
+								value: 0.057990999999999994,
+								royaltyConverted: [
+									{
+										amount: 81.21639549999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.05219189999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CRI',
+							streams: 44,
+							royalty: {
+								name: 'CRI',
+								value: 0.043793,
+								royaltyConverted: [
+									{
+										amount: 61.3320965,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0394137,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SVN',
+							streams: 43,
+							royalty: {
+								name: 'SVN',
+								value: 0.05542,
+								royaltyConverted: [
+									{
+										amount: 77.61570999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.049878,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'TWN',
+							streams: 37,
+							royalty: {
+								name: 'TWN',
+								value: 0.026807000000000004,
+								royaltyConverted: [
+									{
+										amount: 37.543203500000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.024126300000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HKG',
+							streams: 36,
+							royalty: {
+								name: 'HKG',
+								value: 0.07347400000000001,
+								royaltyConverted: [
+									{
+										amount: 102.90033700000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.06612660000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SAU',
+							streams: 36,
+							royalty: {
+								name: 'SAU',
+								value: 0.07424700000000001,
+								royaltyConverted: [
+									{
+										amount: 103.98292350000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.06682230000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PER',
+							streams: 35,
+							royalty: {
+								name: 'PER',
+								value: 0.013925000000000002,
+								royaltyConverted: [
+									{
+										amount: 19.5019625,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.012532500000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MAR',
+							streams: 33,
+							royalty: {
+								name: 'MAR',
+								value: 0.019199,
+								royaltyConverted: [
+									{
+										amount: 26.888199500000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.017279100000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ETH',
+							streams: 32,
+							royalty: {
+								name: 'ETH',
+								value: 0.0017010000000000003,
+								royaltyConverted: [
+									{
+										amount: 2.3822505000000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0015309000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ISL',
+							streams: 28,
+							royalty: {
+								name: 'ISL',
+								value: 0.111922,
+								royaltyConverted: [
+									{
+										amount: 156.746761,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.1007298,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LKA',
+							streams: 26,
+							royalty: {
+								name: 'LKA',
+								value: 0.0019430000000000003,
+								royaltyConverted: [
+									{
+										amount: 2.7211715000000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0017487000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'EGY',
+							streams: 25,
+							royalty: {
+								name: 'EGY',
+								value: 0.009486999999999999,
+								royaltyConverted: [
+									{
+										amount: 13.286543499999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.008538299999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'VNM',
+							streams: 23,
+							royalty: {
+								name: 'VNM',
+								value: 0.0033030000000000004,
+								royaltyConverted: [
+									{
+										amount: 4.6258515000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0029727000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'JOR',
+							streams: 22,
+							royalty: {
+								name: 'JOR',
+								value: 0.029011,
+								royaltyConverted: [
+									{
+										amount: 40.6299055,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0261099,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ECU',
+							streams: 20,
+							royalty: {
+								name: 'ECU',
+								value: 0.012568,
+								royaltyConverted: [
+									{
+										amount: 17.601484,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0113112,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'TZA',
+							streams: 19,
+							royalty: {
+								name: 'TZA',
+								value: 0.007566,
+								royaltyConverted: [
+									{
+										amount: 10.596183,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0068094,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MWI',
+							streams: 19,
+							royalty: {
+								name: 'MWI',
+								value: 0.016916999999999998,
+								royaltyConverted: [
+									{
+										amount: 23.692258499999998,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.015225299999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'TTO',
+							streams: 18,
+							royalty: {
+								name: 'TTO',
+								value: 0.014419999999999999,
+								royaltyConverted: [
+									{
+										amount: 20.19521,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.012978,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KOR',
+							streams: 16,
+							royalty: {
+								name: 'KOR',
+								value: 0.039360000000000006,
+								royaltyConverted: [
+									{
+										amount: 55.12368000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.035424000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GTM',
+							streams: 15,
+							royalty: {
+								name: 'GTM',
+								value: 0.0032639999999999995,
+								royaltyConverted: [
+									{
+										amount: 4.571231999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0029376,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LTU',
+							streams: 15,
+							royalty: {
+								name: 'LTU',
+								value: 0.033563,
+								royaltyConverted: [
+									{
+										amount: 47.00498150000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.030206700000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'JAM',
+							streams: 14,
+							royalty: {
+								name: 'JAM',
+								value: 0.020516,
+								royaltyConverted: [
+									{
+										amount: 28.732658,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0184644,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'QAT',
+							streams: 13,
+							royalty: {
+								name: 'QAT',
+								value: 0.012074,
+								royaltyConverted: [
+									{
+										amount: 16.909637,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0108666,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LVA',
+							streams: 13,
+							royalty: {
+								name: 'LVA',
+								value: 0.017447999999999998,
+								royaltyConverted: [
+									{
+										amount: 24.435923999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0157032,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CYP',
+							streams: 12,
+							royalty: {
+								name: 'CYP',
+								value: 0.012468,
+								royaltyConverted: [
+									{
+										amount: 17.461434,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0112212,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PAK',
+							streams: 12,
+							royalty: {
+								name: 'PAK',
+								value: -0.0021850000000000003,
+								royaltyConverted: [
+									{
+										amount: -3.0600925000000005,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0019665000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NAM',
+							streams: 12,
+							royalty: {
+								name: 'NAM',
+								value: 0.001448,
+								royaltyConverted: [
+									{
+										amount: 2.027924,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0013032,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HRV',
+							streams: 10,
+							royalty: {
+								name: 'HRV',
+								value: 0.012198000000000002,
+								royaltyConverted: [
+									{
+										amount: 17.083299000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.010978200000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SLV',
+							streams: 10,
+							royalty: {
+								name: 'SLV',
+								value: 0.004748,
+								royaltyConverted: [
+									{
+										amount: 6.649573999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0042732,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'DZA',
+							streams: 10,
+							royalty: {
+								name: 'DZA',
+								value: 0.005546,
+								royaltyConverted: [
+									{
+										amount: 7.767173,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0049914,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SRB',
+							streams: 9,
+							royalty: {
+								name: 'SRB',
+								value: -0.0016330000000000008,
+								royaltyConverted: [
+									{
+										amount: -2.287016500000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0014697000000000006,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'OMN',
+							streams: 9,
+							royalty: {
+								name: 'OMN',
+								value: 0.005057,
+								royaltyConverted: [
+									{
+										amount: 7.0823285,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0045513,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BGR',
+							streams: 9,
+							royalty: {
+								name: 'BGR',
+								value: 0.011714,
+								royaltyConverted: [
+									{
+										amount: 16.405457000000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.010542600000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'RWA',
+							streams: 9,
+							royalty: {
+								name: 'RWA',
+								value: 0.005338000000000001,
+								royaltyConverted: [
+									{
+										amount: 7.475869000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004804200000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MLT',
+							streams: 7,
+							royalty: {
+								name: 'MLT',
+								value: 0.010527000000000002,
+								royaltyConverted: [
+									{
+										amount: 14.743063500000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.009474300000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PAN',
+							streams: 7,
+							royalty: {
+								name: 'PAN',
+								value: 0.003497000000000001,
+								royaltyConverted: [
+									{
+										amount: 4.897548500000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.003147300000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BIH',
+							streams: 7,
+							royalty: {
+								name: 'BIH',
+								value: -0.0006390000000000002,
+								royaltyConverted: [
+									{
+										amount: -0.8949195000000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0005751000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BOL',
+							streams: 7,
+							royalty: {
+								name: 'BOL',
+								value: 0.0013099999999999995,
+								royaltyConverted: [
+									{
+										amount: 1.8346549999999993,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0011789999999999997,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GEO',
+							streams: 7,
+							royalty: {
+								name: 'GEO',
+								value: 0.010393,
+								royaltyConverted: [
+									{
+										amount: 14.555396499999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0093537,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MUS',
+							streams: 6,
+							royalty: {
+								name: 'MUS',
+								value: -0.00013700000000000084,
+								royaltyConverted: [
+									{
+										amount: -0.19186850000000116,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.00012330000000000075,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'UKR',
+							streams: 6,
+							royalty: {
+								name: 'UKR',
+								value: 0.004816999999999999,
+								royaltyConverted: [
+									{
+										amount: 6.746208499999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004335299999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PRY',
+							streams: 5,
+							royalty: {
+								name: 'PRY',
+								value: -0.004478,
+								royaltyConverted: [
+									{
+										amount: -6.271439,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0040302,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ZWE',
+							streams: 5,
+							royalty: {
+								name: 'ZWE',
+								value: 0.0019649999999999997,
+								royaltyConverted: [
+									{
+										amount: 2.7519824999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0017684999999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'AGO',
+							streams: 4,
+							royalty: {
+								name: 'AGO',
+								value: -0.0054670000000000005,
+								royaltyConverted: [
+									{
+										amount: -7.656533500000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.004920300000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'DOM',
+							streams: 4,
+							royalty: {
+								name: 'DOM',
+								value: 0.0006970000000000006,
+								royaltyConverted: [
+									{
+										amount: 0.9761485000000008,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0006273000000000006,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BWA',
+							streams: 4,
+							royalty: {
+								name: 'BWA',
+								value: -0.001275,
+								royaltyConverted: [
+									{
+										amount: -1.7856375000000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0011475,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MAC',
+							streams: 4,
+							royalty: {
+								name: 'MAC',
+								value: 0.0013840000000000002,
+								royaltyConverted: [
+									{
+										amount: 1.9382920000000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0012456000000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CMR',
+							streams: 4,
+							royalty: {
+								name: 'CMR',
+								value: 0.004486,
+								royaltyConverted: [
+									{
+										amount: 6.282643,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004037400000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BHR',
+							streams: 4,
+							royalty: {
+								name: 'BHR',
+								value: 0.005086,
+								royaltyConverted: [
+									{
+										amount: 7.122943,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0045774000000000006,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NIC',
+							streams: 3,
+							royalty: {
+								name: 'NIC',
+								value: -0.0044080000000000005,
+								royaltyConverted: [
+									{
+										amount: -6.173404000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.003967200000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BGD',
+							streams: 3,
+							royalty: {
+								name: 'BGD',
+								value: -0.003224,
+								royaltyConverted: [
+									{
+										amount: -4.515212,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0029016,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MKD',
+							streams: 3,
+							royalty: {
+								name: 'MKD',
+								value: 0.0013059999999999999,
+								royaltyConverted: [
+									{
+										amount: 1.8290529999999998,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0011753999999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SYC',
+							streams: 3,
+							royalty: {
+								name: 'SYC',
+								value: 0.002953999999999999,
+								royaltyConverted: [
+									{
+										amount: 4.137076999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0026585999999999992,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MOZ',
+							streams: 3,
+							royalty: {
+								name: 'MOZ',
+								value: -0.000029999999999999645,
+								royaltyConverted: [
+									{
+										amount: -0.042014999999999504,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.00002699999999999968,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'URY',
+							streams: 3,
+							royalty: {
+								name: 'URY',
+								value: 0.0007069999999999997,
+								royaltyConverted: [
+									{
+										amount: 0.9901534999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0006362999999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BLZ',
+							streams: 3,
+							royalty: {
+								name: 'BLZ',
+								value: -0.001947,
+								royaltyConverted: [
+									{
+										amount: -2.7267734999999997,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0017523,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GRD',
+							streams: 3,
+							royalty: {
+								name: 'GRD',
+								value: -0.001421,
+								royaltyConverted: [
+									{
+										amount: -1.9901105,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0012789,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BEN',
+							streams: 3,
+							royalty: {
+								name: 'BEN',
+								value: -0.002474,
+								royaltyConverted: [
+									{
+										amount: -3.464837,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0022266,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KWT',
+							streams: 2,
+							royalty: {
+								name: 'KWT',
+								value: -0.004734,
+								royaltyConverted: [
+									{
+										amount: -6.629967000000001,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.004260600000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'PNG',
+							streams: 2,
+							royalty: {
+								name: 'PNG',
+								value: 0.0006350000000000001,
+								royaltyConverted: [
+									{
+										amount: 0.8893175000000002,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0005715000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BRB',
+							streams: 2,
+							royalty: {
+								name: 'BRB',
+								value: -0.00016299999999999995,
+								royaltyConverted: [
+									{
+										amount: -0.22828149999999994,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.00014669999999999996,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KAZ',
+							streams: 2,
+							royalty: {
+								name: 'KAZ',
+								value: -0.0017009999999999998,
+								royaltyConverted: [
+									{
+										amount: -2.3822504999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0015309,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BDI',
+							streams: 2,
+							royalty: {
+								name: 'BDI',
+								value: 0.000471,
+								royaltyConverted: [
+									{
+										amount: 0.6596355,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0004239,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'KGZ',
+							streams: 2,
+							royalty: {
+								name: 'KGZ',
+								value: 0.00079,
+								royaltyConverted: [
+									{
+										amount: 1.106395,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.000711,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LBN',
+							streams: 2,
+							royalty: {
+								name: 'LBN',
+								value: 0.002817,
+								royaltyConverted: [
+									{
+										amount: 3.9452085,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0025353000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MDA',
+							streams: 2,
+							royalty: {
+								name: 'MDA',
+								value: 0.003472,
+								royaltyConverted: [
+									{
+										amount: 4.8625359999999995,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0031248,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'FJI',
+							streams: 2,
+							royalty: {
+								name: 'FJI',
+								value: 0.00531,
+								royaltyConverted: [
+									{
+										amount: 7.436654999999999,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.004778999999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MCO',
+							streams: 1,
+							royalty: {
+								name: 'MCO',
+								value: -0.0016899999999999997,
+								royaltyConverted: [
+									{
+										amount: -2.3668449999999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0015209999999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BRN',
+							streams: 1,
+							royalty: {
+								name: 'BRN',
+								value: -0.0011520000000000002,
+								royaltyConverted: [
+									{
+										amount: -1.6133760000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0010368000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MNG',
+							streams: 1,
+							royalty: {
+								name: 'MNG',
+								value: -0.0014980000000000002,
+								royaltyConverted: [
+									{
+										amount: -2.0979490000000003,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0013482000000000001,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MNE',
+							streams: 1,
+							royalty: {
+								name: 'MNE',
+								value: -0.0011650000000000002,
+								royaltyConverted: [
+									{
+										amount: -1.6315825000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0010485000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CIV',
+							streams: 1,
+							royalty: {
+								name: 'CIV',
+								value: -0.0024400000000000003,
+								royaltyConverted: [
+									{
+										amount: -3.4172200000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0021960000000000005,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'COM',
+							streams: 1,
+							royalty: {
+								name: 'COM',
+								value: -0.002944,
+								royaltyConverted: [
+									{
+										amount: -4.123072,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0026496000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HTI',
+							streams: 1,
+							royalty: {
+								name: 'HTI',
+								value: -0.002944,
+								royaltyConverted: [
+									{
+										amount: -4.123072,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0026496000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'LSO',
+							streams: 1,
+							royalty: {
+								name: 'LSO',
+								value: -0.002944,
+								royaltyConverted: [
+									{
+										amount: -4.123072,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: -0.0026496000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NPL',
+							streams: 1,
+							royalty: {
+								name: 'NPL',
+								value: 0.000236,
+								royaltyConverted: [
+									{
+										amount: 0.330518,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.00021239999999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BHS',
+							streams: 1,
+							royalty: {
+								name: 'BHS',
+								value: 0.002324,
+								royaltyConverted: [
+									{
+										amount: 3.2547620000000004,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0020916000000000003,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'COD',
+							streams: 1,
+							royalty: {
+								name: 'COD',
+								value: 0.00283,
+								royaltyConverted: [
+									{
+										amount: 3.963415,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0025470000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'MDV',
+							streams: 1,
+							royalty: {
+								name: 'MDV',
+								value: 0.003072,
+								royaltyConverted: [
+									{
+										amount: 4.302336,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0027648,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
@@ -28518,78 +6656,192 @@ export const placeholderParseData = {
 					deliveryData: [
 						{
 							name: 'Streaming',
-							streams: 1,
+							streams: 31451,
 							royalty: {
 								name: 'Streaming',
-								value: 0.000047,
+								value: 80.5150058,
 								royaltyConverted: [
 									{
-										amount: 0.000039949999999999995,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.07519999999999999,
-										rate: 1600,
+										amount: 112761.2656229,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 72.46350522,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'UGC',
+							streams: 8,
+							royalty: {
+								name: 'UGC',
+								value: 0.0329627,
+								royaltyConverted: [
+									{
+										amount: 46.16426135,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.029666429999999997,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Download',
+							streams: 1,
+							royalty: {
+								name: 'Download',
+								value: 0.387,
+								royaltyConverted: [
+									{
+										amount: 541.9935,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.3483,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						}
 					]
 				}
-			]
+			],
+			createdAt: '2025-04-26T17:54:04.803Z',
+			updatedAt: '2025-04-26T17:54:04.803Z',
+			'**v': 0
 		},
 		{
-			userId: null,
-			artistName: 'Eli Marliq',
-			upcCode: '197077121407',
-			isrcCode: 'GBWUL2222149',
-			catalogueId: 'CAT670481',
-			activityPeriod: 'Sep-23',
+			_id: '680d1dc62f3e4681ec7748cf',
+			artistId: '67a0d183125b32b4b96b8e34',
+			artistName: 'Xtofa',
+			activityPeriod: 'July 2023',
 			fullReports: [
 				{
-					trackTitle: 'All Of A Sudden (Freestyle)',
+					trackTitle: 'Simple and Sweet Refix',
+					upcCode: '197077506990',
+					isrcCode: 'QZTV32204282',
+					catalogueId: 'CAT700264',
 					totalRoyaltyUSD: {
 						name: 'Total Royalty in USD',
-						value: 0.00005,
+						value: 0.3958857,
 						royaltyConverted: [
 							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
+								amount: 554.4379228500001,
+								rate: 1400.5,
 								fromCurrency: 'USD',
 								toCurrency: 'NGN'
+							},
+							{
+								amount: 0.35629713,
+								rate: 0.9,
+								fromCurrency: 'USD',
+								toCurrency: 'GBP'
 							}
 						]
 					},
-					totalStreams: 1,
+					totalStreams: 148,
 					dspData: [
 						{
-							name: 'Spotify',
-							streams: 1,
+							name: 'Audiomack',
+							streams: 70,
 							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
+								name: 'Audiomack',
+								value: 0.0335517,
 								royaltyConverted: [
 									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
+										amount: 46.989155849999996,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.03019653,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Deezer',
+							streams: 66,
+							royalty: {
+								name: 'Deezer',
+								value: 0.310247,
+								royaltyConverted: [
+									{
+										amount: 434.5009235,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.2792223,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Soundcloud Subscription',
+							streams: 10,
+							royalty: {
+								name: 'Soundcloud Subscription',
+								value: 0.051503,
+								royaltyConverted: [
+									{
+										amount: 72.1299515,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.046352700000000004,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'Soundcloud Ad Monetization',
+							streams: 2,
+							royalty: {
+								name: 'Soundcloud Ad Monetization',
+								value: 0.000584,
+								royaltyConverted: [
+									{
+										amount: 0.817892,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0005256,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
@@ -28597,23 +6849,265 @@ export const placeholderParseData = {
 					],
 					countryData: [
 						{
-							name: 'NGA',
-							streams: 1,
+							name: 'USA',
+							streams: 70,
 							royalty: {
-								name: 'NGA',
-								value: 0.00005,
+								name: 'USA',
+								value: 0.0335517,
 								royaltyConverted: [
 									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
+										amount: 46.989155849999996,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.03019653,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'BRA',
+							streams: 17,
+							royalty: {
+								name: 'BRA',
+								value: 0.019657,
+								royaltyConverted: [
+									{
+										amount: 27.5296285,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0176913,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'FRA',
+							streams: 16,
+							royalty: {
+								name: 'FRA',
+								value: 0.083276,
+								royaltyConverted: [
+									{
+										amount: 116.628038,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0749484,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'HRV',
+							streams: 16,
+							royalty: {
+								name: 'HRV',
+								value: 0.14356,
+								royaltyConverted: [
+									{
+										amount: 201.05578,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.12920399999999999,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'CAN',
+							streams: 9,
+							royalty: {
+								name: 'CAN',
+								value: 0.02414,
+								royaltyConverted: [
+									{
+										amount: 33.80807,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.021726000000000002,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ISR',
+							streams: 7,
+							royalty: {
+								name: 'ISR',
+								value: 0.034908,
+								royaltyConverted: [
+									{
+										amount: 48.888654,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0314172,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'COL',
+							streams: 3,
+							royalty: {
+								name: 'COL',
+								value: 0.004384,
+								royaltyConverted: [
+									{
+										amount: 6.139792,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0039456,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'DEU',
+							streams: 3,
+							royalty: {
+								name: 'DEU',
+								value: 0.010301,
+								royaltyConverted: [
+									{
+										amount: 14.4265505,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0092709,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'NLD',
+							streams: 2,
+							royalty: {
+								name: 'NLD',
+								value: 0.000584,
+								royaltyConverted: [
+									{
+										amount: 0.817892,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0005256,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'ZAF',
+							streams: 2,
+							royalty: {
+								name: 'ZAF',
+								value: 0.004796,
+								royaltyConverted: [
+									{
+										amount: 6.716798,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0043164,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'SLV',
+							streams: 2,
+							royalty: {
+								name: 'SLV',
+								value: 0.009365,
+								royaltyConverted: [
+									{
+										amount: 13.1156825,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.0084285,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
+									}
+								]
+							}
+						},
+						{
+							name: 'GBR',
+							streams: 1,
+							royalty: {
+								name: 'GBR',
+								value: 0.027363,
+								royaltyConverted: [
+									{
+										amount: 38.321881499999996,
+										rate: 1400.5,
+										fromCurrency: 'USD',
+										toCurrency: 'NGN'
+									},
+									{
+										amount: 0.024626699999999998,
+										rate: 0.9,
+										fromCurrency: 'USD',
+										toCurrency: 'GBP'
 									}
 								]
 							}
@@ -28622,945 +7116,32 @@ export const placeholderParseData = {
 					deliveryData: [
 						{
 							name: 'Streaming',
-							streams: 1,
+							streams: 148,
 							royalty: {
 								name: 'Streaming',
-								value: 0.00005,
+								value: 0.3958857,
 								royaltyConverted: [
 									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
+										amount: 554.4379228500001,
+										rate: 1400.5,
 										fromCurrency: 'USD',
 										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'CANNOT LET IT GET TO MY HEAD',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
 									},
 									{
-										amount: 0.08,
-										rate: 1600,
+										amount: 0.35629713,
+										rate: 0.9,
 										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
+										toCurrency: 'GBP'
 									}
 								]
 							}
 						}
 					]
 				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Pearls Stunner',
-			upcCode: '197077298277',
-			isrcCode: 'GBWUL2295835',
-			catalogueId: 'CAT683532',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Hold Up',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Dj Yk Mule',
-			upcCode: '8720766140612',
-			isrcCode: 'NLRD52046046',
-			catalogueId: 'CAT619228',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Popoye Cruise',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'CDB Papi',
-			upcCode: '197773385134',
-			isrcCode: 'QZTRX2394761',
-			catalogueId: 'CAT879118',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Drop Top',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				},
-				{
-					trackTitle: 'Charity Fund Baby',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Jesse Manny',
-			upcCode: '197368369013',
-			isrcCode: 'USLZJ2305092',
-			catalogueId: 'CAT781733',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Zombie',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Nakel Medina',
-			upcCode: '197077313772',
-			isrcCode: 'QZTRX2202549',
-			catalogueId: 'CAT684878',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Money',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Keruchi God-Son',
-			upcCode: '197773172635',
-			isrcCode: 'QZTRX2311582',
-			catalogueId: 'CAT860395',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Yes I Do',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
-		},
-		{
-			userId: null,
-			artistName: 'Machala Way',
-			upcCode: '197077483086',
-			isrcCode: 'QZTRX2298074',
-			catalogueId: 'CAT698787',
-			activityPeriod: 'Sep-23',
-			fullReports: [
-				{
-					trackTitle: 'Next To You',
-					totalRoyaltyUSD: {
-						name: 'Total Royalty in USD',
-						value: 0.00005,
-						royaltyConverted: [
-							{
-								amount: 0.0000425,
-								rate: 0.85,
-								fromCurrency: 'USD',
-								toCurrency: 'EUR'
-							},
-							{
-								amount: 0.08,
-								rate: 1600,
-								fromCurrency: 'USD',
-								toCurrency: 'NGN'
-							}
-						]
-					},
-					totalStreams: 1,
-					dspData: [
-						{
-							name: 'Spotify',
-							streams: 1,
-							royalty: {
-								name: 'Spotify',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					countryData: [
-						{
-							name: 'NGA',
-							streams: 1,
-							royalty: {
-								name: 'NGA',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					],
-					deliveryData: [
-						{
-							name: 'Streaming',
-							streams: 1,
-							royalty: {
-								name: 'Streaming',
-								value: 0.00005,
-								royaltyConverted: [
-									{
-										amount: 0.0000425,
-										rate: 0.85,
-										fromCurrency: 'USD',
-										toCurrency: 'EUR'
-									},
-									{
-										amount: 0.08,
-										rate: 1600,
-										fromCurrency: 'USD',
-										toCurrency: 'NGN'
-									}
-								]
-							}
-						}
-					]
-				}
-			]
+			],
+			createdAt: '2025-04-26T17:54:14.275Z',
+			updatedAt: '2025-04-26T17:54:14.275Z',
+			'**v': 0
 		}
 	]
 };

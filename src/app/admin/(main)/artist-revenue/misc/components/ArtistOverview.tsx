@@ -1,164 +1,105 @@
-
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+import { Loader2 } from 'lucide-react'; // Removed ArrowRight
+import { formatCurrency } from '@/utils/currency';
+import { useParams } from 'next/navigation';
+import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
+// Removed Button and Image imports as they are no longer used in this component's core logic
 
-interface ArtistOverviewProps {
-    artistId: number;
+// Define interfaces for the delivery breakdown structure
+interface PeriodBreakdownItem {
+	streams: number;
+	revenue: number;
 }
 
-interface MediaItemProps {
-    title: string;
-    type: string;
-    album: string;
-    tracks: number;
-    platforms: string[];
+interface DeliveryPlatformData {
+	totalStreams: number;
+	totalRevenue: number;
+	periodBreakdown: {
+		[period: string]: PeriodBreakdownItem;
+	};
 }
 
-const MediaItem: React.FC<MediaItemProps> = ({ title, type, album, tracks, platforms }) => {
-    return (
-        <div className="bg-admin-secondary/80 rounded-md p-4 flex gap-4">
-            <div className="relative w-12 h-12 bg-purple-600 rounded-md text-white">
-                <Image
-                    src={`/images/placeholder_images/album-cover.png`}
-                    alt={"album cover"}
-                    fill
-                />
-            </div>
-            <div className="flex flex-col gap-1">
-                <p className="font-medium">{title}</p>
-                <div className="text-xs text-[#898989] gap-x-8 gap-y-1">
-                    <div className="flex items-center gap-2.5">
-                        <span>Type:</span>
-                        <span className="ml-1">{type}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                        <span>Album:</span>
-                        <span className="ml-1">{album}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                        <span>Tracks:</span>
-                        <span className="ml-1">{tracks}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                        <span>Platforms:</span>
-                        <div className="inline-flex ml-1 gap-1">
-                            {platforms.map((platform, index) => (
-                                <div
-                                    key={index}
-                                    className="size-8 rounded-full flex items-center justify-center bg-white/20 -ml-2.5"
-                                >
-                                    <Image
-                                        src={`/images/platform_logos/${platform}.svg`}
-                                        alt={platform}
-                                        width={20}
-                                        height={20}
-                                    />
-                                </div>
-                                // <span 
-                                //   key={platform} 
-                                //   className="w-4 h-4 rounded-full" 
-                                //   style={{ 
-                                //     backgroundColor: 
-                                //       platform === 'spotify' ? '#1DB954' : 
-                                //       platform === 'C' ? '#FC3C44' : 
-                                //       platform === 'youtube' ? '#FF0000' : 
-                                //       platform === 'amazon' ? '#00A8E1' : 
-                                //       '#888' 
-                                //   }}
-                                // />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
+interface DeliveryBreakdown {
+	[platform: string]: DeliveryPlatformData;
+}
 
-const ArtistOverview: React.FC<ArtistOverviewProps> = ({ }) => {
-    // Mock data
-    const streamingItems = [
-        {
-            title: "California King Bed",
-            type: "Album",
-            album: "California King Bed",
-            tracks: 5,
-            platforms: ["spotify", "apple", "youtube", "amazon"]
-        },
-        {
-            title: "California King Bed",
-            type: "Album",
-            album: "California King Bed",
-            tracks: 8,
-            platforms: ["spotify", "apple", "youtube", "amazon"]
-        },
-        {
-            title: "California King Bed",
-            type: "Album",
-            album: "California King Bed",
-            tracks: 6,
-            platforms: ["spotify", "apple", "youtube", "amazon"]
-        }
-    ];
+// Removed MediaItemProps and MediaItem component as they are no longer needed
 
-    const downloadItems = [...streamingItems];
+const ArtistOverview: React.FC = ({}) => {
+	const { artist_id } = useParams<{ artist_id: string }>();
+	const { data: artistAnalytics, isLoading: artistAnalyticsLoading } = useGetArtistAnalytics({
+		artistId: artist_id
+	});
 
-    return (
-        <div className="space-y-8">
-            <section className="flex flex-col rounded-lg border-[0.5px] border-[#383838]">
-                <header className="flex justify-between items-center bg-[#272727c5] p-4">
-                    <h3 className="text-md font-semibold bg-admin-primary/10 text-admin-primary px-3 py-1 rounded">
-                        Streaming
-                    </h3>
-                    <Button variant="outline" size="md" className="text-xs">
-                        View All <ArrowRight size={14} className="ml-1" />
-                    </Button>
-                </header>
+	// Removed mock data (streamingItems, downloadItems)
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
-                    {streamingItems.map((item, index) => (
-                        <MediaItem key={`streaming-${index}`} {...item} />
-                    ))}
-                </div>
-            </section>
+	// The main return now maps each platform in the breakdown to its own section
+	return (
+		<div className="space-y-8">
+			{' '}
+			{/* Restored original outer div class */}
+			{artistAnalyticsLoading ? (
+				// Display a single loading indicator for the whole overview
+				<div className="flex items-center justify-center p-8 text-admin-muted rounded-lg border-[0.5px] border-[#383838] bg-[#1f1f1f]">
+					<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+					Loading Artist Overview...
+				</div>
+			) : !artistAnalytics?.deliveryBreakdown || Object.keys(artistAnalytics.deliveryBreakdown).length === 0 ? (
+				// Display a single message if no data is available
+				<div className="p-8 text-center text-admin-muted rounded-lg border-[0.5px] border-[#383838] bg-[#1f1f1f]">No delivery breakdown data available for this artist.</div>
+			) : (
+				// Map each platform to its own section
+				Object.entries(artistAnalytics.deliveryBreakdown as DeliveryBreakdown).map(([platform, data]) => (
+					<section key={platform} className="flex flex-col rounded-lg border-[0.5px] border-[#383838]">
+						<header className="flex justify-between items-center bg-[#27272766] p-4">
+							{' '}
+							{/* Original header style */}
+							<h3 className="text-md font-semibold bg-admin-primary/10 text-admin-primary px-3 py-1 rounded">
+								{' '}
+								{/* Original title style */}
+								{platform} {/* Platform name as the title */}
+							</h3>
+							{/* Optional: Add View All button if needed later */}
+						</header>
 
-
-            <section className="flex flex-col rounded-lg border-[0.5px] border-[#383838]">
-                <header className="flex justify-between items-center bg-[#27272766] p-4">
-                    <h3 className="text-md font-semibold bg-admin-primary/10 text-admin-primary px-3 py-1 rounded">
-                        Downloads
-                    </h3>
-                    <Button variant="outline" size="md" className="text-xs text-admin-muted">
-                        View All <ArrowRight size={14} className="ml-1" />
-                    </Button>
-                </header>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 p-4">
-                    {downloadItems.map((item, index) => (
-                        <MediaItem key={`download-${index}`} {...item} />
-                    ))}
-                </div>
-            </section>
-
-            {/* Royalties Section */}
-            <section className="flex flex-col rounded-lg border-[0.5px] border-[#383838]">
-                <header className="flex justify-between items-center bg-[#27272766] p-4">
-                    <h3 className="text-md font-semibold bg-admin-primary/10 text-admin-primary px-3 py-1 rounded">
-                        Royalties
-                    </h3>
-                    <Button variant="outline" size="md" className="text-xs text-admin-muted">
-                        View All <ArrowRight size={14} className="ml-1" />
-                    </Button>
-                </header>
-
-                <div className="p-8 text-center text-admin-muted">
-                    No royalties found with this artist.
-                </div>
-            </section>
-        </div>
-    );
+						<div className="p-4 space-y-4">
+							{' '}
+							{/* Content area for this platform */}
+							{/* Totals */}
+							<div className="bg-admin-secondary/50 rounded-md p-3 space-y-1 border border-[#383838]/50">
+								<h4 className="text-sm font-medium uppercase text-admin-muted/80 mb-1">Totals</h4>
+								<p className="text-sm">
+									<span className="font-medium">Streams:</span> <span className="text-admin-muted">{data.totalStreams.toLocaleString()}</span>
+								</p>
+								<p className="text-sm">
+									<span className="font-medium">Revenue:</span> <span className="text-admin-accent">{formatCurrency(data.totalRevenue)}</span>
+								</p>
+							</div>
+							{/* Period Breakdown */}
+							<div className="bg-admin-secondary/50 rounded-md p-3 space-y-2 border border-[#383838]/50">
+								<h4 className="text-sm font-medium uppercase text-admin-muted/80 mb-2">Period Breakdown</h4>
+								{Object.keys(data.periodBreakdown).length > 0 ? (
+									Object.entries(data.periodBreakdown).map(([period, periodData]: [string, PeriodBreakdownItem]) => (
+										<div key={period} className="text-xs border-b border-[#383838]/50 pb-2 mb-2 last:border-b-0 last:pb-0 last:mb-0">
+											<p className="font-medium mb-0.5">{period}</p>
+											<p>
+												<span className="text-admin-muted/90">Streams:</span> {periodData.streams.toLocaleString()}
+											</p>
+											<p>
+												<span className="text-admin-muted/90">Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.revenue)}</span>
+											</p>
+										</div>
+									))
+								) : (
+									<p className="text-xs text-admin-muted/80 italic">No period breakdown available.</p>
+								)}
+							</div>
+						</div>
+					</section>
+				))
+			)}
+		</div>
+	);
 };
 
 export default ArtistOverview;
