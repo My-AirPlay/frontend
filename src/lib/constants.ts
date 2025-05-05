@@ -34,7 +34,7 @@ export const urls = {
 
 	login: '/login',
 	register: '/register',
-	dashboard: '/dashboard',
+	dashboard: '/artiste/dashboard',
 	uploadMusic: '/upload',
 	uploadAlbum: '/upload/album',
 	onboarding: '/onboarding',
