@@ -7,8 +7,7 @@ import { SiAudiomack, SiSpotify, SiApplemusic, SiYoutube } from 'react-icons/si'
 import { TbBrandDeezer } from 'react-icons/tb'; // Added correct Deezer icon import
 import { FaDollarSign } from 'react-icons/fa'; // Added react-icons imports
 // Import necessary icons from lucide-react for recent sales
-import { ChevronRight, ArrowLeft, ArrowRight, Filter, Disc, Music, Video, RadioTower, Download, Users, AudioLines } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronRight, ArrowLeft, ArrowRight, Disc, Music, Video, RadioTower, Download, Users, AudioLines } from 'lucide-react';
 import Link from 'next/link';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { useMobile, useWindowWidth } from '@/hooks';
