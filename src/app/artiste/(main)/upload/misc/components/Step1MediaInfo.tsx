@@ -127,9 +127,7 @@ export default function Step1MusicInfo() {
 							name="description"
 							render={({ field }) => (
 								<FormItem className="col-span-full">
-									<FormLabel>
-										Description <span className="text-primary">*</span>
-									</FormLabel>
+									<FormLabel>Description</FormLabel>
 									<FormControl>
 										<Textarea placeholder="Enter track description" className={errors.description ? 'border-red-500' : ''} {...field} />
 									</FormControl>
@@ -143,7 +141,9 @@ export default function Step1MusicInfo() {
 							name="recordLabel"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Record Label</FormLabel>
+									<FormLabel>
+										Record Label <span className="text-primary">*</span>
+									</FormLabel>
 									<FormControl>
 										<Input placeholder="Enter record label" hasError={!!errors.recordLabel} errormessage={errors.recordLabel?.message} {...field} />
 									</FormControl>
@@ -156,9 +156,7 @@ export default function Step1MusicInfo() {
 							name="publisher"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>
-										Publisher <span className="text-primary">*</span>
-									</FormLabel>
+									<FormLabel>Publisher</FormLabel>
 									<FormControl>
 										<Input placeholder="Enter publisher" hasError={!!errors.publisher} errormessage={errors.publisher?.message} {...field} />
 									</FormControl>
@@ -196,9 +194,9 @@ export default function Step1MusicInfo() {
 							name="universalProductCode"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel info="If you have one, enter it here. If not, we’ll generate one for you">Universal Product Code (UPC) (optional)</FormLabel>
+									<FormLabel info="Enter your UPC if available, or we'll generate one.">Universal Product Code (UPC) (optional)</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter UPC(If you have one, enter it here. If not, we’ll generate one for you)" hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
+										<Input placeholder="Enter UPC (optional)" hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}
@@ -209,9 +207,9 @@ export default function Step1MusicInfo() {
 							name="releaseVersion"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel info={'used for non-original release versions, e.g. Remastered, Live, Remixes, etc.'}>Release Version </FormLabel>
+									<FormLabel info="For remasters, live versions, remixes, etc.">Release Version </FormLabel>
 									<FormControl>
-										<Input placeholder="Enter release version(used for non-original release versions, e.g. Remastered, Live, Remixes, etc.)" hasError={!!errors.releaseVersion} errormessage={errors.releaseVersion?.message} {...field} />
+										<Input placeholder="e.g., Remastered, Live" hasError={!!errors.releaseVersion} errormessage={errors.releaseVersion?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}
@@ -235,7 +233,7 @@ export default function Step1MusicInfo() {
 										field.onChange('');
 									} else {
 										setCopyrightError('');
-										field.onChange(newValue.trim() ? `${newValue.trim()} ${selectedYear}` : '');
+										field.onChange(newValue.trim() ? `${selectedYear} ${newValue.trim()}` : '');
 									}
 								};
 
@@ -257,12 +255,12 @@ export default function Step1MusicInfo() {
 
 								return (
 									<FormItem>
-										<FormLabel>
+										<FormLabel info="Year and name of copyright holder (e.g., 2024 Band Name).">
 											Copyright <span className="text-primary">*</span>
 										</FormLabel>
-										<div className="flex gap-2">
+										<div className="flex gap-2 items-stretch">
 											<Select value={selectedYear.toString()} onValueChange={handleYearChange}>
-												<SelectTrigger className={`w-32 bg-[#383838] text-foreground rounded-md border border-border  !p-2 focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-white/50 transition-all ${!selectedYear ? 'border-red-500' : ''}`}>
+												<SelectTrigger className={`w-32 bg-[#383838] text-foreground rounded-md border border-border focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-white/50 transition-all h-10 px-3 py-2 ${!selectedYear ? 'border-red-500' : ''}`}>
 													<SelectValue placeholder="Year" />
 												</SelectTrigger>
 												<SelectContent>
@@ -273,8 +271,8 @@ export default function Step1MusicInfo() {
 													))}
 												</SelectContent>
 											</Select>
-											<FormControl>
-												<Input placeholder="Enter copyright information" hasError={!!copyrightError || !!errors.copyright} errormessage={copyrightError || errors.copyright?.message} value={copyrightInputValue} onChange={handleInputChange} className="flex-1" />
+											<FormControl className="flex-1">
+												<Input placeholder="Copyright Owner" hasError={!!copyrightError || !!errors.copyright} errormessage={copyrightError || errors.copyright?.message} value={copyrightInputValue} onChange={handleInputChange} className="h-10" />
 											</FormControl>
 										</div>
 										{(copyrightError || errors.copyright) && <p className="text-sm text-red-500 mt-1">{copyrightError || errors.copyright?.message}</p>}

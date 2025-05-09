@@ -74,8 +74,10 @@ const FormLabel = React.forwardRef<React.ElementRef<typeof LabelPrimitive.Root>,
 			{props.children}
 			<TooltipProvider>
 				<Tooltip>
-					<TooltipTrigger className={cn(!info && 'hidden')}>
-						<Info className="size-4 text-primary" />
+					<TooltipTrigger asChild className={cn(!info && 'hidden')} onClick={e => e.preventDefault()}>
+						<button type="button" className="ml-1 inline-flex items-center justify-center">
+							<Info className="size-4 text-primary" />
+						</button>
 					</TooltipTrigger>
 					<TooltipContent>{info}</TooltipContent>
 				</Tooltip>
