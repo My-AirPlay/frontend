@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 interface CurrencyPair {
 	fromCurrency: string | null;
 	toCurrency: string | null;
-	exchangeRate: number | null;
+	exchangeRate: string;
 }
 
 export const analyzeCsv = async (file: File, exchangeRates: CurrencyPair[]) => {
