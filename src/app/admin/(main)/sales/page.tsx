@@ -11,12 +11,14 @@ import MatchArtistForm from './misc/components/MatchArtistForm';
 import CreateArtistForm from './misc/components/CreateArtistForm';
 import SuccessModal from './misc/components/SuccessModal';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
+import { toast } from 'sonner'; // Import toast
+import { AxiosError } from 'axios'; // Import AxiosError
 import { AnimatePresence, motion } from 'framer-motion';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { useAdminAnalyzeCsv } from '../catalogue/api/postAdminAnalyzeCsv';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { currencySymbols, placeholderParseData, ReportItem } from '@/lib/types';
+import { currencySymbols, ReportItem } from '@/lib/types';
 
 type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist';
 
@@ -38,7 +40,7 @@ const mapCurrencyToOptions = (currencyData?: Record<string, string>): DropdownOp
 	return Object.keys(currencyData).map(key => ({
 		id: key, // Use the key as the ID (e.g., "USD")
 		label: key, // Use the key as the label
-		symbol: currencySymbols[key] || key // Use the symbol if available, otherwise fall back to the currency code
+		symbol: (currencySymbols as Record<string, string>)[key] || key // Use the symbol if available, otherwise fall back to the currency code
 	}));
 };
 
@@ -52,6 +54,7 @@ const Sales: React.FC = () => {
 	const { rawData } = useStaticAppInfo();
 
 	const currencyOptions = mapCurrencyToOptions(rawData?.Currency);
+	const [analyzedApiData, setAnalyzedApiData] = useState<ReportItem[] | null>(null);
 
 	// Initialize react-hook-form with simplified CurrencyPair
 	const { control, watch } = useForm<{ currencyPairs: CurrencyPair[] }>({
@@ -107,31 +110,8 @@ const Sales: React.FC = () => {
 		completed: false
 	});
 
-	// Mock data for artists
-	// Add default _id to mock data items if missing
-	const [matchedArtists, setMatchedArtists] = useState<ReportItem[]>(
-		placeholderParseData?.data
-			?.filter(x => x?.artistId) // Filter based on artistId presence
-			.map((item, index) => ({
-				...item,
-				_id: item._id || `matched-${index}`,
-				createdAt: item.createdAt || new Date().toISOString(), // Add default createdAt
-				updatedAt: item.updatedAt || new Date().toISOString(), // Add default updatedAt
-				__v: item?.['**v'] || 0 // Add default __v
-			})) || []
-	);
-
-	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>(
-		placeholderParseData?.data
-			?.filter(x => !x?.artistId) // Filter based on artistId absence
-			.map((item, index) => ({
-				...item,
-				_id: item._id || `unmatched-${index}`,
-				createdAt: item.createdAt || new Date().toISOString(), // Add default createdAt
-				updatedAt: item.updatedAt || new Date().toISOString(), // Add default updatedAt
-				__v: item?.['**v'] || 0 // Add default __v
-			})) || []
-	);
+	const [matchedArtists, setMatchedArtists] = useState<ReportItem[]>([]);
+	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>([]);
 
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
 
@@ -166,21 +146,51 @@ const Sales: React.FC = () => {
 	const { mutate: analyzeCsv, isPending: isAnalyzeCsv } = useAdminAnalyzeCsv();
 
 	const handleFileSelected = (file: File) => {
+		// Convert exchange rates to positive numbers before sending
+		const normalizedCurrencyPairs = currencyPairs.map(pair => ({
+			...pair,
+			exchangeRate: Math.abs(parseFloat(pair.exchangeRate))
+		}));
+
+		console.log('normalizedCurrencyPairs', normalizedCurrencyPairs);
+
 		analyzeCsv(
-			{ file, exchangeRates: currencyPairs },
+			{ file, exchangeRates: normalizedCurrencyPairs },
 			{
-				onSuccess: () => {
+				onSuccess: apiResponse => {
+					console.log('apiResponse', apiResponse);
+					setProcessingComplete(true);
+
+					const reportItems: ReportItem[] = apiResponse?.data || [];
+					setAnalyzedApiData(reportItems);
+
+					const groupedByArtist: { [key: string]: ReportItem[] } = reportItems.reduce((acc, report) => {
+						acc[report.artistName] = acc[report.artistName] || [];
+						acc[report.artistName].push(report);
+						return acc;
+					}, {});
+
+					const transformedArtistReports: ReportItem[] = Object.values(groupedByArtist).map(artistItemGroup => {
+						return artistItemGroup[0];
+					});
+
+					const unmatched: ReportItem[] = transformedArtistReports.filter(ar => !ar.artistId);
+					const matched: ReportItem[] = transformedArtistReports.filter(ar => ar.artistId);
+
+					setUnmatchedArtists(unmatched);
+					setMatchedArtists(matched);
+
 					setCsvUploaded(true);
 					setCurrentStep('processing');
 					startProcessing();
 				},
-				onError: error => {
+				onError: (error: Error) => {
 					console.error('Failed to analyze CSV:', error);
-					setCsvUploaded(false); // Reset on failure
-
-					//for now simulate the cvs upload working
-					setCurrentStep('processing');
-					startProcessing();
+					setCsvUploaded(false);
+					const axiosError = error as AxiosError;
+					const apiErrorMessage = axiosError?.response?.data && typeof axiosError.response.data === 'object' && 'message' in axiosError.response.data && typeof axiosError.response.data.message === 'string' && axiosError.response.data.message;
+					const errorMessage = apiErrorMessage || error.message || 'Failed to analyze CSV';
+					toast.error(String(errorMessage));
 				}
 			}
 		);
@@ -418,7 +428,7 @@ const Sales: React.FC = () => {
 					</div>
 				)}
 
-				{currentStep === 'match-artist' && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={placeholderParseData?.data?.filter(x => x.artistName === unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName)} onCreateNew={handleCreateNewArtist} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName} />}
+				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedArtists} onCreateNew={handleCreateNewArtist} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName} />}
 
 				{currentStep === 'create-artist' && <CreateArtistForm onSave={handleSaveArtist} />}
 
