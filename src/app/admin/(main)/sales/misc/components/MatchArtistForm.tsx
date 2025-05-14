@@ -3,15 +3,13 @@ import React, { useState } from 'react';
 import { ChevronDown, User } from 'lucide-react';
 import { useGetAllArtists } from '../../../catalogue/api/getAllArtistsParams';
 import { LoadingBox } from '@/components/ui/LoadingBox';
-// Define ArtistReport and related types locally due to large types file
-import { Artist } from '@/lib/types'; // Keep Artist import if it exists and is needed
+import { Artist, ReportItem } from '@/lib/types'; // Keep Artist import if it exists and is needed
 // Removed unused MatchArtistReportsResponse and MatchArtistReportsParams imports
 import { useMatchArtistReports } from '../../../catalogue/api/matchArtistReports'; // Import the hook
 import { toast } from 'sonner'; // Assuming you use sonner for notifications/popups
 import { AxiosError } from 'axios'; // Import AxiosError for better error typing
 
 // --- Start: Local Type Definitions ---
-// (Ideally these should be in src/lib/types.ts)
 
 // General interface for expected API response structure (success or error)
 interface ApiResponse {
@@ -21,62 +19,13 @@ interface ApiResponse {
 	// Add other potential fields if known
 }
 
-export interface RoyaltyConverted {
-	amount: number;
-	rate: number;
-	fromCurrency: string;
-	toCurrency: string;
-}
-
-export interface Royalty {
-	name: string;
-	value: number;
-	royaltyConverted: RoyaltyConverted[];
-}
-
-export interface DspData {
-	name: string;
-	streams: number;
-	royalty: Royalty;
-}
-
-export interface CountryData {
-	name: string;
-	streams: number;
-	royalty: Royalty;
-}
-
-export interface DeliveryData {
-	name: string;
-	streams: number;
-	royalty: Royalty;
-}
-
-export interface FullReport {
-	trackTitle: string;
-	upcCode: string;
-	isrcCode: string;
-	catalogueId: string;
-	totalRoyaltyUSD: Royalty;
-	totalStreams: number;
-	dspData: DspData[];
-	countryData: CountryData[];
-	deliveryData: DeliveryData[];
-}
-
-export interface ArtistReport {
-	artistId: string | null;
-	artistName: string;
-	activityPeriod: string;
-	fullReports: FullReport[];
-}
 // --- End: Local Type Definitions ---
 
 interface MatchArtistFormProps {
 	onMatch: (artistId: string, success: boolean, message?: string) => void; // Modified to pass success/message
 	onCreateNew: () => void;
 	unmatchedArtistName?: string;
-	unmatchedReports: ArtistReport[]; // Add prop for reports data
+	unmatchedReports?: ReportItem[]; // Add prop for reports data
 }
 
 const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew, unmatchedReports, unmatchedArtistName }) => {
@@ -92,9 +41,9 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 		setIsDropdownOpen(false);
 
 		// Trigger the mutation on selection
-		console.log('unmatchedReports', unmatchedReports);
+		console.log('unmatchedReports', unmatchedReports || []);
 		matchArtist(
-			{ artistId: artist._id, reports: unmatchedReports },
+			{ artistId: artist._id, reports: unmatchedReports || [] },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
@@ -193,64 +142,3 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 };
 
 export default MatchArtistForm;
-
-// NOTE: Ensure ArtistReport type is correctly defined and exported, likely in src/lib/types.ts
-// Example definition (adjust based on actual structure):
-/*
-export interface RoyaltyConverted {
-    amount: number;
-    rate: number;
-    fromCurrency: string;
-    toCurrency: string;
-}
-
-export interface Royalty {
-    name: string;
-    value: number;
-    royaltyConverted: RoyaltyConverted[];
-}
-
-export interface DspData {
-    name: string;
-    streams: number;
-    royalty: Royalty;
-}
-
-export interface CountryData {
-    name: string;
-    streams: number;
-    royalty: Royalty;
-}
-
-export interface DeliveryData {
-    name: string;
-    streams: number;
-    royalty: Royalty;
-}
-
-export interface FullReport {
-    trackTitle: string;
-    upcCode: string;
-    isrcCode: string;
-    catalogueId: string;
-    totalRoyaltyUSD: Royalty;
-    totalStreams: number;
-    dspData: DspData[];
-    countryData: CountryData[];
-    deliveryData: DeliveryData[];
-}
-
-export interface ArtistReport {
-    artistId: string | null;
-    artistName: string;
-    activityPeriod: string;
-    fullReports: FullReport[];
-}
-
-export interface Artist {
-    _id: string;
-    artistName: string;
-    // other artist properties...
-    isNew?: boolean; // Example property
-}
-*/
