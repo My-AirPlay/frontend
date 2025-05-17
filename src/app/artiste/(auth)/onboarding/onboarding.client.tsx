@@ -13,16 +13,6 @@ import { Spinner } from '@/components/icons';
 
 const OnboardingClientPage = () => {
 	const { artist, isLoading } = useArtisteContext();
-	React.useEffect(() => {
-		const fetchUser = async () => {
-			const user = await getArtistProfile();
-			if (user && user.stage !== userProfileStage.onboarding) {
-				redirect('/artiste/dashboard');
-			}
-		};
-		fetchUser();
-	}, []);
-
 	const [currentStep, setCurrentStep] = useState(onboardingStages[artist?.stage || ''] || OnboardingSteps.BASIC_DETAIL);
 	const screens = {
 		[OnboardingSteps.BASIC_DETAIL]: <OnboardingBasciDetail email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
@@ -30,19 +20,30 @@ const OnboardingClientPage = () => {
 		[OnboardingSteps.SOCIAL_LINK]: <OnboardingSocialMedia email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
 		[OnboardingSteps.PREVIEW]: <PreviewOnboarding setCurrentStep={setCurrentStep} />
 	};
+
+	React.useEffect(() => {
+		if (!isLoading && !artist) {
+			redirect('/artiste/login');
+		}
+
+		if (!!artist && !onboardingStagesKey.includes(artist?.stage)) {
+			redirect('/artiste/dashboard');
+		}
+		const fetchUser = async () => {
+			const user = await getArtistProfile();
+			if (user && user.stage !== userProfileStage.onboarding) {
+				redirect('/artiste/dashboard');
+			}
+		};
+		fetchUser();
+	}, [isLoading, artist, onboardingStagesKey]);
+
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center h-screen">
 				<Spinner />
 			</div>
 		);
-	}
-	if (!isLoading && !artist) {
-		redirect('/artiste/login');
-	}
-
-	if (!!artist && !onboardingStagesKey.includes(artist?.stage)) {
-		redirect('/artiste/dashboard');
 	}
 	return <>{screens[currentStep]}</>;
 };

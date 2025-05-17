@@ -10,25 +10,6 @@ import { LinkButton } from '@/components/ui';
 const MusicDashboard = () => {
 	const { data, isLoading, error } = useGetDashboardData();
 
-	if (isLoading) {
-		return (
-			<div className="flex justify-center items-center h-screen">
-				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-			</div>
-		);
-	}
-
-	if (error) {
-		return (
-			<div className="text-center text-red-500 mt-10 p-6">
-				<div className="mx-auto mb-4">⚠️</div>
-				<h2 className="text-xl font-bold">Error loading dashboard data</h2>
-				<p>Please try again later or contact support.</p>
-			</div>
-		);
-	}
-
-	// Prepare data for charts
 	const revenueHistory = [...(data?.revenueHistory || [])]
 		.sort((a, b) => {
 			const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -62,6 +43,24 @@ const MusicDashboard = () => {
 			...entry,
 			period: `${entry.period?.split(' ')[0]?.slice(0, 3)} ${entry.period?.split(' ')[1]?.slice(-2)}`
 		}));
+
+	if (isLoading) {
+		return (
+			<div className="flex justify-center items-center h-screen">
+				<div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div className="text-center text-red-500 mt-10 p-6">
+				<div className="mx-auto mb-4">⚠️</div>
+				<h2 className="text-xl font-bold">Error loading dashboard data</h2>
+				<p>Please try again later or contact support.</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="container mx-auto px-4 py-6">

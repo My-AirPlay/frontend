@@ -19,6 +19,7 @@ interface OnboardingSocialMedialProps {
 const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
 	const { replace } = useRouter();
 	const { checkAuthStatus } = useArtisteContext();
+
 	const { mutateAsync, status } = useMutation({
 		mutationFn: postSocialLinks,
 		onSuccess: async result => {
@@ -34,6 +35,17 @@ const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
 			replace('/artiste/dashboard');
 		}
 	});
+
+	React.useEffect(() => {
+		const check = async () => {
+			if (status == 'success') {
+				toast.success('Social links updated successfully');
+				await checkAuthStatus();
+			}
+		};
+		check();
+	}, [status]);
+
 	const formik = useFormik({
 		validateOnChange: true,
 		validationSchema: onboardingSocialLinkSchema,
