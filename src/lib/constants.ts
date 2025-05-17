@@ -278,7 +278,8 @@ export const userProfileStage = {
 	onboarding: 'verifyProfile',
 	verifyEmail: 'verifyEmail',
 	bankInfo: 'Add bank info',
-	socialLinks: 'Add social links'
+	socialLinks: 'Add social links',
+	payment: 'Make payment'
 };
 
 export const onboardingStages = {
