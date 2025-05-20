@@ -67,7 +67,7 @@ interface MatchArtistReportsResponse {
 }
 
 export const matchArtistReports = async ({ artistId, artistName = false, reports }: MatchArtistReportsParams) => {
-	const response = await APIAxios.post(`/admin/match/${artistId}`, reports, {
+	const response = await APIAxios.post(`/admin/match/${artistId}`, [...reports], {
 		params: {
 			artistName
 		}
