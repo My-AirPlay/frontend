@@ -88,7 +88,7 @@ const Sales: React.FC = () => {
 		}
 	};
 
-	// Function to remove a currency pair (min 1)
+	// Function to remove a currency pair (index: number)
 	const removeCurrencyPair = (index: number) => {
 		if (fields.length > 1) {
 			remove(index);
@@ -114,6 +114,7 @@ const Sales: React.FC = () => {
 	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>([]);
 
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
+	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
 
 	const navigateToNextStep = () => {
 		if (currentStep === 'exchange-rate') {
@@ -177,22 +178,6 @@ const Sales: React.FC = () => {
 					console.log('apiResponse', apiResponse);
 					console.log('groupedByArtist', groupedByArtist);
 
-					// const transformedArtistReports: ReportItem[] = Object.values(groupedByArtist).map((artistItemGroup: ReportItem[]) => {
-					// 	const firstItem = artistItemGroup[0];
-					// 	return {
-					// 		artistId: firstItem?.artistId || null,
-					// 		artistName: firstItem?.artistName || 'Unknown Artist',
-					// 		activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
-					// 		fullReports: artistItemGroup.flatMap(item => item.fullReports),
-					// 		_id: firstItem?._id || 'No ID',
-					// 		createdAt: firstItem?.createdAt || new Date(),
-					// 		updatedAt: firstItem?.updatedAt || new Date(),
-					// 		__v: firstItem?.__v || 0
-					// 	};
-					// });
-
-					// console.log('transformedArtistReports', transformedArtistReports);
-
 					const transformedArtistReports: ReportItem[] = Object.values(groupedByArtist).map((artistItemGroup: ReportItem[]) => {
 						const firstItem = artistItemGroup[0];
 						return {
@@ -200,7 +185,7 @@ const Sales: React.FC = () => {
 							artistName: firstItem?.artistName || 'Unknown Artist',
 							activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
 							fullReports: artistItemGroup.flatMap(item => item.fullReports),
-							_id: firstItem?._id || 'No ID',
+							_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
 							createdAt: firstItem?.createdAt || new Date(),
 							updatedAt: firstItem?.updatedAt || new Date(),
 							__v: firstItem?.__v || 0
@@ -262,14 +247,14 @@ const Sales: React.FC = () => {
 		setCurrentStep('match-artist');
 	};
 
-	const handleCreateNewArtist = () => {
-		setCurrentStep('create-artist');
+	const handleMatchArtist = (systemArtistId: string) => {
+		console.log('Matched with system artist ID:', systemArtistId);
+		setSystemArtistIdForMatch(systemArtistId);
+		setShowSuccessModal('matched');
 	};
 
-	const handleMatchArtist = (artistId: string) => {
-		console.log('Matched with artist ID:', artistId);
-		// Here we would call an API to match the artist
-		setShowSuccessModal('matched');
+	const handleCreateNewArtist = () => {
+		setCurrentStep('create-artist');
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -284,23 +269,29 @@ const Sales: React.FC = () => {
 		setShowSuccessModal(null);
 		setCurrentStep('artist-records');
 
-		// Update the lists to simulate the match/create was successful
-		if (selectedUnmatchedArtist) {
-			const updatedUnmatched = unmatchedArtists.filter(artist => artist._id !== selectedUnmatchedArtist);
-			setUnmatchedArtists(updatedUnmatched);
+		if (selectedUnmatchedArtist && systemArtistIdForMatch) {
+			const reportItemToMove = unmatchedArtists.find(artist => artist._id === selectedUnmatchedArtist);
 
-			const artistToMove = unmatchedArtists.find(artist => artist._id === selectedUnmatchedArtist);
-			if (artistToMove) {
-				const updatedArtist = {
-					...artistToMove,
-					realName: 'Updated Name',
+			if (reportItemToMove) {
+				setUnmatchedArtists(currentUnmatched => currentUnmatched.filter(artist => artist._id !== selectedUnmatchedArtist));
+
+				const newMatchedArtistData = {
+					...reportItemToMove,
+					artistId: systemArtistIdForMatch,
+					realName: 'Updated Name', // This should ideally come from the matched system artist
 					status: 'completed' as const
 				};
-				setMatchedArtists([...matchedArtists, updatedArtist]);
+
+				setMatchedArtists(currentMatched => [...currentMatched, newMatchedArtistData]);
+			} else {
+				console.warn('Could not find the artist to move from unmatched to matched.');
 			}
+		} else {
+			console.warn('Missing selectedUnmatchedArtist or systemArtistIdForMatch in handleCloseSuccessModal.');
 		}
 
 		setSelectedUnmatchedArtist(null);
+		setSystemArtistIdForMatch(null);
 	};
 
 	const getProgressPercentage = () => {
