@@ -378,6 +378,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 												field.onChange(copyrightInputValue.trim() ? `${year} ${copyrightInputValue.trim()}` : '');
 											}
 										};
+
 										return (
 											<FormItem className="w-full">
 												<div className="flex items-center justify-between">
