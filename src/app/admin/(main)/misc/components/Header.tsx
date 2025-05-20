@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
+import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu } from '@/components/ui';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useArtisteContext } from '@/contexts/AuthContextArtist';
+import { getInitials } from '@/utils/strings';
 import Sidebar from './Sidebar';
 
 const Header: React.FC = () => {
+	const { artist, logout } = useArtisteContext();
+	const router = useRouter();
+
+	const logoutArtist = () => {
+		logout();
+		router.push('/artiste/login');
+	};
 	const [isSheetOpen, setIsSheetOpen] = useState(false);
 	const path = usePathname();
 	const getPageTitle = () => {
@@ -45,10 +55,26 @@ const Header: React.FC = () => {
         </button> */}
 
 				<div className="flex items-center space-x-2">
-					<div className="h-8 w-8 rounded-full bg-purple-600 flex items-center justify-center">
-						<span className="text-white text-sm">JD</span>
-					</div>
-					{/* <ChevronDown size={16} className="text-white/60" /> */}
+					<ReusableDropdownMenu
+						trigger={
+							<Avatar className="cursor-pointer">
+								<AvatarImage alt="@shadcn" />
+								<AvatarFallback>{getInitials(artist?.artistName || 'FN')}</AvatarFallback>
+							</Avatar>
+						}
+						items={[
+							{
+								label: 'Profile',
+								onClick: () => {
+									router.push('/artiste/settings?section=profile');
+								}
+							},
+							{
+								label: 'Logout',
+								onClick: logoutArtist
+							}
+						]}
+					/>
 				</div>
 
 				{/* Control the Sheet's open state */}

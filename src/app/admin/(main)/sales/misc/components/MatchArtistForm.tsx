@@ -43,7 +43,7 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 		// Trigger the mutation on selection
 		console.log('unmatchedReports', unmatchedReports || []);
 		matchArtist(
-			{ artistId: artist._id, reports: unmatchedReports || [] },
+			{ artistId: artist._id, reports: unmatchedReports?.filter(item => item.artistName === artist.artistName) || [] },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data

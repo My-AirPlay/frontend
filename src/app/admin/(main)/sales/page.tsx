@@ -165,11 +165,14 @@ const Sales: React.FC = () => {
 					const reportItems: ReportItem[] = apiResponse || [];
 					setAnalyzedApiData(reportItems);
 
-					const groupedByArtist: { [key: string]: ReportItem[] } = reportItems.reduce((acc, report) => {
-						acc[report.artistName] = acc[report.artistName] || [];
-						acc[report.artistName].push(report);
-						return acc;
-					}, {});
+					const groupedByArtist: { [key: string]: ReportItem[] } = reportItems.reduce(
+						(acc, report) => {
+							acc[report.artistName] = acc[report.artistName] || [];
+							acc[report.artistName].push(report);
+							return acc;
+						},
+						{} as { [key: string]: ReportItem[] }
+					);
 
 					console.log('apiResponse', apiResponse);
 					console.log('groupedByArtist', groupedByArtist);
