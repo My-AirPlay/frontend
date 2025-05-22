@@ -1,2 +1,2 @@
 export { default as AllProviders } from './AllProviders';
-export { ArtistAuthProvider } from './AuthContext';
+export { AuthProvider } from './AuthContext';
