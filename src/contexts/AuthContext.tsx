@@ -57,7 +57,7 @@ interface BankDetails {
 	paidRegistrationFee?: boolean;
 }
 
-export interface ArtistAuthState {
+export interface AuthState {
 	artist: IArtistUser | null;
 	admin: IArtistUser | null;
 	isAuthenticated: boolean;
@@ -66,7 +66,7 @@ export interface ArtistAuthState {
 	error: string | null;
 }
 
-export const initialAuthState: ArtistAuthState = {
+export const initialAuthState: AuthState = {
 	artist: null,
 	admin: null,
 	isAuthenticated: false,
@@ -77,7 +77,7 @@ export const initialAuthState: ArtistAuthState = {
 
 export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | { type: 'SET_LOADING'; payload: boolean } | { type: 'ARTISTE_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'ADMIN_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'LOGIN_FAILURE'; payload: string } | { type: 'LOGOUT' } | { type: 'SET_ERROR'; payload: string | null };
 
-export const authReducer: Reducer<ArtistAuthState, AuthActionType> = (state, action) => {
+export const authReducer: Reducer<AuthState, AuthActionType> = (state, action) => {
 	switch (action.type) {
 		case 'SET_AUTHENTICATING':
 			return {
@@ -137,7 +137,7 @@ export const authReducer: Reducer<ArtistAuthState, AuthActionType> = (state, act
 	}
 };
 
-interface AuthContextType extends ArtistAuthState {
+interface AuthContextType extends AuthState {
 	dispatch: React.Dispatch<AuthActionType>;
 	logout: (reroute?: boolean) => void;
 	checkAuthStatus: () => Promise<void>;
