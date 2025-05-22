@@ -39,12 +39,16 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 		{
 			id: 'catalogueId',
 			header: 'Catalogue ID',
-			accessorKey: 'catalogueId'
+			accessorKey: 'catalogueId',
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.catalogueId} </p>
 		},
 		{
 			id: 'isrcCode',
 			header: 'ISRC Code ',
-			accessorKey: 'isrcCode'
+			accessorKey: 'isrcCode',
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.isrcCode} </p>
 		}
 	];
 
