@@ -4,16 +4,16 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu } from '@/components/ui';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useArtisteContext } from '@/contexts/AuthContextArtist';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { getInitials } from '@/utils/strings';
 import Sidebar from './Sidebar';
 
 const Header: React.FC = () => {
-	const { artist, logout } = useArtisteContext();
+	const { admin, logout } = useAuthContext();
 	const router = useRouter();
 
 	const logoutArtist = () => {
-		logout();
+		logout(true);
 		router.push('/artiste/login');
 	};
 	const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -39,27 +39,12 @@ const Header: React.FC = () => {
 			<h1 className="text-xl font-semibold">{getPageTitle()}</h1>
 
 			<div className="flex items-center space-x-4">
-				{/* <Input
-          type="text"
-          placeholder="Search..."
-          leftIcon={<Search size={16} className="text-white" />}
-          className=" rounded-full pl-10 pr-4 w-64 text-sm max-md:hidden"
-        /> */}
-
-				{/* <button className="text-white/60 hover:text-foreground">
-          <Settings size={20} />
-        </button>
-
-        <button className="text-white/60 hover:text-foreground">
-          <Bell size={20} />
-        </button> */}
-
 				<div className="flex items-center space-x-2">
 					<ReusableDropdownMenu
 						trigger={
 							<Avatar className="cursor-pointer">
 								<AvatarImage alt="@shadcn" />
-								<AvatarFallback>{getInitials(artist?.artistName || 'FN')}</AvatarFallback>
+								<AvatarFallback>{getInitials(admin?.firstName + ' ' + admin?.lastName || admin?.artistName || 'FN')}</AvatarFallback>
 							</Avatar>
 						}
 						items={[

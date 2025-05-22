@@ -6,14 +6,14 @@ import OnboardingBankDetail from './_components/bank-details/bank-details';
 import OnboardingSocialMedia from './_components/social-media-links/social-media-links';
 import PreviewOnboarding from './_components/preview-onboarding/preview-onboarding';
 import React, { useState } from 'react';
-import { useArtisteContext } from '@/contexts/AuthContextArtist';
+import { useAuthContext } from '@/contexts/AuthContext';
 // import { getArtistProfile } from '@/contexts/AuthContextArtist';
 import { redirect } from 'next/navigation';
 import { Spinner } from '@/components/icons';
 import RegistrationPaymentPage from './_components/payment-registration-fee';
 
 const OnboardingClientPage = () => {
-	const { artist, isLoading } = useArtisteContext();
+	const { artist, isLoading } = useAuthContext();
 	const [currentStep, setCurrentStep] = useState(onboardingStages[artist?.stage || ''] || OnboardingSteps.BASIC_DETAIL);
 	const screens = {
 		[OnboardingSteps.BASIC_DETAIL]: <OnboardingBasciDetail email={artist?.email || ''} setCurrentStep={setCurrentStep} />,

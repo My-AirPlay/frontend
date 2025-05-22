@@ -11,7 +11,7 @@ import { userProfileStage } from '@/lib/constants';
 import { loginSchema } from '@/lib/schemas';
 import { useMutation } from '@tanstack/react-query';
 import { loginArtistUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
-import { getArtistProfile, useArtisteContext } from '@/contexts/AuthContextArtist';
+import { getArtistProfile, useAuthContext } from '@/contexts/AuthContext';
 import { Input } from '@/components/ui';
 
 import AuthWrapper from '../misc/components/auth-wrapper';
@@ -19,11 +19,16 @@ import AuthActions from '../misc/components/auth-actions';
 
 const LoginPageClient = () => {
 	const router = useRouter();
-	const { checkAuthStatus } = useArtisteContext();
+	const { checkAuthStatus } = useAuthContext();
 	const { mutate, status } = useMutation({
 		mutationFn: loginArtistUser,
 		onSuccess: async ({ data, error }) => {
 			await checkAuthStatus();
+			console.log(process.env.ADMIN_EMAIL, 'admin email');
+			if (data?.user.email == process.env.ADMIN_EMAIL) {
+				router.replace('/admin/dashboard');
+				return;
+			}
 			if (error) {
 				if (error.code === '500') return;
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,7 +39,7 @@ const LoginPageClient = () => {
 				toast.success('Check your email to verify your acount');
 				router.push('/artiste/verify');
 				return;
-			} else if (data.user.stage !== 'Complete') {
+			} else if (data.user.stage !== 'complete') {
 				toast.success('Welcome.');
 				router.replace('/artiste/onboarding');
 				return;

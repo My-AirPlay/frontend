@@ -5,7 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import { redirect, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { useArtisteContext } from '@/contexts/AuthContextArtist';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -14,7 +14,7 @@ interface LayoutProps {
 
 const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
 	const pathname = usePathname();
-	const { artist, isLoading, isAuthenticating } = useArtisteContext();
+	const { artist, isLoading, isAuthenticating } = useAuthContext();
 	useEffect(() => {
 		if (artist && !isLoading && !isAuthenticating) {
 			if (artist.stage !== 'complete' || !artist.bankDetails.paidRegistrationFee) {

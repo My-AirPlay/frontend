@@ -3,16 +3,15 @@ import { Reducer, useLayoutEffect } from 'react';
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import APIAxios, { setAxiosDefaultToken } from '@/utils/axios';
 import { useRouter } from 'next/navigation';
-import { clearAdminTokens, getAdminAccessToken } from '@/actions/auth/auth.action';
+import { clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
 import { AppLogo } from '@/components/icons';
-
-interface IAdminUser {
+interface IArtistUser {
 	_id: string;
 	email: string;
 	stage: string;
 	status: string;
-	AdminName: string;
+	artistName: string;
 	city: string;
 	country: string;
 	firstName: string;
@@ -58,25 +57,27 @@ interface BankDetails {
 	paidRegistrationFee?: boolean;
 }
 
-export interface AdminAuthState {
-	Admin: IAdminUser | null;
+export interface ArtistAuthState {
+	artist: IArtistUser | null;
+	admin: IArtistUser | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
 	isAuthenticating: boolean;
 	error: string | null;
 }
 
-export const initialAuthState: AdminAuthState = {
-	Admin: null,
+export const initialAuthState: ArtistAuthState = {
+	artist: null,
+	admin: null,
 	isAuthenticated: false,
 	isLoading: false,
 	isAuthenticating: true,
 	error: null
 };
 
-export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | { type: 'SET_LOADING'; payload: boolean } | { type: 'LOGIN_SUCCESS'; payload: IAdminUser } | { type: 'LOGIN_FAILURE'; payload: string } | { type: 'LOGOUT' } | { type: 'SET_ERROR'; payload: string | null };
+export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | { type: 'SET_LOADING'; payload: boolean } | { type: 'ARTISTE_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'ADMIN_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'LOGIN_FAILURE'; payload: string } | { type: 'LOGOUT' } | { type: 'SET_ERROR'; payload: string | null };
 
-export const authReducer: Reducer<AdminAuthState, AuthActionType> = (state, action) => {
+export const authReducer: Reducer<ArtistAuthState, AuthActionType> = (state, action) => {
 	switch (action.type) {
 		case 'SET_AUTHENTICATING':
 			return {
@@ -88,10 +89,21 @@ export const authReducer: Reducer<AdminAuthState, AuthActionType> = (state, acti
 				...state,
 				isLoading: action.payload
 			};
-		case 'LOGIN_SUCCESS':
+		case 'ARTISTE_LOGIN_SUCCESS':
 			return {
 				...state,
-				Admin: action.payload,
+				artist: action.payload,
+				admin: null,
+				isAuthenticated: true,
+				isLoading: false,
+				isAuthenticating: false,
+				error: null
+			};
+		case 'ADMIN_LOGIN_SUCCESS':
+			return {
+				...state,
+				admin: action.payload,
+				artist: null,
 				isAuthenticated: true,
 				isLoading: false,
 				isAuthenticating: false,
@@ -100,7 +112,7 @@ export const authReducer: Reducer<AdminAuthState, AuthActionType> = (state, acti
 		case 'LOGIN_FAILURE':
 			return {
 				...state,
-				Admin: null,
+				artist: null,
 				isAuthenticated: false,
 				isLoading: false,
 				isAuthenticating: false,
@@ -109,7 +121,8 @@ export const authReducer: Reducer<AdminAuthState, AuthActionType> = (state, acti
 		case 'LOGOUT':
 			return {
 				...state,
-				Admin: null,
+				artist: null,
+				admin: null,
 				isAuthenticated: false,
 				isLoading: false,
 				error: null
@@ -124,9 +137,9 @@ export const authReducer: Reducer<AdminAuthState, AuthActionType> = (state, acti
 	}
 };
 
-interface AuthContextType extends AdminAuthState {
+interface AuthContextType extends ArtistAuthState {
 	dispatch: React.Dispatch<AuthActionType>;
-	logout: () => void;
+	logout: (reroute?: boolean) => void;
 	checkAuthStatus: () => Promise<void>;
 }
 
@@ -137,22 +150,22 @@ const AuthContext = createContext<AuthContextType>({
 	checkAuthStatus: async () => {}
 });
 
-export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [state, dispatch] = useReducer(authReducer, initialAuthState);
 	const router = useRouter();
 
 	const logout = (reroute?: boolean) => {
-		clearAdminTokens();
+		clearArtistTokens();
 		dispatch({ type: 'LOGOUT' });
 		if (reroute) {
-			router.replace('/admin/login');
+			router.replace('/artiste/login');
 		}
 	};
 
 	const checkAuthStatus = React.useCallback(async () => {
-		const token = await getAdminAccessToken();
+		const token = await getArtistAccessToken();
 		if (!token) {
-			router.replace('/admin/login');
+			router.replace('/artiste/login');
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 			return;
 		}
@@ -161,18 +174,23 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
 		const isTokenExpired = decodedToken.exp * 1000 < Date.now();
 
 		if (isTokenExpired) {
-			await clearAdminTokens();
+			await clearArtistTokens();
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 			return;
 		}
 
 		try {
-			const { data } = await APIAxios.get<IAdminUser>('/admin/profile', {
+			const { data } = await APIAxios.get<IArtistUser>('/artist/profile', {
 				headers: {
 					Authorization: `Bearer ${token}`
 				}
 			});
-			dispatch({ type: 'LOGIN_SUCCESS', payload: data });
+			console.log(process.env.NEXT_PUBLIC_ADMIN_EMAIL, 'admin email in auth context');
+			if (data.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
+				dispatch({ type: 'ADMIN_LOGIN_SUCCESS', payload: data });
+			} else {
+				dispatch({ type: 'ARTISTE_LOGIN_SUCCESS', payload: data });
+			}
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				console.log(error.response?.data, token);
@@ -208,21 +226,21 @@ export const AdminAuthProvider: React.FC<{ children: ReactNode }> = ({ children 
 	);
 };
 
-export const useadminContext = () => {
+export const useAuthContext = () => {
 	const context = useContext(AuthContext);
 	if (!context) {
-		throw new Error('useadminContext must be used within an AuthProvider');
+		throw new Error('useAuthContext must be used within an AuthProvider');
 	}
 	return context;
 };
 
-export async function getAdminProfile() {
-	const accessToken = await getAdminAccessToken();
+export async function getArtistProfile() {
+	const accessToken = await getArtistAccessToken();
 
 	try {
 		if (!accessToken || !accessToken.trim()) return null;
 
-		const { data } = await APIAxios.get<IAdminUser>('/admin/profile', {
+		const { data } = await APIAxios.get<IArtistUser>('/artist/profile', {
 			headers: {
 				Authorization: `Bearer ${accessToken}`
 			}

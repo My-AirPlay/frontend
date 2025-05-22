@@ -10,7 +10,7 @@ import { postOnbaordingBankDetail, useInitiatePayment } from '@/app/artiste/(aut
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
 import { LinkButton } from '@/components/ui';
-import { useArtisteContext } from '@/contexts/AuthContextArtist';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { useGetBankList } from '../../../misc/api/mutations/auth.mutations';
 import { Input } from '@/components/ui/input';
 import SelectSingleCombo from '@/components/ui/select-single-combobox';
@@ -67,7 +67,7 @@ interface IBank {
 }
 
 const OnboardingBankDetail = ({ email }: OnboardingBankDetailProps) => {
-	const { checkAuthStatus } = useArtisteContext();
+	const { checkAuthStatus } = useAuthContext();
 	const { data: bankList } = useGetBankList();
 
 	const {
