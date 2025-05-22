@@ -8,13 +8,13 @@ import { toast } from 'sonner';
 import { Input, Button, Card, CardContent, SelectSimple, Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui';
 
 import { type BankFormValues, bankSchema } from '../schemas';
-import { useArtisteContext } from '@/contexts/AuthContextArtist';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { useUpdateBankData } from '../api';
 import { SmallSpinner, Spinner } from '@/components/icons';
 
 export default function SectionBankDetails() {
 	const [isEditing, setIsEditing] = useState(false);
-	const { artist, isLoading, checkAuthStatus } = useArtisteContext();
+	const { artist, isLoading, checkAuthStatus } = useAuthContext();
 
 	const defaultValues: BankFormValues = {
 		accountNumber: artist?.bankDetails?.accountNumber.toString() || '',

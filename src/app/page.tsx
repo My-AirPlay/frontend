@@ -138,14 +138,14 @@ export default function Home() {
 									Get Started
 								</LinkButton>
 							</div>
-							<div className="hidden md:block">
+							{/* <div className="hidden md:block">
 								<Image src="/assets/circle-btn.svg" alt="Circle" width={80} height={80} />
-							</div>
+							</div> */}
 						</div>
 						<div className="md:block">
-							<div className="mb-6 md:mb-[74px]">
+							{/* <div className="mb-6 md:mb-[74px]">
 								<Image src="/assets/elipse.svg" alt="Elipse" width={120} height={120} className="hidden md:block" />
-							</div>
+							</div> */}
 							<h2 className="text-3xl sm:text-4xl lg:text-6xl text-white font-bold max-w-[295px]">own your journey</h2>
 						</div>
 					</div>

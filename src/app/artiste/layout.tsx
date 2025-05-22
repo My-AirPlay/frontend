@@ -1,19 +1,16 @@
 import React from 'react';
-import { ArtistAuthProvider } from '@/contexts';
+import ArtisteClientLayout from './layout.client';
 
 export const metadata = {
-    title: 'My Airplay | Artiste',
-    description: '',
+	title: 'My Airplay | Artiste',
+	description: ''
 };
 
-export default function ArtisteLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
-    return (
-        <ArtistAuthProvider>
-            {children}
-        </ArtistAuthProvider>
-    );
+export default function ArtisteLayout({ children }: { children: React.ReactNode }) {
+	return (
+		<>
+			{children}
+			<ArtisteClientLayout />
+		</>
+	);
 }

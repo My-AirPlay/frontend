@@ -1,10 +1,11 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
-import { usePathname } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -13,6 +14,14 @@ interface LayoutProps {
 
 const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
 	const pathname = usePathname();
+	const { artist, isLoading, isAuthenticating } = useAuthContext();
+	useEffect(() => {
+		if (artist && !isLoading && !isAuthenticating) {
+			if (artist.stage !== 'complete' || !artist.bankDetails.paidRegistrationFee) {
+				redirect('/artiste/onboarding');
+			}
+		}
+	}, [artist, isLoading, isAuthenticating]);
 
 	// Determine if we need full width (no padding) based on route
 	const isFullWidth = pathname.startsWith('/artist-revenue') || pathname.startsWith('/help/tickets') || pathname.startsWith('/help/chat');

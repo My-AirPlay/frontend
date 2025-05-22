@@ -3,18 +3,17 @@ import { Settings, Menu } from 'lucide-react';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Sidebar from './Sidebar';
-import { useArtisteContext } from '@/contexts/AuthContextArtist';
-import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu } from '@/components/ui';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu, Skeleton } from '@/components/ui';
 import { getInitials } from '@/utils/strings';
 import { useRouter } from 'next/navigation';
 
 const Header: React.FC = () => {
-	const { artist, logout } = useArtisteContext();
+	const { artist, logout, isLoading } = useAuthContext();
 	const router = useRouter();
 
 	const logoutArtist = () => {
-		logout();
-		router.push('/artiste/login');
+		logout(true);
 	};
 	return (
 		<header className="h-16 flex items-center justify-between px-6">
@@ -23,34 +22,40 @@ const Header: React.FC = () => {
 					<Settings size={20} />
 				</button>
 
-				<ReusableDropdownMenu
-					trigger={
-						<Avatar className="cursor-pointer">
-							<AvatarImage alt="@shadcn" />
-							<AvatarFallback>{getInitials(artist?.artistName || 'FN')}</AvatarFallback>
-						</Avatar>
-					}
-					items={[
-						{
-							label: 'Profile',
-							onClick: () => {
-								router.push('/artiste/settings?section=profile');
+				{isLoading ? (
+					<Skeleton className="w-8 h-8 rounded-full bg-muted animate-pulse" />
+				) : (
+					<>
+						<ReusableDropdownMenu
+							trigger={
+								<Avatar className="cursor-pointer">
+									<AvatarImage alt="@shadcn" />
+									<AvatarFallback>{getInitials(artist?.firstName + ' ' + artist?.lastName || artist?.artistName || 'FN')}</AvatarFallback>
+								</Avatar>
 							}
-						},
-						{
-							label: 'Logout',
-							onClick: logoutArtist
-						}
-					]}
-				/>
-				<Sheet>
-					<SheetTrigger className="md:hidden text-primary">
-						<Menu size={24} className="text-primary" />
-					</SheetTrigger>
-					<SheetContent side="right" className="w-64 !p-0">
-						<Sidebar />
-					</SheetContent>
-				</Sheet>
+							items={[
+								{
+									label: 'Profile',
+									onClick: () => {
+										router.push('/artiste/settings?section=profile');
+									}
+								},
+								{
+									label: 'Logout',
+									onClick: logoutArtist
+								}
+							]}
+						/>
+						<Sheet>
+							<SheetTrigger className="md:hidden text-primary">
+								<Menu size={24} className="text-primary" />
+							</SheetTrigger>
+							<SheetContent side="right" className="w-64 !p-0">
+								<Sidebar />
+							</SheetContent>
+						</Sheet>
+					</>
+				)}
 			</div>
 		</header>
 	);

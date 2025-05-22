@@ -54,27 +54,30 @@ interface BankDetails {
 	paymentOption: string;
 	dealType: string;
 	rate: number;
+	paidRegistrationFee?: boolean;
 }
 
-export interface ArtistAuthState {
+export interface AuthState {
 	artist: IArtistUser | null;
+	admin: IArtistUser | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
 	isAuthenticating: boolean;
 	error: string | null;
 }
 
-export const initialAuthState: ArtistAuthState = {
+export const initialAuthState: AuthState = {
 	artist: null,
+	admin: null,
 	isAuthenticated: false,
 	isLoading: false,
 	isAuthenticating: true,
 	error: null
 };
 
-export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | { type: 'SET_LOADING'; payload: boolean } | { type: 'LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'LOGIN_FAILURE'; payload: string } | { type: 'LOGOUT' } | { type: 'SET_ERROR'; payload: string | null };
+export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | { type: 'SET_LOADING'; payload: boolean } | { type: 'ARTISTE_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'ADMIN_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'LOGIN_FAILURE'; payload: string } | { type: 'LOGOUT' } | { type: 'SET_ERROR'; payload: string | null };
 
-export const authReducer: Reducer<ArtistAuthState, AuthActionType> = (state, action) => {
+export const authReducer: Reducer<AuthState, AuthActionType> = (state, action) => {
 	switch (action.type) {
 		case 'SET_AUTHENTICATING':
 			return {
@@ -86,10 +89,21 @@ export const authReducer: Reducer<ArtistAuthState, AuthActionType> = (state, act
 				...state,
 				isLoading: action.payload
 			};
-		case 'LOGIN_SUCCESS':
+		case 'ARTISTE_LOGIN_SUCCESS':
 			return {
 				...state,
 				artist: action.payload,
+				admin: null,
+				isAuthenticated: true,
+				isLoading: false,
+				isAuthenticating: false,
+				error: null
+			};
+		case 'ADMIN_LOGIN_SUCCESS':
+			return {
+				...state,
+				admin: action.payload,
+				artist: null,
 				isAuthenticated: true,
 				isLoading: false,
 				isAuthenticating: false,
@@ -108,6 +122,7 @@ export const authReducer: Reducer<ArtistAuthState, AuthActionType> = (state, act
 			return {
 				...state,
 				artist: null,
+				admin: null,
 				isAuthenticated: false,
 				isLoading: false,
 				error: null
@@ -122,9 +137,9 @@ export const authReducer: Reducer<ArtistAuthState, AuthActionType> = (state, act
 	}
 };
 
-interface AuthContextType extends ArtistAuthState {
+interface AuthContextType extends AuthState {
 	dispatch: React.Dispatch<AuthActionType>;
-	logout: () => void;
+	logout: (reroute?: boolean) => void;
 	checkAuthStatus: () => Promise<void>;
 }
 
@@ -135,7 +150,7 @@ const AuthContext = createContext<AuthContextType>({
 	checkAuthStatus: async () => {}
 });
 
-export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [state, dispatch] = useReducer(authReducer, initialAuthState);
 	const router = useRouter();
 
@@ -170,7 +185,12 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 					Authorization: `Bearer ${token}`
 				}
 			});
-			dispatch({ type: 'LOGIN_SUCCESS', payload: data });
+			console.log(process.env.NEXT_PUBLIC_ADMIN_EMAIL, 'admin email in auth context');
+			if (data.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
+				dispatch({ type: 'ADMIN_LOGIN_SUCCESS', payload: data });
+			} else {
+				dispatch({ type: 'ARTISTE_LOGIN_SUCCESS', payload: data });
+			}
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				console.log(error.response?.data, token);
@@ -206,10 +226,10 @@ export const ArtistAuthProvider: React.FC<{ children: ReactNode }> = ({ children
 	);
 };
 
-export const useArtisteContext = () => {
+export const useAuthContext = () => {
 	const context = useContext(AuthContext);
 	if (!context) {
-		throw new Error('useArtisteContext must be used within an AuthProvider');
+		throw new Error('useAuthContext must be used within an AuthProvider');
 	}
 	return context;
 };
