@@ -137,7 +137,8 @@ export enum OnboardingSteps {
 	BASIC_DETAIL,
 	BANK,
 	SOCIAL_LINK,
-	PREVIEW
+	PREVIEW,
+	PAY_REGISTRATION_FEE
 }
 
 export const metricsDate = ['daily', 'monthly', 'yearly'];
@@ -278,13 +279,15 @@ export const userProfileStage = {
 	onboarding: 'verifyProfile',
 	verifyEmail: 'verifyEmail',
 	bankInfo: 'Add bank info',
-	socialLinks: 'Add social links'
+	socialLinks: 'Add social links',
+	payment: 'Pay registration Fee'
 };
 
 export const onboardingStages = {
 	[userProfileStage.bankInfo]: OnboardingSteps.BANK,
 	[userProfileStage.onboarding]: OnboardingSteps.BASIC_DETAIL,
-	[userProfileStage.socialLinks]: OnboardingSteps.SOCIAL_LINK
+	[userProfileStage.socialLinks]: OnboardingSteps.SOCIAL_LINK,
+	[userProfileStage.payment]: OnboardingSteps.PAY_REGISTRATION_FEE
 };
 export const onboardingStagesKey = Object.keys(onboardingStages);
 
