@@ -34,14 +34,14 @@ const LoginPageClient = () => {
 				toast.success('Check your email to verify your acount');
 				router.push('/artiste/verify');
 				return;
-			}
-			if (data.user.stage === userProfileStage.onboarding || data.user.stage === 'Add bank info') {
+			} else if (data.user.stage !== 'Complete') {
 				toast.success('Welcome.');
 				router.replace('/artiste/onboarding');
 				return;
+			} else {
+				toast.success(`Welcome Back ${data.user.firstName}`);
+				router.replace('/artiste/dashboard');
 			}
-			toast.success(`Welcome Back ${data.user.firstName}`);
-			router.replace('/artiste/dashboard');
 		}
 	});
 

@@ -4,6 +4,7 @@ import { AxiosError } from 'axios';
 import { userProfileStage } from '../../../../../../lib/constants';
 import APIAxios, { setAxiosDefaultToken } from '@/utils/axios';
 import { setArtistAccessToken } from '@/actions/auth/auth.action';
+import { useQuery } from '@tanstack/react-query';
 
 export interface IRegisterationArtistDetails {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,6 +36,7 @@ interface BankDetails {
 	currency: string | null;
 	sortCode: string | null;
 	paymentOption: string | null;
+	paidRegistrationFee?: boolean;
 }
 
 interface VerificationDetails {
@@ -148,3 +150,35 @@ export const resetPassword = async ({ token, newPassword }: { token: string; new
 		};
 	}
 };
+
+const fetchBanks = async () => {
+	const res = await APIAxios.get('/artist/get_banks');
+	return res.data as IBank[];
+};
+
+export const useGetBankList = () => {
+	return useQuery({
+		queryKey: ['bank-list'],
+		queryFn: fetchBanks,
+		refetchOnWindowFocus: false,
+		retry: 1
+	});
+};
+
+interface IBank {
+	id: number;
+	name: string;
+	slug: string;
+	code: string;
+	longcode: string;
+	gateway: null | string;
+	pay_with_bank: boolean;
+	supports_transfer: boolean;
+	active: boolean;
+	country: string;
+	currency: string;
+	type: string;
+	is_deleted: boolean;
+	createdAt: string;
+	updatedAt: string;
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { onboardingStages, onboardingStagesKey, OnboardingSteps, userProfileStage } from '@/lib/constants';
+import { onboardingStages, onboardingStagesKey, OnboardingSteps } from '@/lib/constants';
 import OnboardingBasciDetail from './_components/basic-details/basic-details';
 import OnboardingBankDetail from './_components/bank-details/bank-details';
 import OnboardingSocialMedia from './_components/social-media-links/social-media-links';
@@ -18,7 +18,8 @@ const OnboardingClientPage = () => {
 		[OnboardingSteps.BASIC_DETAIL]: <OnboardingBasciDetail email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
 		[OnboardingSteps.BANK]: <OnboardingBankDetail setCurrentStep={setCurrentStep} email={artist?.email || ''} />,
 		[OnboardingSteps.SOCIAL_LINK]: <OnboardingSocialMedia email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
-		[OnboardingSteps.PREVIEW]: <PreviewOnboarding setCurrentStep={setCurrentStep} />
+		[OnboardingSteps.PREVIEW]: <PreviewOnboarding setCurrentStep={setCurrentStep} />,
+		[OnboardingSteps.PAY_REGISTRATION_FEE]: <PreviewOnboarding setCurrentStep={setCurrentStep} />
 	};
 
 	React.useEffect(() => {
@@ -26,12 +27,12 @@ const OnboardingClientPage = () => {
 			redirect('/artiste/login');
 		}
 
-		if (!!artist && !onboardingStagesKey.includes(artist?.stage)) {
+		if (!!artist && artist?.stage == 'Complete') {
 			redirect('/artiste/dashboard');
 		}
 		const fetchUser = async () => {
 			const user = await getArtistProfile();
-			if (user && user.stage !== userProfileStage.onboarding) {
+			if (user && user.stage === 'Complete') {
 				redirect('/artiste/dashboard');
 			}
 		};

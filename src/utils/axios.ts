@@ -33,7 +33,7 @@ APIAxios.interceptors.response.use(
 			toast.error('Check your internet connection -- NETWORK ERROR PLACEHOLDER', { duration: 10000, id: '90009' });
 			return Promise.reject(error);
 		}
-		if ((error && error.status === 401) || error?.code == 'token_not_valid') {
+		if (error?.code == 'token_not_valid') {
 			toast.error('Session Expired, Login in again to continue', {
 				duration: 10000
 			});
