@@ -10,7 +10,7 @@ import { redirect } from 'next/navigation';
 import { loginSchema } from '@/lib/schemas'; // Assuming admin login uses the same schema
 import { useMutation } from '@tanstack/react-query';
 // import { loginAdminUser } from '@/app/admin/(auth)/misc/api/mutations/auth.mutations'; // This will need to be created
-import { useArtisteContext, getArtistProfile } from '@/contexts/AuthContextArtist';
+import { useAuthContext, getArtistProfile } from '@/contexts/AuthContext'; // Assuming useArtisteContext is a typo and it's useAuthContext
 import { Input } from '@/components/ui';
 
 // Assuming AuthWrapper and AuthActions can be reused or adapted.
@@ -23,7 +23,7 @@ import { AxiosError } from 'axios';
 
 const AdminLoginPageClient = () => {
 	const router = useRouter();
-	const { checkAuthStatus } = useArtisteContext();
+	const { checkAuthStatus } = useAuthContext(); // Changed from useArtisteContext
 	const { mutate, status } = useMutation({
 		mutationFn: async (credentials: InferType<typeof loginSchema>) => {
 			const response = await APIAxios.post('/admin/auth/login', credentials); // Example admin login endpoint
