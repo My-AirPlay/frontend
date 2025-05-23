@@ -4,7 +4,7 @@ import { AdminLayout } from './misc/components';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { Spinner } from '@/components/icons';
-import { onboardingStages, userProfileStage } from '@/lib/constants';
+import { userProfileStage } from '@/lib/constants';
 
 interface AppLayoutProps {
 	children: ReactNode;
