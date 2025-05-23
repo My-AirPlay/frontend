@@ -8,13 +8,13 @@ import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, Card, CardContent, Textarea, Input, Button } from '@/components/ui';
 
 import { type ProfileFormValues, profileSchema } from '../schemas';
-import { useArtisteContext } from '@/contexts/AuthContextArtist';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { SmallSpinner, Spinner } from '@/components/icons';
 import { useUpdateProfile } from '../api';
 
 export default function SectionProfile() {
 	const [isEditing, setIsEditing] = useState(false);
-	const { artist, isLoading, checkAuthStatus } = useArtisteContext();
+	const { artist, isLoading, checkAuthStatus } = useAuthContext();
 
 	const defaultValues: ProfileFormValues = {
 		firstName: artist?.firstName || '',
