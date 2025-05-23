@@ -10,7 +10,7 @@ import { redirect } from 'next/navigation';
 import { loginSchema } from '@/lib/schemas'; // Assuming admin login uses the same schema
 import { useMutation } from '@tanstack/react-query';
 // import { loginAdminUser } from '@/app/admin/(auth)/misc/api/mutations/auth.mutations'; // This will need to be created
-import { getAdminProfile, useAdminContext } from '@/contexts/AuthContextAdmin';
+import { useArtisteContext, getArtistProfile } from '@/contexts/AuthContextArtist';
 import { Input } from '@/components/ui';
 
 // Assuming AuthWrapper and AuthActions can be reused or adapted.
@@ -18,12 +18,12 @@ import { Input } from '@/components/ui';
 import AuthWrapper from '@/app/artiste/(auth)/misc/components/auth-wrapper';
 import AuthActions from '@/app/artiste/(auth)/misc/components/auth-actions';
 import APIAxios from '@/utils/axios'; // For a direct API call for login
-import { setAdminAccessToken } from '@/actions/auth/auth.action'; // To set tokens
+import { setArtistAccessToken } from '@/actions/auth/auth.action'; // To set tokens
 import { AxiosError } from 'axios';
 
 const AdminLoginPageClient = () => {
 	const router = useRouter();
-	const { checkAuthStatus } = useAdminContext();
+	const { checkAuthStatus } = useArtisteContext();
 	const { mutate, status } = useMutation({
 		mutationFn: async (credentials: InferType<typeof loginSchema>) => {
 			const response = await APIAxios.post('/admin/auth/login', credentials); // Example admin login endpoint
@@ -33,7 +33,7 @@ const AdminLoginPageClient = () => {
 			// Simplified success logic for admin
 			// Assuming data contains { access: string, refresh: string, user: object }
 			if (data && data.access && data.refresh) {
-				await setAdminAccessToken({ access: data.access, refresh: data.refresh });
+				await setArtistAccessToken({ access: data.access, refresh: data.refresh });
 				await checkAuthStatus(); // Re-check auth status to update context
 				toast.success(`Welcome Back, ${data.user?.firstName || 'Admin'}!`);
 				router.replace('/admin/dashboard'); // Redirect to admin dashboard
@@ -65,7 +65,7 @@ const AdminLoginPageClient = () => {
 
 	React.useEffect(() => {
 		const fetchUser = async () => {
-			const user = await getAdminProfile();
+			const user = await getArtistProfile();
 			if (user) {
 				// If admin is already logged in, redirect to dashboard
 				redirect('/admin/dashboard');
