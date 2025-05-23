@@ -242,6 +242,38 @@ const Sales: React.FC = () => {
 		}, 1000);
 	};
 
+	const handlePublishMatchedArtists = async () => {
+		if (matchedArtists.length === 0) {
+			toast.info('No matched artists to publish.');
+			return;
+		}
+
+		const artistNamesToPublish = matchedArtists.map(artist => artist.artistName);
+
+		try {
+			const response = await fetch('/api/admin/publish_records', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ artistNames: artistNamesToPublish })
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				toast.success(result.message || 'Artists published successfully!');
+				// Optionally, you might want to clear the matchedArtists array or update their status locally
+				// setMatchedArtists([]);
+			} else {
+				toast.error(result.message || 'Failed to publish artists.');
+			}
+		} catch (error) {
+			console.error('Error publishing matched artists:', error);
+			toast.error('An unexpected error occurred while publishing artists.');
+		}
+	};
+
 	const handleArtistMatch = (artistId: string) => {
 		setSelectedUnmatchedArtist(artistId);
 		setCurrentStep('match-artist');
@@ -466,6 +498,12 @@ const Sales: React.FC = () => {
 						<Button variant="outline" className="bg-background border-border text-foreground" onClick={navigateToPreviousStep}>
 							Back
 						</Button>
+
+						{currentStep === 'artist-records' && (
+							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={handlePublishMatchedArtists}>
+								Publish Matched Artists
+							</Button>
+						)}
 
 						{currentStep === 'artist-records' ? (
 							''

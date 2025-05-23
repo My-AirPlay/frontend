@@ -1,3 +1,4 @@
+
 'use client';
 import React, { ReactNode } from 'react';
 import { AdminLayout } from './misc/components';
@@ -8,6 +9,7 @@ import { Spinner } from '@/components/icons';
 interface AppLayoutProps {
 	children: ReactNode;
 }
+
 const AppLayout = ({ children }: AppLayoutProps) => {
 	const router = useRouter();
 	const { admin, artist, isLoading, isAuthenticating } = useAuthContext();
