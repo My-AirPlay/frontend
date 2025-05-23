@@ -6,6 +6,7 @@ import Footer from './Footer';
 import { redirect, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { userProfileStage } from '@/lib/constants';
 
 interface LayoutProps {
 	children: React.ReactNode;
@@ -17,7 +18,7 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
 	const { artist, isLoading, isAuthenticating } = useAuthContext();
 	useEffect(() => {
 		if (artist && !isLoading && !isAuthenticating) {
-			if (artist.stage !== 'complete') {
+			if (artist.stage !== 'complete' && artist.stage !== userProfileStage.payment) {
 				redirect('/artiste/onboarding');
 			}
 		}

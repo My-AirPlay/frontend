@@ -77,13 +77,13 @@ const OnboardingBankDetail = ({ email, setCurrentStep }: OnboardingBankDetailPro
 	} = useForm<BankDetailFormValues>({
 		resolver: zodResolver(bankDetailSchema),
 		defaultValues: {
-			bankName: artist?.bankDetails.bankName ?? '',
-			accountName: artist?.bankDetails.accountName ?? '',
-			accountNumber: artist?.bankDetails.accountNumber ?? '',
-			ibanSwiftCode: artist?.bankDetails.ibanSwiftCode ?? '',
-			bvn: artist?.bankDetails.bvn ?? '',
-			bankCode: artist?.bankDetails.bankCode ?? '',
-			currency: artist?.bankDetails.currency ?? 'naira',
+			bankName: artist?.bankDetails?.bankName ?? '',
+			accountName: artist?.bankDetails?.accountName ?? '',
+			accountNumber: artist?.bankDetails?.accountNumber ?? '',
+			ibanSwiftCode: artist?.bankDetails?.ibanSwiftCode ?? '',
+			bvn: artist?.bankDetails?.bvn ?? '',
+			bankCode: artist?.bankDetails?.bankCode ?? '',
+			currency: artist?.bankDetails?.currency ?? 'naira',
 			sortCode: '',
 			paymentOption: 'Monthly'
 		}

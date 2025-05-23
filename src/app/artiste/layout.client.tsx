@@ -2,6 +2,7 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import { userProfileStage } from '@/lib/constants';
 
 export default function ArtisteClientLayout() {
 	const router = useRouter();
@@ -10,7 +11,7 @@ export default function ArtisteClientLayout() {
 	React.useEffect(() => {
 		if (!isLoading && !isAuthenticating) {
 			if (artist) {
-				if (artist.stage !== 'complete') {
+				if (artist.stage !== 'complete' && artist.stage !== userProfileStage.payment) {
 					router.push('/artiste/onboarding');
 				}
 			} else if (admin) {

@@ -15,7 +15,7 @@ import RegistrationPaymentPage from './_components/payment-registration-fee';
 const OnboardingClientPage = () => {
 	const { artist, isLoading } = useAuthContext();
 	const searchParams = useSearchParams();
-	const forceStep = searchParams.get('step') ? parseInt(searchParams.get('step') as string) : onboardingStages[artist!.stage];
+	const forceStep = searchParams.get('step') ? OnboardingSteps.PAY_REGISTRATION_FEE : onboardingStages[artist!.stage];
 	const [currentStep, setCurrentStep] = useState(forceStep || OnboardingSteps.BASIC_DETAIL);
 	const screens = {
 		[OnboardingSteps.BASIC_DETAIL]: <OnboardingBasciDetail email={artist?.email || ''} setCurrentStep={setCurrentStep} />,

@@ -4,6 +4,7 @@ import { AdminLayout } from './misc/components';
 import { useRouter } from 'next/navigation';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { Spinner } from '@/components/icons';
+import { userProfileStage } from '@/lib/constants';
 
 interface AppLayoutProps {
 	children: ReactNode;
@@ -16,7 +17,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 	React.useEffect(() => {
 		if (!isLoading && !isAuthenticating) {
 			if (artist) {
-				if (artist.stage !== 'complete') {
+				if (artist.stage !== 'complete' && artist.stage !== userProfileStage.payment) {
 					router.push('/artiste/onboarding');
 				} else if (artist.stage === 'complete') {
 					router.replace('/artiste/dashboard');
