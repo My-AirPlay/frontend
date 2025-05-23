@@ -8,13 +8,15 @@ import PreviewOnboarding from './_components/preview-onboarding/preview-onboardi
 import React, { useState } from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 // import { getArtistProfile } from '@/contexts/AuthContextArtist';
-import { redirect } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import { Spinner } from '@/components/icons';
 import RegistrationPaymentPage from './_components/payment-registration-fee';
 
 const OnboardingClientPage = () => {
 	const { artist, isLoading } = useAuthContext();
-	const [currentStep, setCurrentStep] = useState(onboardingStages[artist?.stage || ''] || OnboardingSteps.BASIC_DETAIL);
+	const searchParams = useSearchParams();
+	const forceStep = searchParams.get('step') ? parseInt(searchParams.get('step') as string) : OnboardingSteps.BASIC_DETAIL;
+	const [currentStep, setCurrentStep] = useState<any>(onboardingStages[artist!.stage] || forceStep || OnboardingSteps.BASIC_DETAIL);
 	const screens = {
 		[OnboardingSteps.BASIC_DETAIL]: <OnboardingBasciDetail email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
 		[OnboardingSteps.BANK]: <OnboardingBankDetail setCurrentStep={setCurrentStep} email={artist?.email || ''} />,
@@ -26,12 +28,12 @@ const OnboardingClientPage = () => {
 	React.useEffect(() => {
 		if (!isLoading && !artist) {
 			redirect('/artiste/login');
-		} else if (!!artist && artist?.stage == 'complete' && artist.bankDetails.paidRegistrationFee) {
+		} else if (!!artist && artist?.stage == 'complete' && !forceStep) {
 			redirect('/artiste/dashboard');
-		} else if (!!artist && (artist.stage === 'Add social links' || artist.stage === 'complete') && !artist.bankDetails.paidRegistrationFee) {
+		} else if (!!artist && (artist.stage === 'Add social links' || artist.stage === 'complete') && !artist.bankDetails.registrationFeeReference) {
 			setCurrentStep(OnboardingSteps.PAY_REGISTRATION_FEE);
 		}
-	}, [isLoading, artist]);
+	}, [isLoading, artist, forceStep]);
 
 	if (isLoading) {
 		return (

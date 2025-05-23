@@ -10,7 +10,7 @@ export default function ArtisteClientLayout() {
 	React.useEffect(() => {
 		if (!isLoading && !isAuthenticating) {
 			if (artist) {
-				if (artist.stage !== 'complete' || !artist.bankDetails.paidRegistrationFee) {
+				if (artist.stage !== 'complete') {
 					router.push('/artiste/onboarding');
 				}
 			} else if (admin) {

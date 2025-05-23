@@ -149,19 +149,15 @@ const Step3MediaCoverUpload = () => {
 		<div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto">
 			<section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
 				<div className="flex flex-col gap-2">
-					<label className={cn('flex-1 border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-md:w-[250px] md:max-h-[300px] p-3 aspect-square', isDragging ? 'border-solid border-3' : 'border-primary')} onDragEnter={handleDrag} onDragOver={handleDrag} onDragLeave={handleDrag} onDrop={handleDrop} id="track-cover-upload-input">
+					<label className={cn('flex-1 border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-md:w-[250px] md:max-h-[300px] p-3 aspect-square overflow-hidden', isDragging ? 'border-solid border-3' : 'border-primary')} onDragEnter={handleDrag} onDragOver={handleDrag} onDragLeave={handleDrag} onDrop={handleDrop} id="track-cover-upload-input">
 						{!previewUrl ? (
 							<>
-								<AppLogo width={150} height={150} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
+								<AppLogo width={150} height={150} style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
 								<p className="text-center text-white/30 mb-6 text-xs max-w-[30ch]">Drag and drop your image file here, or click the button below</p>
 							</>
 						) : (
-							<div className="flex flex-col items-center justify-start gap-4">
-								<Image src={previewUrl || '/placeholder.svg'} alt="Preview" width={200} height={200} className="rounded-xl" />
-								<div>
-									<h6 className="text-lg font-medium">{mediaInfo?.title || 'Track Title'}</h6>
-									<p className="text-white/50 mb-6 text-xs max-w-[30ch]">{mediaInfo?.artistName || 'Track Artist'}</p>
-								</div>
+							<div className="flex flex-col items-center justify-start gap-4 w-full h-full">
+								<Image src={previewUrl || '/placeholder.svg'} alt="Preview" width={200} height={200} className="rounded-xl object-contain w-full h-full" />
 							</div>
 						)}
 					</label>
@@ -170,6 +166,10 @@ const Step3MediaCoverUpload = () => {
 							<div className="h-full bg-primary transition-all" style={{ width: `${uploadProgress || 0}%` }} />
 						</div>
 					)}
+					<div>
+						<h6 className="text-lg font-medium">{mediaInfo?.title || 'Track Title'}</h6>
+						<p className="text-white/50 mb-6 text-xs max-w-[30ch]">{mediaInfo?.artistName || 'Track Artist'}</p>
+					</div>
 				</div>
 				<div className="flex flex-col items-start justify-center">
 					<input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange} accept=".jpg,.jpeg,.png" id="track-cover-upload-input" />

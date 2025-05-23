@@ -1,4 +1,3 @@
-
 'use client';
 import React, { ReactNode } from 'react';
 import { AdminLayout } from './misc/components';
@@ -17,9 +16,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 	React.useEffect(() => {
 		if (!isLoading && !isAuthenticating) {
 			if (artist) {
-				if (artist.stage !== 'complete' || !artist.bankDetails.paidRegistrationFee) {
+				if (artist.stage !== 'complete') {
 					router.push('/artiste/onboarding');
-				} else if (artist.stage === 'complete' && artist.bankDetails.paidRegistrationFee) {
+				} else if (artist.stage === 'complete') {
 					router.replace('/artiste/dashboard');
 				} else if (admin) {
 					return;

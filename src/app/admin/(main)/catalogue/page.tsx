@@ -205,11 +205,16 @@ const Catalogue: React.FC = () => {
 	};
 
 	// Construct parameters object for the API hooks including sorting
-	const apiParams: { page: string; limit: string; sortBy?: string; sortOrder?: 'asc' | 'desc' } = {
+	const apiParams: {
+		page: string;
+		limit: string;
+		sortBy?: string;
+		sortOrder?: 'asc' | 'desc';
+	} = {
 		page,
 		limit,
-		sortBy,
-		sortOrder
+		sortBy: sortBy || 'title',
+		sortOrder: sortOrder || 'asc'
 	};
 
 	// Fetch data with sorting

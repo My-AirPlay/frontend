@@ -17,7 +17,7 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
 	const { artist, isLoading, isAuthenticating } = useAuthContext();
 	useEffect(() => {
 		if (artist && !isLoading && !isAuthenticating) {
-			if (artist.stage !== 'complete' || !artist.bankDetails.paidRegistrationFee) {
+			if (artist.stage !== 'complete') {
 				redirect('/artiste/onboarding');
 			}
 		}

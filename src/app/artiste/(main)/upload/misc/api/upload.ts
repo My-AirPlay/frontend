@@ -4,14 +4,29 @@ import { UploadAlbumPayload, UploadTrackPayload } from '../types';
 import { MediaUploadInfo } from '../store/media';
 
 export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
+	// Max file size in bytes (e.g., 50MB)
+	const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
+	// Check if the files are within the size limit
+	if (payload.media && payload.media.size > MAX_FILE_SIZE) {
+		throw new Error('Media file is too large. Please upload a file smaller than 50MB.');
+	}
+
+	if (payload.coverArt && payload.coverArt.size > MAX_FILE_SIZE) {
+		throw new Error('Cover art is too large. Please upload a file smaller than 50MB.');
+	}
+
+	// Prepare FormData
 	const formData = new FormData();
 
+	// Append other fields from the payload
 	Object.entries(payload).forEach(([key, value]) => {
 		if (key !== 'media' && key !== 'coverArt' && key !== 'streamingPlatforms') {
 			formData.append(key, value || '');
 		}
 	});
 
+	// Handle streamingPlatforms field (array or single value)
 	if (Array.isArray(payload.streamingPlatforms)) {
 		payload.streamingPlatforms.forEach((platform, i) => {
 			formData.append(`streamingPlatforms[${i}]`, platform);
@@ -20,16 +35,28 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 		formData.append('streamingPlatforms', payload.streamingPlatforms as unknown as string);
 	}
 
-	formData.append('coverArt', payload.coverArt);
-	formData.append('media', payload.media);
+	// Append the media and cover art files
+	if (payload.coverArt) {
+		formData.append('coverArt', payload.coverArt);
+	}
+	if (payload.media) {
+		formData.append('media', payload.media);
+	}
 
-	const response = await APIAxios.post(`/media/create-media`, formData, {
-		headers: {
-			'Content-Type': 'multipart/form-data'
-		}
-	});
-
-	return response.data;
+	// Send the request
+	try {
+		const response = await APIAxios.post(`/media/create-media`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			},
+			timeout: 30000 // Timeout in milliseconds (30 seconds)
+		});
+		return response.data;
+	} catch (error) {
+		// Handle errors (e.g., network error, CORS error, timeout)
+		console.error('Error uploading track:', error);
+		throw new Error('An error occurred while uploading the track. Please try again later.');
+	}
 };
 
 export const uploadAlbum = async (payload: UploadAlbumPayload) => {

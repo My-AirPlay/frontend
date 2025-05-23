@@ -2,7 +2,7 @@
 import { Reducer, useLayoutEffect } from 'react';
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import APIAxios, { setAxiosDefaultToken } from '@/utils/axios';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
 import { AppLogo } from '@/components/icons';
@@ -47,14 +47,17 @@ interface ContractDetails {
 interface BankDetails {
 	bankName: string;
 	accountName: string;
-	accountNumber: number;
+	accountNumber: string;
 	ibanSwiftCode: string;
+	bvn: string;
+	bankCode: string;
 	currency: string;
 	sortCode: number;
 	paymentOption: string;
 	dealType: string;
 	rate: number;
 	paidRegistrationFee?: boolean;
+	registrationFeeReference?: string;
 }
 
 export interface AuthState {
@@ -153,6 +156,8 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [state, dispatch] = useReducer(authReducer, initialAuthState);
 	const router = useRouter();
+	const pathname = usePathname();
+	const isAdminRoute = pathname.includes('/admin');
 
 	const logout = (reroute?: boolean) => {
 		clearArtistTokens();
@@ -165,7 +170,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 	const checkAuthStatus = React.useCallback(async () => {
 		const token = await getArtistAccessToken();
 		if (!token) {
-			router.replace('/artiste/login');
+			if (isAdminRoute) {
+				router.replace('/admin/login');
+			} else {
+				router.replace('/artiste/login');
+			}
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 			return;
 		}
@@ -200,7 +209,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 				}
 			}
 		}
-	}, [router, dispatch]);
+	}, [router, dispatch, isAdminRoute]);
 
 	useLayoutEffect(() => {
 		checkAuthStatus();

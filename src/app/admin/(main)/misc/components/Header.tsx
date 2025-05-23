@@ -14,7 +14,7 @@ const Header: React.FC = () => {
 
 	const logoutArtist = () => {
 		logout(true);
-		router.push('/artiste/login');
+		router.push('/admin/login');
 	};
 	const [isSheetOpen, setIsSheetOpen] = useState(false);
 	const path = usePathname();
