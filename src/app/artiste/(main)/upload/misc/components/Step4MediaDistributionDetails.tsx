@@ -50,6 +50,22 @@ export default function Step4AlbumDistributionDetails() {
 	const [differentReleaseDate, setDifferentReleaseDate] = useState(false);
 	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
 
+	const allPlatformValues = formattedData?.StreamingPlatform.map(p => p.value) || [];
+
+	const areAllSelected = allPlatformValues.length > 0 && allPlatformValues.every(p => selectedPlatforms.includes(p));
+
+	const handleToggleAll = (checked: boolean) => {
+		if (checked) {
+			allPlatformValues.forEach(p => {
+				if (!selectedPlatforms.includes(p)) togglePlatform(p);
+			});
+		} else {
+			allPlatformValues.forEach(p => {
+				if (selectedPlatforms.includes(p)) togglePlatform(p);
+			});
+		}
+	};
+
 	// Initialize IndexedDB and load cover art if exists
 	useEffect(() => {
 		const loadData = async () => {
@@ -210,6 +226,12 @@ export default function Step4AlbumDistributionDetails() {
 			</Form>
 
 			<h6 className="text-lg text-primary font-semibold mb-4 mt-10">Store Distribution</h6>
+			<div className="flex items-center space-x-2 mb-4">
+				<Checkbox id="selectAll" checked={areAllSelected} onCheckedChange={handleToggleAll} />
+				<label htmlFor="selectAll" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+					Select All Platforms
+				</label>
+			</div>
 
 			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">{formattedData?.StreamingPlatform.map((platform, index) => <Step4MediaDistributionPlatformCard handleToggle={handleToggle} key={index} platform={platform} selectedPlatforms={selectedPlatforms} index={index} />)}</div>
 

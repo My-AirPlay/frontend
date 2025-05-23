@@ -1,17 +1,35 @@
 'use client';
 
 import { useInitiatePayment } from '../../../misc/api/mutations/onboarding.mutation';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { useState } from 'react';
 
 const RegistrationPaymentPage = ({ email }: { email: string }) => {
+	const { artist, isLoading } = useAuthContext();
 	const { mutate: initiatePayment, isPending } = useInitiatePayment();
 	const router = useRouter();
+	const [buttonText, setButtonText] = useState('Make Payment');
 
+	const handleSkip = () => {
+		redirect('/artiste/dashboard');
+	};
 	const handleGeneratePaymentLink = () => {
+		if (buttonText === 'Continue') {
+			if (!artist?.bankDetails.registrationFeeReference) {
+				toast.error('Failed to verify payment. Please try again.', {
+					duration: 10000
+				});
+				setButtonText('Make Payment');
+				return;
+			}
+			redirect('/artiste/dashboard');
+		}
+		const newTab = window.open('', '_blank');
 		initiatePayment(
 			{ email },
 			{
@@ -22,7 +40,8 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 						});
 						return;
 					}
-					router.push(result.data.authorization_url);
+					setButtonText('Continue');
+					newTab.location.href = result.data.authorization_url;
 				},
 				onError: () => {
 					toast.error('Failed to generate payment link. Please try again.', {
@@ -80,9 +99,12 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 							</p>
 						</div>
 					</CardContent>
-					<CardFooter>
+					<CardFooter className="gap-8">
 						<Button onClick={handleGeneratePaymentLink} className="w-full">
-							Generate Payment Link
+							{buttonText}
+						</Button>
+						<Button variant="secondary" onClick={handleSkip} className="w-full">
+							Skip
 						</Button>
 					</CardFooter>
 				</Card>

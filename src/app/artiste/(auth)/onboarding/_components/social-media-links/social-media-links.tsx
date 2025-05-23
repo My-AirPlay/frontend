@@ -10,15 +10,16 @@ import { useMutation } from '@tanstack/react-query';
 import { postSocialLinks } from '@/app/artiste/(auth)/misc/api/mutations/onboarding.mutation';
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
-import { useRouter } from 'nextjs-toploader/app';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+
 interface OnboardingSocialMedialProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 	email: string;
 }
-const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
+const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedialProps) => {
 	const { replace } = useRouter();
-	const { checkAuthStatus } = useAuthContext();
+	const { checkAuthStatus, artist } = useAuthContext();
 
 	const { mutateAsync, status } = useMutation({
 		mutationFn: postSocialLinks,
@@ -32,7 +33,7 @@ const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
 				return;
 			}
 			await checkAuthStatus();
-			replace('/artiste/dashboard');
+			setCurrentStep(OnboardingSteps.PREVIEW);
 		}
 	});
 
@@ -50,12 +51,12 @@ const OnboardingSocialMedia = ({ email }: OnboardingSocialMedialProps) => {
 		validateOnChange: true,
 		validationSchema: onboardingSocialLinkSchema,
 		initialValues: {
-			instagram: '',
-			twitter: '',
-			facebook: '',
-			soundcloud: '',
-			tiktok: '',
-			website: ''
+			instagram: artist?.socialLinks.instagram ?? '',
+			twitter: artist?.socialLinks.twitter ?? '',
+			facebook: artist?.socialLinks.facebook ?? '',
+			soundcloud: artist?.socialLinks.soundCloud ?? '',
+			tiktok: artist?.socialLinks.tiktok ?? '',
+			website: artist?.socialLinks.website ?? ''
 		},
 		onSubmit: value => {
 			mutateAsync({

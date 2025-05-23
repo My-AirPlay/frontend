@@ -14,16 +14,22 @@ import { useMediaUploadStore } from '../store';
 import { useUploadTrack } from '../api/upload';
 import Image from 'next/image';
 import { PlatformImage } from './Step4MediaDistributionPlatformCards';
+import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 
 export default function Step5MediaPreview() {
 	const { state: isUploadStatusModalOpen, setTrue: openUploadStatusModal, setFalse: closeUploadStatusModal, setState: setUploadStatusModalOpen } = useBooleanStateControl();
 	const router = useRouter();
 
 	const { mediaInfo, mediaFileId, coverArtId, setCurrentStep, mediaType, streamingPlatforms, clearStore, getMediaFile, getCoverArtFile, isDBInitialized } = useMediaUploadStore();
-
+	const { formattedData } = useStaticAppInfo();
 	const [mediaFile, setMediaFile] = useState<File | null>(null);
 	const [coverArtFile, setCoverArtFile] = useState<File | null>(null);
 	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
+
+	const getLabelFromValue = (value: string): string => {
+		const match = formattedData?.StreamingPlatform?.find(p => p.value === value);
+		return match?.label || value;
+	};
 
 	useEffect(() => {
 		const loadFiles = async () => {
@@ -163,7 +169,7 @@ export default function Step5MediaPreview() {
 									<p className="text-sm text-gray-400 mb-2">Streaming Platforms</p>
 									<div className="flex flex-wrap gap-2">
 										{streamingPlatforms.map((platform, index) => (
-											<PlatformImage label={platform} key={index} isSelected />
+											<PlatformImage label={getLabelFromValue(platform)} key={index} isSelected />
 										))}
 									</div>
 								</div>
@@ -221,7 +227,7 @@ export default function Step5MediaPreview() {
 				cancelLabel="Back to Submit"
 				onAction={() => {
 					if (status === 'success') {
-						router.push('/artiste/catalog');
+						router.replace('/artiste/catalog');
 						clearStore();
 					} else {
 						closeUploadStatusModal();

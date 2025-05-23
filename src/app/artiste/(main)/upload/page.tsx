@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui';
 import { MoveRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useMediaUploadStore } from './misc/store';
 import { useAlbumUploadStore } from './misc/store';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface MediaOption {
 	value: string;
@@ -50,6 +51,7 @@ const mediaOptions: MediaOption[] = [
 ];
 
 export default function MediaTypeSelection() {
+	const { artist } = useAuthContext();
 	const router = useRouter();
 	const { mediaType, setMediaType, setCurrentStep: setMediaUploadCurrentStep, hasOngoingUpload: hasOngoingMediaUpload, clearStore: clearMediaUploadStore } = useMediaUploadStore();
 	const { albumType, setAlbumType, setCurrentStep: setAlbumUploadCurrentStep, hasOngoingUpload: hasOngoingAlbumUpload, clearStore: clearAlbumUploadStore } = useAlbumUploadStore();
@@ -68,6 +70,9 @@ export default function MediaTypeSelection() {
 
 	const handleContinue = () => {
 		if (!selectedType) return;
+		if (!!artist && !artist.bankDetails.registrationFeeReference) {
+			redirect('/artiste/onboarding?step=registration_fee');
+		}
 
 		if (selectedType === 'Album' || selectedType === 'ExtendedPlaylist' || selectedType === 'MixTape') {
 			if (hasOngoingAlbumUpload() && albumType === selectedType) {

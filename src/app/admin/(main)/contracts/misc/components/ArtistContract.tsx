@@ -103,17 +103,18 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 	return (
 		<div className="space-y-8">
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<SingleDatePicker label="Start Date" value={startDate} onChange={setStartDate} />
-				<SingleDatePicker label="End Date" value={endDate} onChange={setEndDate} />
+				<SingleDatePicker label="Start Date" value={startDate} onChange={setStartDate} defaultDate={startDate} />
+				<SingleDatePicker label="End Date" value={endDate} onChange={setEndDate} defaultDate={endDate} />
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				<SelectSimple
 					label="Payment Currency"
 					options={[
-						{ value: 'ACTIVE', label: 'ACTIVE' },
-						{ value: 'PENDING', label: 'PENDING' },
-						{ value: 'DEACTIVATED', label: 'DEACTIVATED' }
+						{ value: 'USD', label: 'USD' },
+						{ value: 'EUR', label: 'EUR' },
+						{ value: 'GBP', label: 'GBP' },
+						{ value: 'NGN', label: 'NGN' }
 					]}
 					valueKey="value"
 					labelKey="label"
@@ -138,7 +139,7 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 				<div className="relative border-2 border-dashed border-primary rounded-md p-8 ">
 					{primaryFile.previewUrl ? (
 						<div className="min-h-[300px]">
-							<Image className="absolute top-0 left-0 w-full h-full" src={primaryFile.previewUrl} alt="contract preview" width={500} height={500} />
+							<iframe src={primaryFile.previewUrl} title="PDF Preview" width="100%" height="600px" className="absolute top-0 left-0 w-full h-full" />
 							<div className=" h-20 w-20 text-admin-muted absolute z-[3] top-1/2  -translate-y-1/2  left-1/2  -translate-x-1/2  ">
 								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-full w-full">
 									<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>

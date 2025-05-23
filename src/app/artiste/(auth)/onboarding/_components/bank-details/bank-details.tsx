@@ -9,7 +9,6 @@ import { useMutation } from '@tanstack/react-query';
 import { postOnbaordingBankDetail, useInitiatePayment } from '@/app/artiste/(auth)/misc/api/mutations/onboarding.mutation';
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
-import { LinkButton } from '@/components/ui';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useGetBankList } from '../../../misc/api/mutations/auth.mutations';
 import { Input } from '@/components/ui/input';
@@ -66,7 +65,8 @@ interface IBank {
 	updatedAt: string;
 }
 
-const OnboardingBankDetail = ({ email }: OnboardingBankDetailProps) => {
+const OnboardingBankDetail = ({ email, setCurrentStep }: OnboardingBankDetailProps) => {
+	const { artist, isLoading } = useAuthContext();
 	const { checkAuthStatus } = useAuthContext();
 	const { data: bankList } = useGetBankList();
 
@@ -79,13 +79,13 @@ const OnboardingBankDetail = ({ email }: OnboardingBankDetailProps) => {
 	} = useForm<BankDetailFormValues>({
 		resolver: zodResolver(bankDetailSchema),
 		defaultValues: {
-			bankName: '',
-			accountName: '',
-			accountNumber: '',
-			ibanSwiftCode: '',
-			bvn: '',
-			bankCode: '',
-			currency: 'naira',
+			bankName: artist?.bankDetails.bankName ?? '',
+			accountName: artist?.bankDetails.accountName ?? '',
+			accountNumber: artist?.bankDetails.accountNumber ?? '',
+			ibanSwiftCode: artist?.bankDetails.ibanSwiftCode ?? '',
+			bvn: artist?.bankDetails.bvn ?? '',
+			bankCode: artist?.bankDetails.bankCode ?? '',
+			currency: artist?.bankDetails.currency ?? 'naira',
 			sortCode: '',
 			paymentOption: 'Monthly'
 		}
@@ -118,20 +118,7 @@ const OnboardingBankDetail = ({ email }: OnboardingBankDetailProps) => {
 			},
 			{
 				onSuccess: () => {
-					intitatePayment(
-						{ email },
-						{
-							onSuccess: result => {
-								if (!result) {
-									toast.error('Something went wrong. Try again', {
-										duration: 1000000
-									});
-									return;
-								}
-								router.push(result.data.authorization_url);
-							}
-						}
-					);
+					setCurrentStep(OnboardingSteps.SOCIAL_LINK);
 				}
 			}
 		);
@@ -200,10 +187,7 @@ const OnboardingBankDetail = ({ email }: OnboardingBankDetailProps) => {
 					<Input label="Currency" placeholder="Currency" {...register('currency')} hasError={!!errors.currency} errormessage={errors.currency?.message} />
 				</div>
 
-				<div className="flex items-center justify-between pt-4">
-					<LinkButton size="lg" variant="outline" className="text-sm" href={`/artiste/dashboard`} onClick={checkAuthStatus}>
-						Skip
-					</LinkButton>
+				<div className="pt-4">
 					<Button size="lg" type="submit" className="max-w-[250px] w-full rounded-full mx-auto" disabled={isPending || initiatingPayment} isLoading={isPending || initiatingPayment}>
 						Continue <MoveRight />
 					</Button>

@@ -1,14 +1,17 @@
 'use client';
 import PreviewTable from '@/components/preview-table/preview-table';
 import { Button } from '@/components/ui/button';
-import { OnboardingSteps, urls } from '@/lib/constants';
+import { OnboardingSteps } from '@/lib/constants';
 import { useRouter } from 'nextjs-toploader/app';
 import React from 'react';
+import { useAuthContext } from '@/contexts/AuthContext';
+
 interface PreviewOnboardingProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 }
 const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
 	const { replace } = useRouter();
+	const { artist, isLoading } = useAuthContext();
 	const data = [
 		[
 			{
@@ -17,45 +20,45 @@ const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
 			},
 			{
 				title: 'First Name',
-				value: 'Ashley'
+				value: artist?.firstName
 			},
 			{
 				title: 'Last Name',
-				value: 'Ezechi'
+				value: artist?.lastName
 			},
 			{
 				title: 'Phone Number',
-				value: ''
+				value: artist?.phoneNumber
 			},
 			{
 				title: 'Country',
-				value: 'NG'
+				value: artist?.country
 			},
 			{
 				title: 'City',
-				value: 'LNG'
+				value: artist?.city
 			},
 			{
 				title: 'Artist Name',
-				value: 'The African'
+				value: artist?.artistName
 			}
 		],
 		[
 			{
 				title: 'Bank Name',
-				value: 'Artist'
+				value: artist?.bankDetails.bankName
 			},
 			{
-				title: 'Ashley Eze',
-				value: 'Ashley'
+				title: 'Currency',
+				value: artist?.bankDetails.currency
 			},
 			{
 				title: 'Account Number',
-				value: '0938483928'
+				value: artist?.bankDetails.accountNumber
 			},
 			{
 				title: 'Account Name',
-				value: 'First Bank'
+				value: artist?.bankDetails.accountName
 			}
 		]
 	];
@@ -70,7 +73,7 @@ const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
 					<Button size={'lg'} className="max-w-[275px] bg-transparent border-2 border-white h-[75px] " onClick={() => setCurrentStep(OnboardingSteps.BASIC_DETAIL)}>
 						Edit
 					</Button>
-					<Button size={'lg'} className="max-w-[275px] h-[75px] " onClick={() => replace(urls.onboardingSatus)}>
+					<Button size={'lg'} className="max-w-[275px] h-[75px] " onClick={() => setCurrentStep(OnboardingSteps.PAY_REGISTRATION_FEE)}>
 						Continue
 					</Button>
 				</div>
