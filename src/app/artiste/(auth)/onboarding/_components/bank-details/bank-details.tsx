@@ -13,7 +13,6 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { useGetBankList } from '../../../misc/api/mutations/auth.mutations';
 import { Input } from '@/components/ui/input';
 import SelectSingleCombo from '@/components/ui/select-single-combobox';
-import { useRouter } from 'next/navigation';
 
 export const onboardingBankDetailSchema = z.object({
 	bankName: z.string().min(1, 'Bank name is required'),
@@ -66,8 +65,7 @@ interface IBank {
 }
 
 const OnboardingBankDetail = ({ email, setCurrentStep }: OnboardingBankDetailProps) => {
-	const { artist, isLoading } = useAuthContext();
-	const { checkAuthStatus } = useAuthContext();
+	const { artist } = useAuthContext();
 	const { data: bankList } = useGetBankList();
 
 	const {
@@ -91,7 +89,7 @@ const OnboardingBankDetail = ({ email, setCurrentStep }: OnboardingBankDetailPro
 		}
 	});
 
-	const { mutate: intitatePayment, isPending: initiatingPayment } = useInitiatePayment();
+	const { isPending: initiatingPayment } = useInitiatePayment();
 
 	const { mutateAsync, isPending } = useMutation({
 		mutationFn: postOnbaordingBankDetail,
@@ -108,8 +106,6 @@ const OnboardingBankDetail = ({ email, setCurrentStep }: OnboardingBankDetailPro
 			}
 		}
 	});
-
-	const router = useRouter();
 	const onSubmit = (data: BankDetailFormValues) => {
 		mutateAsync(
 			{

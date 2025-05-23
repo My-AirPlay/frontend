@@ -1,7 +1,7 @@
 'use client';
 
 import { useInitiatePayment } from '../../../misc/api/mutations/onboarding.mutation';
-import { redirect, useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -10,9 +10,8 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { useState } from 'react';
 
 const RegistrationPaymentPage = ({ email }: { email: string }) => {
-	const { artist, isLoading } = useAuthContext();
+	const { artist } = useAuthContext();
 	const { mutate: initiatePayment, isPending } = useInitiatePayment();
-	const router = useRouter();
 	const [buttonText, setButtonText] = useState('Make Payment');
 
 	const handleSkip = () => {
@@ -41,7 +40,7 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 						return;
 					}
 					setButtonText('Continue');
-					newTab.location.href = result.data.authorization_url;
+					newTab!.location.href = result.data.authorization_url;
 				},
 				onError: () => {
 					toast.error('Failed to generate payment link. Please try again.', {

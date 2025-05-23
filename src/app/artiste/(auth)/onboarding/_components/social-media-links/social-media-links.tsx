@@ -11,14 +11,12 @@ import { postSocialLinks } from '@/app/artiste/(auth)/misc/api/mutations/onboard
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
 
 interface OnboardingSocialMedialProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 	email: string;
 }
 const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedialProps) => {
-	const { replace } = useRouter();
 	const { checkAuthStatus, artist } = useAuthContext();
 
 	const { mutateAsync, status } = useMutation({
@@ -45,7 +43,7 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 			}
 		};
 		check();
-	}, [status]);
+	}, [status, checkAuthStatus]);
 
 	const formik = useFormik({
 		validateOnChange: true,

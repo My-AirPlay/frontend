@@ -47,7 +47,7 @@ interface ContractDetails {
 interface BankDetails {
 	bankName: string;
 	accountName: string;
-	accountNumber: number;
+	accountNumber: string;
 	ibanSwiftCode: string;
 	bvn: string;
 	bankCode: string;
@@ -170,7 +170,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 	const checkAuthStatus = React.useCallback(async () => {
 		const token = await getArtistAccessToken();
 		if (!token) {
-			isAdminRoute ? router.replace('/admin/login') : router.replace('/artiste/login');
+			if (isAdminRoute) {
+				router.replace('/admin/login');
+			} else {
+				router.replace('/artiste/login');
+			}
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 			return;
 		}
@@ -205,7 +209,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 				}
 			}
 		}
-	}, [router, dispatch]);
+	}, [router, dispatch, isAdminRoute]);
 
 	useLayoutEffect(() => {
 		checkAuthStatus();

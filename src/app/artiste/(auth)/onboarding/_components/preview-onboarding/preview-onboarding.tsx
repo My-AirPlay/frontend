@@ -2,7 +2,6 @@
 import PreviewTable from '@/components/preview-table/preview-table';
 import { Button } from '@/components/ui/button';
 import { OnboardingSteps } from '@/lib/constants';
-import { useRouter } from 'nextjs-toploader/app';
 import React from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 
@@ -10,8 +9,7 @@ interface PreviewOnboardingProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 }
 const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
-	const { replace } = useRouter();
-	const { artist, isLoading } = useAuthContext();
+	const { artist } = useAuthContext();
 	const data = [
 		[
 			{
@@ -20,45 +18,45 @@ const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
 			},
 			{
 				title: 'First Name',
-				value: artist?.firstName
+				value: artist!.firstName || ''
 			},
 			{
 				title: 'Last Name',
-				value: artist?.lastName
+				value: artist!.lastName || ''
 			},
 			{
 				title: 'Phone Number',
-				value: artist?.phoneNumber
+				value: artist!.phoneNumber || ''
 			},
 			{
 				title: 'Country',
-				value: artist?.country
+				value: artist!.country || ''
 			},
 			{
 				title: 'City',
-				value: artist?.city
+				value: artist!.city
 			},
 			{
 				title: 'Artist Name',
-				value: artist?.artistName
+				value: artist!.artistName
 			}
 		],
 		[
 			{
 				title: 'Bank Name',
-				value: artist?.bankDetails.bankName
+				value: artist!.bankDetails.bankName
 			},
 			{
 				title: 'Currency',
-				value: artist?.bankDetails.currency
+				value: artist!.bankDetails.currency
 			},
 			{
 				title: 'Account Number',
-				value: artist?.bankDetails.accountNumber
+				value: artist!.bankDetails.accountNumber
 			},
 			{
 				title: 'Account Name',
-				value: artist?.bankDetails.accountName
+				value: artist!.bankDetails.accountName
 			}
 		]
 	];

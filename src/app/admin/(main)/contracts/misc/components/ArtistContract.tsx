@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { SelectSimple, SingleDatePicker } from '@/components/ui';
 import { Artist } from '@/lib/types';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useUpdateArtistContract, useUploadArtistContract } from '../../../catalogue/api/postAdminUploadArtistContract';
 import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';

@@ -16,8 +16,7 @@ interface OnboardingBasciDetailProps {
 	email: string;
 }
 const OnboardingBasciDetail = ({ setCurrentStep, email }: OnboardingBasciDetailProps) => {
-	const { artist, isLoading } = useAuthContext();
-	console.log(artist);
+	const { artist } = useAuthContext();
 	const { mutateAsync, status } = useMutation({
 		mutationFn: postOnboardingPersonalDetail,
 		onSuccess(data) {
