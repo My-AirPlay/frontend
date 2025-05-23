@@ -70,7 +70,7 @@ export default function MediaTypeSelection() {
 
 	const handleContinue = () => {
 		if (!selectedType) return;
-		if (!!artist && !artist.bankDetails.registrationFeeReference) {
+		if (!!artist && !artist.bankDetails.paidRegistrationFee) {
 			redirect('/artiste/onboarding?step=registration_fee');
 		}
 
