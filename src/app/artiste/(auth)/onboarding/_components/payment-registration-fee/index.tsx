@@ -1,7 +1,7 @@
 'use client';
 
 import { useInitiatePayment } from '../../../misc/api/mutations/onboarding.mutation';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Spinner } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -11,11 +11,13 @@ import { useState } from 'react';
 
 const RegistrationPaymentPage = ({ email }: { email: string }) => {
 	const { artist } = useAuthContext();
+	const router = useRouter();
 	const { mutate: initiatePayment, isPending } = useInitiatePayment();
-	const [buttonText, setButtonText] = useState('Make Payment');
+	const text = artist?.bankDetails?.registrationFeeReference ? 'Continue' : 'Make Payment';
+	const [buttonText, setButtonText] = useState(text);
 
 	const handleSkip = () => {
-		redirect('/artiste/dashboard');
+		router.push('/artiste/dashboard');
 	};
 	const handleGeneratePaymentLink = () => {
 		if (buttonText === 'Continue') {
@@ -34,13 +36,16 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 			{
 				onSuccess: result => {
 					if (!result) {
-						toast.error('Something went wrong. Try again', {
+						toast.error('Something went wrong. refresh page to try again', {
 							duration: 10000
 						});
 						return;
 					}
 					setButtonText('Continue');
 					newTab!.location.href = result.data.authorization_url;
+					setTimeout(async () => {
+						router.refresh();
+					}, 5000);
 				},
 				onError: () => {
 					toast.error('Failed to generate payment link. Please try again.', {

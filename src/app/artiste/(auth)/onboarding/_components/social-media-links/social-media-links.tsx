@@ -49,12 +49,12 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 		validateOnChange: true,
 		validationSchema: onboardingSocialLinkSchema,
 		initialValues: {
-			instagram: artist?.socialLinks.instagram ?? '',
-			twitter: artist?.socialLinks.twitter ?? '',
-			facebook: artist?.socialLinks.facebook ?? '',
-			soundcloud: artist?.socialLinks.soundCloud ?? '',
-			tiktok: artist?.socialLinks.tiktok ?? '',
-			website: artist?.socialLinks.website ?? ''
+			instagram: artist?.socialLinks?.instagram ?? '',
+			twitter: artist?.socialLinks?.twitter ?? '',
+			facebook: artist?.socialLinks?.facebook ?? '',
+			soundcloud: artist?.socialLinks?.soundCloud ?? '',
+			tiktok: artist?.socialLinks?.tiktok ?? '',
+			website: artist?.socialLinks?.website ?? ''
 		},
 		onSubmit: value => {
 			mutateAsync({
