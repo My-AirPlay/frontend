@@ -30,7 +30,7 @@ const OnboardingClientPage = () => {
 			redirect('/artiste/login');
 		} else if (!!artist && artist?.stage == 'complete' && !forceStep) {
 			redirect('/artiste/dashboard');
-		} else if (!!artist && (artist.stage === 'Add social links' || artist.stage === 'complete') && !artist.bankDetails.registrationFeeReference) {
+		} else if (!!artist && (artist.stage === 'Add social links' || artist.stage === 'complete') && !artist.bankDetails.paidRegistrationFee) {
 			setCurrentStep(OnboardingSteps.PAY_REGISTRATION_FEE);
 		}
 	}, [isLoading, artist, forceStep]);

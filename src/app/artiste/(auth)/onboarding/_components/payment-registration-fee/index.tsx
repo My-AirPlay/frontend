@@ -13,7 +13,7 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 	const { artist } = useAuthContext();
 	const router = useRouter();
 	const { mutate: initiatePayment, isPending } = useInitiatePayment();
-	const text = artist?.bankDetails?.registrationFeeReference ? 'Continue' : 'Make Payment';
+	const text = artist?.bankDetails?.paidRegistrationFee ? 'Continue' : 'Make Payment';
 	const [buttonText, setButtonText] = useState(text);
 
 	const handleSkip = () => {
@@ -21,7 +21,7 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 	};
 	const handleGeneratePaymentLink = () => {
 		if (buttonText === 'Continue') {
-			if (!artist?.bankDetails.registrationFeeReference) {
+			if (!artist?.bankDetails.paidRegistrationFee) {
 				toast.error('Failed to verify payment. Please try again.', {
 					duration: 10000
 				});
