@@ -133,6 +133,7 @@ export interface WithdrawalSlipData {
 	updatedAt: string; // ISO Date String
 	__v?: number; // MongoDB version key
 	totalRoyalty?: number | string; // Added based on usage in artist-revenue page
+	totalRevenue?: number | string;
 	// Add other relevant fields like artist details if nested
 }
 

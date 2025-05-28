@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight } from 'lucide-react';
@@ -7,7 +7,7 @@ import { Video } from 'iconsax-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Button, ReusableDropdownMenu, Dialog, DialogContent, Sheet, SheetContent, SheetHeader, SheetTitle, Skeleton, DialogTitle } from '@/components/ui';
+import { Button, ReusableDropdownMenu, Dialog, DialogContent, Sheet, SheetContent, SheetHeader, SheetTitle, Skeleton } from '@/components/ui';
 
 import useBooleanStateControl from '@/hooks/useBooleanStateControl';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -86,6 +86,7 @@ const VideoCard = ({ audio }: { audio: TArtistMedia }) => {
 			}
 		});
 	};
+	const [isPlaying, setIsPlaying] = useState(false);
 
 	return (
 		<article className="relative flex flex-col gap-2.5 rounded-xl cursor-pointer p-1 border-[0.6px]">
@@ -132,24 +133,32 @@ const VideoCard = ({ audio }: { audio: TArtistMedia }) => {
 			</footer>
 
 			<Dialog open={isViewDetailsDialogOpen} onOpenChange={setIsViewDetailsDialogState}>
-				<DialogTitle>Details</DialogTitle>
 				<DialogContent className="bg-zinc-900 text-white max-w-md p-0 border-none !rounded-2xl">
 					<div className="rounded-2xl p-4">
 						<div className="rounded-2xl bg-background p-2.5">
-							<div className="flex gap-6 mb-4 p-4">
+							<div className="flex gap-6 mb-4 p-4 border rounded-lg">
 								<div className="relative w-32 h-32 flex items-center justify-center">
-									<Image src={audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'} alt={audio.title} className="object-cover rounded-lg text-opacity-0 text-[0px]" fill onError={() => setImageError(true)} />
-									{imageError && <Video size={60} className="stroke-white z-[3]" />}
+									{/* Poster image */}
+									{!isPlaying && <Image src={audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'} alt={audio.title} className="object-cover rounded-lg" fill onError={() => setImageError(true)} />}
+
+									{/* Fallback icon if image load fails */}
+									{!isPlaying && imageError && <Video size={60} className="stroke-white z-10" />}
+
+									{/* Video player (HTML5) */}
+									{isPlaying && <video className="rounded-lg w-full h-full object-cover" src={audio.mediaUrl} controls autoPlay />}
+
+									{/* Or, if it’s an embeddable iframe (e.g. YouTube/Vimeo), use: */}
+									{isPlaying && audio.mediaUrl.includes('youtube') && <iframe className="rounded-lg w-full h-full" src={audio.mediaUrl} frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen />}
 								</div>
 
-								<div className="flex flex-col justify-between">
+								<div className="flex flex-col justify-between flex-1">
 									<div>
 										<div className="text-orange-500 text-sm">Released • {audio.releaseDate ? format(new Date(audio.releaseDate), 'MMM dd yyyy') : 'No date'}</div>
 										<h2 className="text-xl font-bold mt-2">{audio.title}</h2>
 									</div>
 
-									<Button size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full flex items-center justify-center">
-										<Play className="ml-1" />
+									<Button size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full" onClick={() => setIsPlaying(p => !p)}>
+										<Play />
 									</Button>
 								</div>
 							</div>

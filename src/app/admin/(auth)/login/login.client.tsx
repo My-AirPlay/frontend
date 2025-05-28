@@ -9,7 +9,6 @@ import { redirect } from 'next/navigation';
 
 import { loginSchema } from '@/lib/schemas'; // Assuming admin login uses the same schema
 import { useMutation } from '@tanstack/react-query';
-// import { loginAdminUser } from '@/app/admin/(auth)/misc/api/mutations/auth.mutations'; // This will need to be created
 import { useAuthContext, getArtistProfile } from '@/contexts/AuthContext'; // Assuming useArtisteContext is a typo and it's useAuthContext
 import { Input } from '@/components/ui';
 
@@ -17,29 +16,26 @@ import { Input } from '@/components/ui';
 // If not, admin-specific versions or adjustments would be needed.
 import AuthWrapper from '@/app/artiste/(auth)/misc/components/auth-wrapper';
 import AuthActions from '@/app/artiste/(auth)/misc/components/auth-actions';
-import APIAxios from '@/utils/axios'; // For a direct API call for login
 import { setArtistAccessToken } from '@/actions/auth/auth.action'; // To set tokens
 import { AxiosError } from 'axios';
+import { loginArtistUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
 
 const AdminLoginPageClient = () => {
 	const router = useRouter();
 	const { checkAuthStatus } = useAuthContext(); // Changed from useArtisteContext
 	const { mutate, status } = useMutation({
-		mutationFn: async (credentials: InferType<typeof loginSchema>) => {
-			const response = await APIAxios.post('/admin/auth/login', credentials); // Example admin login endpoint
-			return response.data; // Adjust based on your API response structure
-		},
+		mutationFn: loginArtistUser,
 		onSuccess: async data => {
 			// Simplified success logic for admin
 			// Assuming data contains { access: string, refresh: string, user: object }
-			if (data && data.access && data.refresh) {
-				await setArtistAccessToken({ access: data.access, refresh: data.refresh });
-				await checkAuthStatus(); // Re-check auth status to update context
-				toast.success(`Welcome Back, ${data.user?.firstName || 'Admin'}!`);
+			if (data.data && data.data.accessToken) {
+				await setArtistAccessToken({ access: data.data.accessToken, refresh: data.data.accessToken });
+				await checkAuthStatus();
+				toast.success('Welcome Back, Admin');
 				router.replace('/admin/dashboard'); // Redirect to admin dashboard
 			} else {
 				// Handle cases where tokens are not returned
-				toast.error(data?.message || 'Login failed: Invalid response from server.');
+				toast.error('Login failed: Invalid response from server.');
 			}
 		},
 		onError: (error: AxiosError | Error) => {

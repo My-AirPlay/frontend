@@ -9,6 +9,7 @@ import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics
 interface PeriodBreakdownItem {
 	streams: number;
 	revenue: number;
+	netRevenue: number;
 }
 
 interface DeliveryPlatformData {
@@ -86,7 +87,10 @@ const ArtistOverview: React.FC = ({}) => {
 												<span className="text-admin-muted/90">Streams:</span> {periodData.streams.toLocaleString()}
 											</p>
 											<p>
-												<span className="text-admin-muted/90">Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.revenue)}</span>
+												<span className="text-admin-muted/90">Gross Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.revenue)}</span>
+											</p>
+											<p>
+												<span className="text-admin-muted/90">Net Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.netRevenue)}</span>
 											</p>
 										</div>
 									))

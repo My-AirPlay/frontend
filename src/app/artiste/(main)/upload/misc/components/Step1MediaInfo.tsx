@@ -12,22 +12,24 @@ import { Input, Select, SelectContent, SelectItem, SelectSimple, SelectTrigger, 
 import { MediaInfoFormValues, mediaInfoSchema } from '../schema';
 import { useMediaUploadStore } from '../store';
 import { useState } from 'react';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function Step1MusicInfo() {
 	const { mediaInfo, updateMediaInfo, setCurrentStep } = useMediaUploadStore();
+	const { artist } = useAuthContext();
 	const { formattedData, isLoading } = useStaticAppInfo();
 	const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 	const [copyrightInputValue, setCopyrightInputValue] = useState<string>(mediaInfo.copyright ? mediaInfo.copyright.replace(/^\d{4}\s*/, '') : '');
 	const [copyrightError, setCopyrightError] = useState('');
 	const defaultValues = {
 		title: mediaInfo.title,
-		artistName: mediaInfo.artistName || 'Artist Name',
+		artistName: mediaInfo.artistName || (artist?.artistName ?? ''),
 		mainGenre: mediaInfo.mainGenre,
 		releaseDate: mediaInfo.releaseDate || new Date().toISOString().split('T')[0],
-		description: mediaInfo.description || 'This is a sample description for the track.',
-		recordLabel: mediaInfo.recordLabel || 'Sample Record Label',
-		publisher: mediaInfo.publisher || 'Sample Publisher',
-		copyright: mediaInfo.copyright || '2025 Copyright Owner',
+		description: mediaInfo.description || '',
+		recordLabel: mediaInfo.recordLabel || '',
+		publisher: mediaInfo.publisher || '',
+		copyright: mediaInfo.copyright || '',
 		explicitContent: mediaInfo.explicitContent || 'No',
 		lyrics: mediaInfo.lyrics || '',
 		universalProductCode: mediaInfo.universalProductCode,

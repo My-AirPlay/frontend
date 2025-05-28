@@ -24,11 +24,12 @@ interface ApiResponse {
 interface MatchArtistFormProps {
 	onMatch: (artistId: string, success: boolean, message?: string) => void; // Modified to pass success/message
 	onCreateNew: () => void;
-	unmatchedArtistName?: string;
+	unmatchedArtistName?: ReportItem[];
+	activityPeriod?: string;
 	unmatchedReports?: ReportItem[]; // Add prop for reports data
 }
 
-const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew, unmatchedReports, unmatchedArtistName }) => {
+const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew, unmatchedArtistName, activityPeriod }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
 	const { data: artists, isLoading: artistsLoading } = useGetAllArtists({ page: '1', limit: '100' });
@@ -40,10 +41,8 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 		setSelectedArtist(artist);
 		setIsDropdownOpen(false);
 
-		// Trigger the mutation on selection
-		console.log('unmatchedReports', unmatchedReports || []);
 		matchArtist(
-			{ artistId: artist._id, reports: unmatchedReports?.filter(item => item.artistName === artist.artistName) || [] },
+			{ artistId: artist._id, activityPeriod, reports: unmatchedArtistName || [] },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
@@ -79,7 +78,7 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 
 	return (
 		<div className="space-y-6">
-			<h1 className="text-2xl font-semibold">Match Artist: {unmatchedArtistName || 'Unmatched Artist'}</h1>
+			<h1 className="text-2xl font-semibold">Match Artist: {unmatchedArtistName.artistName || 'Unmatched Artist'}</h1>
 
 			<p className="mb-4">Select the correct artist profile from the list below to match with the report data.</p>
 

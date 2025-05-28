@@ -176,9 +176,9 @@ const Dashboard: React.FC = () => {
 
 	// Mock data - Ensure data access is safe even if analysis is loading/undefined
 	const uploads = [
-		{ id: 1, type: 'Music - Tracks', lastUploaded: audio?.data?.[0]?.createdAt, category: 'Tracks', count: audio?.total || 0, icon: <Music color="#fe6b02" size={24} /> },
-		{ id: 2, type: 'Music - Album', lastUploaded: video?.data?.[0]?.createdAt, category: 'Album', count: video?.total || 0, icon: <Disc color="#fe6b02" size={24} /> },
-		{ id: 3, type: 'Music - Videos', lastUploaded: albums?.data?.[0]?.createdAt, category: 'Videos', count: albums?.total || 0, icon: <Video color="#fe6b02" size={24} /> }
+		{ id: 1, type: 'Music - Tracks', lastUploaded: audio?.data?.[0]?.createdAt, category: 'Tracks', count: audio?.total || 0, icon: <Music color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=tracks' },
+		{ id: 2, type: 'Music - Album', lastUploaded: video?.data?.[0]?.createdAt, category: 'Album', count: video?.total || 0, icon: <Disc color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=releases' },
+		{ id: 3, type: 'Music - Videos', lastUploaded: albums?.data?.[0]?.createdAt, category: 'Videos', count: albums?.total || 0, icon: <Video color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=videos' }
 	];
 
 	// analysis?.periodSummary?.map((x)=>({month:x.}))
@@ -209,18 +209,20 @@ const Dashboard: React.FC = () => {
 							</div>
 						) : (
 							uploads?.map(upload => (
-								<div key={upload?.id} className="">
-									<div className="flex justify-between items-center">
-										<div className="flex items-center space-x-3">
-											<div className="bg-accent p-2 rounded-md">{upload?.icon}</div>
-											<div>
-												<h3 className="max-md:text-sm font-medium capitalize">{upload?.type}</h3>
-												<p className="text-[0.7rem] md:text-xs text-white/70 ">Last Uploaded: {moment(upload?.lastUploaded).format('DD MMM, YYYY')}</p>
+								<Link href={upload.route} key={upload.id}>
+									<div key={upload?.id} className="">
+										<div className="flex justify-between items-center">
+											<div className="flex items-center space-x-3">
+												<div className="bg-accent p-2 rounded-md">{upload?.icon}</div>
+												<div>
+													<h3 className="max-md:text-sm font-medium capitalize">{upload?.type}</h3>
+													<p className="text-[0.7rem] md:text-xs text-white/70 ">Last Uploaded: {moment(upload?.lastUploaded).format('DD MMM, YYYY')}</p>
+												</div>
 											</div>
+											<div className="md:text-xl font-bold bg-[#272727] p-2.5 rounded-md">{upload?.count?.toLocaleString()}</div>
 										</div>
-										<div className="md:text-xl font-bold bg-[#272727] p-2.5 rounded-md">{upload?.count?.toLocaleString()}</div>
 									</div>
-								</div>
+								</Link>
 							))
 						)}
 					</div>

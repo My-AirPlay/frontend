@@ -119,6 +119,16 @@ const Contracts = () => {
 		{ id: 'country', label: 'Country' } // Assuming country is available in data
 	];
 
+	const getStage = row => {
+		if (row.contractDetails?.contract) {
+			return row.stage;
+		} else if (!row.contractDetails?.contract && row.stage === 'complete') {
+			return 'Contract Upload';
+		} else {
+			return row.stage;
+		}
+	};
+
 	const columns = [
 		{
 			id: 'artistName',
@@ -141,7 +151,7 @@ const Contracts = () => {
 		{
 			id: 'stage',
 			header: 'Stage',
-			cell: (info: any) => <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize whitespace-nowrap">{info.row.original.stage || '-'}</span>
+			cell: (info: any) => <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize whitespace-nowrap">{getStage(info.row.original) || '-'}</span>
 		},
 		{
 			id: 'email', // Added email column

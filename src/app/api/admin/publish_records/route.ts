@@ -3,14 +3,14 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
 	try {
 		const body = await request.json();
-		const { artistNames } = body;
+		const { artistIds } = body;
 
-		if (!artistNames || !Array.isArray(artistNames) || artistNames.some(name => typeof name !== 'string')) {
+		if (!artistIds || !Array.isArray(artistIds) || artistIds.some(name => typeof name !== 'string')) {
 			return NextResponse.json({ message: 'Invalid input: artistNames must be an array of strings.' }, { status: 400 });
 		}
 
 		// For now, we'll just log the artist names
-		console.log('Received artist names to publish:', artistNames);
+		console.log('Received artist names to publish:', artistIds);
 
 		// In a real application, you would process these artist names,
 		// e.g., update their status in the database, trigger notifications, etc.

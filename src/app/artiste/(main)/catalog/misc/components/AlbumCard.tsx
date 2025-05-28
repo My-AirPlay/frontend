@@ -30,7 +30,7 @@ const mediaUpdateSchema = z.object({
 	recordLabel: z.string().optional(),
 	publisher: z.string().min(1, 'Publisher is required'),
 	copyright: z.string().min(1, 'Copyright is required'),
-	explicitContent: z.string().min(1, 'Please select an option'),
+	explicitContent: z.string().optional(),
 	universalProductCode: z.string().min(1, 'UPC is required'),
 	releaseVersion: z.string().min(1, 'Release version is required')
 });
@@ -372,9 +372,7 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 										name="universalProductCode"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>
-													Universal Product Code (UPC) <span className="text-primary">*</span>
-												</FormLabel>
+												<FormLabel>Universal Product Code (UPC)</FormLabel>
 												<FormControl>
 													<Input placeholder="Enter UPC" hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
 												</FormControl>

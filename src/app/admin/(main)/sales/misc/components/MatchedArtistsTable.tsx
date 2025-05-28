@@ -8,6 +8,17 @@ interface MatchedArtistsTableProps {
 
 const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) => {
 	console.log('artists prop', artists);
+
+	function getRoyalty(fullReport) {
+		const value = parseFloat(fullReport.totalRoyaltyUSD?.royaltyConverted[0].amount)?.toFixed(2);
+		const currency = fullReport.totalRoyaltyUSD.royaltyConverted[0].toCurrency;
+		return new Intl.NumberFormat('en-GB', {
+			style: 'currency',
+			currency: currency,
+			minimumFractionDigits: 2
+		}).format(Number(value));
+	}
+
 	const columns = [
 		{
 			id: 'artistName',
@@ -31,10 +42,10 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) =>
 		},
 		{
 			id: 'totalroyalty',
-			header: 'Total Royalty',
+			header: 'Total Royalty(USD)',
 			accessorKey: 'totalroyalty',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.totalRoyaltyUSD?.value?.toFixed(2)} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row.original?.fullReports[0])} </p>
 		},
 		{
 			id: 'catalogueId',
