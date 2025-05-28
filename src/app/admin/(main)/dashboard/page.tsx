@@ -3,9 +3,9 @@
 import React, { useState, useMemo } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SiAudiomack, SiSpotify, SiApplemusic, SiYoutube } from 'react-icons/si'; // Removed SiDeezer
+import { SiAudiomack, SiSpotify, SiApplemusic, SiYoutube, SiAmazon, SiAmazonmusic } from 'react-icons/si'; // Removed SiDeezer
 import { TbBrandDeezer } from 'react-icons/tb'; // Added correct Deezer icon import
-import { FaDollarSign } from 'react-icons/fa'; // Added react-icons imports
+import { FaDollarSign, FaMusic } from 'react-icons/fa'; // Added react-icons imports
 // Import necessary icons from lucide-react for recent sales
 import { ChevronRight, ArrowLeft, ArrowRight, Disc, Music, Video, RadioTower, Download, Users, AudioLines } from 'lucide-react';
 import Link from 'next/link';
@@ -61,6 +61,8 @@ const getDspIcon = (name: string | undefined) => {
 	switch (name?.toLowerCase()) {
 		case 'audiomack':
 			return <SiAudiomack size={iconSize} color={iconColor} />;
+		case 'Amazon Unlimited':
+			return <SiAmazonmusic size={iconSize} color={iconColor} />;
 		case 'spotify':
 			return <SiSpotify size={iconSize} color={iconColor} />;
 		case 'apple music':
@@ -72,7 +74,7 @@ const getDspIcon = (name: string | undefined) => {
 			return <TbBrandDeezer size={iconSize} color={iconColor} />; // Use correct Deezer icon
 		// Add more cases for other DSPs if needed
 		default:
-			return <FaDollarSign size={iconSize} color={iconColor} />; // Default icon
+			return <FaMusic size={iconSize} color={iconColor} />; // Default icon
 	}
 };
 
@@ -268,7 +270,7 @@ const Dashboard: React.FC = () => {
 														</div>
 														<div className="flex flex-col items-center">
 															<div className="w-6 h-6 flex items-center justify-center mb-1">{getDspIcon(topDSPs[currentDspIndex]?.name)}</div>
-															<span className="text-sm font-bold">${topDSPs[currentDspIndex]?.totalRevenue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</span>
+															<span className="text-sm font-bold">₦{topDSPs[currentDspIndex]?.totalRevenue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}</span>
 														</div>
 													</div>
 												</motion.div>
