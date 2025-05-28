@@ -119,7 +119,7 @@ const Contracts = () => {
 		{ id: 'country', label: 'Country' } // Assuming country is available in data
 	];
 
-	const getStage = row => {
+	const getStage = (row: any) => {
 		if (row.contractDetails?.contract) {
 			return row.stage;
 		} else if (!row.contractDetails?.contract && row.stage === 'complete') {

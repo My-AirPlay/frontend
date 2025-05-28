@@ -139,13 +139,14 @@ const ArtistRevenue: React.FC = () => {
 			cell: info => {
 				const revenue = parseFloat(info.row.original.totalRoyaltyUSD || '0').toFixed(2);
 				const formattedRevenue = parseFloat(revenue).toLocaleString();
-				return <p className="font-medium ">{`$${formattedRevenue}`}</p>;
+				return <p className="font-medium ">{`NGN${formattedRevenue}`}</p>;
 			}
 		}
 	];
 
 	// Note: totalRevenue calculation might need adjustment based on API data if it's dynamic
-	const totalRevenue = `$${analysisLoading ? 0 : (analysis.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+	const totalRevenue = `NGN${analysisLoading ? 0 : (analysis.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+	const grossRevenue = `NGN${analysisLoading ? 0 : (analysis.grossRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 	return (
 		<div className="space-y-6">
@@ -154,11 +155,20 @@ const ArtistRevenue: React.FC = () => {
 			{/* Added PreviousPageButton */}
 			<PreviousPageButton />
 			{/* Revenue Summary Box - Kept as is */}
-			<div className="bg-secondary rounded-lg p-4 flex gap-4 items-center">
-				<AccountCoins className="size-12" />
-				<div>
-					<p className="text-sm text-muted">Total Revenue Made</p>
-					<h3 className="text-2xl font-bold">{totalRevenue}</h3>
+			<div className="justify-between bg-secondary rounded-lg p-4 flex gap-4 items-center">
+				<div className="flex gap-4">
+					<AccountCoins className="size-12" />
+					<div>
+						<p className="text-sm">Gross Revenue</p>
+						<h3 className="text-2xl font-bold">{grossRevenue}</h3>
+					</div>
+				</div>
+				<div className="flex gap-4">
+					<AccountCoins className="size-12" />
+					<div>
+						<p className="text-sm">Net Revenue</p>
+						<h3 className="text-2xl font-bold">{totalRevenue}</h3>
+					</div>
 				</div>
 			</div>
 			{/* Main Content Area */}

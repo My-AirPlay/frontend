@@ -20,14 +20,18 @@ import { toast } from 'sonner'; // Import toast
 // const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Define interfaces for row data (adjust based on actual API response)
+type SortableColumn = { id: string; label: string };
 
+type TabKey = 'releases' | 'tracks' | 'videos';
 const Catalogue: React.FC = () => {
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
-	const currentTab = searchParams.get('tab') ?? 'tracks';
+	const rawTab = useSearchParams().get('tab');
 
-	const [tab, setTab] = useState<'releases' | 'tracks' | 'videos' | string>(currentTab || 'releases'); // Default to releases or read from URL
+	const initialTab: TabKey = rawTab === 'releases' || rawTab === 'tracks' || rawTab === 'videos' ? rawTab : 'tracks';
+
+	const [tab, setTab] = useState<TabKey>(initialTab);
 
 	// State for sorting
 	const [sortBy, setSortBy] = useState<string>(searchParams.get('sortBy') || 'title');
@@ -76,7 +80,7 @@ const Catalogue: React.FC = () => {
 			let fetchErrors = 0;
 
 			// helper to fetch a URL and add to a JSZip folder, inferring filename from URL
-			async function fetchAndAddToFolder(url: string, folder: JSZip) {
+			const fetchAndAddToFolder = async (url: string, folder: JSZip) => {
 				try {
 					const res = await fetch(url);
 					if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -90,7 +94,7 @@ const Catalogue: React.FC = () => {
 					console.error(`Error fetching ${url}:`, e);
 					fetchErrors++;
 				}
-			}
+			};
 
 			// ———————————————
 			// Determine which rows to process:
@@ -167,23 +171,14 @@ const Catalogue: React.FC = () => {
 	const { data: releases, isLoading: releasesLoading } = useGetAllAlbums(apiParams);
 	const { data: video, isLoading: videoLoading } = useGetAdminMedia({ ...apiParams, type: 'video' });
 
-	// Define sortable columns for each tab
-	const releaseSortableColumns = [
+	const releaseSortableColumns: SortableColumn[] = [
 		{ id: 'title', label: 'Title' },
 		{ id: 'artistName', label: 'Artist' },
 		{ id: 'recordLabel', label: 'Record Label' },
 		{ id: 'universalProductCode', label: 'Product Code' }
 	];
 
-	const trackSortableColumns = [
-		{ id: 'title', label: 'Title' },
-		{ id: 'artistName', label: 'Artist' },
-		{ id: 'recordLabel', label: 'Record Label' },
-		{ id: 'mainGenre', label: 'Genre' },
-		{ id: 'universalProductCode', label: 'Product Code' }
-	];
-
-	const videosSortableColumns = [
+	const trackSortableColumns: SortableColumn[] = [
 		{ id: 'title', label: 'Title' },
 		{ id: 'artistName', label: 'Artist' },
 		{ id: 'recordLabel', label: 'Record Label' },
@@ -191,7 +186,15 @@ const Catalogue: React.FC = () => {
 		{ id: 'universalProductCode', label: 'Product Code' }
 	];
 
-	const sortableColumns = {
+	const videosSortableColumns: SortableColumn[] = [
+		{ id: 'title', label: 'Title' },
+		{ id: 'artistName', label: 'Artist' },
+		{ id: 'recordLabel', label: 'Record Label' },
+		{ id: 'mainGenre', label: 'Genre' },
+		{ id: 'universalProductCode', label: 'Product Code' }
+	];
+
+	const sortableColumns: Record<TabKey, SortableColumn[]> = {
 		releases: releaseSortableColumns,
 		tracks: trackSortableColumns,
 		videos: videosSortableColumns
@@ -346,7 +349,7 @@ const Catalogue: React.FC = () => {
 				value={tab}
 				onValueChange={(newTab: string) => {
 					const validTab = newTab;
-					setTab(validTab);
+					setTab(validTab as TabKey);
 					setSelectedRows([]); // Clear selection when tab changes
 
 					// Determine sortable columns for the new tab

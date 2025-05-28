@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 		// In a real application, you would process these artist names,
 		// e.g., update their status in the database, trigger notifications, etc.
 
-		return NextResponse.json({ message: 'Artists published successfully', receivedArtisNames: artistNames }, { status: 200 });
+		return NextResponse.json({ message: 'Artists published successfully', receivedArtisNames: artistIds }, { status: 200 });
 	} catch (error) {
 		console.error('Error publishing artists:', error);
 		let errorMessage = 'Internal Server Error';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useCallback, useState } from 'react';
 import { ArrowLeftRight, ArrowRight, ChevronDown, Upload } from 'lucide-react';
@@ -122,7 +123,7 @@ const Sales: React.FC = () => {
 	const [matchedArtists, setMatchedArtists] = useState<ReportItem[]>([]);
 	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>([]);
 
-	const [selectedRows, setSelectedRows] = useState<[]>([]);
+	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
 	const [activityPeriod, setActivityPeriod] = useState<string>('');
@@ -271,7 +272,7 @@ const Sales: React.FC = () => {
 					//setMatchedArtists([]);
 					setCurrentStep('send-emails');
 				},
-				onError: (error: Error | AxiosError<ApiResponse>) => {
+				onError: (error: Error | AxiosError<ApiResponse> | null) => {
 					console.error('Error publishing matched artists:', error);
 					toast.error('An unexpected error occurred while publishing artists.');
 				}
@@ -279,13 +280,14 @@ const Sales: React.FC = () => {
 		);
 	};
 
-	const handleSendEmails = async rows => {
+	const handleSendEmails = async (rows: any) => {
 		if (selectedRows.length === 0) {
 			toast.info('No matched artists to send emails.');
 			return;
 		}
 
-		const artistIdsToPublish = rows.map(artist => artist.artistId);
+		const artistIdsToPublish = rows.map((artist: any) => artist.artistId);
+		console.log(artistIdsToPublish);
 		sendEmails(
 			{ artistIds: artistIdsToPublish },
 			{
@@ -301,7 +303,7 @@ const Sales: React.FC = () => {
 		);
 	};
 
-	const handleArtistMatch = row => {
+	const handleArtistMatch = (row: any) => {
 		setSelectedUnmatchedArtist(row._id);
 		setActivityPeriod(row.activityPeriod);
 		setCurrentStep('match-artist');
@@ -325,7 +327,7 @@ const Sales: React.FC = () => {
 		setShowSuccessModal('created');
 	};
 
-	const handleSelectionChange = useCallback((selectedData: []) => {
+	const handleSelectionChange = useCallback((selectedData: ReportItem[]) => {
 		setSelectedRows(selectedData);
 	}, []);
 

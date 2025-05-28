@@ -60,6 +60,7 @@ export interface APIResponse {
 	// Summary metrics
 	totalStreams: number;
 	totalRevenue: number;
+	grossRevenue: number;
 	averageStreamValue: number;
 
 	// Breakdowns
