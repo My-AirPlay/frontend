@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useCallback, useState } from 'react';
+
 import { Button, DataTable } from '@/components/ui';
 import { ReportItem } from '@/lib/types';
 import { Download } from 'lucide-react';
@@ -13,15 +15,46 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 	// keep track of selected rows locally
 	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
 
-	const getRoyalty = (report: ReportItem['fullReports'][0]): string => {
-		const raw = parseFloat(report.totalRoyaltyUSD?.royaltyConverted[0].amount ?? '0');
-		const converted = raw.toFixed(2);
-		const currency = report.totalRoyaltyUSD.royaltyConverted[0].toCurrency;
+	const getRoyalty = (row: any): string => {
+		const reports = row.fullReports || [];
+
+		// Sum all the converted amounts (fallback to 0 if missing)
+		const total = reports.reduce((sum: number, rep: any) => {
+			const amt = parseFloat(rep.totalRoyaltyUSD?.royaltyConverted?.[0]?.amount ?? '0');
+			return sum + amt;
+		}, 0);
+
+		// Use the currency from the first report (or “USD” fallback)
+		const currency = reports[0]?.totalRoyaltyUSD?.royaltyConverted?.[0]?.toCurrency || 'USD';
+
+		// Format as currency
 		return new Intl.NumberFormat('en-GB', {
 			style: 'currency',
 			currency,
 			minimumFractionDigits: 2
-		}).format(Number(converted));
+		}).format(total);
+	};
+
+	const getTrackTitleCell = (row: any) => {
+		const reports = row.original.fullReports || [];
+		if (reports.length <= 1) {
+			return <span>{reports[0]?.trackTitle ?? '—'}</span>;
+		}
+
+		const firstTitle = reports[0].trackTitle;
+		const others = reports.slice(1).map((r: any) => r.trackTitle);
+		const count = others.length;
+
+		const tooltipText = others.slice(0, count).join('\n');
+
+		return (
+			<span className="flex items-center">
+				<span>{firstTitle}</span>
+				<span className="ml-1 px-1 text-[10px] font-medium bg-gray-200 text-gray-700 rounded cursor-help" title={tooltipText}>
+					+{count}
+				</span>
+			</span>
+		);
 	};
 
 	// receive selection from DataTable and lift it up
@@ -40,12 +73,12 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 
 	const columns = [
 		{ id: 'artistName', header: 'Artist Name', accessorKey: 'artistName' },
-		{ id: 'trackTitle', header: 'Track Title', accessorFn: row => row.fullReports?.[0]?.trackTitle ?? '—' },
+		{ id: 'trackTitle', header: 'Track Title', cell: (info: any) => <p className="text-admin-primary hover:underline">{getTrackTitleCell(info.row)}</p> },
 		{ id: 'activityPeriod', header: 'Activity Period', accessorKey: 'activityPeriod' },
-		{ id: 'totalRoyalty', header: 'Total Royalty (USD)', accessorFn: row => getRoyalty(row.fullReports[0]) },
-		{ id: 'catalogueId', header: 'Catalogue ID', accessorFn: row => row.fullReports?.[0]?.catalogueId ?? '—' },
-		{ id: 'isrcCode', header: 'ISRC Code', accessorFn: row => row.fullReports?.[0]?.isrcCode ?? '—' }
-	] as const;
+		{ id: 'totalRoyalty', header: 'Total Royalty (USD)', accessorFn: (row: any) => getRoyalty(row) },
+		{ id: 'catalogueId', header: 'Catalogue ID', accessorFn: (row: any) => row.fullReports?.[0]?.catalogueId ?? '—' },
+		{ id: 'isrcCode', header: 'ISRC Code', accessorFn: (row: any) => row.fullReports?.[0]?.isrcCode ?? '—' }
+	];
 
 	return (
 		<div className="w-full">

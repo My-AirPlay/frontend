@@ -123,13 +123,16 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 		);
 	};
 	const [isPlaying, setIsPlaying] = useState(false);
-	const audioRef = useRef(null);
+	const audioRef = useRef<HTMLAudioElement | null>(null);
 
 	const handlePlayPause = () => {
+		const audio = audioRef.current;
+		if (!audio) return;
+
 		if (isPlaying) {
-			audioRef.current.pause();
+			audio.pause();
 		} else {
-			audioRef.current.play();
+			audio.play();
 		}
 		setIsPlaying(!isPlaying);
 	};

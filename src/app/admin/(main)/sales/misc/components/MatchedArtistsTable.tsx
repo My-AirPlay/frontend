@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { DataTable } from '@/components/ui';
 import { ReportItem } from '@/lib/types'; // Changed Artist to ReportItem
@@ -9,15 +10,48 @@ interface MatchedArtistsTableProps {
 const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) => {
 	console.log('artists prop', artists);
 
-	function getRoyalty(fullReport) {
-		const value = parseFloat(fullReport.totalRoyaltyUSD?.royaltyConverted[0].amount)?.toFixed(2);
-		const currency = fullReport.totalRoyaltyUSD.royaltyConverted[0].toCurrency;
+	const getRoyalty = (row: any): string => {
+		const reports = row.original.fullReports || [];
+
+		/* eslint-disable @typescript-eslint/no-explicit-any */
+		const total = reports.reduce((sum: number, rep: any) => {
+			const amt = parseFloat(rep.totalRoyaltyUSD?.royaltyConverted?.[0]?.amount ?? '0');
+			return sum + amt;
+		}, 0);
+
+		// Use the currency from the first report (or “USD” fallback)
+		const currency = reports[0]?.totalRoyaltyUSD?.royaltyConverted?.[0]?.toCurrency || 'USD';
+
+		// Format as currency
 		return new Intl.NumberFormat('en-GB', {
 			style: 'currency',
-			currency: currency,
+			currency,
 			minimumFractionDigits: 2
-		}).format(Number(value));
-	}
+		}).format(total);
+	};
+
+	const getTrackTitleCell = (row: any) => {
+		const reports = row.original.fullReports || [];
+		if (reports.length <= 1) {
+			return <span>{reports[0]?.trackTitle ?? '—'}</span>;
+		}
+
+		const firstTitle = reports[0].trackTitle;
+		const others = reports.slice(1).map((r: any) => r.trackTitle);
+		const count = others.length;
+
+		// Build tooltip text
+		const tooltipText = others.slice(0, count).join('\n');
+
+		return (
+			<span className="flex items-center">
+				<span>{firstTitle}</span>
+				<span className="ml-1 px-1 text-[10px] font-medium bg-gray-200 text-gray-700 rounded cursor-help" title={tooltipText}>
+					+{count}
+				</span>
+			</span>
+		);
+	};
 
 	const columns = [
 		{
@@ -27,11 +61,10 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) =>
 		},
 
 		{
-			id: 'realName',
-			header: 'Track Title',
-			accessorKey: 'realName',
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary hover:underline"> {info.row.original?.fullReports[0]?.trackTitle} </p>
+			id: 'trackTitle',
+			header: 'Track Title(s)',
+			accessorFn: (row: any) => row.fullReports?.[0]?.trackTitle ?? '—',
+			cell: (info: any) => <p className="text-admin-primary hover:underline">{getTrackTitleCell(info.row)}</p>
 		},
 		{
 			id: 'activityperiod',
@@ -42,10 +75,10 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) =>
 		},
 		{
 			id: 'totalroyalty',
-			header: 'Total Royalty(USD)',
+			header: 'Total Royalty(NGN)',
 			accessorKey: 'totalroyalty',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row.original?.fullReports[0])} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row)} </p>
 		},
 		{
 			id: 'catalogueId',

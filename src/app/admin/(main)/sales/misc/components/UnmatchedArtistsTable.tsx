@@ -1,15 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { DataTable } from '@/components/ui';
 import { ReportItem } from '@/lib/types'; // Changed Artist to ReportItem
 
 interface UnmatchedArtistsTableProps {
 	artists: ReportItem[]; // Changed Artist[] to ReportItem[]
-	onArtistMatch: (artistId: string) => void;
+	onArtistMatch: (row: ReportItem) => void;
 }
 
 const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, onArtistMatch }) => {
-	console.log(artists);
-	function getRoyalty(fullReport) {
+	function getRoyalty(fullReport: any) {
 		const value = parseFloat(fullReport.totalRoyaltyUSD?.royaltyConverted[0].amount)?.toFixed(2);
 		const currency = fullReport.totalRoyaltyUSD.royaltyConverted[0].toCurrency;
 		return new Intl.NumberFormat('en-GB', {
@@ -41,7 +41,7 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 		},
 		{
 			id: 'totalroyalty',
-			header: 'Total Royalty(USD)',
+			header: 'Total Royalty(NGN)',
 			accessorKey: 'totalroyalty',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row.original?.fullReports[0])} </p>
