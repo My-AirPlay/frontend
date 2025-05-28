@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight } from 'lucide-react';
+import { Play, Pause, Ellipsis, Eye, Trash, Edit2, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { Musicnote, TickCircle } from 'iconsax-react';
 import { useForm } from 'react-hook-form';
@@ -122,6 +122,17 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 			}
 		);
 	};
+	const [isPlaying, setIsPlaying] = useState(false);
+	const audioRef = useRef(null);
+
+	const handlePlayPause = () => {
+		if (isPlaying) {
+			audioRef.current.pause();
+		} else {
+			audioRef.current.play();
+		}
+		setIsPlaying(!isPlaying);
+	};
 
 	return (
 		<article
@@ -185,7 +196,7 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 					}
 				}}
 			>
-				<Image src={audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'} alt={audio.title} className="object-cover rounded-xl z-[2] text-opacity-0 text-[0px]" priority={true} fill onError={() => setImageError(true)} />
+				<Image src={audio.mediaCoverArtUrl || '/images/placeholder.png'} alt={audio.title} className="object-cover rounded-xl z-[2] text-opacity-0 text-[0px]" priority={true} fill onError={() => setImageError(true)} />
 				{imageError && <Musicnote size={60} className="stroke-white z-[3]" />}
 			</div>
 			<footer className="px-3">
@@ -199,7 +210,7 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 						<div className="rounded-2xl bg-background p-2.5">
 							<div className="flex gap-6 mb-4 p-4">
 								<div className="relative w-32 h-32 flex items-center justify-center">
-									<Image src={audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'} alt={audio.title} className="object-cover rounded-lg text-opacity-0 text-[0px]" fill onError={() => setImageError(true)} />
+									<Image src={audio.mediaCoverArtUrl || '/images/placeholder.png'} alt={audio.title} className="object-cover rounded-lg text-opacity-0 text-[0px]" fill onError={() => setImageError(true)} />
 									{imageError && <Musicnote size={60} className="stroke-white z-[3]" />}
 								</div>
 
@@ -209,9 +220,10 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 										<h2 className="text-xl font-bold mt-2">{audio.title}</h2>
 									</div>
 
-									<Button size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full flex items-center justify-center">
-										<Play className="ml-1" />
+									<Button onClick={handlePlayPause} size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full flex items-center justify-center">
+										{isPlaying ? <Pause /> : <Play className="ml-1" />}
 									</Button>
+									<audio ref={audioRef} src={audio.mediaUrl} />
 								</div>
 							</div>
 

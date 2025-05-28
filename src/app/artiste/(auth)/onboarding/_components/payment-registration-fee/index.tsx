@@ -22,7 +22,7 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 	const handleGeneratePaymentLink = () => {
 		if (buttonText === 'Continue') {
 			if (!artist?.bankDetails.paidRegistrationFee) {
-				toast.error('Failed to verify payment. Please try again.', {
+				toast.error('Failed to verify payment. Please refresh page to try again.', {
 					duration: 10000
 				});
 				setButtonText('Make Payment');
@@ -36,7 +36,7 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 			{
 				onSuccess: result => {
 					if (!result) {
-						toast.error('Something went wrong. refresh page to try again', {
+						toast.error('Something went wrong. Please try again', {
 							duration: 10000
 						});
 						return;

@@ -7,7 +7,6 @@ import { useParams } from 'next/navigation';
 import { ArtistOverview, ArtistAnalytics, ArtistTransactions } from '../../misc/components';
 import { AccountCoins } from '../../misc/icons';
 import { useGetOneArtist } from '../../../catalogue/api/getOneArtist';
-import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips'; // Added import
 import { WithdrawalSlipData } from '@/lib/types'; // Added import
 
@@ -15,9 +14,6 @@ const ArtistRevenueDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
 
 	const { data: artist } = useGetOneArtist({ artistId: artist_id });
-	const { data: artistAnalytics } = useGetArtistAnalytics({
-		artistId: artist_id
-	});
 
 	// Fetch withdrawal slips
 	const { data: withdrawalsData } = useGetAllWithdrawalSlips({
@@ -30,10 +26,17 @@ const ArtistRevenueDetails: React.FC = () => {
 	// Filter pending withdrawal slips
 	const allDebitTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending');
 
+	const allCreditTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status !== 'Pending');
 	// Calculate total pending royalty
 	const totalPendingRoyalty = allDebitTransactions.reduce((sum, slip) => {
 		// Ensure totalRoyalty is treated as a number, default to 0 if undefined or null
-		const royalty = Number(slip.totalRoyalty) || 0;
+		const royalty = Number(slip.totalRevenue) || 0;
+		return sum + royalty;
+	}, 0);
+
+	const totalCreditRoyalty = allCreditTransactions.reduce((sum, slip) => {
+		// Ensure totalRoyalty is treated as a number, default to 0 if undefined or null
+		const royalty = Number(slip.totalRevenue) || 0;
 		return sum + royalty;
 	}, 0);
 
@@ -67,7 +70,7 @@ const ArtistRevenueDetails: React.FC = () => {
 					<AccountCoins className="size-12" />
 					<div>
 						<p className="text-sm text-white/60">Total Revenue Made</p>
-						<h3 className="text-2xl font-bold">{`$${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</h3>
+						<h3 className="text-2xl font-bold">{`NGN${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</h3>
 					</div>
 				</div>
 
@@ -87,16 +90,16 @@ const ArtistRevenueDetails: React.FC = () => {
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Revenue Generated</p>
-							<p className="font-medium">{`$${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</p>
+							<p className="font-medium">{`NGN${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</p>
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Credits</p>
-							<p className="font-normal">{`$${artistAnalytics?.paidRoyalty || 0}`}</p>
+							<p className="font-normal">{`NGN${parseFloat(totalCreditRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Debits</p>
 							{/* Display calculated pending royalty */}
-							<p className="font-normal">{`$${parseFloat(totalPendingRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
+							<p className="font-normal">{`NGN${parseFloat(totalPendingRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
 						</div>
 					</div>
 				</div>

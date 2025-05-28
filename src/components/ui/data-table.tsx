@@ -50,6 +50,9 @@ export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading,
 
 		// Create new URL with updated query parameters
 		const params = new URLSearchParams(searchParams.toString());
+		if (params.get('page') === page.toString() && params.get('limit') === limit.toString()) {
+			return;
+		}
 		params.set('page', page.toString());
 		params.set('limit', limit.toString());
 

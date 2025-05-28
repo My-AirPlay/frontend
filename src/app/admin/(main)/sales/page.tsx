@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ArrowLeftRight, ArrowRight, ChevronDown, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -19,8 +19,10 @@ import { useAdminAnalyzeCsv } from '../catalogue/api/postAdminAnalyzeCsv';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { currencySymbols, ReportItem } from '@/lib/types';
+import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
+import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/SendEmailsToArtistsTable';
 
-type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist';
+type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'send-emails';
 
 interface DropdownOption {
 	id: string;
@@ -88,6 +90,13 @@ const Sales: React.FC = () => {
 		}
 	};
 
+	interface ApiResponse {
+		success: boolean; // Assume API includes this field
+		message?: string;
+		data?: unknown; // Keep data flexible or define more specifically if known
+		// Add other potential fields if known
+	}
+
 	// Function to remove a currency pair (index: number)
 	const removeCurrencyPair = (index: number) => {
 		if (fields.length > 1) {
@@ -113,8 +122,10 @@ const Sales: React.FC = () => {
 	const [matchedArtists, setMatchedArtists] = useState<ReportItem[]>([]);
 	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>([]);
 
+	const [selectedRows, setSelectedRows] = useState<[]>([]);
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
+	const [activityPeriod, setActivityPeriod] = useState<string>('');
 
 	const navigateToNextStep = () => {
 		if (currentStep === 'exchange-rate') {
@@ -141,10 +152,14 @@ const Sales: React.FC = () => {
 			setSelectedUnmatchedArtist(null);
 		} else if (currentStep === 'create-artist') {
 			setCurrentStep('match-artist');
+		} else if (currentStep === 'send-emails') {
+			setCurrentStep('artist-records');
 		}
 	};
 
 	const { mutate: analyzeCsv, isPending: isAnalyzeCsv } = useAdminAnalyzeCsv();
+	const { mutate: publishCsv } = usePublishArtistReports();
+	const { mutate: sendEmails } = useSendEmailReports();
 
 	const handleFileSelected = (file: File) => {
 		// Convert exchange rates to positive numbers before sending
@@ -241,41 +256,54 @@ const Sales: React.FC = () => {
 			}, 1500);
 		}, 1000);
 	};
-
-	const handlePublishMatchedArtists = async () => {
+	const publishArtists = async () => {
 		if (matchedArtists.length === 0) {
 			toast.info('No matched artists to publish.');
 			return;
 		}
-
-		const artistNamesToPublish = matchedArtists.map(artist => artist.artistName);
-
-		try {
-			const response = await fetch('/api/admin/publish_records', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
+		publishCsv(
+			{ artists: matchedArtists },
+			{
+				onSuccess: (data: ApiResponse) => {
+					// Use ApiResponse type for data
+					console.log('API Response:', data);
+					toast.success(data.message || 'Published successfully!');
+					//setMatchedArtists([]);
+					setCurrentStep('send-emails');
 				},
-				body: JSON.stringify({ artistNames: artistNamesToPublish })
-			});
-
-			const result = await response.json();
-
-			if (response.ok) {
-				toast.success(result.message || 'Artists published successfully!');
-				// Optionally, you might want to clear the matchedArtists array or update their status locally
-				// setMatchedArtists([]);
-			} else {
-				toast.error(result.message || 'Failed to publish artists.');
+				onError: (error: Error | AxiosError<ApiResponse>) => {
+					console.error('Error publishing matched artists:', error);
+					toast.error('An unexpected error occurred while publishing artists.');
+				}
 			}
-		} catch (error) {
-			console.error('Error publishing matched artists:', error);
-			toast.error('An unexpected error occurred while publishing artists.');
-		}
+		);
 	};
 
-	const handleArtistMatch = (artistId: string) => {
-		setSelectedUnmatchedArtist(artistId);
+	const handleSendEmails = async rows => {
+		if (selectedRows.length === 0) {
+			toast.info('No matched artists to send emails.');
+			return;
+		}
+
+		const artistIdsToPublish = rows.map(artist => artist.artistId);
+		sendEmails(
+			{ artistIds: artistIdsToPublish },
+			{
+				onSuccess: (data: ApiResponse) => {
+					console.log('API Response:', data);
+					toast.success(data.message || 'Emails sent successfully!');
+				},
+				onError: (error: Error | AxiosError<ApiResponse>) => {
+					console.error('Error sending emails:', error);
+					toast.error('An unexpected error occurred while sending emails.');
+				}
+			}
+		);
+	};
+
+	const handleArtistMatch = row => {
+		setSelectedUnmatchedArtist(row._id);
+		setActivityPeriod(row.activityPeriod);
 		setCurrentStep('match-artist');
 	};
 
@@ -296,6 +324,10 @@ const Sales: React.FC = () => {
 		// Here we would call an API to create the artist
 		setShowSuccessModal('created');
 	};
+
+	const handleSelectionChange = useCallback((selectedData: []) => {
+		setSelectedRows(selectedData);
+	}, []);
 
 	const handleCloseSuccessModal = () => {
 		setShowSuccessModal(null);
@@ -488,8 +520,15 @@ const Sales: React.FC = () => {
 						<UnmatchedArtistsTable artists={unmatchedArtists} onArtistMatch={handleArtistMatch} />
 					</div>
 				)}
+				{currentStep === 'send-emails' && (
+					<div>
+						<div className="mt-8 mb-4">
+							<SendEmailsToArtistsTable artists={matchedArtists} onRowSelectionChange={handleSelectionChange} onSendEmails={handleSendEmails} />
+						</div>
+					</div>
+				)}
 
-				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedArtists} onCreateNew={handleCreateNewArtist} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)?.artistName} />}
+				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedArtists} onCreateNew={handleCreateNewArtist} activityPeriod={activityPeriod} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)} />}
 
 				{currentStep === 'create-artist' && <CreateArtistForm onSave={handleSaveArtist} />}
 
@@ -499,8 +538,8 @@ const Sales: React.FC = () => {
 							Back
 						</Button>
 
-						{currentStep === 'artist-records' && (
-							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={handlePublishMatchedArtists}>
+						{currentStep === 'artist-records' && unmatchedArtists.length === 0 && (
+							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={publishArtists}>
 								Publish Matched Artists
 							</Button>
 						)}

@@ -38,7 +38,7 @@ export function formatCurrency(amount: number, currency?: SupportedCurrency): st
 	const locale = getLocaleForCurrency(currency || 'USD');
 	return new Intl.NumberFormat(locale, {
 		style: 'currency',
-		currency: currency || 'USD',
+		currency: 'NGN',
 		minimumFractionDigits: 2
 	}).format(amount);
 }

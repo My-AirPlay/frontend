@@ -5,15 +5,15 @@ import { MediaUploadInfo } from '../store/media';
 
 export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 	// Max file size in bytes (e.g., 50MB)
-	const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+	const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
 
 	// Check if the files are within the size limit
 	if (payload.media && payload.media.size > MAX_FILE_SIZE) {
-		throw new Error('Media file is too large. Please upload a file smaller than 50MB.');
+		throw new Error('Media file is too large. Please upload a file smaller than 500MB.');
 	}
 
 	if (payload.coverArt && payload.coverArt.size > MAX_FILE_SIZE) {
-		throw new Error('Cover art is too large. Please upload a file smaller than 50MB.');
+		throw new Error('Cover art is too large. Please upload a file smaller than 500MB.');
 	}
 
 	// Prepare FormData
@@ -49,7 +49,7 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 			headers: {
 				'Content-Type': 'multipart/form-data'
 			},
-			timeout: 30000 // Timeout in milliseconds (30 seconds)
+			timeout: 100000 // Timeout in milliseconds (30 seconds)
 		});
 		return response.data;
 	} catch (error) {

@@ -15,6 +15,7 @@ import { useMediaUploadStore } from '../store';
 export default function Step2MediaTrackUpload() {
 	const { setMediaFile, setCurrentStep, mediaFileId, getMediaFile, initializeDB, isDBInitialized, mediaType } = useMediaUploadStore();
 	const isAudio = mediaType === 'Track' || mediaType === 'PlayBack';
+	const [videoUrl, setVideoUrl] = useState<string | null>(null);
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 	const [uploadProgress, setUploadProgress] = useState(0);
 	const [isDragging, setIsDragging] = useState(false);
@@ -50,12 +51,15 @@ export default function Step2MediaTrackUpload() {
 		}
 
 		// Validate file size (35MB max)
-		if (file.size > 35 * 1024 * 1024) {
-			toast.error('File size exceeds the 35MB limit. Please upload a smaller file.');
+		if (file.size > 512 * 1024 * 1024) {
+			toast.error('File size exceeds the 512MB limit. Please upload a smaller file.');
 			return;
 		}
+		console.log(file);
 
 		setUploadedFile(file);
+		const objectUrl = URL.createObjectURL(file);
+		setVideoUrl(objectUrl);
 		await setMediaFile(file); // Store in IndexedDB
 		simulateUpload();
 	};
@@ -98,8 +102,8 @@ export default function Step2MediaTrackUpload() {
 			toast.error('Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.');
 			return;
 		}
-		if (file.size > 40 * 1024 * 1024) {
-			toast.error('File size exceeds the 35MB limit. Please upload a smaller file.');
+		if (file.size > 512 * 1024 * 1024) {
+			toast.error('File size exceeds the 512MB limit. Please upload a smaller file.');
 			return;
 		}
 
@@ -121,7 +125,17 @@ export default function Step2MediaTrackUpload() {
 		<div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto ">
 			<section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
 				<label className={cn('border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-h-[300px]', isDragging ? 'border-solid border-3' : 'border-primary')} onDragEnter={handleDrag} onDragOver={handleDrag} onDragLeave={handleDrag} onDrop={handleDrop} id="track-upload-input ">
-					<Music width={100} height={100} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
+					{/* Video preview */}
+					{videoUrl ? (
+						<div className="mt-4">
+							<video controls width="100%">
+								<source src={videoUrl} type="video/mp4" />
+								Your browser does not support the video tag.
+							</video>
+						</div>
+					) : (
+						<Music width={100} height={100} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
+					)}
 					<p className="text-white/30 mb-6 text-xs max-w-[30ch] text-center text-balance">Drag and drop your audio file here, or click the button below</p>
 				</label>
 				<div className="flex flex-col items-start justify-center">

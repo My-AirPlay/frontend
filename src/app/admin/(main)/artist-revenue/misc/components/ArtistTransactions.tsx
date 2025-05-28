@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Filter, ArrowUp, ArrowDown } from 'lucide-react'; // Added ArrowUp, ArrowDown
 import { DataTable, Input } from '@/components/ui'; // Added Input
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'; // Added DropdownMenu components
-import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips';
 import { useParams, useSearchParams, useRouter, usePathname } from 'next/navigation'; // Added hooks
 import { formatCurrency } from '@/utils/currency';
+import { useGetAllWithdrawalSlips } from '@/app/admin/(main)/catalogue/api/getAllWithdrawalSlips';
 
 // Updated interface to match API response for withdrawal slips
 interface WithdrawalSlipData {
@@ -55,7 +55,6 @@ const ArtistTransactions: React.FC = ({}) => {
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>((searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc'); // Default descending date
 	const [inputValue, setInputValue] = useState<string>(searchTerm); // State for the input field's value
 
-	console.log('artist_id', artist_id);
 	const { data: withdrawalsData, isLoading: withdrawalsLoading } = useGetAllWithdrawalSlips({
 		page: 1,
 		limit: 100,
@@ -163,6 +162,7 @@ const ArtistTransactions: React.FC = ({}) => {
 	const creditTransactions = showAllCredits ? allCreditTransactions : allCreditTransactions.slice(0, 3);
 	const debitTransactions = showAllDebits ? allDebitTransactions : allDebitTransactions.slice(0, 3);
 
+	console.log(creditTransactions);
 	// Updated columns for Credit Transactions (Status != Pending)
 	const creditColumns = [
 		{
@@ -172,10 +172,13 @@ const ArtistTransactions: React.FC = ({}) => {
 			cell: (info: any) => <span className="font-mono text-xs">{info.getValue()?.slice(-6) || 'N/A'}</span>
 		},
 		{
-			id: 'activityPeriod',
+			id: 'activityPeriods',
 			header: 'Description', // Using activityPeriod as description
-			accessorKey: 'notes',
-			cell: (info: any) => <span className="font-medium">{info.getValue() || 'N/A'}</span>
+			accessorKey: 'activityPeriods',
+			cell: (info: any) => {
+				console.log(info);
+				<span className="font-medium">{info.getValue() || 'N/A'}</span>;
+			}
 		},
 		{
 			id: 'createdAt',
@@ -186,9 +189,9 @@ const ArtistTransactions: React.FC = ({}) => {
 		{
 			id: 'finalAmountSent',
 			header: 'Amount',
-			accessorKey: 'finalAmountSent',
+			accessorKey: 'totalRevenue',
 			// Assuming positive amounts are credits here
-			cell: (info: any) => <span className="text-primary">{formatCurrency(info.getValue())}</span>
+			cell: (info: any) => <span className="text-primary">{formatCurrency(info.getValue(), 'NGN')}</span>
 		}
 	];
 
@@ -210,10 +213,10 @@ const ArtistTransactions: React.FC = ({}) => {
 			}
 		},
 		{
-			id: 'activityPeriod',
+			id: 'activityPeriods',
 			header: 'Description', // Using activityPeriod as description
-			accessorKey: 'activityPeriod',
-			cell: (info: any) => <span className="font-medium">{info.getValue() || 'N/A'}</span>
+			accessorKey: 'activityPeriods',
+			cell: (info: any) => <span className="font-medium">{info.getValue()[0] || 'N/A'}</span>
 		},
 		{
 			id: 'createdAt',
@@ -225,7 +228,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			id: 'totalRevenue', // Show requested amount for pending withdrawals
 			header: 'Amount',
 			accessorKey: 'totalRevenue',
-			cell: (info: any) => <span className="text-red-500">{formatCurrency(info.getValue())}</span>
+			cell: (info: any) => <span className="text-red-500">{formatCurrency(info.getValue(), 'NGN')}</span>
 		}
 		// Add other relevant columns like 'status' if needed
 		// {
