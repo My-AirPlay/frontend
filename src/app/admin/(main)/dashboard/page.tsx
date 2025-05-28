@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SiAudiomack, SiSpotify, SiApplemusic, SiYoutube, SiAmazon, SiAmazonmusic } from 'react-icons/si'; // Removed SiDeezer
+import { SiAudiomack, SiSpotify, SiApplemusic, SiYoutube, SiAmazonmusic } from 'react-icons/si'; // Removed SiDeezer
 import { TbBrandDeezer } from 'react-icons/tb'; // Added correct Deezer icon import
 import { FaDollarSign, FaMusic } from 'react-icons/fa'; // Added react-icons imports
 // Import necessary icons from lucide-react for recent sales
