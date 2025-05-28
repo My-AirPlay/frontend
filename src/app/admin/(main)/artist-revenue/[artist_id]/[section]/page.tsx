@@ -70,7 +70,7 @@ const ArtistRevenueDetails: React.FC = () => {
 					<AccountCoins className="size-12" />
 					<div>
 						<p className="text-sm text-white/60">Total Revenue Made</p>
-						<h3 className="text-2xl font-bold">{`NGN${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</h3>
+						<h3 className="text-2xl font-bold">{`₦${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</h3>
 					</div>
 				</div>
 
@@ -90,16 +90,16 @@ const ArtistRevenueDetails: React.FC = () => {
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Revenue Generated</p>
-							<p className="font-medium">{`NGN${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</p>
+							<p className="font-medium">{`₦${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</p>
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Credits</p>
-							<p className="font-normal">{`NGN${parseFloat(totalCreditRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
+							<p className="font-normal">{`₦${parseFloat(totalCreditRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Debits</p>
 							{/* Display calculated pending royalty */}
-							<p className="font-normal">{`NGN${parseFloat(totalPendingRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
+							<p className="font-normal">{`₦${parseFloat(totalPendingRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
 						</div>
 					</div>
 				</div>

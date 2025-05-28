@@ -139,14 +139,14 @@ const ArtistRevenue: React.FC = () => {
 			cell: info => {
 				const revenue = parseFloat(info.row.original.totalRoyaltyUSD || '0').toFixed(2);
 				const formattedRevenue = parseFloat(revenue).toLocaleString();
-				return <p className="font-medium ">{`NGN${formattedRevenue}`}</p>;
+				return <p className="font-medium ">{`₦${formattedRevenue}`}</p>;
 			}
 		}
 	];
 
 	// Note: totalRevenue calculation might need adjustment based on API data if it's dynamic
-	const totalRevenue = `NGN${analysisLoading ? 0 : (analysis.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-	const grossRevenue = `NGN${analysisLoading ? 0 : (analysis.grossRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+	const totalRevenue = `₦${analysisLoading ? 0 : (analysis.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+	const grossRevenue = `₦${analysisLoading ? 0 : (analysis.grossRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 	return (
 		<div className="space-y-6">

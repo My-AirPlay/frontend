@@ -148,7 +148,7 @@ const Dashboard: React.FC = () => {
 					id: type, // Use type as a unique identifier
 					type: type, // Use the delivery type name (e.g., "Streaming", "UGC")
 					// Format the revenue amount with '$' and two decimal places
-					amount: `$${(data.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+					amount: `₦${(data.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
 					date: mostRecentDate, // Use the determined most recent date
 					revenue: true, // Assuming all these are revenue entries
 					icon: getSaleIcon(type) // Get the appropriate icon
@@ -241,7 +241,7 @@ const Dashboard: React.FC = () => {
 						) : (
 							<>
 								<div className="mb-4 flex justify-between items-center gap-4">
-									<h3 className="text-2xl font-bold">${analysis?.totalRevenue?.toLocaleString() || 0}</h3>
+									<h3 className="text-2xl font-bold">₦{analysis?.totalRevenue?.toLocaleString() || 0}</h3>
 									<p className="text-sm text-white/70">All Revenue</p>
 								</div>
 
@@ -331,7 +331,7 @@ const Dashboard: React.FC = () => {
 				<article>
 					<header className="flex justify-between items-center mb-3">
 						<h2 className="text-xl font-normal">Recent Sales</h2>
-						<Link href="/admin/sales" className="text-sm text-white/70 hover:text-foreground flex items-center">
+						<Link href="/admin/artist-revenue" className="text-sm text-white/70 hover:text-foreground flex items-center">
 							View All <ChevronRight size={16} />
 						</Link>
 					</header>
