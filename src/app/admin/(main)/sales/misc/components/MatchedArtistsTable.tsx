@@ -75,7 +75,7 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) =>
 		},
 		{
 			id: 'totalroyalty',
-			header: 'Total Royalty(NGN)',
+			header: 'Total Royalty(₦)',
 			accessorKey: 'totalroyalty',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row)} </p>
