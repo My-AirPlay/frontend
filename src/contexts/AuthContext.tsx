@@ -3,7 +3,7 @@ import { Reducer, useLayoutEffect } from 'react';
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import APIAxios, { setAxiosDefaultToken } from '@/utils/axios';
 import { usePathname, useRouter } from 'next/navigation';
-import { clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
+import { clearAdminTokens, clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
 import { AppLogo } from '@/components/icons';
 interface IArtistUser {
@@ -161,6 +161,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 	const logout = (reroute?: boolean) => {
 		clearArtistTokens();
+		clearAdminTokens();
 		dispatch({ type: 'LOGOUT' });
 		if (reroute) {
 			router.replace('/artiste/login');

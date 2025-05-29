@@ -133,7 +133,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 					<div className="relative">
 						{/* Removed currency/wallet icons as currency is unknown without slip data */}
 						{/* Added $ sign with z-index */}
-						<span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 pointer-events-none z-10">$</span>
+						<span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 pointer-events-none z-10">₦</span>
 						<Input
 							type="number"
 							placeholder="Enter amount"
@@ -150,7 +150,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 
 					{/* Update Button */}
 					<div className="flex justify-center">
-						<Button className="bg-primary hover:bg-primary/90" onClick={handleUpdate} disabled={isUpdatingWithdrawal || !finalAmount || parseFloat(finalAmount) < 0}>
+						<Button className="bg-primary hover:bg-primary/90" onClick={handleUpdate} disabled={isUpdatingWithdrawal || !finalAmount || parseFloat(finalAmount) < 0 || parseFloat(finalAmount) > artistData?.totalRoyaltyUSD}>
 							{isUpdatingWithdrawal ? 'Updating...' : 'Withdraw'}
 							{isUpdatingWithdrawal ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ChevronRight className="h-4 w-4 " />}
 						</Button>

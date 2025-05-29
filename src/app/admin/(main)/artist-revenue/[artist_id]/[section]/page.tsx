@@ -70,7 +70,7 @@ const ArtistRevenueDetails: React.FC = () => {
 					<AccountCoins className="size-12" />
 					<div>
 						<p className="text-sm text-white/60">Total Revenue Made</p>
-						<h3 className="text-2xl font-bold">{`₦${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</h3>
+						<h3 className="text-2xl font-bold">{`₦${parseFloat(totalCreditRoyalty.toFixed(2)).toLocaleString() || 0}`}</h3>
 					</div>
 				</div>
 
@@ -89,7 +89,7 @@ const ArtistRevenueDetails: React.FC = () => {
 							<p className="font-normal">{artist?.email || '-'}</p>
 						</div>
 						<div className="flex flex-col">
-							<p className="text-white/60 text-xs font-light">Revenue Generated</p>
+							<p className="text-white/60 text-xs font-light">Balance</p>
 							<p className="font-medium">{`₦${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</p>
 						</div>
 						<div className="flex flex-col">

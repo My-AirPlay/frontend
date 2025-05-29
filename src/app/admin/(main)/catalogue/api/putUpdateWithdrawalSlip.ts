@@ -25,11 +25,11 @@ interface UpdateWithdrawalResponse {
 
 // Async function to perform the API call
 const updateWithdrawalSlip = async (payload: UpdateWithdrawalPayload): Promise<UpdateWithdrawalResponse> => {
-	const { transactionId, artistId, ...updateData } = payload;
+	const { artistId, ...updateData } = payload;
 	// Adjust the endpoint as needed. Using PUT /admin/withdrawalslip/:transactionId
 	// Passing artistId as a query param if required by the backend
 	const response = await APIAxios.put<UpdateWithdrawalResponse>(
-		`/admin/withdrawalslip/${transactionId}`,
+		`/admin/withdrawalslip`,
 		updateData, // Send only the fields to be updated in the body
 		{ params: { artistId } } // Send artistId as query param if needed
 	);

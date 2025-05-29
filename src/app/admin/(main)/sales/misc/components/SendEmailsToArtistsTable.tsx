@@ -20,6 +20,7 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 
 		// Sum all the converted amounts (fallback to 0 if missing)
 		const total = reports.reduce((sum: number, rep: any) => {
+			console.log(rep);
 			const amt = parseFloat(rep.totalRoyaltyUSD?.royaltyConverted?.[0]?.amount ?? '0');
 			return sum + amt;
 		}, 0);
@@ -75,7 +76,7 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 		{ id: 'artistName', header: 'Artist Name', accessorKey: 'artistName' },
 		{ id: 'trackTitle', header: 'Track Title', cell: (info: any) => <p className="text-admin-primary hover:underline">{getTrackTitleCell(info.row)}</p> },
 		{ id: 'activityPeriod', header: 'Activity Period', accessorKey: 'activityPeriod' },
-		{ id: 'totalRoyalty', header: 'Total Royalty (USD)', accessorFn: (row: any) => getRoyalty(row) },
+		{ id: 'totalRoyalty', header: 'Gross Revenue(₦)', accessorFn: (row: any) => getRoyalty(row) },
 		{ id: 'catalogueId', header: 'Catalogue ID', accessorFn: (row: any) => row.fullReports?.[0]?.catalogueId ?? '—' },
 		{ id: 'isrcCode', header: 'ISRC Code', accessorFn: (row: any) => row.fullReports?.[0]?.isrcCode ?? '—' }
 	];
