@@ -176,8 +176,8 @@ const ArtistTransactions: React.FC = ({}) => {
 			header: 'Description', // Using activityPeriod as description
 			accessorKey: 'activityPeriods',
 			cell: (info: any) => {
-				console.log(info);
-				<span className="font-medium">{info.getValue() || 'N/A'}</span>;
+				console.log(info?.row?.original.activityPeriods[0]);
+				return <span className="font-medium">Payment For : {info?.row?.original.activityPeriods[0] || 'N/A'}</span>;
 			}
 		},
 		{
@@ -216,7 +216,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			id: 'activityPeriods',
 			header: 'Description', // Using activityPeriod as description
 			accessorKey: 'activityPeriods',
-			cell: (info: any) => <span className="font-medium">{info.getValue()[0] || 'N/A'}</span>
+			cell: (info: any) => <span className="font-medium">{info.getValue()[0] || 'Payout'}</span>
 		},
 		{
 			id: 'createdAt',
@@ -253,6 +253,9 @@ const ArtistTransactions: React.FC = ({}) => {
 			<div className="flex flex-wrap gap-4 justify-between items-center">
 				<h3 className="text-md font-semibold bg-primary/10 text-primary px-3 py-1 rounded">Transactions History</h3>
 				<div className="flex flex-wrap items-center gap-2">
+					<Button variant="link" className="p-0 h-auto font-mono text-xs text-primary hover:underline" onClick={() => router.push(`/admin/artist-revenue/${artist_id}/withdraw/1}`)}>
+						Withdraw
+					</Button>
 					{/* Search Input */}
 					<Input placeholder="Search transactions..." value={inputValue} onChange={e => setInputValue(e.target.value)} className="h-9 w-full sm:w-auto md:w-56" />
 					{/* Sort Dropdown */}

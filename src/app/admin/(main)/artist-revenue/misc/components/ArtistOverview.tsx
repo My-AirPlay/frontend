@@ -31,6 +31,7 @@ const ArtistOverview: React.FC = ({}) => {
 	const { data: artistAnalytics, isLoading: artistAnalyticsLoading } = useGetArtistAnalytics({
 		artistId: artist_id
 	});
+	console.log(artistAnalytics);
 
 	// Removed mock data (streamingItems, downloadItems)
 

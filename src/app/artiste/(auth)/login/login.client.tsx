@@ -44,7 +44,7 @@ const LoginPageClient = () => {
 				router.replace('/artiste/onboarding');
 				return;
 			} else {
-				toast.success(`Welcome Back ${data.user.firstName}`);
+				toast.success(`Welcome Back ${data.user.firstName || data.user.artistName}`);
 				router.replace('/artiste/dashboard');
 			}
 		}

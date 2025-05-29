@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react'; // Added Loader
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { formatCurrency } from '@/utils/currency';
+import { ChartDatum, CustomBarChart } from '@/app/admin/(main)/artist-revenue/misc/components/BarChart';
+import { PerformanceItem } from '@/app/artiste/(main)/dashboard/misc/api';
 
 // --- Interfaces for Period Summary ---
 interface PeriodSummaryItem {
@@ -14,6 +17,30 @@ interface PeriodSummaryItem {
 interface PeriodSummary {
 	[period: string]: PeriodSummaryItem;
 }
+
+type Breakdown = {
+	streams: number;
+	revenue: number;
+};
+
+type PeriodBreakdown = {
+	[period: string]: Breakdown;
+};
+
+type CountryBreakdown = {
+	[countryCode: string]: {
+		periodBreakdown: PeriodBreakdown;
+	};
+};
+
+type ArtistAnalytics = {
+	countryBreakdown?: CountryBreakdown;
+};
+
+export type ProcessedCountryPeriodData = {
+	streams: ChartDatum[];
+	revenue: ChartDatum[];
+};
 
 // --- Helper Function to Parse Period Strings ---
 const monthMap: { [key: string]: number } = {
@@ -195,6 +222,100 @@ const ArtistAnalytics: React.FC = () => {
 		return processedData;
 	}, [artistAnalytics?.periodSummary]);
 
+	const processedDspPeriodData: ProcessedCountryPeriodData = useMemo(() => {
+		if (!artistAnalytics?.dspBreakdown) return { streams: [], revenue: [] };
+
+		const groupedByPeriod: Record<string, Record<string, any>> = {};
+
+		Object.entries(artistAnalytics.dspBreakdown).forEach(([dsp, dspData]) => {
+			const dspInfo = dspData as PerformanceItem;
+			Object.entries(dspInfo.periodBreakdown).forEach(([period, breakdown]) => {
+				const { label } = parsePeriodString(period);
+
+				if (!groupedByPeriod[label]) {
+					groupedByPeriod[label] = { monthLabel: label };
+				}
+
+				groupedByPeriod[label][dsp] = {
+					streams: breakdown.streams,
+					revenue: breakdown.revenue
+				};
+			});
+		});
+
+		const flattenedStreams: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.streams !== undefined) {
+					flat[key] = val.streams;
+				}
+			});
+			return flat;
+		});
+
+		const flattenedRevenue: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.revenue !== undefined) {
+					flat[key] = val.revenue;
+				}
+			});
+			return flat;
+		});
+
+		return {
+			streams: flattenedStreams,
+			revenue: flattenedRevenue
+		};
+	}, [artistAnalytics?.dspBreakdown]);
+
+	const processedCountryPeriodData: ProcessedCountryPeriodData = useMemo(() => {
+		if (!artistAnalytics?.countryBreakdown) return { streams: [], revenue: [] };
+
+		const groupedByPeriod: Record<string, Record<string, any>> = {};
+
+		Object.entries(artistAnalytics.countryBreakdown).forEach(([country, countryData]) => {
+			const countryInfo = countryData as PerformanceItem;
+			Object.entries(countryInfo.periodBreakdown).forEach(([period, breakdown]) => {
+				const { label } = parsePeriodString(period);
+
+				if (!groupedByPeriod[label]) {
+					groupedByPeriod[label] = { monthLabel: label };
+				}
+
+				groupedByPeriod[label][country] = {
+					streams: breakdown.streams,
+					revenue: breakdown.revenue
+				};
+			});
+		});
+
+		const flattenedStreams: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.streams !== undefined) {
+					flat[key] = val.streams;
+				}
+			});
+			return flat;
+		});
+
+		const flattenedRevenue: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.revenue !== undefined) {
+					flat[key] = val.revenue;
+				}
+			});
+			return flat;
+		});
+
+		return {
+			streams: flattenedStreams,
+			revenue: flattenedRevenue
+		};
+	}, [artistAnalytics?.countryBreakdown]);
+
 	if (artistAnalyticsLoading) {
 		return (
 			<div className="flex items-center justify-center p-8 text-admin-muted rounded-lg border-[0.5px] border-[#383838] bg-[#1f1f1f]">
@@ -225,6 +346,15 @@ const ArtistAnalytics: React.FC = () => {
 				dataKey="streams"
 				strokeColor="#82ca9d" // Example color
 			/>
+
+			{/* Monthly Streams Chart */}
+			<CustomBarChart title="Monthly Country Revenue" data={processedCountryPeriodData.revenue} dataKey="revenue" strokeColor="#8884d8" />
+
+			<CustomBarChart title="Monthly Country Streams" data={processedCountryPeriodData.streams} dataKey="streams" strokeColor="#8884d8" />
+
+			<CustomBarChart title="Monthly Distribution Streams" data={processedDspPeriodData.revenue} dataKey="revenue" strokeColor="#8884d8" />
+
+			<CustomBarChart title="Monthly Distribution Streams" data={processedDspPeriodData.streams} dataKey="streams" strokeColor="#8884d8" />
 		</div>
 	);
 };

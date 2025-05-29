@@ -6,9 +6,11 @@ import { RevenueHistoryChart, StreamsHistoryChart } from './misc/components';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { BarChart2, ChevronsRight, Globe, Music } from 'lucide-react';
 import { LinkButton } from '@/components/ui';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 const MusicDashboard = () => {
 	const { data, isLoading, error } = useGetDashboardData();
+	const { artist } = useAuthContext();
 
 	const revenueHistory = [...(data?.revenueHistory || [])]
 		.sort((a, b) => {
@@ -73,7 +75,7 @@ const MusicDashboard = () => {
 				</div>
 			</header>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
 				<Card>
 					<CardHeader className="flex flex-row items-center gap-1.5 pb-2">
 						<Music className="size-6 text-muted-foreground" />
@@ -89,11 +91,20 @@ const MusicDashboard = () => {
 					<CardHeader className="flex flex-row items-center gap-1.5 pb-2">
 						<Icon icon="fa-solid:coins" height={30} width={30} className="text-white" />
 
-						<CardTitle className="text-sm lg:text-xl font-semibold">Total Revenue</CardTitle>
+						<CardTitle className="text-sm lg:text-xl font-semibold">Gross Revenue</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(data?.totalRevenue || 0)}</div>
 						<p className="text-xs text-muted-foreground">Across all platforms</p>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardHeader className="flex flex-row items-center gap-1.5 pb-2">
+						<Icon icon="fa-solid:money-bill" height={30} width={30} className="text-white" />
+						<CardTitle className="text-sm lg:text-xl font-semibold">Balance</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(artist?.totalRoyaltyUSD || 0)}</div>
 					</CardContent>
 				</Card>
 

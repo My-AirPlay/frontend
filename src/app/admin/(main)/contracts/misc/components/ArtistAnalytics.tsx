@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'; // Keep this directive
 
 import React, { useMemo } from 'react'; // Add useMemo
@@ -6,7 +7,10 @@ import { useParams } from 'next/navigation'; // Add useParams
 import { Loader2 } from 'lucide-react'; // Add Loader2
 // Adjust the import path for useGetArtistAnalytics relative to the new location
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
-import { formatCurrency } from '@/utils/currency'; // Add formatCurrency
+import { formatCurrency } from '@/utils/currency';
+import { ChartDatum, CustomBarChart } from '@/app/admin/(main)/artist-revenue/misc/components/BarChart';
+import { ProcessedCountryPeriodData } from '@/app/admin/(main)/artist-revenue/misc/components/ArtistAnalytics';
+import { PerformanceItem } from '@/app/artiste/(main)/dashboard/misc/api'; // Add formatCurrency
 
 // --- Interfaces for Period Summary ---
 interface PeriodSummaryItem {
@@ -155,6 +159,100 @@ const ArtistAnalytics: React.FC = () => {
 		return processedData;
 	}, [artistAnalytics?.periodSummary]);
 
+	const processedDspPeriodData: ProcessedCountryPeriodData = useMemo(() => {
+		if (!artistAnalytics?.dspBreakdown) return { streams: [], revenue: [] };
+
+		const groupedByPeriod: Record<string, Record<string, any>> = {};
+
+		Object.entries(artistAnalytics.dspBreakdown).forEach(([dsp, dspData]) => {
+			const dspInfo = dspData as PerformanceItem;
+			Object.entries(dspInfo.periodBreakdown).forEach(([period, breakdown]) => {
+				const { label } = parsePeriodString(period);
+
+				if (!groupedByPeriod[label]) {
+					groupedByPeriod[label] = { monthLabel: label };
+				}
+
+				groupedByPeriod[label][dsp] = {
+					streams: breakdown.streams,
+					revenue: breakdown.revenue
+				};
+			});
+		});
+
+		const flattenedStreams: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.streams !== undefined) {
+					flat[key] = val.streams;
+				}
+			});
+			return flat;
+		});
+
+		const flattenedRevenue: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.revenue !== undefined) {
+					flat[key] = val.revenue;
+				}
+			});
+			return flat;
+		});
+
+		return {
+			streams: flattenedStreams,
+			revenue: flattenedRevenue
+		};
+	}, [artistAnalytics?.dspBreakdown]);
+
+	const processedCountryPeriodData: ProcessedCountryPeriodData = useMemo(() => {
+		if (!artistAnalytics?.countryBreakdown) return { streams: [], revenue: [] };
+
+		const groupedByPeriod: Record<string, Record<string, any>> = {};
+
+		Object.entries(artistAnalytics.countryBreakdown).forEach(([country, countryData]) => {
+			const countryInfo = countryData as PerformanceItem;
+			Object.entries(countryInfo.periodBreakdown).forEach(([period, breakdown]) => {
+				const { label } = parsePeriodString(period);
+
+				if (!groupedByPeriod[label]) {
+					groupedByPeriod[label] = { monthLabel: label };
+				}
+
+				groupedByPeriod[label][country] = {
+					streams: breakdown.streams,
+					revenue: breakdown.revenue
+				};
+			});
+		});
+
+		const flattenedStreams: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.streams !== undefined) {
+					flat[key] = val.streams;
+				}
+			});
+			return flat;
+		});
+
+		const flattenedRevenue: ChartDatum[] = Object.values(groupedByPeriod).map(entry => {
+			const flat: ChartDatum = { monthLabel: entry.monthLabel };
+			Object.entries(entry).forEach(([key, val]) => {
+				if (key !== 'monthLabel' && val?.revenue !== undefined) {
+					flat[key] = val.revenue;
+				}
+			});
+			return flat;
+		});
+
+		return {
+			streams: flattenedStreams,
+			revenue: flattenedRevenue
+		};
+	}, [artistAnalytics?.countryBreakdown]);
+
 	// Loading state (copied from source)
 	if (artistAnalyticsLoading) {
 		return (
@@ -175,6 +273,13 @@ const ArtistAnalytics: React.FC = () => {
 		<div className="space-y-8">
 			<MonthlyChart title="Monthly Revenue" data={chartData} dataKey="revenue" strokeColor="#8884d8" />
 			<MonthlyChart title="Monthly Streams" data={chartData} dataKey="streams" strokeColor="#82ca9d" />
+			<CustomBarChart title="Monthly Country Revenue" data={processedCountryPeriodData.revenue} dataKey="revenue" strokeColor="#8884d8" />
+
+			<CustomBarChart title="Monthly Country Streams" data={processedCountryPeriodData.streams} dataKey="streams" strokeColor="#8884d8" />
+
+			<CustomBarChart title="Monthly Distribution Streams" data={processedDspPeriodData.revenue} dataKey="revenue" strokeColor="#8884d8" />
+
+			<CustomBarChart title="Monthly Distribution Streams" data={processedDspPeriodData.streams} dataKey="streams" strokeColor="#8884d8" />
 		</div>
 	);
 };

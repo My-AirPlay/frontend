@@ -41,7 +41,7 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 		},
 		{
 			id: 'totalroyalty',
-			header: 'Total Royalty(₦)',
+			header: 'Gross Revenue(₦)',
 			accessorKey: 'totalroyalty',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row.original?.fullReports[0])} </p>
