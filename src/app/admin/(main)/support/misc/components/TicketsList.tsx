@@ -11,6 +11,7 @@ interface TicketsListProps {
 interface Ticket {
 	_id: number;
 	complaintType: string;
+	complaintId: string;
 	artistName: string;
 	createdAt: string;
 	status: 'open' | 'closed' | 'pending';
@@ -39,7 +40,7 @@ const TicketsList: React.FC<TicketsListProps> = ({ limit = 10, tickets }) => {
 									<p className="text-xs text-white/60">{ticket.artistName}</p>
 								</div>
 								<div className="flex flex-col items-end gap-1">
-									<LinkButton href={`./support/tickets/${ticket._id}`} size="thin" className="text-white rounded-full">
+									<LinkButton href={`./support/tickets/${ticket._id}?complaintId=${ticket.complaintId}`} size="thin" className="text-white rounded-full">
 										Open
 									</LinkButton>
 									<span className="text-xs text-white/60">{moment(ticket.createdAt).format('DD  MMM, YYYY')}</span>

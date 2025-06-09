@@ -40,14 +40,16 @@ export default function AllIssuesPage() {
 					<div className="space-y-4 mt-4">
 						{pendingIssues.length > 0 ? (
 							pendingIssues.map(issue => (
-								<div key={issue._id} className="bg-secondary rounded-md p-4">
-									<div className="text-xs text-gray-400 mb-2">
-										{/* Assuming no image attachment info in the data */}
-										No image attached
+								<Link key={issue._id} href={`/artiste/support/all-issues/${issue._id}?complaintId=${issue.complaintId}`}>
+									<div className="bg-secondary rounded-md p-4 mb-2">
+										<div className="text-xs text-gray-400 mb-2">
+											{/* Assuming no image attachment info in the data */}
+											{issue.attachment ? 'image attachment' : 'No image attached'}
+										</div>
+										<h4 className="font-medium mb-1">{issue.complaintType}</h4>
+										<p className="text-sm text-gray-400">{truncateText({ text: issue.complain })}</p>
 									</div>
-									<h4 className="font-medium mb-1">{issue.complaintType}</h4>
-									<p className="text-sm text-gray-400">{truncateText({ text: issue.complain })}</p>
-								</div>
+								</Link>
 							))
 						) : (
 							<div className="bg-secondary rounded-md p-4 text-center text-gray-400">No pending issues</div>
@@ -64,18 +66,20 @@ export default function AllIssuesPage() {
 					<div className="space-y-4 mt-4">
 						{inProgressIssues.length > 0 ? (
 							inProgressIssues.map(issue => (
-								<div key={issue._id} className="bg-secondary rounded-md p-4">
-									<div className="flex justify-between mb-2">
-										<div className="text-xs text-gray-400">No image attached</div>
-										<div className="text-xs bg-[#FF6B00] px-2 py-0.5 rounded text-white">Email sent</div>
+								<Link key={issue._id} href={`/artiste/support/all-issues/${issue._id}?complaintId=${issue.complaintId}`}>
+									<div className="bg-secondary rounded-md p-4 mb-2">
+										<div className="flex justify-between mb-2">
+											<div className="text-xs text-gray-400">No image attached</div>
+											<div className="text-xs bg-[#FF6B00] px-2 py-0.5 rounded text-white">Email sent</div>
+										</div>
+										<h4 className="font-medium mb-1">{issue.complaintType}</h4>
+										<p className="text-sm text-gray-400 mb-2">{truncateText({ text: issue.complain })}</p>
+										<div className="flex items-center text-xs text-gray-400">
+											<span className="inline-block w-3 h-3 bg-[#FF6B00] rounded-full mr-2"></span>
+											Customer Representative
+										</div>
 									</div>
-									<h4 className="font-medium mb-1">{issue.complaintType}</h4>
-									<p className="text-sm text-gray-400 mb-2">{truncateText({ text: issue.complain })}</p>
-									<div className="flex items-center text-xs text-gray-400">
-										<span className="inline-block w-3 h-3 bg-[#FF6B00] rounded-full mr-2"></span>
-										Customer Representative
-									</div>
-								</div>
+								</Link>
 							))
 						) : (
 							<div className="bg-secondary rounded-md p-4 text-center text-gray-400">No issues in progress</div>
@@ -92,13 +96,15 @@ export default function AllIssuesPage() {
 					<div className="space-y-4 mt-4">
 						{completedIssues.length > 0 ? (
 							completedIssues.map(issue => (
-								<div key={issue._id} className="bg-secondary rounded-md p-4">
-									<div className="flex justify-between mb-2">
-										<div className="text-xs bg-green-500/20 px-2 py-0.5 rounded text-green-400">Resolved via mail</div>
+								<Link key={issue._id} href={`/artiste/support/all-issues/${issue._id}?complaintId=${issue.complaintId}`}>
+									<div className="bg-secondary rounded-md p-4 mb-2">
+										<div className="flex justify-between mb-2">
+											<div className="text-xs bg-green-500/20 px-2 py-0.5 rounded text-green-400">Resolved</div>
+										</div>
+										<h4 className="font-medium mb-1">{issue.complaintType}</h4>
+										<p className="text-sm text-gray-400">{truncateText({ text: issue.complain })}</p>
 									</div>
-									<h4 className="font-medium mb-1">{issue.complaintType}</h4>
-									<p className="text-sm text-gray-400">{truncateText({ text: issue.complain })}</p>
-								</div>
+								</Link>
 							))
 						) : (
 							<div className="bg-secondary rounded-md p-4 text-center text-gray-400">No completed issues</div>

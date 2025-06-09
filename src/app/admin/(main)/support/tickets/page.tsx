@@ -1,7 +1,7 @@
 'use client';
-
-import React from 'react';
-import { Download, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Notepad2 } from 'iconsax-react';
 import { LinkButton, PreviousPageButton } from '@/components/ui';
@@ -21,20 +21,15 @@ const AllTicketsPage: React.FC = () => {
 	const { data: tickets, isPending } = useGetComplaints({ page: page.toString(), limit: limit.toString() });
 	const totalTickets = tickets?.total || 0;
 
-	// Function to update page and limit in URL
+	const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'resolved'>('all');
+
 	const updateQueryParams = (newParams: { page?: number; limit?: number }) => {
 		const params = new URLSearchParams(searchParams.toString());
-		if (newParams.page) {
-			params.set('page', newParams.page.toString());
-		}
-		if (newParams.limit) {
-			params.set('limit', newParams.limit.toString());
-		}
-		// Preserve existing params (e.g., artistId)
+		if (newParams.page) params.set('page', newParams.page.toString());
+		if (newParams.limit) params.set('limit', newParams.limit.toString());
 		router.push(`${pathname}?${params.toString()}`, { scroll: false });
 	};
 
-	// Handlers for pagination controls
 	const handleNextPage = () => {
 		if (page < tickets?.totalPages || 1) updateQueryParams({ page: page + 1 });
 	};
@@ -45,10 +40,16 @@ const AllTicketsPage: React.FC = () => {
 
 	const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const newLimit = Number(e.target.value);
-		if (newLimit > 0) {
-			updateQueryParams({ limit: newLimit, page: 1 }); // Reset to page 1 when limit changes
-		}
+		if (newLimit > 0) updateQueryParams({ limit: newLimit, page: 1 });
 	};
+
+	// Filter tickets by selected status
+	const filteredTickets =
+		tickets?.data?.filter((ticket: any) => {
+			if (statusFilter === 'resolved') return ticket.status === 'Resolved';
+			if (statusFilter === 'open') return ticket.status !== 'Resolved';
+			return true;
+		}) || [];
 
 	return (
 		<div className="space-y-6">
@@ -58,14 +59,11 @@ const AllTicketsPage: React.FC = () => {
 				<div className="flex items-center">
 					<div className="mr-4">Total: {totalTickets?.toLocaleString()} Tickets</div>
 					<div className="flex gap-2">
-						<Button variant="outline" size="md" className="border-border bg-secondary">
-							<Filter size={16} className="mr-2" />
-							Filter
-						</Button>
-						<Button size="md">
-							<Download size={16} className="mr-2" />
-							Download
-						</Button>
+						<select className="bg-secondary border border-border text-sm rounded px-3 py-1" value={statusFilter} onChange={e => setStatusFilter(e.target.value as 'all' | 'open' | 'resolved')}>
+							<option value="all">All</option>
+							<option value="open">Open</option>
+							<option value="resolved">Resolved</option>
+						</select>
 					</div>
 				</div>
 			</header>
@@ -75,10 +73,11 @@ const AllTicketsPage: React.FC = () => {
 					<LoadingBox size={62} />
 				</div>
 			)}
+
 			<div className="grid md:[grid-template-columns:repeat(auto-fill,minmax(350px,1fr))] gap-x-6 gap-y-5">
-				{tickets?.data?.map((ticket: { _id: string; complaintType: string; artistName: string; createdAt: string }, index: number) => (
+				{filteredTickets.map((ticket: any, index: number) => (
 					<article key={index} className="flex flex-col gap-2 bg-custom-gradient px-5 py-4 rounded-lg overflow-hidden">
-						<LinkButton size="thin" href={`/admin/support/tickets/${ticket._id}`} className="rounded-full self-end">
+						<LinkButton size="thin" href={`/admin/support/tickets/${ticket._id}?complaintId=${ticket.complaintId}`} className="rounded-full self-end">
 							View Ticket
 						</LinkButton>
 						<div className="p-4 space-y-4 divide-y">
@@ -98,52 +97,43 @@ const AllTicketsPage: React.FC = () => {
 								</div>
 								<div>
 									<p className="text-xs text-white/50">Date Submitted</p>
-									<p className="text-sm">{moment(ticket?.createdAt).format('DD  MMM, YYYY')}</p>
+									<p className="text-sm">{moment(ticket?.createdAt).format('DD MMM, YYYY')}</p>
 								</div>
-								{/* <div>
-									<p className="text-xs text-white/50">Priority</p>
-									<p className="text-sm">{ticket?.priority}</p>
-								</div> */}
+								<div>
+									<p className="text-xs text-white/50">Status</p>
+									<p className="text-sm">{ticket?.status}</p>
+								</div>
 								<div>
 									<p className="text-xs text-white/50">Ticket ID</p>
-									<p className="text-sm">{ticket?._id.substring(ticket?._id?.length - 8)}</p>
+									<p className="text-sm">{ticket?.complaintId}</p>
 								</div>
 							</div>
 						</div>
 					</article>
 				))}
 			</div>
+
 			{/* Pagination */}
 			<div className="flex justify-between items-center mt-4">
 				<div className="flex gap-2 items-center">
-					<Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handlePrevPage()}>
+					<Button variant="outline" size="icon" className="h-8 w-8" onClick={handlePrevPage}>
 						<ChevronLeft size={16} />
 					</Button>
 					<span className="text-xs">
 						{page}/ {tickets?.totalPages || 1}
 					</span>
-					<Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleNextPage()}>
+					<Button variant="outline" size="icon" className="h-8 w-8" onClick={handleNextPage}>
 						<ChevronRight size={16} />
 					</Button>
 				</div>
 				<div className="flex items-center gap-2">
 					<span className="text-sm text-white/50">Rows per page:</span>
-					<select className="bg-secondary border border-border rounded p-1 text-sm" onChange={handleLimitChange}>
-						<option value={'3'} defaultChecked={limit === 3}>
-							3
-						</option>
-						<option value={'5'} defaultChecked={limit === 5}>
-							5
-						</option>
-						<option value={'10'} defaultChecked={limit === 10}>
-							10
-						</option>
-						<option value={'50'} defaultChecked={limit === 50}>
-							50
-						</option>
-						<option value={'100'} defaultChecked={limit === 100}>
-							100
-						</option>
+					<select className="bg-secondary border border-border rounded p-1 text-sm" value={limit} onChange={handleLimitChange}>
+						<option value="3">3</option>
+						<option value="5">5</option>
+						<option value="10">10</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
 					</select>
 				</div>
 			</div>
