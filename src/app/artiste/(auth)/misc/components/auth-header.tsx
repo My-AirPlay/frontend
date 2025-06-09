@@ -41,8 +41,8 @@ const AuthHeader = () => {
 						<Button className="text-[0.9rem] text-white font-medium border border-custom-dot w-full max-w-[120px] grid place-items-center rounded-md" size="md" variant="outline">
 							Video Demo
 						</Button>
-						<LinkButton href={'/register'} className="text-[0.9rem] flex-1 text-white font-medium  rounded-md w-full max-w-[180px] grid place-items-center px-5" size="md">
-							Create an Acount
+						<LinkButton href={'/artiste/register'} className="text-[0.9rem] flex-1 text-white font-medium  rounded-md w-full max-w-[180px] grid place-items-center px-5" size="md">
+							Create an Account
 						</LinkButton>
 					</div>
 				</div>
@@ -73,8 +73,8 @@ const AuthHeader = () => {
 			</nav>
 
 			<div className="hidden lg:block">
-				<LinkButton href={'/register'} className="text-[0.9rem] flex-1 text-white font-medium  rounded-md w-full max-w-[180px] grid place-items-center px-5" size="md">
-					Create an Acount
+				<LinkButton href={'/artiste/register'} className="text-[0.9rem] flex-1 text-white font-medium  rounded-md w-full max-w-[180px] grid place-items-center px-5" size="md">
+					Create an Account
 				</LinkButton>
 			</div>
 			<Button className="bg-transparent hover:bg-transparent border  w-[31px] h-[31px] flex border-custom-icon-btn-border rounded  text-white lg:hidden  " onClick={() => setShowMenu(true)}>

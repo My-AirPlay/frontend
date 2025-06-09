@@ -19,11 +19,12 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import { useAdminAnalyzeCsv } from '../catalogue/api/postAdminAnalyzeCsv';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { currencySymbols, ReportItem } from '@/lib/types';
+import { currencySymbols, ReportItem, SharedRevenue } from '@/lib/types';
 import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
 import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/SendEmailsToArtistsTable';
+import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueShareForm';
 
-type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'send-emails';
+type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'add-revenue-share' | 'send-emails';
 
 interface DropdownOption {
 	id: string;
@@ -67,6 +68,11 @@ const Sales: React.FC = () => {
 					fromCurrency: 'USD',
 					toCurrency: 'NGN',
 					exchangeRate: '1610' // Default rate for the first pair
+				},
+				{
+					fromCurrency: 'EUR',
+					toCurrency: 'NGN',
+					exchangeRate: '2600' // Default rate for the second pair
 				}
 			]
 		}
@@ -112,6 +118,7 @@ const Sales: React.FC = () => {
 
 	const [csvUploaded, setCsvUploaded] = useState(false);
 	const [processingComplete, setProcessingComplete] = useState(false);
+	const [loadingComplete, setLoadingComplete] = useState(false);
 
 	const [processingSteps, setProcessingSteps] = useState({
 		uploadSuccessful: false,
@@ -155,6 +162,9 @@ const Sales: React.FC = () => {
 			setCurrentStep('match-artist');
 		} else if (currentStep === 'send-emails') {
 			setCurrentStep('artist-records');
+		} else if (currentStep === 'add-revenue-share') {
+			setCurrentStep('artist-records');
+			setSelectedUnmatchedArtist(null);
 		}
 	};
 
@@ -204,6 +214,14 @@ const Sales: React.FC = () => {
 							_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
 							createdAt: firstItem?.createdAt || new Date(),
 							updatedAt: firstItem?.updatedAt || new Date(),
+							sharedRevenue: [
+								{
+									artistId: firstItem?.artistId || null,
+									artistName: firstItem?.artistName || 'Unknown Artist',
+									activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
+									percentage: 100
+								}
+							],
 							__v: firstItem?.__v || 0
 						};
 					});
@@ -262,6 +280,7 @@ const Sales: React.FC = () => {
 			toast.info('No matched artists to publish.');
 			return;
 		}
+		setLoadingComplete(true);
 		publishCsv(
 			{ artists: matchedArtists },
 			{
@@ -269,12 +288,14 @@ const Sales: React.FC = () => {
 					// Use ApiResponse type for data
 					console.log('API Response:', data);
 					toast.success(data.message || 'Published successfully!');
+					setLoadingComplete(false);
 					//setMatchedArtists([]);
 					setCurrentStep('send-emails');
 				},
 				onError: (error: Error | AxiosError<ApiResponse> | null) => {
 					console.error('Error publishing matched artists:', error);
 					toast.error('An unexpected error occurred while publishing artists.');
+					setLoadingComplete(false);
 				}
 			}
 		);
@@ -309,6 +330,12 @@ const Sales: React.FC = () => {
 		setCurrentStep('match-artist');
 	};
 
+	const handleRevenueShare = (row: any) => {
+		setSelectedUnmatchedArtist(row._id);
+		setActivityPeriod(row.activityPeriod);
+		setCurrentStep('add-revenue-share');
+	};
+
 	const handleMatchArtist = (systemArtistId: string) => {
 		console.log('Matched with system artist ID:', systemArtistId);
 		setSystemArtistIdForMatch(systemArtistId);
@@ -331,6 +358,17 @@ const Sales: React.FC = () => {
 		setSelectedRows(selectedData);
 	}, []);
 
+	const handleOnSave = (value: SharedRevenue[]) => {
+		setCurrentStep('artist-records');
+		const newMatchedArtist = matchedArtists.find(artist => artist._id === selectedUnmatchedArtist);
+		if (newMatchedArtist) {
+			newMatchedArtist.sharedRevenue = value;
+		}
+
+		setSelectedUnmatchedArtist(null);
+		setSystemArtistIdForMatch(null);
+	};
+
 	const handleCloseSuccessModal = () => {
 		setShowSuccessModal(null);
 		setCurrentStep('artist-records');
@@ -345,7 +383,10 @@ const Sales: React.FC = () => {
 					...reportItemToMove,
 					artistId: systemArtistIdForMatch,
 					realName: 'Updated Name', // This should ideally come from the matched system artist
-					status: 'completed' as const
+					status: 'completed' as const,
+					shareRevenue: {
+						artistId: systemArtistIdForMatch
+					}
 				};
 
 				setMatchedArtists(currentMatched => [...currentMatched, newMatchedArtistData]);
@@ -409,7 +450,7 @@ const Sales: React.FC = () => {
 
 													{/* Add/Remove Buttons */}
 													<div className="flex justify-end gap-2 mt-4">
-														{fields.length > 1 && (
+														{fields.length > 3 && (
 															<Button variant="destructive" size="sm" onClick={() => removeCurrencyPair(index)}>
 																Remove
 															</Button>
@@ -517,7 +558,7 @@ const Sales: React.FC = () => {
 					<div className="space-y-6">
 						<h2 className="text-xl font-semibold mb-4">Artists Records</h2>
 
-						<MatchedArtistsTable artists={matchedArtists} />
+						<MatchedArtistsTable artists={matchedArtists} onArtistRevenueClick={handleRevenueShare} />
 
 						<UnmatchedArtistsTable artists={unmatchedArtists} onArtistMatch={handleArtistMatch} />
 					</div>
@@ -534,6 +575,8 @@ const Sales: React.FC = () => {
 
 				{currentStep === 'create-artist' && <CreateArtistForm onSave={handleSaveArtist} />}
 
+				{currentStep === 'add-revenue-share' && <RevenueShareForm matchedArtistName={matchedArtists.find(a => a._id === selectedUnmatchedArtist)} matchedReports={matchedArtists} onSave={handleOnSave} />}
+
 				{(currentStep === 'csv-upload' || currentStep === 'processing' || currentStep === 'artist-records') && (
 					<div className="flex justify-between mt-8">
 						<Button variant="outline" className="bg-background border-border text-foreground" onClick={navigateToPreviousStep}>
@@ -541,7 +584,7 @@ const Sales: React.FC = () => {
 						</Button>
 
 						{currentStep === 'artist-records' && unmatchedArtists.length === 0 && (
-							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={publishArtists}>
+							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={publishArtists} isLoading={loadingComplete}>
 								Publish Matched Artists
 							</Button>
 						)}

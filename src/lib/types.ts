@@ -232,12 +232,20 @@ export interface ReportItem {
 	_id: string;
 	userId?: string | null; // Made optional to handle cases where it might be missing
 	artistId: string | null;
+	sharedRevenue: SharedRevenue[] | [];
 	artistName: string;
 	activityPeriod: string; // e.g., "September 2023"
 	fullReports: FullReport[];
 	createdAt: string | Date; // ISO Date String
 	updatedAt: string | Date; // ISO Date String
 	__v?: number; // MongoDB version key (Made optional)
+}
+
+export interface SharedRevenue {
+	artistId: string | null;
+	artistName: string | null;
+	percentage: number;
+	activityPeriod?: string;
 }
 
 // Represents the entire structure of the placeholderParseData object

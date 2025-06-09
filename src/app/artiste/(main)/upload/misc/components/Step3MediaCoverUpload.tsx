@@ -175,7 +175,7 @@ const Step3MediaCoverUpload = () => {
 					<input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange} accept=".jpg,.jpeg,.png" id="track-cover-upload-input" />
 
 					<div className="mb-6 text-left">
-						<h3 className="text-base font-semibold mb-4">Track upload requirements</h3>
+						<h3 className="text-base font-semibold mb-4">Thumbnail upload requirements</h3>
 						<ul className="list-disc pl-6 space-y-2 text-[0.9rem] text-white/70 text-left">
 							<li>File format: JPG, PNG, JPEG</li>
 							<li>Size: at least 3000×3000 pixels</li>
@@ -183,7 +183,7 @@ const Step3MediaCoverUpload = () => {
 							<li>Color mode: Best quality RGB (including black and white images)</li>
 							<li>Resolution: 72 dpi</li>
 							<li>No logos, URLs, release dates, or advertisements.</li>
-							<li> Artwork must not contain barcodes or social media handles.</li>
+							<li>Thumbnail must not contain barcodes or social media handles.</li>
 						</ul>
 					</div>
 

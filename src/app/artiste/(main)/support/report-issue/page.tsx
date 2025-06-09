@@ -4,19 +4,20 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { ArrowRight, Upload } from 'lucide-react';
 import { toast } from 'sonner';
-
 import { zodResolver } from '@hookform/resolvers/zod';
+
 import { Textarea, Button, Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 import { SelectSimple } from '@/components/ui';
-
-import { useReportIssue } from '../misc/api';
 import { SmallSpinner } from '@/components/icons';
+import { useState } from 'react';
+import { useReportIssue } from '@/app/artiste/(main)/support/misc/api';
+import Image from 'next/image';
 
 const formSchema = z.object({
-	complaintType: z.string().min(1, 'Please select a complaintType'),
+	complaintType: z.string().min(1, 'Please select a complaint type'),
 	complain: z.string().min(1, 'Please enter your complaint'),
-	attachment: z.instanceof(File).optional().nullable()
+	attachments: z.instanceof(File).optional().nullable()
 });
 
 export type ArtistReportIssueFormValues = z.infer<typeof formSchema>;
@@ -29,23 +30,49 @@ export default function ReportIssuePage() {
 		defaultValues: {
 			complaintType: '',
 			complain: '',
-			attachment: null
+			attachments: null
 		}
 	});
 
-	const { mutate: createComplaint, isPending: isCreatingComplaint } = useReportIssue();
-	const onSubmit = (data: ArtistReportIssueFormValues) => {
+	const file = form.watch('attachments');
+
+	const getPreview = () => {
+		if (!file) return null;
+		const url = URL.createObjectURL(file);
+
+		if (file.type.startsWith('image/')) {
+			return <Image src={url} alt="Preview" className="mt-4 max-w-xs rounded" />;
+		}
+
+		if (file.type === 'video/mp4') {
+			return (
+				<video controls className="mt-4 max-w-xs rounded">
+					<source src={url} type="video/mp4" />
+					Your browser does not support the video tag.
+				</video>
+			);
+		}
+
+		return null;
+	};
+
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const { mutate: createComplaint } = useReportIssue();
+	const onSubmit = async (data: ArtistReportIssueFormValues) => {
+		setIsSubmitting(true);
 		createComplaint(data, {
 			onSuccess: () => {
 				toast.success('Your complaint has been submitted successfully.');
 				form.reset();
+				setIsSubmitting(false);
 			},
 			onError: error => {
 				toast.error('An error occurred while submitting your complaint.');
 				console.error(error);
+				setIsSubmitting(false);
+				form.reset();
 			}
 		});
-		console.log(data);
 	};
 
 	return (
@@ -60,7 +87,7 @@ export default function ReportIssuePage() {
 						name="complaintType"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel className="block mb-2 text-sm font-medium">Complaint Type</FormLabel>
+								<FormLabel>Complaint Type</FormLabel>
 								<FormControl>
 									<SelectSimple options={formattedData?.ComplaintType} value={field.value} valueKey="value" labelKey="label" onChange={field.onChange} placeholder="Select complaint type" isLoadingOptions={isLoading} hasError={!!form.formState.errors.complaintType} errormessage={form.formState.errors.complaintType?.message} />
 								</FormControl>
@@ -73,7 +100,7 @@ export default function ReportIssuePage() {
 						name="complain"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel className="block mb-2 text-sm font-medium">What is your complaint?</FormLabel>
+								<FormLabel>What is your complaint?</FormLabel>
 								<FormControl>
 									<Textarea placeholder="Share a reply" className="w-full bg-secondary border-gray-700 text-white min-h-[150px]" {...field} hasError={!!form.formState.errors.complain} errormessage={form.formState.errors.complain?.message} />
 								</FormControl>
@@ -83,30 +110,41 @@ export default function ReportIssuePage() {
 
 					<FormField
 						control={form.control}
-						name="attachment"
+						name="attachments"
 						render={({ field: { onChange } }) => (
 							<FormItem>
-								<FormLabel className="block mb-2 text-sm font-medium">Share a attachment (Optional)</FormLabel>
+								<FormLabel>Share an attachment (Optional)</FormLabel>
 								<FormControl>
 									<div className="border border-dashed border-[#FF6B00] rounded-md p-8 text-center">
 										<div className="flex flex-col items-center justify-center">
 											<Upload className="h-10 w-10 text-gray-500 mb-2" />
 											<p className="text-sm text-gray-400 mb-1">
-												Drag & drop files or <span className="text-[#FF6B00]">Browse</span>
+												Drag & drop file or{' '}
+												<label htmlFor="attachment-upload" className="text-[#FF6B00] cursor-pointer">
+													Browse
+												</label>
 											</p>
 											<p className="text-xs text-gray-500">Supported formats: JPEG, PNG, GIF, MP4</p>
 										</div>
+
 										<input
 											type="file"
 											className="hidden"
 											id="attachment-upload"
 											accept="image/jpeg,image/png,image/gif,video/mp4"
 											onChange={e => {
-												if (e.target.files && e.target.files[0]) {
+												if (e.target.files?.[0]) {
 													onChange(e.target.files[0]);
 												}
 											}}
 										/>
+
+										{file && (
+											<div className="mt-4 text-left text-sm text-gray-700">
+												<p className="font-medium">Selected file: {file.name}</p>
+												{getPreview()}
+											</div>
+										)}
 									</div>
 								</FormControl>
 							</FormItem>
@@ -114,10 +152,10 @@ export default function ReportIssuePage() {
 					/>
 
 					<div className="flex justify-center">
-						<Button type="submit" className=" text-white px-10">
+						<Button type="submit" className="text-white px-10" disabled={isSubmitting}>
 							Submit
 							<ArrowRight className="ml-2" />
-							{isCreatingComplaint && <SmallSpinner />}
+							{isSubmitting && <SmallSpinner />}
 						</Button>
 					</div>
 				</form>

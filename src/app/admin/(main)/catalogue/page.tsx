@@ -28,6 +28,7 @@ const Catalogue: React.FC = () => {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 	const rawTab = useSearchParams().get('tab');
+	const [downloadProgress, setDownloadProgress] = useState<number>(0);
 
 	const initialTab: TabKey = rawTab === 'releases' || rawTab === 'tracks' || rawTab === 'videos' ? rawTab : 'tracks';
 
@@ -72,6 +73,7 @@ const Catalogue: React.FC = () => {
 		}
 
 		setIsBulkDownloading(true);
+		setDownloadProgress(5);
 		toast.info('Preparing files for download…');
 
 		try {
@@ -96,28 +98,21 @@ const Catalogue: React.FC = () => {
 				}
 			};
 
-			// ———————————————
 			// Determine which rows to process:
-			// If any selectedRows have row.fileIds, we expand those IDs
-			// and lookup each in tracks.data; otherwise just use selectedRows.
-			// (Assuming you have access to `tracks.data` in this scope.)
-			// ———————————————
 			let rowsToProcess: typeof selectedRows = selectedRows;
 
 			const hasFileIds = selectedRows.some(row => Array.isArray((row as any).fileIds));
 			if (hasFileIds) {
-				// flatten all fileIds
 				const allIds = (selectedRows as any[]).flatMap(r => r.fileIds as string[]);
-
-				// lookup each id in tracks.data
 				rowsToProcess = allIds.map(id => tracks.data.find((t: any) => t._id === id)).filter((t): t is typeof t => Boolean(t));
 			}
-			// ———————————————
 
 			// now fetch media + cover for each row in rowsToProcess
 			const rowPromises = rowsToProcess.map(async (row, idx) => {
 				const folderName = `${row.artistName} - ${row.title} (${idx + 1})`;
 				const folder = zip.folder(folderName)!;
+
+				setDownloadProgress(prev => Math.min(prev + Math.floor(90 / rowsToProcess.length), 95));
 
 				if (typeof row.mediaUrl === 'string') {
 					await fetchAndAddToFolder(row.mediaUrl, folder);
@@ -125,9 +120,13 @@ const Catalogue: React.FC = () => {
 				if (typeof row.mediaCoverArtUrl === 'string') {
 					await fetchAndAddToFolder(row.mediaCoverArtUrl, folder);
 				}
+
+				folder.file('tracks.json', JSON.stringify(row, null, 2));
+				filesAdded++; // counting this file too, since it's added
 			});
 
 			await Promise.all(rowPromises);
+			setDownloadProgress(98);
 
 			if (filesAdded === 0) {
 				toast.error('Failed to fetch any files. Cannot create zip.');
@@ -143,12 +142,14 @@ const Catalogue: React.FC = () => {
 				compression: 'DEFLATE',
 				compressionOptions: { level: 6 }
 			});
+			setDownloadProgress(100);
 			saveAs(blob, `airplay-download-${Date.now()}.zip`);
 			toast.success(`Download started with ${filesAdded} files.`);
 		} catch (err) {
 			console.error('Bulk download error:', err);
 			toast.error('Unexpected error during bulk download.');
 		} finally {
+			setTimeout(() => setDownloadProgress(0), 1500);
 			setIsBulkDownloading(false);
 		}
 	};
@@ -343,6 +344,11 @@ const Catalogue: React.FC = () => {
 					</Button>
 				</div>
 			</div>
+			{downloadProgress > 0 && (
+				<div className="h-1 w-full bg-muted rounded overflow-hidden">
+					<div className="h-full bg-primary transition-all duration-500" style={{ width: `${downloadProgress}%` }} />
+				</div>
+			)}
 
 			<Tabs
 				defaultValue="releases"

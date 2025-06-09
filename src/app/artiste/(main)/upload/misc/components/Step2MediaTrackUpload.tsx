@@ -150,7 +150,7 @@ export default function Step2MediaTrackUpload() {
 							</li>
 							{isAudio && <li>Audio quality: 44.1kHz or greater, 16-bit stereo or 24-bit stereo</li>}
 							{!isAudio && <li>Video mode: Best quality</li>}
-							<li>File size: File size cannot be greater than 35 MB</li>
+							<li>File size: File size cannot be greater than 500 MB</li>
 						</ul>
 					</div>
 

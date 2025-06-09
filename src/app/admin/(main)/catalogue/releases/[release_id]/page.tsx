@@ -178,7 +178,7 @@ const ReleaseDetails: React.FC = () => {
 
 	return (
 		<div className="space-y-6">
-			<PreviousPageButton />
+			<PreviousPageButton target={'/admin/catalogue?page=1&limit=20&sortBy=title&sortOrder=desc&tab=releases'} />
 
 			{/* Header Section */}
 			<div className="flex flex-col md:flex-row justify-between md:items-center gap-4">

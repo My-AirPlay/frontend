@@ -33,7 +33,7 @@ export const urls = {
 	forgotPassword: '/forgot-password',
 
 	login: '/login',
-	register: '/register',
+	register: '/artiste/register',
 	dashboard: '/artiste/dashboard',
 	uploadMusic: '/upload',
 	uploadAlbum: '/upload/album',

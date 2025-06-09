@@ -1,12 +1,12 @@
 'use client';
-
-import React from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { useParams } from 'next/navigation';
-import { Button, LinkButton } from '@/components/ui';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect, useState } from 'react';
+import { ArrowLeft, Send } from 'lucide-react';
+import { useParams, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui';
 import Link from 'next/link';
 import { useUpdateComplaintStatus } from '../../api/patchComplaintStatus';
-import { useGetSingleComplaint } from '../../api/getSingleComplaint';
+import { useGetAllComplaintById, useGetSingleComplaint, useReportIssue } from '../../api/getSingleComplaint';
 import moment from 'moment';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -14,178 +14,170 @@ import { LoadingBox } from '@/components/ui/LoadingBox';
 
 const TicketDetails: React.FC = () => {
 	const { ticket_id } = useParams<{ ticket_id: string }>();
+	const searchParams = useSearchParams();
+	const complaintId = searchParams.get('complaintId') || '';
+
+	const [newMessage, setNewMessage] = useState('');
+	const [messageList, setMessageList] = useState<any[]>([]); // Local state for messages
 
 	const { data: ticket, isPending: isPendingTicket, refetch: refetchTicket } = useGetSingleComplaint({ complaintId: ticket_id });
+
+	const { data: messages, refetch: refetchMessages } = useGetAllComplaintById({ complaintId });
+
 	const { mutate, isPending } = useUpdateComplaintStatus();
+	const { mutate: createComplaint, isPending: isCreatingComplaint } = useReportIssue();
+
+	// Sync message list from API
+	useEffect(() => {
+		if (messages?.messages) {
+			setMessageList(messages.messages);
+		}
+	}, [messages]);
+
+	const sendMessage = () => {
+		if (!newMessage.trim()) return;
+
+		// Append locally for instant UI feedback (optional)
+		const newMsg = {
+			id: Date.now(), // temp ID
+			content: newMessage.trim(),
+			sender: 'admin',
+			time: moment().format('HH:mm A')
+		};
+		setMessageList(prev => [...prev, newMsg]);
+
+		createComplaint(
+			{
+				complaintType: ticket?.complain?.complaintType,
+				complaintId: ticket?.complain?.complaintId,
+				status: 'Pending',
+				complain: newMessage.trim()
+			},
+			{
+				onSuccess: () => {
+					refetchMessages(); // Refresh from API
+				},
+				onError: () => {
+					toast.error('Failed to send message');
+				}
+			}
+		);
+
+		setNewMessage('');
+	};
 
 	return (
-		<div className="bg-custom-gradient rounded-lg text-white min-h-[70vh]">
-			<div className=" mx-auto px-6 py-4">
+		<div className="bg-custom-gradient rounded-lg text-white min-h-[70vh] flex flex-col justify-between">
+			<div className="mx-auto px-6 py-4 w-full">
 				<div className="flex items-center mb-6">
 					<Link href="/admin/support/tickets" className="flex items-center text-white">
 						<ArrowLeft size={20} className="mr-2" />
-						All Ticket
+						All Tickets
 					</Link>
 				</div>
 
 				{isPendingTicket ? (
-					<div className="w-full px-6 py-4 flex justify-center items-center  min-h-[50vh]">
+					<div className="w-full px-6 py-4 flex justify-center items-center min-h-[50vh]">
 						<LoadingBox size={62} />
 					</div>
 				) : (
 					<>
-						<div className=" rounded-lg p-6 mb-6">
-							<div className="grid md:grid-cols-2 lg:grid-cols-3 max-w-2xl gap-x-6 gap-y-4 ">
-								<div>
-									<p className="text-[#D8D8D8] text-sm mb-1">User</p>
-									<p className="font-medium">{ticket?.artistName || '-'}</p>
-								</div>
-								<div>
-									<p className="text-[#D8D8D8] text-sm mb-1">Email Address</p>
-									<p className="font-medium">{ticket?.email || '-'}</p>
-								</div>
-								<div>
-									<p className="text-[#D8D8D8] text-sm mb-1">Subject Title</p>
-									<p className="font-medium">{ticket?.complain?.complaintType || '-'}</p>
-								</div>
-								<div>
-									<p className="text-[#D8D8D8] text-sm mb-1">Date Submitted</p>
-
-									<p className="font-medium">{moment(ticket?.dateSubmitted).format('DD  MMM, YYYY')}</p>
-								</div>
-								<div>
-									<p className="text-[#D8D8D8] text-sm mb-1">Status</p>
-									<p className="font-medium">{ticket?.complain?.status || '-'}</p>
-								</div>
-								<div>
-									<p className="text-[#D8D8D8] text-sm mb-1">Ticket ID</p>
-									<p className="font-medium">{ticket?.complain?._id?.substring(ticket?.complain?._id?.length - 8) || '-'}</p>
-								</div>
+						{/* Ticket Info */}
+						<div className="rounded-lg p-6 mb-6 mr-10">
+							<div className="grid md:grid-cols-2 gap-4 max-w-2xl">
+								{[
+									{ label: 'User', value: ticket?.artistName },
+									{ label: 'Email Address', value: ticket?.email },
+									{
+										label: 'Subject Title',
+										value: ticket?.complain?.complaintType
+									},
+									{
+										label: 'Date Submitted',
+										value: moment(ticket?.dateSubmitted).format('DD MMM, YYYY')
+									},
+									{ label: 'Status', value: ticket?.complain?.status },
+									{
+										label: 'Ticket ID',
+										value: ticket?.complain?.complaintId
+									}
+								].map(({ label, value }) => (
+									<div key={label}>
+										<p className="text-[#D8D8D8] text-sm mb-1">{label}</p>
+										<p className="font-medium">{value || '-'}</p>
+									</div>
+								))}
 							</div>
 						</div>
 
-						<div className="bg-background rounded-lg p-6 mb-8">
-							<h3 className="text-white mb-4">Ticket Issue</h3>
-							<p className="text-gray-300 mb-6 text-sm">{ticket?.complain?.complain || '-'}</p>
+						{/* Chat UI */}
+						<div className="bg-background rounded-lg p-6 mb-4 flex flex-col gap-4">
+							<h3 className="text-white mb-2">Ticket Conversation</h3>
 
-							{isPendingTicket ? (
-								<div className="border border-dashed border-primary p-6 flex justify-center items-center w-24 h-24">
-									<div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#D8D8D8]"></div>
-								</div>
-							) : (
-								ticket?.complain?.attachment && <Image src={ticket?.complain?.attachment} className="w-full aspect-video" width={1000} height={1000} alt="ticket img" />
-							)}
+							<div className="p-4 space-y-4 min-h-[400px] max-h-[500px] overflow-y-auto bg-muted/10 rounded-md">
+								{messageList.map(msg => (
+									<div key={msg.id} className={`flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}>
+										<div className={`max-w-[70%] w-[70%] p-3 rounded-lg ${msg.sender === 'admin' ? 'bg-primary text-white' : 'bg-white text-black'}`}>
+											<p className="text-sm">{msg.content}</p>
+											{msg.time && <p className="text-xs text-right mt-1 text-white/60">{msg.time}</p>}
+										</div>
+									</div>
+								))}
+							</div>
+
+							{/* Attachment (if any) */}
+							{ticket?.complain?.attachment && <Image src={ticket.complain.attachment} className="rounded-md mt-4 w-full aspect-video" width={1000} height={600} alt="ticket attachment" />}
 						</div>
 
-						<div className="flex flex-col gap-7 items-center justify-center mb-6">
+						{/* Message Input */}
+						<div className="flex items-center gap-4 px-4 py-2 bg-background rounded-lg">
+							<input value={newMessage} onChange={e => setNewMessage(e.target.value)} className="flex-grow p-2 rounded-md text-black text-sm" placeholder="Type your message..." />
+							<Button size="icon" onClick={sendMessage} disabled={isPending || isCreatingComplaint}>
+								<Send size={16} />
+							</Button>
+						</div>
+
+						{/* Status Actions */}
+						<div className="flex flex-col gap-4 items-center justify-center mt-6 mb-4">
 							{ticket?.complain?.status === 'Resolved' ? (
 								<Button
 									variant="outline"
-									size="md"
 									disabled={isPending}
 									onClick={() =>
 										mutate(
-											{
-												complaintId: ticket_id,
-												status: 'Deferred'
-											},
+											{ complaintId: ticket_id, status: 'Deferred' },
 											{
 												onSuccess: () => {
 													toast.success('Ticket has been deferred');
 													refetchTicket();
 												},
-												onError: error => {
-													toast.error(error.message || 'Failed to update ticket');
-												}
+												onError: error => toast.error(error.message || 'Failed to update ticket')
 											}
 										)
 									}
 								>
-									{isPending ? 'Loading...' : 'This ticket is deferred.'}
+									{isPending ? 'Loading...' : 'Mark as Deferred'}
 								</Button>
-							) : ticket?.complain?.status === 'Deferred' ? (
+							) : (
 								<Button
-									size="md"
+									variant="destructive"
 									disabled={isPending}
 									onClick={() =>
 										mutate(
-											{
-												complaintId: ticket_id,
-												status: 'Resolved'
-											},
+											{ complaintId: ticket_id, status: 'Resolved' },
 											{
 												onSuccess: () => {
-													toast.success('Ticket has been resolved');
+													toast.success('Ticket has been closed');
 													refetchTicket();
 												},
-												onError: error => {
-													toast.error(error.message || 'Failed to update ticket');
-												}
+												onError: error => toast.error(error.message || 'Failed to update ticket')
 											}
 										)
 									}
 								>
-									{isPending ? 'Loading...' : 'This ticket has been solved.'}
+									{isPending ? 'Closing...' : 'Close Ticket'}
 								</Button>
-							) : ticket?.complain?.status === 'Pending' ? (
-								<>
-									<Button
-										size="md"
-										disabled={isPending}
-										onClick={() =>
-											mutate(
-												{
-													complaintId: ticket_id,
-													status: 'Resolved'
-												},
-												{
-													onSuccess: () => {
-														toast.success('Ticket has been resolved');
-														refetchTicket();
-													},
-													onError: error => {
-														toast.error(error.message || 'Failed to update ticket');
-													}
-												}
-											)
-										}
-									>
-										{isPending ? 'Loading...' : 'This ticket has been solved.'}
-									</Button>
-
-									<Button
-										variant="outline"
-										size="md"
-										disabled={isPending}
-										onClick={() =>
-											mutate(
-												{
-													complaintId: ticket_id,
-													status: 'Deferred'
-												},
-												{
-													onSuccess: () => {
-														toast.success('Ticket has been deferred');
-														refetchTicket();
-													},
-													onError: error => {
-														toast.error(error.message || 'Failed to update ticket');
-													}
-												}
-											)
-										}
-									>
-										{isPending ? 'Loading...' : 'This ticket is deferred.'}
-									</Button>
-								</>
-							) : (
-								''
 							)}
-
-							<LinkButton href={`mailto:${ticket?.email}`} size="lg" className="rounded-full">
-								Add Response
-								<ArrowRight size={16} />
-							</LinkButton>
 						</div>
 					</>
 				)}
@@ -193,5 +185,4 @@ const TicketDetails: React.FC = () => {
 		</div>
 	);
 };
-
 export default TicketDetails;

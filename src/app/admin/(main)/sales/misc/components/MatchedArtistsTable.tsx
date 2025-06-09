@@ -5,9 +5,10 @@ import { ReportItem } from '@/lib/types'; // Changed Artist to ReportItem
 
 interface MatchedArtistsTableProps {
 	artists: ReportItem[]; // Changed Artist[] to ReportItem[]
+	onArtistRevenueClick: (row: ReportItem) => void;
 }
 
-const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) => {
+const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists, onArtistRevenueClick }) => {
 	console.log('artists prop', artists);
 
 	const getRoyalty = (row: any): string => {
@@ -99,7 +100,7 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists }) =>
 	return (
 		<div className="space-y-6">
 			<h3 className="text-lg font-medium">Matched Artists</h3>
-			<DataTable data={artists} columns={columns} pagination={false} defaultRowsPerPage={50} />
+			<DataTable data={artists} columns={columns} pagination={false} defaultRowsPerPage={50} onRowClick={row => onArtistRevenueClick(row)} />
 		</div>
 	);
 };
