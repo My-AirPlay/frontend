@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import * as React from 'react';
@@ -107,38 +108,79 @@ export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading,
 	}, [rowSelection, onRowSelectionChange, table]);
 
 	return (
-		<div className="space-y-4 ">
-			<div className={cn('print:hidden overflow-hidden rounded-full opacity-0 transition-opacity', isFetching && !isLoading && 'opacity-100')}>
-				<div className="bg-primary/20 h-1 w-full overflow-hidden">
-					<div className="h-full w-full origin-[0_50%] animate-indeterminate-progress rounded-full bg-primary"></div>
-				</div>
+		<div className={cn(' bg-zinc-900 p-4 sm:p-6 md:p-8 lg:p-10 text-zinc-100', className)}>
+			{/* Indeterminate Loading Bar */}
+			<div className={cn('print:hidden h-1 w-full overflow-hidden rounded-full transition-opacity duration-300 ease-in-out', isFetching && !isLoading ? 'opacity-100' : 'opacity-0')}>
+				<div className="h-full w-full origin-[0_50%] animate-indeterminate-progress rounded-full bg-primary-500"></div>
 			</div>
-			{filterComponent && <div className="flex justify-end mb-4">{filterComponent}</div>}
 
-			<div className={cn('rounded-xl overflow-hidden bg-custom-gradient', className)}>
+			{/* Filter Component */}
+			{filterComponent && <div className="flex justify-end mb-6 mt-4">{filterComponent}</div>}
+
+			{/* Table Container */}
+			<div className={cn('rounded-xl overflow-hidden border border-zinc-700 shadow-xl bg-zinc-800')}>
 				<Table>
-					<TableHeader className="pb-3">
-						{table.getHeaderGroups().map(headerGroup => (
-							<TableRow key={headerGroup.id} className="border-border">
-								{headerGroup.headers.map(header => (
-									<TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
-								))}
-							</TableRow>
-						))}
+					<TableHeader className="bg-zinc-700">
+						{' '}
+						{/* Darker header background */}
+						{table.getHeaderGroups().map(
+							(
+								headerGroup: any // Cast to any for mock compatibility
+							) => (
+								<TableRow key={headerGroup.id} className="border-b border-zinc-600">
+									{' '}
+									{/* Lighter border for header */}
+									{headerGroup.headers.map(
+										(
+											header: any // Cast to any for mock compatibility
+										) => (
+											<TableHead key={header.id} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-300">
+												{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+											</TableHead>
+										)
+									)}
+								</TableRow>
+							)
+						)}
 					</TableHeader>
 					<TableBody>
 						{table?.getRowModel()?.rows?.length ? (
-							table?.getRowModel()?.rows?.map(row => (
-								<TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className="cursor-pointer" onClick={() => onRowClick && onRowClick(row.original)}>
-									{row.getVisibleCells().map(cell => (
-										<TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-									))}
-								</TableRow>
-							))
+							table?.getRowModel()?.rows?.map(
+								(
+									row: any // Cast to any for mock compatibility
+								) => (
+									<TableRow
+										key={row.id}
+										data-state={row.getIsSelected() && 'selected'}
+										className="cursor-pointer border-b border-zinc-800 last:border-b-0 hover:bg-zinc-700 transition-colors duration-150 ease-in-out" // Lighter hover
+										onClick={() => onRowClick && onRowClick(row.original)}
+									>
+										{row.getVisibleCells().map(
+											(
+												cell: any // Cast to any for mock compatibility
+											) => (
+												<TableCell key={cell.id} className="px-4 py-3 text-sm text-zinc-100">
+													{flexRender(cell.column.columnDef.cell, cell.getContext())}
+												</TableCell>
+											)
+										)}
+									</TableRow>
+								)
+							)
 						) : (
 							<TableRow>
-								<TableCell colSpan={tableColumns.length} className="text-center p-4">
-									No data available
+								<TableCell colSpan={tableColumns.length} className="text-center p-6 text-zinc-400">
+									{isLoading ? (
+										<span className="flex items-center justify-center">
+											<svg className="animate-spin h-5 w-5 text-primary-400 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+												<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+												<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+											</svg>
+											Loading data...
+										</span>
+									) : (
+										'No data available'
+									)}
 								</TableCell>
 							</TableRow>
 						)}
@@ -160,16 +202,17 @@ export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading,
 							</button>
 						</div>
 
+						{/* Rows per page selector */}
 						<div className="flex items-center space-x-2">
-							<span className="text-sm text-foreground">Rows per page</span>
+							<span className="text-sm text-zinc-300">Rows per page:</span>
 							<select
-								className="bg-accent text-foreground rounded-md border border-border px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+								className="bg-zinc-600 text-zinc-200 rounded-md border border-zinc-500 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 cursor-pointer"
 								value={table.getState().pagination.pageSize}
 								onChange={e => {
 									table.setPageSize(Number(e.target.value));
 								}}
 							>
-								{rowsPerPageOptions.map(pageSize => (
+								{rowsPerPageOptions?.map(pageSize => (
 									<option key={pageSize} value={pageSize}>
 										{pageSize}
 									</option>
@@ -179,6 +222,37 @@ export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading,
 					</div>
 				)}
 			</div>
+
+			{/* Custom scrollbar styling */}
+			<style>
+				{`
+        .scrollbar-thin {
+          scrollbar-width: thin;
+          scrollbar-color: #525252 #3f3f46; /* thumb track (zinc-600 zinc-700) */
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background-color: #525252; /* zinc-600 */
+          border-radius: 10px;
+          border: 2px solid #3f3f46; /* zinc-700 for track background */
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background-color: #3f3f46; /* zinc-700 */
+        }
+
+        @keyframes indeterminate-progress {
+            0% { transform: translateX(-100%) scaleX(0); }
+            40% { transform: translateX(0%) scaleX(0.4); }
+            100% { transform: translateX(100%) scaleX(0.5); }
+        }
+        .animate-indeterminate-progress {
+            animation: indeterminate-progress 1.5s infinite ease-in-out;
+        }
+        `}
+			</style>
 		</div>
 	);
 }

@@ -1,19 +1,69 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useState, useEffect } from 'react'; // Added useEffect
-import { Filter, ArrowUp, ArrowDown } from 'lucide-react'; // Removed Search, Added ArrowUp, ArrowDown
+import { Filter, ArrowUp, ArrowDown, Coins } from 'lucide-react'; // Removed Search, Added ArrowUp, ArrowDown
 import Link from 'next/link';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation'; // Added hooks
-// import moment from 'moment'; // Keep moment commented out for now unless needed for date formatting/sorting
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable, Input, PreviousPageButton } from '@/components/ui'; // Added Input, PreviousPageButton
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'; // Added DropdownMenu components
-import { AccountCoins } from './misc/icons';
 import { useGetAllArtists } from '../catalogue/api/getAllArtistsParams';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useGetFullAnalysis } from '../dashboard/api/getFullAnalysis';
+
+const NairaSign = ({ size, className }: any) => <Coins className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />;
+
+// Another Wallet SVG (e.g., from Lucide's WalletMinimal)
+const Wallet2 = ({ size, className }: any) => (
+	<svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+		<rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+		<path d="M3 9h18" />
+		<path d="M16 16h2" />
+	</svg>
+);
+
+interface RevenueSummaryCardProps {
+	grossRevenue: string | number;
+	netRevenue: string | number;
+}
+
+const RevenueSummaryCard: React.FC<RevenueSummaryCardProps> = ({ grossRevenue, netRevenue }) => {
+	return (
+		<div className="p-6 bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-xl shadow-2xl border border-zinc-700 text-zinc-100 transform hover:scale-[1.01] transition-all duration-300 ease-in-out">
+			<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+				{/* Gross Revenue Card */}
+				<div className="flex items-center space-x-4 p-4 bg-zinc-700 rounded-lg shadow-inner border border-zinc-600 transition-all duration-200 hover:bg-zinc-600">
+					<div className="flex-shrink-0 p-3 bg-primary-600 rounded-full shadow-lg text-white">
+						<NairaSign size={24} className="text-white" /> {/* Naira Icon for Gross Revenue */}
+					</div>
+					<div>
+						<p className="text-sm font-medium text-zinc-300">Gross Revenue</p>
+						<h3 className="text-2xl font-bold text-white mt-1">
+							{typeof grossRevenue === 'number' ? grossRevenue.toLocaleString() : grossRevenue} {/* Display Naira sign */}
+						</h3>
+					</div>
+				</div>
+
+				{/* Net Revenue Card */}
+				<div className="flex items-center space-x-4 p-4 bg-zinc-700 rounded-lg shadow-inner border border-zinc-600 transition-all duration-200 hover:bg-zinc-600">
+					<div className="flex-shrink-0 p-3 bg-primary-600 rounded-full shadow-lg text-white">
+						{' '}
+						{/* Changed to bg-primary-600 */}
+						<Wallet2 size={24} className="text-white" /> {/* Different Wallet Icon for Net Revenue */}
+					</div>
+					<div>
+						<p className="text-sm font-medium text-zinc-300">Net Revenue</p>
+						<h3 className="text-2xl font-bold text-white mt-1">
+							{typeof netRevenue === 'number' ? netRevenue.toLocaleString() : netRevenue} {/* Display Naira sign */}
+						</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
 
 const ArtistRevenue: React.FC = () => {
 	// Keep React.FC for clarity, TS error likely needs fixing elsewhere or is transient
@@ -155,22 +205,7 @@ const ArtistRevenue: React.FC = () => {
 			{/* Added PreviousPageButton */}
 			<PreviousPageButton />
 			{/* Revenue Summary Box - Kept as is */}
-			<div className="justify-between bg-secondary rounded-lg p-4 flex gap-4 items-center">
-				<div className="flex gap-4">
-					<AccountCoins className="size-12" />
-					<div>
-						<p className="text-sm">Gross Revenue</p>
-						<h3 className="text-2xl font-bold">{grossRevenue}</h3>
-					</div>
-				</div>
-				<div className="flex gap-4">
-					<AccountCoins className="size-12" />
-					<div>
-						<p className="text-sm">Net Revenue</p>
-						<h3 className="text-2xl font-bold">{totalRevenue}</h3>
-					</div>
-				</div>
-			</div>
+			<RevenueSummaryCard grossRevenue={grossRevenue} netRevenue={totalRevenue} />
 			{/* Main Content Area */}
 			<div>
 				{/* Header and Controls */}

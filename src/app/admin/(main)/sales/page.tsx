@@ -343,6 +343,7 @@ const Sales: React.FC = () => {
 	};
 
 	const handleCreateNewArtist = () => {
+		console.log('clicked');
 		setCurrentStep('create-artist');
 	};
 
