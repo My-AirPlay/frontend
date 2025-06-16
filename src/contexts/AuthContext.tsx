@@ -174,7 +174,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 			if (isAdminRoute) {
 				router.replace('/admin/login');
 			} else {
-				router.replace('/artiste/login');
+				if (!pathname.includes('password')) {
+					router.replace('/artiste/login');
+				}
 			}
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 			return;
@@ -273,6 +275,7 @@ const logout = async () => {
 		await fetch('/api/auth/logout', {
 			method: 'POST'
 		});
+		//router.replace('/artiste/login')
 	} catch (error) {
 		console.error('Error during logout:', error);
 	}
