@@ -13,8 +13,8 @@ const Header: React.FC = () => {
 	const router = useRouter();
 
 	const logoutArtist = () => {
-		logout(true);
-		router.push('/');
+		logout(false);
+		router.push('/artiste/login');
 	};
 	return (
 		<header className="h-16 flex items-center justify-between px-6">
