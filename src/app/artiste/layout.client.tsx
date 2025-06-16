@@ -1,11 +1,13 @@
 'use client';
+
 import { useAuthContext } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation'; // Import usePathname
 import React from 'react';
 import { userProfileStage } from '@/lib/constants';
 
 export default function ArtisteClientLayout() {
 	const router = useRouter();
+	const pathname = usePathname();
 	const { admin, artist, isLoading, isAuthenticating } = useAuthContext();
 
 	React.useEffect(() => {
@@ -17,10 +19,12 @@ export default function ArtisteClientLayout() {
 			} else if (admin) {
 				router.replace('/admin/dashboard');
 			} else {
-				router.replace('/artiste/login');
+				if (!pathname.includes('password')) {
+					router.replace('/artiste/login');
+				}
 			}
 		}
-	}, [artist, isLoading, isAuthenticating, admin, router]);
+	}, [artist, isLoading, isAuthenticating, admin, router, pathname]);
 
-	return <></>;
+	return null;
 }
