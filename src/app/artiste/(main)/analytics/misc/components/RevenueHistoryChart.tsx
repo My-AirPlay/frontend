@@ -18,7 +18,7 @@ export const RevenueHistoryChart: React.FC<RevenueHistoryChartProps> = ({ data }
 				<BarChart accessibilityLayer data={data}>
 					<CartesianGrid vertical={false} />
 					<YAxis />
-					<XAxis dataKey="period" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={value => value.slice(0, 3)} />
+					<XAxis dataKey="period" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={value => value.slice(0, 12)} />
 					<ChartTooltip content={<ChartTooltipContent hideLabel />} />
 					<Bar dataKey="value" stackId="a" fill="#FE6902" radius={[2, 2, 0, 0]} width={2} barSize={10} />
 				</BarChart>
