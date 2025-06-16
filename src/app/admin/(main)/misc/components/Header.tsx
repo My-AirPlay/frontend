@@ -13,7 +13,7 @@ const Header: React.FC = () => {
 	const router = useRouter();
 
 	const logoutArtist = () => {
-		logout(true);
+		logout(false);
 		router.push('/admin/login');
 	};
 	const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -48,12 +48,6 @@ const Header: React.FC = () => {
 							</Avatar>
 						}
 						items={[
-							{
-								label: 'Profile',
-								onClick: () => {
-									router.push('/artiste/settings?section=profile');
-								}
-							},
 							{
 								label: 'Logout',
 								onClick: logoutArtist

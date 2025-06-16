@@ -26,7 +26,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
-			period: `${entry.period?.split(' ')[0]?.slice(0, 3)} ${entry.period?.split(' ')[1]?.slice(-2)}`
+			period: entry.period
 		}));
 
 	const streamsHistory = [...(data?.streamsHistory || [])]
@@ -43,7 +43,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
-			period: `${entry.period?.split(' ')[0]?.slice(0, 3)} ${entry.period?.split(' ')[1]?.slice(-2)}`
+			period: entry.period
 		}));
 
 	if (isLoading) {
