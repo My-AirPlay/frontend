@@ -84,7 +84,7 @@ const MusicDashboard = () => {
 				</div>
 			</header>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
 				<Card>
 					<CardHeader className="flex flex-row items-center gap-1.5 pb-2">
 						<Music className="size-6 text-muted-foreground" />
