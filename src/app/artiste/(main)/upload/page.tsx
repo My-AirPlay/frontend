@@ -74,11 +74,13 @@ export default function MediaTypeSelection() {
 			redirect('/artiste/onboarding?step=registration_fee');
 		}
 
+		// setMediaType(selectedType as any);
 		if (selectedType === 'Album' || selectedType === 'ExtendedPlaylist' || selectedType === 'MixTape') {
 			if (hasOngoingAlbumUpload() && albumType === selectedType) {
 				setShowContinueDialog(true);
 				return;
 			}
+			clearAlbumUploadStore();
 			setAlbumType(selectedType as any);
 			setAlbumUploadCurrentStep('musicInfo');
 			router.push('/artiste/upload/album');
@@ -88,6 +90,8 @@ export default function MediaTypeSelection() {
 				setShowContinueDialog(true);
 				return;
 			}
+			console.log('Clearing media store');
+			clearMediaUploadStore();
 			setMediaType(selectedType as any);
 			setMediaUploadCurrentStep('musicInfo');
 			router.push('/artiste/upload/media');
@@ -101,6 +105,7 @@ export default function MediaTypeSelection() {
 			setAlbumUploadCurrentStep('musicInfo');
 			router.push('/artiste/upload/album');
 		} else {
+			console.log('clearing media upload store');
 			clearMediaUploadStore();
 			setMediaType(selectedType as any);
 			setMediaUploadCurrentStep('musicInfo');

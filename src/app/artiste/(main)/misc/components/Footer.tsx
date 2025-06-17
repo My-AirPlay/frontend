@@ -1,6 +1,7 @@
 import React from 'react';
-import { Twitter, Linkedin, Instagram, Facebook } from 'lucide-react';
+import { Linkedin, Instagram, Facebook } from 'lucide-react';
 import Link from 'next/link';
+import { FaSoundcloud } from 'react-icons/fa';
 
 const Footer: React.FC = () => {
 	const currentYear = new Date().getFullYear();
@@ -21,17 +22,17 @@ const Footer: React.FC = () => {
 				</div>
 
 				<div className="flex items-center space-x-4">
-					<a href="#" className="text-white/50 hover:text-foreground">
-						<Twitter size={12} />
+					<a href="https://soundcloud.com/myairplay" className="text-white/50 hover:text-foreground">
+						<FaSoundcloud size={16} />
 					</a>
-					<a href="#" className="text-white/50 hover:text-foreground">
-						<Linkedin size={12} />
+					<a href="https://www.linkedin.com/company/myairplay/?originalSubdomain=ng" className="text-white/50 hover:text-foreground">
+						<Linkedin size={16} />
 					</a>
-					<a href="#" className="text-white/50 hover:text-foreground">
-						<Instagram size={12} />
+					<a href="https://www.instagram.com/myairplay" className="text-white/50 hover:text-foreground">
+						<Instagram size={16} />
 					</a>
-					<a href="#" className="text-white/50 hover:text-foreground">
-						<Facebook size={12} />
+					<a href="https://www.facebook.com/MyAirplays/" className="text-white/50 hover:text-foreground">
+						<Facebook size={16} />
 					</a>
 				</div>
 

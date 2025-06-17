@@ -176,9 +176,14 @@ export const clearMediaDatabase = async (): Promise<boolean> => {
 		const db = await getDB();
 		if (!db) return false;
 
+		// The transaction stores and mode are correct
 		const tx = db.transaction(['mediaFile', 'coverArt', 'mediaInfo'], 'readwrite');
-		await Promise.all([tx.objectStore('mediaFile').clear(), tx.objectStore('coverArt').clear(), tx.objectStore('mediaInfo').clear(), tx.done]);
 
+		await Promise.all([tx.objectStore('mediaFile').clear(), tx.objectStore('coverArt').clear(), tx.objectStore('mediaInfo').clear()]);
+
+		await tx.done;
+
+		console.log('Media database cleared successfully.');
 		return true;
 	} catch (error) {
 		console.error('Error clearing media database:', error);
