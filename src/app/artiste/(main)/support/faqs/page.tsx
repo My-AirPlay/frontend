@@ -12,16 +12,10 @@ const faqData = {
 		{
 			id: 'distribution-1',
 			question: 'How much does music distribution cost with MYAIRPLAY?',
-			answerText: 'You can release unlimited music to Spotify, Apple Music, TikTok, Amazon Music, Tidal, Deezer, Instagram, YouTube Music, Audiomack, and every other global streaming and social platform for as little as N40,000 a year. To proceed with our distribution service, kindly click on the link below and fill in your details: https://bit.ly/3RcYXv3',
+			answerText: 'You can release unlimited music to Spotify, Apple Music, TikTok, Amazon Music, Tidal, Deezer, Instagram, YouTube Music, Audiomack, and every other global streaming and social platform for as little as N40,000 a year.',
 			answer: (
 				<>
 					<p>You can release unlimited music to Spotify, Apple Music, TikTok, Amazon Music, Tidal, Deezer, Instagram, YouTube Music, Audiomack, and every other global streaming and social platform for as little as N40,000 a year.</p>
-					<p className="mt-2">
-						To proceed with our distribution service, kindly click on the link below and fill in your details:{' '}
-						<Link href="https://bit.ly/3RcYXv3" className="text-[#FF6B00] hover:underline">
-							https://bit.ly/3RcYXv3
-						</Link>
-					</p>
 				</>
 			)
 		},

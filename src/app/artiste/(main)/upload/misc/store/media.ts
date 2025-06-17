@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import * as idb from '../index-db/media-db';
+import { streamingPlatformsList } from '@/utils/stores';
 
 export type MediaType = 'Track' | 'Video' | 'PlayBack';
 export type TMediaUploadStep = 'selection' | 'musicInfo' | 'trackUpload' | 'coverArt' | 'distribution' | 'preview' | 'complete';
@@ -60,7 +61,7 @@ const defaultMediaInfo: MediaUploadInfo = {
 	lyrics: '',
 	universalProductCode: '',
 	releaseVersion: '',
-	streamingPlatforms: ['7Digital', 'ACRCloud', 'Alibaba', 'Amazon', 'AMI Entertainment', 'Anghami', 'Apple Music', 'iTunes', 'Audible Magic', 'Audiomack', 'Beatsource', 'BMAT', 'Claro', 'ClicknClear', "d'Music", 'Deezer', 'Facebook / Instagram', 'Gracenote', 'iHeartRadio', 'JioSaavn', 'JOOX', 'Kan Music', 'KDM (K Digital Media)', 'KK Box', 'LiveOne', 'Medianet', 'Mixcloud', 'Mood Media', 'NetEase', 'Pandora', 'Peloton', 'Pretzel', 'Qobuz', 'Soundcloud', 'SoundExchange', 'Spotify', 'Tencent', 'Tidal', 'TikTok', 'TouchTunes', 'Trebel', 'Tuned Global', 'USEA', 'VL Group', 'YouSee / Telmore Musik', 'YouTube']
+	streamingPlatforms: streamingPlatformsList
 };
 
 export const useMediaUploadStore = create<MediaUploadState>()(
@@ -73,7 +74,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 				mediaFileId: null,
 				coverArtId: null,
 				mediaInfo: { ...defaultMediaInfo },
-				streamingPlatforms: ['7Digital', 'ACRCloud', 'Alibaba', 'Amazon', 'AMI Entertainment', 'Anghami', 'Apple Music', 'iTunes', 'Audible Magic', 'Audiomack', 'Beatsource', 'BMAT', 'Claro', 'ClicknClear', "d'Music", 'Deezer', 'Facebook / Instagram', 'Gracenote', 'iHeartRadio', 'JioSaavn', 'JOOX', 'Kan Music', 'KDM (K Digital Media)', 'KK Box', 'LiveOne', 'Medianet', 'Mixcloud', 'Mood Media', 'NetEase', 'Pandora', 'Peloton', 'Pretzel', 'Qobuz', 'Soundcloud', 'SoundExchange', 'Spotify', 'Tencent', 'Tidal', 'TikTok', 'TouchTunes', 'Trebel', 'Tuned Global', 'USEA', 'VL Group', 'YouSee / Telmore Musik', 'YouTube'],
+				streamingPlatforms: streamingPlatformsList,
 				isDBInitialized: false,
 
 				initializeDB: async () => {

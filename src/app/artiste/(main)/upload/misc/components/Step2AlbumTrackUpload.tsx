@@ -26,6 +26,7 @@ import { useAlbumUploadStore } from '../store';
 import type { AlbumTrackInfo } from '../store/album';
 import { trackInfoSchema } from '../schema';
 import SelectMultipleCombo from '@/components/ui/select-multiple-combobox';
+import { streamingPlatformsList } from '@/utils/stores';
 
 type TrackFormValues = z.infer<typeof trackInfoSchema>;
 
@@ -61,7 +62,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 			releaseVersion: '',
 			copyright: '',
 			fileType: 'audio',
-			streamingPlatforms: ['7Digital', 'ACRCloud', 'Alibaba', 'Amazon', 'AMI Entertainment', 'Anghami', 'Apple Music', 'iTunes', 'Audible Magic', 'Audiomack', 'Beatsource', 'BMAT', 'Claro', 'ClicknClear', "d'Music", 'Deezer', 'Facebook / Instagram', 'Gracenote', 'iHeartRadio', 'JioSaavn', 'JOOX', 'Kan Music', 'KDM (K Digital Media)', 'KK Box', 'LiveOne', 'Medianet', 'Mixcloud', 'Mood Media', 'NetEase', 'Pandora', 'Peloton', 'Pretzel', 'Qobuz', 'Soundcloud', 'SoundExchange', 'Spotify', 'Tencent', 'Tidal', 'TikTok', 'TouchTunes', 'Trebel', 'Tuned Global', 'USEA', 'VL Group', 'YouSee / Telmore Musik', 'YouTube']
+			streamingPlatforms: streamingPlatformsList
 		}
 	});
 

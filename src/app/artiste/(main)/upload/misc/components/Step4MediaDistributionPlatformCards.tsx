@@ -11,14 +11,20 @@ interface Props {
 	selectedPlatforms: string[];
 	handleToggle: (value: string) => void;
 }
+const displayLabelMapping: Record<string, string> = {
+	'apple music itunes': 'Apple Music / iTunes',
+	'facebook instagram': 'Facebook / Instagram',
+	'yousee telmore music': 'Yousee / Telmore Music'
+};
 const Step4MediaDistributionPlatformCard = ({ index, platform, selectedPlatforms, handleToggle }: Props) => {
 	const label = platform.label;
+	const displayLabel = displayLabelMapping[label.toLowerCase()] || label;
 	return (
 		<Card key={index} className={`p-4 cursor-pointer text-center transition-all ${selectedPlatforms.includes(platform.value) ? 'border-primary bg-black/50' : 'border-gray-600 hover:border-gray-400'}`} onClick={() => handleToggle(platform.value)}>
 			<div className="flex flex-col items-center">
 				<PlatformImage label={label} isSelected={selectedPlatforms.includes(platform.value)} />
 
-				<p className="text-sm font-medium">{label}</p>
+				<p className="text-sm font-medium">{displayLabel}</p>
 			</div>
 		</Card>
 	);
@@ -41,7 +47,7 @@ export const PlatformImage = ({ label, className, isSelected }: PlatformImagePro
 				alt={label}
 				priority
 				fill
-				className={cn('rounded-full text-[0rem] text-opacity-0 bg-gray-700 z-[2]')}
+				className={cn('rounded-full text-[0rem] text-opacity-0 bg-gray-700 z-[2] size-8')}
 				style={{ filter: isSelected ? 'none' : 'grayscale(1)' }}
 				onError={() => {
 					if (src.endsWith('.png')) setSrc(`/images/platform_logos/${label.toLowerCase()}.jpg`);
