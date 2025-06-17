@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 80">
+    <style>
+        .fluxus-text {
+        font: bold 52px Arial, Helvetica, sans-serif;
+        fill: #ffff;
+        }
+    </style>
+    <text
+            x="50%"
+            y="50%"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            class="fluxus-text"
+    >
+        District
+    </text>
+</svg>
