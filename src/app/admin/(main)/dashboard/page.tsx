@@ -470,7 +470,7 @@ const Dashboard: React.FC = () => {
 											>
 												<CartesianGrid vertical={false} />
 												{/* Use 'month' for XAxis label */}
-												<XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={value => value.slice(0, 7)} />
+												<XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={value => value.slice(0, 12)} />
 												{/* Use 'totalRevenue' for YAxis data */}
 												<YAxis dataKey="totalRevenue" tickLine={false} axisLine={false} tickMargin={8} />
 												<ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />

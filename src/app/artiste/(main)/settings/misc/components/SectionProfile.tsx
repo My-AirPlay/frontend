@@ -195,7 +195,7 @@ export default function SectionProfile() {
 										<FormItem>
 											<FormLabel>Instagram</FormLabel>
 											<FormControl>
-												<Input {...field} placeholder="Instagram profile URL" disabled={!isEditing} hasError={!!errors.Instagram} errormessage={errors.Instagram?.message} />
+												<Input {...field} placeholder="Instagram username" disabled={!isEditing} hasError={!!errors.Instagram} errormessage={errors.Instagram?.message} />
 											</FormControl>
 										</FormItem>
 									)}

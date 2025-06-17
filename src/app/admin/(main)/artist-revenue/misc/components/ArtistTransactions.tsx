@@ -7,6 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { useParams, useSearchParams, useRouter, usePathname } from 'next/navigation'; // Added hooks
 import { formatCurrency } from '@/utils/currency';
 import { useGetAllWithdrawalSlips } from '@/app/admin/(main)/catalogue/api/getAllWithdrawalSlips';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 // Updated interface to match API response for withdrawal slips
 interface WithdrawalSlipData {
@@ -161,8 +162,7 @@ const ArtistTransactions: React.FC = ({}) => {
 	// Conditionally slice data based on state
 	const creditTransactions = showAllCredits ? allCreditTransactions : allCreditTransactions.slice(0, 3);
 	const debitTransactions = showAllDebits ? allDebitTransactions : allDebitTransactions.slice(0, 3);
-
-	console.log(creditTransactions);
+	const { convertCurrency, currency: contextCurrency } = useCurrency();
 	// Updated columns for Credit Transactions (Status != Pending)
 	const creditColumns = [
 		{
@@ -191,7 +191,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			header: 'Amount',
 			accessorKey: 'totalRevenue',
 			// Assuming positive amounts are credits here
-			cell: (info: any) => <span className="text-primary">{formatCurrency(info.getValue(), 'NGN')}</span>
+			cell: (info: any) => <span className="text-primary">{formatCurrency(convertCurrency(info.getValue()), contextCurrency)}</span>
 		}
 	];
 
@@ -228,7 +228,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			id: 'totalRevenue', // Show requested amount for pending withdrawals
 			header: 'Amount',
 			accessorKey: 'totalRevenue',
-			cell: (info: any) => <span className="text-red-500">{formatCurrency(info.getValue(), 'NGN')}</span>
+			cell: (info: any) => <span className="text-red-500">{formatCurrency(convertCurrency(info.getValue()), contextCurrency)}</span>
 		}
 		// Add other relevant columns like 'status' if needed
 		// {

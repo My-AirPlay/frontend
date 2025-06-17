@@ -27,7 +27,7 @@ export function getLocaleForCurrency(currency: SupportedCurrency): string {
 		case 'USD':
 			return 'en-US';
 		case 'EUR':
-			return 'de-DE'; // Common locale for EUR
+			return 'en-GB'; // Common locale for EUR
 		case 'GBP':
 			return 'en-GB';
 		default:
@@ -38,7 +38,7 @@ export function formatCurrency(amount: number, currency?: SupportedCurrency): st
 	const locale = getLocaleForCurrency(currency || 'USD');
 	return new Intl.NumberFormat(locale, {
 		style: 'currency',
-		currency: 'NGN',
+		currency: currency,
 		minimumFractionDigits: 2
 	}).format(amount);
 }

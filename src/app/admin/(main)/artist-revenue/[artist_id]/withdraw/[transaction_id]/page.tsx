@@ -11,12 +11,14 @@ import { useUpdateWithdrawalSlip } from '../../../../catalogue/api/putUpdateWith
 import { formatCurrency } from '@/utils/currency';
 import { PreviousPageButton } from '@/components/ui';
 import { toast } from 'sonner';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 // Removed formatCurrency import as slip details are removed
 // Removed formatDate import as slip details are removed
 // Removed unused PreviousPageButton import
 
 const WithdrawalUpdatePage: React.FC = () => {
 	const router = useRouter();
+	const { convertCurrency, currency: contextCurrency } = useCurrency();
 	const params = useParams<{ artist_id: string; transaction_id: string }>();
 	const { artist_id, transaction_id } = params;
 
@@ -97,10 +99,6 @@ const WithdrawalUpdatePage: React.FC = () => {
 		);
 	}
 
-	// Removed Withdrawal Error/Not Found checks
-
-	// Removed getStatusIndicator function
-
 	return (
 		<div className="container mx-auto p-4 md:p-6 lg:p-8 space-y-8">
 			<PreviousPageButton />
@@ -118,7 +116,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 					<div>
 						<p className="text-sm text-primary-foreground/80">Artist Account Balance</p>
 						{/* Display full or partial ID as needed */}
-						<h2 className="text-xl font-mono font-semibold">{formatCurrency(artistData?.totalRoyaltyUSD || 0)}</h2>
+						<h2 className="text-xl font-mono font-semibold">{formatCurrency(convertCurrency(artistData?.totalRoyaltyUSD || 0), contextCurrency)}</h2>
 					</div>
 				</div>
 			</div>
