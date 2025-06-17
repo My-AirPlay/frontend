@@ -45,6 +45,7 @@ export interface MediaUploadState {
 	hasOngoingUpload: () => boolean;
 }
 
+// SINGLE SOURCE OF TRUTH for default state
 const defaultMediaInfo: MediaUploadInfo = {
 	title: '',
 	artistName: '',
@@ -66,6 +67,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 	devtools(
 		persist(
 			(set, get) => ({
+				// Initial State
 				currentStep: 'selection',
 				mediaType: null,
 				mediaFileId: null,
@@ -75,31 +77,10 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 				isDBInitialized: false,
 
 				initializeDB: async () => {
+					if (get().isDBInitialized) return; // Prevent re-initialization
 					const success = await idb.initMediaDB();
 					if (success) {
 						set({ isDBInitialized: true });
-
-						// Load media info from IndexedDB if it exists
-						try {
-							const storedInfo = await idb.getMediaInfo('media-info');
-							if (storedInfo) {
-								set({ mediaInfo: storedInfo });
-							}
-
-							// Check if media file exists
-							const mediaFile = await idb.getMediaFile('media-file');
-							if (mediaFile) {
-								set({ mediaFileId: 'media-file' });
-							}
-
-							// Check if cover art exists
-							const coverArt = await idb.getMediaCoverArt('media-cover');
-							if (coverArt) {
-								set({ coverArtId: 'media-cover' });
-							}
-						} catch (error) {
-							console.error('Error loading data from IndexedDB:', error);
-						}
 					}
 				},
 
@@ -115,8 +96,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 						mediaType: null,
 						mediaFileId: null,
 						coverArtId: null,
-						mediaInfo: { ...defaultMediaInfo },
-						streamingPlatforms: ['7Digital', 'ACRCloud', 'Alibaba', 'Amazon', 'AMI Entertainment', 'Anghami', 'Apple Music', 'iTunes', 'Audible Magic', 'Audiomack', 'Beatsource', 'BMAT', 'Claro', 'ClicknClear', "d'Music", 'Deezer', 'Facebook / Instagram', 'Gracenote', 'iHeartRadio', 'JioSaavn', 'JOOX', 'Kan Music', 'KDM (K Digital Media)', 'KK Box', 'LiveOne', 'Medianet', 'Mixcloud', 'Mood Media', 'NetEase', 'Pandora', 'Peloton', 'Pretzel', 'Qobuz', 'Soundcloud', 'SoundExchange', 'Spotify', 'Tencent', 'Tidal', 'TikTok', 'TouchTunes', 'Trebel', 'Tuned Global', 'USEA', 'VL Group', 'YouSee / Telmore Musik', 'YouTube']
+						mediaInfo: { ...defaultMediaInfo }
 					});
 				},
 
@@ -128,15 +108,13 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 				setMediaType: type => set({ mediaType: type }),
 
 				setMediaFile: async file => {
-					if (!get().isDBInitialized) {
-						await get().initializeDB();
-					}
+					if (!get().isDBInitialized) await get().initializeDB();
+					const currentId = get().mediaFileId;
 
+					// If no file is provided, delete the old one
 					if (!file) {
-						if (get().mediaFileId) {
-							await idb.deleteMediaFile(get().mediaFileId);
-							set({ mediaFileId: null });
-						}
+						if (currentId) await idb.deleteMediaFile(currentId);
+						set({ mediaFileId: null });
 						return null;
 					}
 
