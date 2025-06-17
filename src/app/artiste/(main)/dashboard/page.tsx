@@ -7,10 +7,12 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { BarChart2, ChevronsRight, Globe, Music } from 'lucide-react';
 import { LinkButton } from '@/components/ui';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 const MusicDashboard = () => {
 	const { data, isLoading, error } = useGetDashboardData();
 	const { artist } = useAuthContext();
+	const { convertCurrency, currency } = useCurrency();
 
 	const revenueHistory = [...(data?.revenueHistory || [])]
 		.sort((a, b) => {
@@ -26,6 +28,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
+			value: convertCurrency(entry.value),
 			period: entry.period
 		}));
 
@@ -43,6 +46,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
+			value: convertCurrency(entry.value),
 			period: entry.period
 		}));
 
@@ -83,7 +87,7 @@ const MusicDashboard = () => {
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl lg:text-3xl font-bold">{data?.totalStreams.toLocaleString()}</div>
-						<p className="text-xs text-muted-foreground">Avg. value: {formatCurrency(data?.averageStreamValue || 0)}</p>
+						<p className="text-xs text-muted-foreground">Across all platforms</p>
 					</CardContent>
 				</Card>
 
@@ -94,7 +98,7 @@ const MusicDashboard = () => {
 						<CardTitle className="text-sm lg:text-xl font-semibold">Gross Revenue</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(data?.totalRevenue || 0)}</div>
+						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(convertCurrency(data?.totalRevenue || 0), currency)}</div>
 						<p className="text-xs text-muted-foreground">Across all platforms</p>
 					</CardContent>
 				</Card>
@@ -104,7 +108,7 @@ const MusicDashboard = () => {
 						<CardTitle className="text-sm lg:text-xl font-semibold">Balance</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(artist?.totalRoyaltyUSD || 0)}</div>
+						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(convertCurrency(artist?.totalRoyaltyUSD || 0), currency)}</div>
 					</CardContent>
 				</Card>
 

@@ -27,7 +27,7 @@ export function getLocaleForCurrency(currency: SupportedCurrency): string {
 		case 'USD':
 			return 'en-US';
 		case 'EUR':
-			return 'de-DE'; // Common locale for EUR
+			return 'en-GB'; // Common locale for EUR
 		case 'GBP':
 			return 'en-GB';
 		default:

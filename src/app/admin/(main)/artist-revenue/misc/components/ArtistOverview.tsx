@@ -3,6 +3,7 @@ import { Loader2 } from 'lucide-react'; // Removed ArrowRight
 import { formatCurrency } from '@/utils/currency';
 import { useParams } from 'next/navigation';
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 // Removed Button and Image imports as they are no longer used in this component's core logic
 
 // Define interfaces for the delivery breakdown structure
@@ -31,7 +32,7 @@ const ArtistOverview: React.FC = ({}) => {
 	const { data: artistAnalytics, isLoading: artistAnalyticsLoading } = useGetArtistAnalytics({
 		artistId: artist_id
 	});
-	console.log(artistAnalytics);
+	const { convertCurrency, currency: contextCurrency } = useCurrency();
 
 	// Removed mock data (streamingItems, downloadItems)
 
@@ -74,7 +75,7 @@ const ArtistOverview: React.FC = ({}) => {
 									<span className="font-medium">Streams:</span> <span className="text-admin-muted">{data.totalStreams.toLocaleString()}</span>
 								</p>
 								<p className="text-sm">
-									<span className="font-medium">Revenue:</span> <span className="text-admin-accent">{formatCurrency(data.totalRevenue)}</span>
+									<span className="font-medium">Revenue:</span> <span className="text-admin-accent">{formatCurrency(convertCurrency(data.totalRevenue), contextCurrency)}</span>
 								</p>
 							</div>
 							{/* Period Breakdown */}
@@ -88,10 +89,10 @@ const ArtistOverview: React.FC = ({}) => {
 												<span className="text-admin-muted/90">Streams:</span> {periodData.streams.toLocaleString()}
 											</p>
 											<p>
-												<span className="text-admin-muted/90">Gross Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.revenue)}</span>
+												<span className="text-admin-muted/90">Gross Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(convertCurrency(periodData.revenue), contextCurrency)}</span>
 											</p>
 											<p>
-												<span className="text-admin-muted/90">Net Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.netRevenue)}</span>
+												<span className="text-admin-muted/90">Net Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(convertCurrency(periodData.netRevenue), contextCurrency)}</span>
 											</p>
 										</div>
 									))

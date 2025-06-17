@@ -7,6 +7,7 @@ import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics
 import { formatCurrency } from '@/utils/currency';
 import { ChartDatum, CustomBarChart } from '@/app/admin/(main)/artist-revenue/misc/components/BarChart';
 import { PerformanceItem } from '@/app/artiste/(main)/dashboard/misc/api';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 // --- Interfaces for Period Summary ---
 interface PeriodSummaryItem {
@@ -127,11 +128,12 @@ interface MonthlyChartProps {
 
 const MonthlyChart: React.FC<MonthlyChartProps> = ({ title, data, dataKey, strokeColor }) => {
 	// Format Y-axis ticks and Tooltip - Ensure it always returns a string
+	const { convertCurrency, currency: contextCurrency } = useCurrency();
 	const formatValue = (value: number | string | undefined): string => {
 		if (typeof value !== 'number') return ''; // Return empty string for non-numbers
 
 		if (dataKey === 'revenue') {
-			return formatCurrency(value) ?? ''; // Use existing utility, fallback to empty string
+			return formatCurrency(convertCurrency(value), contextCurrency) ?? ''; // Use existing utility, fallback to empty string
 		}
 		return value.toLocaleString(); // Simple formatting for streams
 	};

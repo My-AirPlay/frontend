@@ -7,6 +7,7 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu, Skeleton } from '@/components/ui';
 import { getInitials } from '@/utils/strings';
 import { useRouter } from 'next/navigation';
+import { CurrencySwitcher } from '@/app/artiste/(main)/dashboard/misc/components/CurrencySwitcher';
 
 const Header: React.FC = () => {
 	const { artist, logout, isLoading } = useAuthContext();
@@ -19,6 +20,7 @@ const Header: React.FC = () => {
 	return (
 		<header className="h-16 flex items-center justify-between px-6">
 			<div className="flex items-center space-x-4 ml-auto">
+				<CurrencySwitcher />
 				<button className="text-white/60 hover:text-foreground">
 					<Settings size={20} />
 				</button>

@@ -7,10 +7,11 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { BarChart2, Globe, Music } from 'lucide-react';
 import { useGetDashboardData } from '../dashboard/misc/api';
 import { TrackPerformanceCard } from '@/app/artiste/(main)/analytics/misc/components/TrackPerformanceCard';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 const MusicDashboard = () => {
 	const { data, isLoading, error } = useGetDashboardData();
-
+	const { convertCurrency, currency } = useCurrency();
 	if (isLoading) {
 		return (
 			<div className="flex justify-center items-center h-screen">
@@ -44,6 +45,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
+			value: convertCurrency(entry.value),
 			period: entry.period
 		}));
 
@@ -61,6 +63,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
+			value: convertCurrency(entry.value),
 			period: entry.period
 		}));
 	// Prepare DSP data for pie chart
@@ -92,7 +95,7 @@ const MusicDashboard = () => {
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl lg:text-3xl font-bold">{data?.totalStreams.toLocaleString()}</div>
-						<p className="text-xs text-muted-foreground">Avg. value: {formatCurrency(data?.averageStreamValue || 0)}</p>
+						<p className="text-xs text-muted-foreground">Across all platforms</p>
 					</CardContent>
 				</Card>
 
@@ -103,7 +106,7 @@ const MusicDashboard = () => {
 						<CardTitle className="text-sm lg:text-xl font-semibold">Total Revenue</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(data?.totalRevenue || 0)}</div>
+						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(convertCurrency(data?.totalRevenue || 0), currency)}</div>
 						<p className="text-xs text-muted-foreground">Across all platforms</p>
 					</CardContent>
 				</Card>

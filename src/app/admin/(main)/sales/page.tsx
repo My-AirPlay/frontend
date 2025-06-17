@@ -192,39 +192,63 @@ const Sales: React.FC = () => {
 					const reportItems: ReportItem[] = apiResponse || [];
 					setAnalyzedApiData(reportItems);
 
-					const groupedByArtist: { [key: string]: ReportItem[] } = reportItems.reduce(
+					const groupedByArtistAndPeriod: { [artistName: string]: { [activityPeriod: string]: ReportItem[] } } = reportItems.reduce(
 						(acc, report) => {
-							acc[report.artistName] = acc[report.artistName] || [];
-							acc[report.artistName].push(report);
+							// Ensure the object for the artist exists
+							acc[report.artistName] = acc[report.artistName] || {};
+
+							// Ensure the array for the activity period exists within the artist's object
+							acc[report.artistName][report.activityPeriod] = acc[report.artistName][report.activityPeriod] || [];
+
+							// Push the current report into the correct nested array
+							acc[report.artistName][report.activityPeriod].push(report);
+
 							return acc;
 						},
-						{} as { [key: string]: ReportItem[] }
+						{} as { [artistName: string]: { [activityPeriod: string]: ReportItem[] } }
 					);
 
 					console.log('apiResponse', apiResponse);
-					console.log('groupedByArtist', groupedByArtist);
+					console.log('groupedByArtist', groupedByArtistAndPeriod);
 
-					const transformedArtistReports: ReportItem[] = Object.values(groupedByArtist).map((artistItemGroup: ReportItem[]) => {
-						const firstItem = artistItemGroup[0];
-						return {
-							artistId: firstItem?.artistId || null,
-							artistName: firstItem?.artistName || 'Unknown Artist',
-							activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
-							fullReports: artistItemGroup.flatMap(item => item.fullReports),
-							_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
-							createdAt: firstItem?.createdAt || new Date(),
-							updatedAt: firstItem?.updatedAt || new Date(),
-							sharedRevenue: [
-								{
-									artistId: firstItem?.artistId || null,
-									artistName: firstItem?.artistName || 'Unknown Artist',
-									activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
-									percentage: 100
+					// Assuming your input data is named 'groupedByArtistAndPeriod' from the previous step
+					const transformedArtistReports: ReportItem[] = Object.values(groupedByArtistAndPeriod).flatMap(
+						// The outer flatMap iterates through each artist's group of periods.
+						// 'artistPeriodGroup' looks like: { "Jun-24": [...], "Jul-24": [...] }
+						artistPeriodGroup =>
+							Object.values(artistPeriodGroup).map(
+								// The inner map iterates through the array of reports for a single period.
+								// 'periodItemGroup' is the array of reports for ONE artist in ONE period.
+								(periodItemGroup: ReportItem[]) => {
+									// Since all items in this group have the same artist and period,
+									// we can safely take the metadata from the first item.
+									const firstItem = periodItemGroup[0];
+
+									return {
+										artistId: firstItem?.artistId || null,
+										artistName: firstItem?.artistName || 'Unknown Artist',
+										activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
+
+										// This now correctly flattens reports for only this specific group
+										fullReports: periodItemGroup.flatMap(item => item.fullReports),
+
+										// The rest of your logic remains the same
+										_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
+										createdAt: firstItem?.createdAt || new Date(),
+										updatedAt: firstItem?.updatedAt || new Date(),
+										sharedRevenue: [
+											{
+												artistId: firstItem?.artistId || null,
+												artistName: firstItem?.artistName || 'Unknown Artist',
+												activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
+												percentage: 100
+											}
+										],
+										__v: firstItem?.__v || 0
+									};
 								}
-							],
-							__v: firstItem?.__v || 0
-						};
-					});
+							)
+					);
 
 					console.log('transformedArtistReports', transformedArtistReports);
 

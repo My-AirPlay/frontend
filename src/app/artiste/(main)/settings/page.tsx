@@ -2,7 +2,6 @@
 
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Cog, User, Lock, Wallet2, UserMinus } from 'lucide-react';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -20,14 +19,6 @@ export default function SettingsPage() {
 			</div>
 
 			<div className="flex flex-col gap-8">
-				<div className="flex justify-center">
-					<div className="w-24 h-24 rounded-full overflow-hidden relative">
-						{' '}
-						{/* Added relative positioning for Next Image */}
-						<Image src="/images/placeholder_images/album-cover.png" alt="Profile" className="object-cover" fill /> {/* Used fill prop and updated src */}
-					</div>
-				</div>
-
 				<Tabs defaultValue={section} value={section} className="w-full">
 					<TabsList className="bg-transparent border-b border-border w-full justify-start mb-6">
 						<Link href="?section=profile" replace>
