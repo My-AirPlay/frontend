@@ -55,6 +55,7 @@ const TicketDetails: React.FC = () => {
 			},
 			{
 				onSuccess: () => {
+					refetchTicket();
 					refetchMessages(); // Refresh from API
 				},
 				onError: () => {
@@ -145,10 +146,10 @@ const TicketDetails: React.FC = () => {
 									disabled={isPending}
 									onClick={() =>
 										mutate(
-											{ complaintId: ticket_id, status: 'Deferred' },
+											{ complaintId: ticket.complain.complaintId, status: 'Processing' },
 											{
 												onSuccess: () => {
-													toast.success('Ticket has been deferred');
+													toast.success('Ticket has been Re-opened');
 													refetchTicket();
 												},
 												onError: error => toast.error(error.message || 'Failed to update ticket')
@@ -156,7 +157,7 @@ const TicketDetails: React.FC = () => {
 										)
 									}
 								>
-									{isPending ? 'Loading...' : 'Mark as Deferred'}
+									{isPending ? 'Loading...' : 'Re-open ticket'}
 								</Button>
 							) : (
 								<Button
@@ -164,7 +165,7 @@ const TicketDetails: React.FC = () => {
 									disabled={isPending}
 									onClick={() =>
 										mutate(
-											{ complaintId: ticket_id, status: 'Resolved' },
+											{ complaintId: ticket.complain.complaintId, status: 'Resolved' },
 											{
 												onSuccess: () => {
 													toast.success('Ticket has been closed');

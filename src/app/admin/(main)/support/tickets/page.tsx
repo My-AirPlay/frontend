@@ -31,7 +31,7 @@ const AllTicketsPage: React.FC = () => {
 	};
 
 	const handleNextPage = () => {
-		if (page < tickets?.totalPages || 1) updateQueryParams({ page: page + 1 });
+		if (page < (tickets?.totalPages || 1)) updateQueryParams({ page: page + 1 });
 	};
 
 	const handlePrevPage = () => {
@@ -107,6 +107,17 @@ const AllTicketsPage: React.FC = () => {
 									<p className="text-xs text-white/50">Ticket ID</p>
 									<p className="text-sm">{ticket?.complaintId}</p>
 								</div>
+
+								{/* --- ADD THIS SECTION --- */}
+								{ticket.unreadCount > 0 && (
+									<div className="col-span-2 mt-2">
+										<p className="text-xs text-white/50">Unread</p>
+										<p className="text-sm font-semibold text-primary">
+											{ticket.unreadCount} un-answered message{ticket.unreadCount > 1 ? 's' : ''}
+										</p>
+									</div>
+								)}
+								{/* --- END OF SECTION --- */}
 							</div>
 						</div>
 					</article>
@@ -116,13 +127,13 @@ const AllTicketsPage: React.FC = () => {
 			{/* Pagination */}
 			<div className="flex justify-between items-center mt-4">
 				<div className="flex gap-2 items-center">
-					<Button variant="outline" size="icon" className="h-8 w-8" onClick={handlePrevPage}>
+					<Button variant="outline" size="icon" className="h-8 w-8" onClick={handlePrevPage} disabled={page <= 1}>
 						<ChevronLeft size={16} />
 					</Button>
 					<span className="text-xs">
 						{page}/ {tickets?.totalPages || 1}
 					</span>
-					<Button variant="outline" size="icon" className="h-8 w-8" onClick={handleNextPage}>
+					<Button variant="outline" size="icon" className="h-8 w-8" onClick={handleNextPage} disabled={page >= (tickets?.totalPages || 1)}>
 						<ChevronRight size={16} />
 					</Button>
 				</div>

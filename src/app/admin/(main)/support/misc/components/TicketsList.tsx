@@ -8,6 +8,7 @@ interface TicketsListProps {
 	tickets: Ticket[];
 }
 
+// 1. Update the Ticket interface to include the optional unreadCount
 interface Ticket {
 	_id: number;
 	complaintType: string;
@@ -15,6 +16,7 @@ interface Ticket {
 	artistName: string;
 	createdAt: string;
 	status: 'open' | 'closed' | 'pending';
+	unreadCount?: number;
 }
 
 const TicketsList: React.FC<TicketsListProps> = ({ limit = 10, tickets }) => {
@@ -27,8 +29,9 @@ const TicketsList: React.FC<TicketsListProps> = ({ limit = 10, tickets }) => {
 			{displayedTickets?.length <= 0 ? (
 				<p className=" text-center">You have no tickets!</p>
 			) : (
-				displayedTickets?.map((ticket, index) => (
-					<div key={index} className="flex items-start gap-3 border-t border-border pt-3 shadow-sm">
+				displayedTickets?.map(ticket => (
+					// Use a unique ID from the data for the key instead of index
+					<div key={ticket._id} className="flex items-start gap-3 border-t border-border pt-3 shadow-sm">
 						<div className="bg-[#2F363E] rounded-md p-1">
 							<Notepad2 variant="Bold" className="fill-white" size={22} />
 						</div>
@@ -43,8 +46,19 @@ const TicketsList: React.FC<TicketsListProps> = ({ limit = 10, tickets }) => {
 									<LinkButton href={`./support/tickets/${ticket._id}?complaintId=${ticket.complaintId}`} size="thin" className="text-white rounded-full">
 										Open
 									</LinkButton>
-									<span className="text-xs text-white/60">{moment(ticket.createdAt).format('DD  MMM, YYYY')}</span>
+									<span className="text-xs text-white/60">{moment(ticket.createdAt).format('DD MMM, YYYY')}</span>
 								</div>
+							</div>
+
+							{/* 2. Add conditional display logic for unreadCount */}
+							<div className="mt-2">
+								{ticket.unreadCount && ticket.unreadCount > 0 ? (
+									<p className="text-xs font-semibold text-primary">
+										{ticket.unreadCount} un-answered message{ticket.unreadCount > 1 ? 's' : ''}
+									</p>
+								) : (
+									<p className="text-xs text-white/50 italic">Waiting on customer</p>
+								)}
 							</div>
 						</div>
 					</div>

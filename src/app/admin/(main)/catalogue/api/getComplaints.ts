@@ -23,3 +23,15 @@ export const useGetComplaints = (params: GetComplaintsParams) => {
 		queryFn: () => getComplaints(params)
 	});
 };
+
+const getSupportCount = async (): Promise<{ unreadCount: number }> => {
+	const res = await APIAxios.get('/admin/complaints_count');
+	return res.data;
+};
+
+export const useGetSupportCount = () => {
+	return useQuery({
+		queryKey: ['supportCount'],
+		queryFn: getSupportCount
+	});
+};

@@ -2,6 +2,10 @@ import APIAxios from '@/utils/axios';
 import { ArtistReportIssueFormValues } from '../../report-issue/page';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
+interface GetAllIssues {
+	page: number;
+	limit: number;
+}
 const reportIssue = async (data: ArtistReportIssueFormValues & { complaintId?: string; status?: string }) => {
 	const formData = new FormData();
 
@@ -41,15 +45,17 @@ export const useReportIssue = () => {
 	});
 };
 
-const getAllIssue = async () => {
-	const response = await APIAxios.get<APIResponse>('/artist/all_complaints');
+const getAllIssue = async (params: GetAllIssues) => {
+	const response = await APIAxios.get<APIResponse>('/artist/all_complaints', {
+		params: params
+	});
 	return response.data;
 };
 
-export const useListAllIssue = () => {
+export const useListAllIssue = (params: GetAllIssues) => {
 	return useQuery({
-		queryFn: getAllIssue,
-		queryKey: ['listAllIssue']
+		queryKey: ['listAllIssue', params.page, params.limit],
+		queryFn: () => getAllIssue(params)
 	});
 };
 
