@@ -22,3 +22,15 @@ export const useGetArtistAnalytics = (params: GetArtistAnalyticsParams) => {
 		queryFn: () => getArtistAnalytics(params)
 	});
 };
+
+export const getContractsCount = async () => {
+	const response = await APIAxios.get(`/admin/contracts_count`);
+	return response.data;
+};
+
+export const useGetContractsCount = () => {
+	return useQuery({
+		queryKey: ['artistContractsCount'],
+		queryFn: () => getContractsCount()
+	});
+};

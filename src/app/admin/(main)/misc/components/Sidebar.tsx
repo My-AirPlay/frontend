@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useGetSupportCount } from '@/app/admin/(main)/catalogue/api/getComplaints';
+import { useGetContractsCount } from '@/app/admin/(main)/catalogue/api/getArtistAnalytics';
 
 interface SidebarProps {
 	className?: string;
@@ -12,69 +14,44 @@ interface SidebarProps {
 const Sidebar = ({ className, onClose }: SidebarProps) => {
 	// Destructure onClose
 	const pathname = usePathname();
-	const sidebarItems = [
-		{
-			title: null,
-			items: [
-				{
-					href: '/admin/dashboard',
-					icon: Category,
-					label: 'Dashboard'
-				},
-				{
-					href: '/admin/contracts',
-					icon: Edit2,
-					label: 'Contracts',
-					badge: 10
-				},
-				{
-					href: '/admin/catalogue',
-					icon: Document,
-					label: 'Catalogue'
-				}
-			]
-		},
-		{
-			title: 'Accounting',
-			items: [
-				{
-					href: '/admin/sales',
-					icon: Calculator,
-					label: 'Sales'
-				},
-				{
-					href: '/admin/artist-revenue',
-					icon: User,
-					label: 'Artist Revenue'
-				}
-			]
-		},
-		{
-			title: 'Organization',
-			items: [
-				{
-					href: '/policies/privacy',
-					icon: Lock1,
-					label: 'Privacy Policy'
-				},
-				{
-					href: '/policies/terms',
-					icon: ReceiptItem,
-					label: 'Terms of Services'
-				},
-				// {
-				//   href: "/admin/settings",
-				//   icon: Setting2,
-				//   label: "Settings",
-				// },
-				{
-					href: '/admin/support',
-					icon: Headphone,
-					label: 'Help and Support'
-				}
-			]
-		}
-	];
+	const { data: supportData } = useGetSupportCount();
+	const { data: contractsData } = useGetContractsCount();
+	const supportTicketCount = supportData?.unreadCount;
+	console.log(contractsData);
+	const contractsCount = contractsData?.count;
+	const sidebarItems = useMemo(
+		() => [
+			{
+				title: null,
+				items: [
+					{ href: '/admin/dashboard', icon: Category, label: 'Dashboard' },
+					{ href: '/admin/contracts', icon: Edit2, label: 'Contracts', ...(contractsCount && contractsCount > 0 && { badge: contractsCount }) },
+					{ href: '/admin/catalogue', icon: Document, label: 'Catalogue' }
+				]
+			},
+			{
+				title: 'Accounting',
+				items: [
+					{ href: '/admin/sales', icon: Calculator, label: 'Sales' },
+					{ href: '/admin/artist-revenue', icon: User, label: 'Artist Revenue' }
+				]
+			},
+			{
+				title: 'Organization',
+				items: [
+					{ href: '/policies/privacy', icon: Lock1, label: 'Privacy Policy' },
+					{ href: '/policies/terms', icon: ReceiptItem, label: 'Terms of Services' },
+					{
+						href: '/admin/support',
+						icon: Headphone,
+						label: 'Help and Support',
+						...(supportTicketCount && supportTicketCount > 0 && { badge: supportTicketCount })
+					}
+				]
+			}
+		],
+		[supportTicketCount]
+	);
 
 	return (
 		<div className={cn('w-64 h-screen border-r border-admin-border flex flex-col overflow-hidden', className)}>
@@ -106,6 +83,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 											<item.icon variant="Bold" size={20} className={cn('fill-primary', isActive ? 'fill-primary' : 'fill-muted-foreground')} />
 										</span>
 										<span className={cn('flex-1 text-muted-foreground', isActive && 'text-primary')}>{item.label}</span>
+										{item?.badge && <span className="bg-primary text-white text-xs font-bold rounded-full px-2 py-0.5">{item?.badge}</span>}
 									</Link>
 								);
 							})}

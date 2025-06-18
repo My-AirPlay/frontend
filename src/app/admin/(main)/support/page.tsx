@@ -112,7 +112,7 @@ const Help: React.FC = () => {
 							</div>
 
 							<div>
-								<p className="text-xs md:text-sm text-white/60">Ticket Issue</p>
+								<p className="text-xs md:text-sm text-white/60">Last message sent</p>
 								<p className="max-md:text-sm font-medium">{recentTicket?.complain}</p>
 							</div>
 
