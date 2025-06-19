@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import * as React from 'react';
 import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatCurrency } from '@/utils/currency'; // Your existing function (UNCHANGED)
+import { formatCurrency } from '@/utils/currency';
 import { Input } from '@/components/ui/input';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
-import * as React from 'react';
+import { Button } from '@/components/ui'; // Assuming Button is in this path
 
-// ======================= THE FIX =======================
-// 1. Create a new, small component specifically for displaying the formatted revenue.
+// =======================================================
+// This is a great pattern! No changes needed here.
+// It isolates the currency conversion logic.
 const TrackRevenue = ({ amount }: { amount: number }) => {
 	const { convertCurrency, currency: contextCurrency } = useCurrency();
 	const formattedRevenue = formatCurrency(convertCurrency(amount || 0), contextCurrency);
@@ -19,7 +21,6 @@ const TrackRevenue = ({ amount }: { amount: number }) => {
 // =======================================================
 
 export const TrackPerformanceCard = ({ data }: { data: any }) => {
-	// All your existing hooks and logic at the top remain the same.
 	const [searchTerm, setSearchTerm] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const tracksPerPage = 5;
@@ -38,9 +39,18 @@ export const TrackPerformanceCard = ({ data }: { data: any }) => {
 
 	const totalPages = Math.ceil(filteredTracks.length / tracksPerPage);
 
+	// Reset to page 1 whenever the search term changes
 	useEffect(() => {
 		setCurrentPage(1);
 	}, [searchTerm]);
+
+	// --- PAGINATION HANDLERS ---
+	const handleNextPage = () => {
+		setCurrentPage(prev => Math.min(prev + 1, totalPages));
+	};
+	const handlePrevPage = () => {
+		setCurrentPage(prev => Math.max(prev - 1, 1));
+	};
 
 	return (
 		<Card className="col-span-1 lg:col-span-2">
@@ -58,12 +68,13 @@ export const TrackPerformanceCard = ({ data }: { data: any }) => {
 						{paginatedTracks.length > 0 ? (
 							paginatedTracks.map((track: any) => (
 								<div key={track.trackTitle} className="p-3 rounded-lg border hover:bg-muted/50">
-									<div className="flex justify-between items-center font-semibold">
+									{/* CHANGE: This container now stacks on mobile and is a row on larger screens */}
+									<div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center font-semibold">
 										<span className="truncate pr-4">{track.trackTitle}</span>
-										<div className="flex space-x-4 text-right">
-											<span>{track.totalStreams.toLocaleString()} streams</span>
 
-											{/* 3. Use the new component inside the loop */}
+										{/* CHANGE: This sub-container also adapts for better mobile layout */}
+										<div className="flex items-center justify-between text-sm sm:justify-end sm:space-x-4 sm:text-right w-full sm:w-auto">
+											<span className="text-muted-foreground">{track.totalStreams.toLocaleString()} streams</span>
 											<TrackRevenue amount={track.totalRevenue} />
 										</div>
 									</div>
@@ -74,8 +85,20 @@ export const TrackPerformanceCard = ({ data }: { data: any }) => {
 						)}
 					</div>
 
-					{/* Pagination Controls ... */}
-					{totalPages > 1 && <div className="flex justify-center items-center space-x-2 pt-4">{/* ... buttons ... */}</div>}
+					{/* CHANGE: Implemented pagination controls */}
+					{totalPages > 1 && (
+						<div className="flex justify-center items-center space-x-3 pt-4">
+							<Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline" size="sm">
+								Previous
+							</Button>
+							<span className="text-sm text-muted-foreground">
+								Page {currentPage} of {totalPages}
+							</span>
+							<Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline" size="sm">
+								Next
+							</Button>
+						</div>
+					)}
 				</div>
 			</CardContent>
 		</Card>

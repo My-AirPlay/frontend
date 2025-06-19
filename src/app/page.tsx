@@ -7,6 +7,7 @@ import { Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { DemoRequestButton } from '@/components/ui/demo-button';
 
 // Hero carousel images
 const heroImages = ['/images/hero/hero1.png', '/images/hero/hero2.png', '/images/hero/hero3.png'];
@@ -115,9 +116,7 @@ export default function Home() {
 							</div>
 						</div>
 						<div className="flex items-center gap-4">
-							<Button variant="outline" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full hidden sm:flex">
-								Request a Demo
-							</Button>
+							<DemoRequestButton />
 							<LinkButton href="/artiste/register" className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">
 								Get Started
 							</LinkButton>
@@ -131,9 +130,7 @@ export default function Home() {
 						<div className="mb-10 md:mb-0">
 							<h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl text-white mb-6 md:mb-12 max-w-md">Empower your Music...</h1>
 							<div className="flex gap-4 mb-8 md:mb-14">
-								<Button variant="outline" size="lg" className="text-[#FF6B00] border-[#FF6B00] hover:bg-[#FF6B00] hover:text-white rounded-full hidden sm:flex">
-									Request a Demo
-								</Button>
+								<DemoRequestButton />
 								<LinkButton href="/artiste/login" size="lg" className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full">
 									Get Started
 								</LinkButton>

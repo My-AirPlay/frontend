@@ -12,6 +12,9 @@ export default function ArtisteClientLayout() {
 
 	React.useEffect(() => {
 		if (!isLoading && !isAuthenticating) {
+			if (pathname.startsWith('/') && !artist && !admin) {
+				return;
+			}
 			if (artist) {
 				if (artist.stage !== 'complete' && artist.stage !== userProfileStage.payment) {
 					router.push('/artiste/onboarding');

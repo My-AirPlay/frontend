@@ -2,13 +2,14 @@
 
 import logo from '@/app/assets/logo-big.svg';
 import { Icon } from '@iconify/react';
-import { ChevronDown, ChevronRight, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { ChevronDown, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button, LinkButton } from '@/components/ui';
-const navLinks = ['About', 'Features', 'Pricing', 'Royalties', 'Support'];
+import { DemoRequestButton } from '@/components/ui/demo-button';
+/*const navLinks = ['About', 'Features', 'Pricing', 'Royalties', 'Support'];*/
 const AuthHeader = () => {
 	const [showMenu, setShowMenu] = useState(false);
 	return (
@@ -27,7 +28,7 @@ const AuthHeader = () => {
 						<ChevronDown size={24} />
 					</Button>
 				</div>
-				<ul className="flex flex-col lg:flex-row font-poppins flex-1 lg:flex-auto lg:w-fit  lg:px-0 px-4 lg:justify-between  lg:gap-4 gap-[31px] lg:max-w-[627px]">
+				{/*<ul className="flex flex-col lg:flex-row font-poppins flex-1 lg:flex-auto lg:w-fit  lg:px-0 px-4 lg:justify-between  lg:gap-4 gap-[31px] lg:max-w-[627px]">
 					{navLinks.map(link => (
 						<li className="font-bold font-poppins text-white text-sm  items-center gap-3 flex justify-between lg:justify-start" key={link}>
 							<Link href={'#'}>{link}</Link>
@@ -35,12 +36,10 @@ const AuthHeader = () => {
 							<ChevronRight className="lg:hidden block" size={16} />
 						</li>
 					))}
-				</ul>
+				</ul>*/}
 				<div className="lg:hidden block w-fit mx-auto">
 					<div className="flex items-center lg:gap-5 gap-4">
-						<Button className="text-[0.9rem] text-white font-medium border border-custom-dot w-full max-w-[120px] grid place-items-center rounded-md" size="md" variant="outline">
-							Video Demo
-						</Button>
+						<DemoRequestButton />
 						<LinkButton href={'/artiste/register'} className="text-[0.9rem] flex-1 text-white font-medium  rounded-md w-full max-w-[180px] grid place-items-center px-5" size="md">
 							Create an Account
 						</LinkButton>

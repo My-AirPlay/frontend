@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Settings, Menu } from 'lucide-react';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -11,6 +11,7 @@ import { CurrencySwitcher } from '@/app/artiste/(main)/dashboard/misc/components
 
 const Header: React.FC = () => {
 	const { artist, logout, isLoading } = useAuthContext();
+	const [isSheetOpen, setIsSheetOpen] = useState(false);
 	const router = useRouter();
 
 	const logoutArtist = () => {
@@ -49,12 +50,16 @@ const Header: React.FC = () => {
 								}
 							]}
 						/>
-						<Sheet>
-							<SheetTrigger className="md:hidden text-primary">
+						<Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+							<SheetTrigger
+								className="md:hidden text-primary"
+								onClick={() => setIsSheetOpen(true)} // Explicitly open
+							>
 								<Menu size={24} className="text-primary" />
 							</SheetTrigger>
 							<SheetContent side="right" className="w-64 !p-0">
-								<Sidebar />
+								{/* Pass a function to the Sidebar to close the sheet */}
+								<Sidebar onLinkClick={() => setIsSheetOpen(false)} />
 							</SheetContent>
 						</Sheet>
 					</>

@@ -174,7 +174,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 			if (isAdminRoute) {
 				router.replace('/admin/login');
 			} else {
-				if (!pathname.includes('password')) {
+				if (!pathname.includes('password') && !pathname.startsWith('/')) {
 					router.replace('/artiste/login');
 				}
 			}
