@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
 import { AppLogo } from '@/components/icons';
 
-const Sidebar = ({ className }: { className?: string }) => {
+const Sidebar = ({ className, onLinkClick }: { className?: string; onLinkClick?: () => void }) => {
 	const pathname = usePathname();
 	const sidebarItems = [
 		{
@@ -52,7 +52,7 @@ const Sidebar = ({ className }: { className?: string }) => {
 				{sidebarItems.map((item, index) => {
 					const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 					return (
-						<Link href={item.href} className={cn('relative flex md:flex-col gap-x-4 text-sm font-normal items-center md:justify-center py-4 pl-2 pr-3 rounded-l-xl rounded-r-none hover:rounded-r-xl cursor-pointer transition-all duration-200', isActive && 'bg-background !rounded-r-none')} key={index}>
+						<Link onClick={onLinkClick} href={item.href} className={cn('relative flex md:flex-col gap-x-4 text-sm font-normal items-center md:justify-center py-4 pl-2 pr-3 rounded-l-xl rounded-r-none hover:rounded-r-xl cursor-pointer transition-all duration-200', isActive && 'bg-background !rounded-r-none')} key={index}>
 							{isActive && (
 								<>
 									<div className="max-md:hidden transition-all duration-300 absolute right-0 top-full w-full h-4 bg-background" />
