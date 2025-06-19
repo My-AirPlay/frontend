@@ -35,7 +35,7 @@ const Catalogue: React.FC = () => {
 	const [tab, setTab] = useState<TabKey>(initialTab);
 
 	// State for sorting
-	const [sortBy, setSortBy] = useState<string>(searchParams.get('sortBy') || 'title');
+	const [sortBy, setSortBy] = useState<string>(searchParams.get('sortBy') || 'createdAt');
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>((searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc');
 
 	// State for selection
@@ -163,8 +163,8 @@ const Catalogue: React.FC = () => {
 	} = {
 		page,
 		limit,
-		sortBy: sortBy || 'title',
-		sortOrder: sortOrder || 'asc'
+		sortBy: sortBy || 'createdAt',
+		sortOrder: sortOrder || 'desc'
 	};
 
 	// Fetch data with sorting
@@ -176,7 +176,8 @@ const Catalogue: React.FC = () => {
 		{ id: 'title', label: 'Title' },
 		{ id: 'artistName', label: 'Artist' },
 		{ id: 'recordLabel', label: 'Record Label' },
-		{ id: 'universalProductCode', label: 'Product Code' }
+		{ id: 'universalProductCode', label: 'Product Code' },
+		{ id: 'createdAt', label: 'Created At' }
 	];
 
 	const trackSortableColumns: SortableColumn[] = [
@@ -184,7 +185,8 @@ const Catalogue: React.FC = () => {
 		{ id: 'artistName', label: 'Artist' },
 		{ id: 'recordLabel', label: 'Record Label' },
 		{ id: 'mainGenre', label: 'Genre' },
-		{ id: 'universalProductCode', label: 'Product Code' }
+		{ id: 'universalProductCode', label: 'Product Code' },
+		{ id: 'createdAt', label: 'Created At' }
 	];
 
 	const videosSortableColumns: SortableColumn[] = [
@@ -192,7 +194,8 @@ const Catalogue: React.FC = () => {
 		{ id: 'artistName', label: 'Artist' },
 		{ id: 'recordLabel', label: 'Record Label' },
 		{ id: 'mainGenre', label: 'Genre' },
-		{ id: 'universalProductCode', label: 'Product Code' }
+		{ id: 'universalProductCode', label: 'Product Code' },
+		{ id: 'createdAt', label: 'Created At' }
 	];
 
 	const sortableColumns: Record<TabKey, SortableColumn[]> = {
