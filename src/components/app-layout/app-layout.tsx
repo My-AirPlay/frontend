@@ -1,7 +1,8 @@
 import React, { ReactNode } from 'react';
 import Link from 'next/link';
-import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Linkedin } from 'lucide-react';
 import AuthHeader from '@/app/artiste/(auth)/misc/components/auth-header';
+import { FaSoundcloud } from 'react-icons/fa';
 interface AppLayoutProps {
 	children: ReactNode;
 	showIcons?: boolean;
@@ -36,22 +37,22 @@ const CustomAppLayout = ({ children, showIcons }: AppLayoutProps) => {
 				<footer className="pb-3 pt-4 border-t border-t-custom-footer_border/50">
 					<ul className="flex justify-center items-center text-white/30  gap-10">
 						<li>
-							<Link href={'#'}>
-								<Twitter size={18} />
+							<Link href={'https://soundcloud.com/myairplay'}>
+								<FaSoundcloud />
 							</Link>
 						</li>
 						<li>
-							<Link href={'#'}>
+							<Link href={'https://www.linkedin.com/company/myairplay/?originalSubdomain=ng'}>
 								<Linkedin size={18} />
 							</Link>
 						</li>
 						<li>
-							<Link href={'#'}>
+							<Link href={'https://www.instagram.com/myairplay'}>
 								<Instagram size={18} />
 							</Link>
 						</li>
 						<li>
-							<Link href={'#'}>
+							<Link href={'https://www.facebook.com/MyAirplays'}>
 								<Facebook size={18} />
 							</Link>
 						</li>
