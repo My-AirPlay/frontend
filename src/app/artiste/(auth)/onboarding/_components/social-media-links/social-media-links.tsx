@@ -105,7 +105,7 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 	}, []);
 	return (
 		<div>
-			<FormStep formFields={fields} formik={formik} title="SOCIAL MEDIA LINKS" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
+			<FormStep formFields={fields} formik={formik} title="CONNECT SOCIAL MEDIA" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
 				<div className="flex justify-between md:items-center gap-12 w-full md:flex-row flex-col">
 					<Button size={'lg'} type="submit" className="max-w-[275px] h-[75px] " disabled={!formik.isValid || status === 'pending'}>
 						Submit
