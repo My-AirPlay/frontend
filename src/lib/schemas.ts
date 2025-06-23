@@ -28,11 +28,11 @@ export const onboardingBankDetailSchema = Yup.object({
 });
 const requiredError = 'Field is required';
 export const onboardingSocialLinkSchema = Yup.object({
-	instagram: Yup.string().required(requiredError).url('Invalid url'),
-	twitter: Yup.string().optional().url('Invalid url'),
-	facebook: Yup.string().optional().url('Invalid url'),
-	soundCloud: Yup.string().optional().url('Invalid url'),
-	tiktok: Yup.string().optional().url('Invalid url'),
+	instagram: Yup.string().required(requiredError),
+	twitter: Yup.string().optional(),
+	facebook: Yup.string().optional(),
+	soundCloud: Yup.string().optional(),
+	tiktok: Yup.string().optional(),
 	website: Yup.string().optional().url('Invalid url')
 });
 
