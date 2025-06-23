@@ -3,12 +3,13 @@
 import type React from 'react';
 
 import { useState } from 'react';
-import { X, Twitter, Linkedin, Instagram, Facebook } from 'lucide-react';
+import { X, Linkedin, Instagram, Facebook } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { FaSoundcloud } from 'react-icons/fa';
 
 export default function ContactPage() {
 	const [formData, setFormData] = useState({
@@ -70,19 +71,19 @@ export default function ContactPage() {
 				</form>
 
 				<div className="flex justify-center space-x-6 mt-8">
-					<a href="#" className="text-gray-400 hover:text-white">
-						<Twitter className="h-5 w-5" />
+					<a href="https://soundcloud.com/myairplay" className="text-gray-400 hover:text-white">
+						<FaSoundcloud className="h-5 w-5" />
 						<span className="sr-only">Twitter</span>
 					</a>
-					<a href="#" className="text-gray-400 hover:text-white">
+					<a href="https://www.linkedin.com/company/myairplay/?originalSubdomain=ng" className="text-gray-400 hover:text-white">
 						<Linkedin className="h-5 w-5" />
 						<span className="sr-only">LinkedIn</span>
 					</a>
-					<a href="#" className="text-gray-400 hover:text-white">
+					<a href="https://www.instagram.com/myairplay" className="text-gray-400 hover:text-white">
 						<Instagram className="h-5 w-5" />
 						<span className="sr-only">Instagram</span>
 					</a>
-					<a href="#" className="text-gray-400 hover:text-white">
+					<a href="https://www.facebook.com/MyAirplays" className="text-gray-400 hover:text-white">
 						<Facebook className="h-5 w-5" />
 						<span className="sr-only">Facebook</span>
 					</a>

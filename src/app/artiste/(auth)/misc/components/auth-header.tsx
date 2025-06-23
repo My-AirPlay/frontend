@@ -2,13 +2,14 @@
 
 import logo from '@/app/assets/logo-big.svg';
 import { Icon } from '@iconify/react';
-import { ChevronDown, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { ChevronDown, Facebook, Instagram, Linkedin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button, LinkButton } from '@/components/ui';
 import { DemoRequestButton } from '@/components/ui/demo-button';
+import { FaSoundcloud } from 'react-icons/fa';
 /*const navLinks = ['About', 'Features', 'Pricing', 'Royalties', 'Support'];*/
 const AuthHeader = () => {
 	const [showMenu, setShowMenu] = useState(false);
@@ -48,22 +49,22 @@ const AuthHeader = () => {
 				<div className="pb-2 mt-10 h-12 pt-4 border-t border-t-custom-footer_border lg:hidden block">
 					<ul className="flex justify-center items-center text-white/30  gap-10">
 						<li>
-							<Link href={'#'}>
-								<Twitter />
+							<Link href={'https://soundcloud.com/myairplay'}>
+								<FaSoundcloud />
 							</Link>
 						</li>
 						<li>
-							<Link href={'#'}>
+							<Link href={'https://www.linkedin.com/company/myairplay/?originalSubdomain=ng'}>
 								<Linkedin />
 							</Link>
 						</li>
 						<li>
-							<Link href={'#'}>
+							<Link href={'https://www.instagram.com/myairplay'}>
 								<Instagram />
 							</Link>
 						</li>
 						<li>
-							<Link href={'#'}>
+							<Link href={'https://www.facebook.com/MyAirplays'}>
 								<Facebook />
 							</Link>
 						</li>
