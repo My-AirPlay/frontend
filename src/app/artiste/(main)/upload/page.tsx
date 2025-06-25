@@ -68,7 +68,7 @@ export default function MediaTypeSelection() {
 		setSelectedType(value);
 	};
 
-	const handleContinue = () => {
+	const handleContinue = async () => {
 		if (!selectedType) return;
 		if (!!artist && !artist.bankDetails.paidRegistrationFee) {
 			redirect('/artiste/onboarding?step=registration_fee');
@@ -80,7 +80,7 @@ export default function MediaTypeSelection() {
 				setShowContinueDialog(true);
 				return;
 			}
-			clearAlbumUploadStore();
+			await clearAlbumUploadStore();
 			setAlbumType(selectedType as any);
 			setAlbumUploadCurrentStep('musicInfo');
 			router.push('/artiste/upload/album');
@@ -91,7 +91,7 @@ export default function MediaTypeSelection() {
 				return;
 			}
 			console.log('Clearing media store');
-			clearMediaUploadStore();
+			await clearMediaUploadStore();
 			setMediaType(selectedType as any);
 			setMediaUploadCurrentStep('musicInfo');
 			router.push('/artiste/upload/media');
