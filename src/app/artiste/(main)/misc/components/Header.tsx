@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Sidebar from './Sidebar';
@@ -22,9 +22,6 @@ const Header: React.FC = () => {
 		<header className="h-16 flex items-center justify-between px-6">
 			<div className="flex items-center space-x-4 ml-auto">
 				<CurrencySwitcher />
-				<button className="text-white/60 hover:text-foreground">
-					<Settings size={20} />
-				</button>
 
 				{isLoading ? (
 					<Skeleton className="w-8 h-8 rounded-full bg-muted animate-pulse" />

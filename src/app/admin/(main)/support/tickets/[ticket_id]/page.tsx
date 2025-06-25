@@ -1,8 +1,8 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Send } from 'lucide-react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { ArrowLeft, Send, X } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui';
 import Link from 'next/link';
 import { useUpdateComplaintStatus } from '../../api/patchComplaintStatus';
@@ -13,16 +13,17 @@ import { toast } from 'sonner';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 
 const TicketDetails: React.FC = () => {
-	const { ticket_id } = useParams<{ ticket_id: string }>();
 	const searchParams = useSearchParams();
 	const complaintId = searchParams.get('complaintId') || '';
 
 	const [newMessage, setNewMessage] = useState('');
 	const [messageList, setMessageList] = useState<any[]>([]); // Local state for messages
 
-	const { data: ticket, isPending: isPendingTicket, refetch: refetchTicket } = useGetSingleComplaint({ complaintId: ticket_id });
+	const [previewAttachmentUrl, setPreviewAttachmentUrl] = useState<string | null>(null);
+	const [previewAttachmentType, setPreviewAttachmentType] = useState<'image' | 'video' | null>(null);
 
 	const { data: messages, refetch: refetchMessages } = useGetAllComplaintById({ complaintId });
+	const { data: ticket, isPending: isPendingTicket, refetch: refetchTicket } = useGetSingleComplaint({ complaintId: complaintId });
 
 	const { mutate, isPending } = useUpdateComplaintStatus();
 	const { mutate: createComplaint, isPending: isCreatingComplaint } = useReportIssue();
@@ -67,6 +68,22 @@ const TicketDetails: React.FC = () => {
 		setNewMessage('');
 	};
 
+	const openAttachmentPreview = (url: string) => {
+		// Simple extension check
+		const ext = url.split('.').pop()?.toLowerCase() || '';
+		if (['mp4', 'webm', 'ogg'].includes(ext)) {
+			setPreviewAttachmentType('video');
+		} else {
+			setPreviewAttachmentType('image');
+		}
+		setPreviewAttachmentUrl(url);
+	};
+
+	// Close modal
+	const closeAttachmentPreview = () => {
+		setPreviewAttachmentUrl(null);
+		setPreviewAttachmentType(null);
+	};
 	return (
 		<div className="bg-custom-gradient rounded-lg text-white min-h-[70vh] flex flex-col justify-between">
 			<div className="mx-auto px-6 py-4 w-full">
@@ -121,13 +138,15 @@ const TicketDetails: React.FC = () => {
 										<div className={`max-w-[70%] w-[70%] p-3 rounded-lg ${msg.sender === 'admin' ? 'bg-primary text-white' : 'bg-white text-black'}`}>
 											<p className="text-sm">{msg.content}</p>
 											{msg.time && <p className="text-xs text-right mt-1 text-white/60">{msg.time}</p>}
+											{msg.isAttachment && (
+												<div className="w-full justify-end flex p-8 bg-background cursor-pointer" onClick={() => openAttachmentPreview(msg.isAttachment)} title="Click to preview attachment">
+													<Image src={msg.isAttachment} className="rounded-md mt-4 justify-end aspect-video object-contain" width={200} height={200} alt="ticket attachment" />
+												</div>
+											)}
 										</div>
 									</div>
 								))}
 							</div>
-
-							{/* Attachment (if any) */}
-							{ticket?.complain?.attachment && <Image src={ticket.complain.attachment} className="rounded-md mt-4 w-full aspect-video" width={1000} height={600} alt="ticket attachment" />}
 						</div>
 
 						{/* Message Input */}
@@ -183,6 +202,23 @@ const TicketDetails: React.FC = () => {
 					</>
 				)}
 			</div>
+			{/* Attachment Preview Modal */}
+			{previewAttachmentUrl && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80" onClick={closeAttachmentPreview}>
+					<div
+						className="relative max-w-4xl max-h-[90vh] w-full mx-4 p-2"
+						onClick={e => e.stopPropagation()} // prevent modal close on inner click
+					>
+						<button className="absolute top-2 right-2 text-white hover:text-gray-300" onClick={closeAttachmentPreview} aria-label="Close preview">
+							<X size={24} />
+						</button>
+
+						{previewAttachmentType === 'image' && <img src={previewAttachmentUrl} alt="Attachment preview" className="rounded-lg max-w-full max-h-[90vh] object-contain" />}
+
+						{previewAttachmentType === 'video' && <video src={previewAttachmentUrl} controls autoPlay className="rounded-lg max-w-full max-h-[80vh]" />}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

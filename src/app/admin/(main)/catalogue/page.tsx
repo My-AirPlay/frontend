@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { DataTable, PreviousPageButton } from '@/components/ui';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'; // Added Dropdown imports
 import { useGetAdminMedia } from './api';
-import { useGetAllAlbums } from './api/getAdminGetAllAlbums';
+import { useGetAllAlbums, useGetAllContractIds } from './api/getAdminGetAllAlbums';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ArrowDown, ArrowUp } from 'lucide-react';
@@ -170,11 +170,14 @@ const Catalogue: React.FC = () => {
 	// Fetch data with sorting
 	const { data: tracks, isLoading: tracksLoading } = useGetAdminMedia(apiParams);
 	const { data: releases, isLoading: releasesLoading } = useGetAllAlbums(apiParams);
+	const { data: artistIds } = useGetAllContractIds(); //getall_contractIds
 	const { data: video, isLoading: videoLoading } = useGetAdminMedia({ ...apiParams, type: 'video' });
+	const artistIdsSet = new Set(artistIds ?? []);
 
 	const releaseSortableColumns: SortableColumn[] = [
 		{ id: 'title', label: 'Title' },
 		{ id: 'artistName', label: 'Artist' },
+		{ id: 'hasContract', label: 'Contract Status' },
 		{ id: 'recordLabel', label: 'Record Label' },
 		{ id: 'universalProductCode', label: 'Product Code' },
 		{ id: 'createdAt', label: 'Created At' }
@@ -183,6 +186,7 @@ const Catalogue: React.FC = () => {
 	const trackSortableColumns: SortableColumn[] = [
 		{ id: 'title', label: 'Title' },
 		{ id: 'artistName', label: 'Artist' },
+		{ id: 'hasContract', label: 'Contract Status' },
 		{ id: 'recordLabel', label: 'Record Label' },
 		{ id: 'mainGenre', label: 'Genre' },
 		{ id: 'universalProductCode', label: 'Product Code' },
@@ -192,6 +196,7 @@ const Catalogue: React.FC = () => {
 	const videosSortableColumns: SortableColumn[] = [
 		{ id: 'title', label: 'Title' },
 		{ id: 'artistName', label: 'Artist' },
+		{ id: 'hasContract', label: 'Contract Status' },
 		{ id: 'recordLabel', label: 'Record Label' },
 		{ id: 'mainGenre', label: 'Genre' },
 		{ id: 'universalProductCode', label: 'Product Code' },
@@ -221,6 +226,12 @@ const Catalogue: React.FC = () => {
 			header: 'Artist',
 			accessorKey: 'artistName',
 			cell: (info: any) => <p className="text-primary ">{info.row.original.artistName}</p>
+		},
+		{
+			id: 'hasContract',
+			header: 'Contract Status',
+			accessorKey: 'contractDetails',
+			cell: (info: any) => <div>{!artistIdsSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span> : <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span>}</div>
 		},
 		{
 			id: 'recordLabel',
@@ -256,6 +267,12 @@ const Catalogue: React.FC = () => {
 			cell: (info: any) => <p className="text-primary ">{info.row.original.artistName}</p>
 		},
 		{
+			id: 'hasContract',
+			header: 'Contract Status',
+			accessorKey: 'contractDetails',
+			cell: (info: any) => <div>{!artistIdsSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span> : <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span>}</div>
+		},
+		{
 			id: 'recordLabel',
 			header: 'Record Label',
 			accessorKey: 'recordLabel'
@@ -287,6 +304,12 @@ const Catalogue: React.FC = () => {
 			header: 'Artist',
 			accessorKey: 'artistName',
 			cell: (info: any) => <p className="text-primary ">{info.row.original.artistName}</p>
+		},
+		{
+			id: 'hasContract',
+			header: 'Contract Status',
+			accessorKey: 'contractDetails',
+			cell: (info: any) => <div>{!artistIdsSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span> : <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span>}</div>
 		},
 		{
 			id: 'recordLabel',

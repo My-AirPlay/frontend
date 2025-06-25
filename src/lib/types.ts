@@ -78,6 +78,7 @@ export interface Artist {
 	city: string;
 	country: string;
 	firstName: string;
+	bio: string;
 	lastName: string;
 	phoneNumber: string;
 	bankDetails: BankDetails;

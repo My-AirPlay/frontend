@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { Send, X } from 'lucide-react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui';
 import moment from 'moment';
 import Image from 'next/image';
@@ -12,7 +12,6 @@ import { useGetAllComplaintById, useGetSingleComplaint } from '@/app/admin/(main
 import { useReportIssue } from '@/app/artiste/(main)/support/misc/api';
 
 const TicketDetails: React.FC = () => {
-	const { ticket_id } = useParams<{ ticket_id: string }>();
 	const searchParams = useSearchParams();
 	const complaintId = searchParams.get('complaintId') || '';
 
@@ -21,7 +20,7 @@ const TicketDetails: React.FC = () => {
 	const [previewAttachmentUrl, setPreviewAttachmentUrl] = useState<string | null>(null);
 	const [previewAttachmentType, setPreviewAttachmentType] = useState<'image' | 'video' | null>(null);
 
-	const { data: ticket, isPending: isPendingTicket } = useGetSingleComplaint({ complaintId: ticket_id });
+	const { data: ticket, isPending: isPendingTicket } = useGetSingleComplaint({ complaintId: complaintId });
 
 	const { data: messages, refetch: refetchMessages } = useGetAllComplaintById({ complaintId });
 
@@ -151,6 +150,7 @@ const TicketDetails: React.FC = () => {
 			{/* Attachment Preview Modal */}
 			{previewAttachmentUrl && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80" onClick={closeAttachmentPreview}>
+					{/* The parent div for the Image component now has relative positioning */}
 					<div
 						className="relative max-w-4xl max-h-[90vh] w-full mx-4 p-2"
 						onClick={e => e.stopPropagation()} // prevent modal close on inner click
@@ -158,10 +158,9 @@ const TicketDetails: React.FC = () => {
 						<button className="absolute top-2 right-2 text-white hover:text-gray-300" onClick={closeAttachmentPreview} aria-label="Close preview">
 							<X size={24} />
 						</button>
+						{previewAttachmentType === 'image' && <img src={previewAttachmentUrl} alt="Attachment preview" className="rounded-lg max-w-full max-h-[90vh] object-contain" />}
 
-						{previewAttachmentType === 'image' && <Image src={previewAttachmentUrl} alt="Attachment preview" className="rounded-lg max-w-full max-h-[80vh] object-contain" />}
-
-						{previewAttachmentType === 'video' && <video src={previewAttachmentUrl} controls autoPlay className="rounded-lg max-w-full max-h-[80vh]" />}
+						{previewAttachmentType === 'video' && <video src={previewAttachmentUrl} controls autoPlay className="rounded-lg max-w-full max-h-[80vh] w-full h-full" />}
 					</div>
 				</div>
 			)}

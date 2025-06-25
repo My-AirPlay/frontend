@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { ArrowRight, MoveLeft } from 'lucide-react';
+import { ArrowRight, MoveLeft, X } from 'lucide-react';
 import Image from 'next/image';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -14,6 +15,43 @@ import { SingleDatePicker } from '@/components/ui';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useMediaUploadStore } from '../store';
 import Step4MediaDistributionPlatformCard from './Step4MediaDistributionPlatformCards';
+import { useAuthContext } from '@/contexts/AuthContext';
+
+interface pdfModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	pdfUrl: string;
+}
+const PDFModal = ({ isOpen, onClose, pdfUrl }: pdfModalProps) => {
+	useEffect(() => {
+		const handleEsc = (event: any) => {
+			if (event.key === 'Escape') {
+				onClose();
+			}
+		};
+		if (isOpen) {
+			document.addEventListener('keydown', handleEsc);
+		}
+		return () => {
+			document.removeEventListener('keydown', handleEsc);
+		};
+	}, [isOpen, onClose]);
+	if (!isOpen) return null;
+
+	return (
+		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
+			<div className="relative w-full h-full max-w-4xl max-h-[90vh] bg-background rounded-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+				<div className="flex justify-between items-center p-4 border-b">
+					<h3 className="text-lg font-semibold">Distribution Agreement</h3>
+					<Button onClick={onClose} variant="ghost" size="icon" className="rounded-full">
+						<X className="w-5 h-5" />
+					</Button>
+				</div>
+				<iframe src={pdfUrl} title="Distribution Agreement" className="w-full h-[calc(100%-65px)] border-0" />
+			</div>
+		</div>
+	);
+};
 
 const releaseDateFormSchema = z
 	.object({
@@ -22,9 +60,10 @@ const releaseDateFormSchema = z
 	})
 	.refine(
 		data => {
-			const today = new Date().toISOString().split('T')[0];
-			const releaseDate = data.releaseDate;
-			const originalReleaseDate = data.originalReleaseDate;
+			const today = new Date();
+			today.setHours(0, 0, 0, 0); // set to start of day
+			const releaseDate = new Date(data.releaseDate);
+			const originalReleaseDate = data.originalReleaseDate ? new Date(data.originalReleaseDate) : null;
 
 			if (releaseDate < today) {
 				return false;
@@ -46,9 +85,15 @@ type ReleaseDateFormType = z.infer<typeof releaseDateFormSchema>;
 export default function Step4AlbumDistributionDetails() {
 	const { streamingPlatforms: selectedPlatforms, togglePlatform, setCurrentStep, mediaInfo, coverArtId, updateMediaInfo, getCoverArtFile, isDBInitialized, initializeDB } = useMediaUploadStore();
 
+	const { artist } = useAuthContext();
 	const { formattedData, isLoading } = useStaticAppInfo();
 	const [differentReleaseDate, setDifferentReleaseDate] = useState(false);
 	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
+
+	// State for the distribution agreement
+	const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const agreementPdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'; // Placeholder PDF URL
 
 	const allPlatformValues = formattedData?.StreamingPlatform.map(p => p.value) || [];
 
@@ -110,6 +155,10 @@ export default function Step4AlbumDistributionDetails() {
 	});
 
 	const handleContinue = async () => {
+		if (!isTermsAccepted) {
+			toast.error('You must accept the distribution agreement to continue.');
+			return;
+		}
 		const isValid = await form.trigger();
 		if (!isValid) {
 			toast.error('Please fill in all required fields correctly.');
@@ -235,15 +284,39 @@ export default function Step4AlbumDistributionDetails() {
 
 			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">{formattedData?.StreamingPlatform.map((platform, index) => <Step4MediaDistributionPlatformCard handleToggle={handleToggle} key={index} platform={platform} selectedPlatforms={selectedPlatforms} index={index} />)}</div>
 
+			{/* --- Terms and Conditions Checkbox --- */}
+			{!artist?.contractDetails?.contract && (
+				<div className="p-4 bg-secondary border-border rounded-lg mb-8">
+					<div className="flex items-start space-x-3">
+						<Checkbox id="terms" checked={isTermsAccepted} onCheckedChange={checked => setIsTermsAccepted(checked === true)} className="mt-1" />
+						<label htmlFor="terms" className="text-sm text-muted-foreground leading-relaxed">
+							You must select this checkbox to confirm that you have read, understood, and agree to the terms of the{' '}
+							<a
+								href="#"
+								onClick={e => {
+									e.preventDefault();
+									setIsModalOpen(true);
+								}}
+								className="font-semibold text-primary hover:underline"
+							>
+								MyAirplay Distribution Agreement.
+							</a>
+						</label>
+					</div>
+				</div>
+			)}
+
 			<div className="flex justify-between items-center">
 				<Button onClick={() => setCurrentStep('coverArt')} size="lg" variant={'outline'} className="rounded-full">
 					<MoveLeft className="mr-2 h-4 w-4" />
 					Music Cover
 				</Button>
-				<Button onClick={handleContinue} className="" size="lg">
+				<Button onClick={handleContinue} className="rounded-full" size="lg" disabled={!isTermsAccepted}>
 					Preview <ArrowRight className="ml-2 h-4 w-4" />
 				</Button>
 			</div>
+
+			<PDFModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} pdfUrl={agreementPdfUrl} />
 		</div>
 	);
 }

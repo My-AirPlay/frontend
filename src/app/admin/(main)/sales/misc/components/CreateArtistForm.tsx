@@ -186,8 +186,8 @@ const CreateArtistForm: React.FC<CreateArtistFormProps> = ({ onSave }) => {
 
 						<TabsContent value="contract" className="space-y-6">
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-								<Controller control={control} name="contractDetails.startDate" render={({ field }) => <SingleDatePicker label="Start Date" onChange={date => field.onChange(date)} defaultDate={field.value} value={field.value} className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-primary-500" />} />
-								<Controller control={control} name="contractDetails.endDate" render={({ field }) => <SingleDatePicker label="End Date" onChange={date => field.onChange(date)} defaultDate={field.value} value={field.value} className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-primary-500" />} />
+								<Controller control={control} name="contractDetails.startDate" render={({ field }) => <SingleDatePicker label="Start Date" onChange={date => field.onChange(date)} value={field.value} className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-primary-500" />} />
+								<Controller control={control} name="contractDetails.endDate" render={({ field }) => <SingleDatePicker label="End Date" onChange={date => field.onChange(date)} value={field.value} className="bg-zinc-800 border-zinc-700 text-zinc-100 focus:ring-primary-500" />} />
 							</div>
 							<div className="space-y-2">
 								<label className="block text-sm font-medium text-zinc-200 mb-2">Upload Artist Contract</label>
