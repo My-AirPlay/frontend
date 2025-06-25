@@ -17,10 +17,10 @@ export default function SectionBankDetails() {
 	const { artist, isLoading, checkAuthStatus } = useAuthContext();
 
 	const defaultValues: BankFormValues = {
-		accountNumber: artist?.bankDetails?.accountNumber.toString() || '',
+		accountNumber: artist?.bankDetails?.accountNumber?.toString() || '',
 		bankName: artist?.bankDetails?.bankName || '',
 		accountName: artist?.bankDetails?.accountName || '',
-		sortCode: artist?.bankDetails?.sortCode.toString() || '',
+		sortCode: artist?.bankDetails?.sortCode?.toString() || '',
 		ibanSwiftCode: artist?.bankDetails?.ibanSwiftCode || '',
 		payoutOption: artist?.bankDetails?.paymentOption || 'monthly',
 		currency: artist?.bankDetails?.currency || 'naira'

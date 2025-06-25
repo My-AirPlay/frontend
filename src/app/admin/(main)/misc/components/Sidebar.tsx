@@ -51,7 +51,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 				]
 			}
 		],
-		[supportTicketCount]
+		[supportTicketCount, contractsCount]
 	);
 
 	return (

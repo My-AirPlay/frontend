@@ -81,7 +81,7 @@ export const CurrencyProvider: FC<{ children: ReactNode }> = ({ children }) => {
 			isLoadingRates,
 			errorRates
 		}),
-		[currency, exchangeRates, isLoadingRates, errorRates]
+		[currency, isLoadingRates, errorRates, convertCurrency]
 	);
 
 	return <CurrencyContext.Provider value={value}>{children}</CurrencyContext.Provider>;

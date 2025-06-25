@@ -202,7 +202,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 				}
 			}),
 			{
-				name: 'media-upload-storage',
+				name: 'media-upload-storage-v2',
 				partialize: state => ({
 					currentStep: state.currentStep,
 					mediaType: state.mediaType,

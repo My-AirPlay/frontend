@@ -26,3 +26,14 @@ export const useGetAllAlbums = (options: FetchOptions) => {
 		queryFn: () => getAllAlbums(options)
 	});
 };
+export const getAllContractIds = async () => {
+	const response = await APIAxios.get(`/admin/getall_contractIds`);
+	return response.data;
+};
+
+export const useGetAllContractIds = () => {
+	return useQuery({
+		queryKey: ['getAllContractIds'],
+		queryFn: () => getAllContractIds()
+	});
+};

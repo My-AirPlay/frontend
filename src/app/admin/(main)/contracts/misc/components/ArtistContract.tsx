@@ -7,31 +7,27 @@ import { Button } from '@/components/ui/button';
 import { Save } from 'lucide-react';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { toast } from 'sonner';
-import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'; // Import necessary types
-
-// Artist type is already imported from '@/lib/types'
+import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 
 // Helper function to safely create a Date object
+// Defaults to today's date if the provided string is invalid or missing.
 const safeNewDate = (dateString?: string | null): Date => {
 	if (dateString) {
 		const date = new Date(dateString);
-		// Check if the date is valid
 		if (!isNaN(date.getTime())) {
 			return date;
 		}
 	}
-	// Fallback to current date if the input is invalid or missing
-	return new Date();
+	return new Date(); // Fallback to current date
 };
 
 interface ArtistContractProps {
 	artist: Artist;
-	// Replace 'any' with the specific 'Artist' type
 	artistRefetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<Artist, Error>>;
 }
 
 interface UploadArtistContractPayload {
-	contract: File | null; // Allow null to match your payload
+	contract: File | null;
 	email: string;
 	startDate: string;
 	endDate: string;
@@ -45,8 +41,25 @@ interface FileWithPreview {
 
 const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }) => {
 	const [primaryFile, setPrimaryFile] = useState<FileWithPreview>({ file: null, previewUrl: null });
+
+	// 1. State for startDate, initialized safely.
 	const [startDate, setStartDate] = useState<Date>(safeNewDate(artist?.contractDetails?.startDate));
-	const [endDate, setEndDate] = useState<Date>(safeNewDate(artist?.contractDetails?.endDate));
+
+	// 2. State for endDate, initialized based on the initial startDate.
+	const [endDate, setEndDate] = useState<Date>(() => {
+		const initialEndDate = new Date(startDate);
+		initialEndDate.setFullYear(initialEndDate.getFullYear() + 1);
+		return initialEndDate;
+	});
+
+	// 3. This Effect hook will run ONLY when `startDate` changes.
+	useEffect(() => {
+		// When startDate changes, we calculate the new endDate and update its state.
+		const newEndDate = new Date(startDate);
+		newEndDate.setFullYear(newEndDate.getFullYear() + 1);
+		setEndDate(newEndDate);
+	}, [startDate]); // The dependency array makes this effect reactive to startDate changes.
+
 	const [status, setStatus] = useState<string>(artist?.contractDetails?.status || 'ACTIVE');
 
 	const handlePrimaryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,7 +105,6 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 		}
 	};
 
-	// Clean up object URLs to prevent memory leaks
 	useEffect(() => {
 		return () => {
 			if (primaryFile.previewUrl) URL.revokeObjectURL(primaryFile.previewUrl);
@@ -102,8 +114,10 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 	return (
 		<div className="space-y-8">
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<SingleDatePicker label="Start Date" value={startDate} onChange={setStartDate} defaultDate={startDate} />
-				<SingleDatePicker label="End Date" value={endDate} onChange={setEndDate} defaultDate={endDate} />
+				{/* 4. The onChange for the start date picker can now simply call setStartDate */}
+				<SingleDatePicker label="Start Date" value={startDate} onChange={setStartDate} />
+
+				<SingleDatePicker label="End Date" value={endDate} onChange={() => {}} disabled />
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -126,7 +140,6 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 			{artist?.contractDetails?.contract && (
 				<div className="space-y-4">
 					<h2 className="text-lg font-medium">Preview Artist Contract</h2>
-
 					<Link href={artist?.contractDetails?.contract} className="text-primary hover:underline" target="_blank">
 						Contract Preview
 					</Link>
@@ -165,7 +178,7 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 							</div>
 						</div>
 					)}
-					<input type="file" className=" absolute z-[2] top-0 left-0 w-full h-full cursor-pointer opacity-0" accept="*image" onChange={handlePrimaryFileChange} />
+					<input type="file" className=" absolute z-[2] top-0 left-0 w-full h-full cursor-pointer opacity-0" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={handlePrimaryFileChange} />
 				</div>
 			</div>
 

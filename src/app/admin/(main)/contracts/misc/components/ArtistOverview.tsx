@@ -1,4 +1,4 @@
-import { Button, Input, SelectSimple } from '@/components/ui';
+import { Button, Input, SelectSimple, Textarea } from '@/components/ui';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { Artist } from '@/lib/types';
 import { Save } from 'lucide-react';
@@ -52,6 +52,7 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }
 				<Input label="Full Name" value={`${artist?.firstName || ''} ${artist?.lastName || ''}`} readOnly />
 
 				<Input label="Email" value={artist?.email} readOnly type="email" />
+				<Textarea label="Bio" value={artist?.bio} readOnly />
 			</div>
 
 			<div className="space-y-6">
