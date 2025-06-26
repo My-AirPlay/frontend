@@ -29,7 +29,7 @@ type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records
 interface DropdownOption {
 	id: string;
 	label: string;
-	symbol: string;
+	symbol?: string;
 }
 
 interface createdArtistProp {
@@ -53,6 +53,49 @@ interface CurrencyPair {
 	toCurrency: string | null;
 	exchangeRate: string;
 }
+
+interface PublishTagModalProps {
+	onClose: () => void;
+	onPublish: (tag: string) => void;
+	isLoading: boolean;
+}
+
+const PublishTagModal: React.FC<PublishTagModalProps> = ({ onClose, onPublish, isLoading }) => {
+	const [selectedTag, setSelectedTag] = useState<string>('');
+	const tags = ['MyAirplay-F', 'MyAirplay-S', 'Sound on'];
+
+	const handlePublish = () => {
+		if (!selectedTag) {
+			toast.error('Please select a tag to publish.');
+			return;
+		}
+		onPublish(selectedTag);
+	};
+
+	return (
+		<div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+			<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-[#272727] p-6 rounded-lg shadow-xl w-full max-w-md space-y-4">
+				<h2 className="text-xl font-semibold text-white">Choose a tag to publish</h2>
+				<p className="text-sm text-gray-400">Select one of the following tags. This will be associated with the published artist records.</p>
+				<div className="space-y-2">
+					{tags.map(tag => (
+						<div key={tag} className={`p-3 rounded-md cursor-pointer transition-colors ${selectedTag === tag ? 'bg-primary text-white' : 'bg-secondary hover:bg-primary/20'}`} onClick={() => setSelectedTag(tag)}>
+							{tag}
+						</div>
+					))}
+				</div>
+				<div className="flex justify-end gap-4 mt-6">
+					<Button variant="outline" onClick={onClose} disabled={isLoading}>
+						Cancel
+					</Button>
+					<Button className="bg-primary hover:bg-primary/90" onClick={handlePublish} disabled={!selectedTag || isLoading} isLoading={isLoading}>
+						Publish
+					</Button>
+				</div>
+			</motion.div>
+		</div>
+	);
+};
 
 const Sales: React.FC = () => {
 	const { rawData } = useStaticAppInfo();
@@ -134,6 +177,7 @@ const Sales: React.FC = () => {
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
 	const [activityPeriod, setActivityPeriod] = useState<string>('');
+	const [showPublishTagModal, setShowPublishTagModal] = useState(false);
 
 	const navigateToNextStep = () => {
 		if (currentStep === 'exchange-rate') {
@@ -299,20 +343,21 @@ const Sales: React.FC = () => {
 			}, 1500);
 		}, 1000);
 	};
-	const publishArtists = async () => {
+	const publishArtists = async (tag: string) => {
 		if (matchedArtists.length === 0) {
 			toast.info('No matched artists to publish.');
 			return;
 		}
 		setLoadingComplete(true);
 		publishCsv(
-			{ artists: matchedArtists },
+			{ artists: matchedArtists, tag: tag },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
 					console.log('API Response:', data);
 					toast.success(data.message || 'Published successfully!');
 					setLoadingComplete(false);
+					setShowPublishTagModal(false);
 					//setMatchedArtists([]);
 					setCurrentStep('send-emails');
 				},
@@ -609,7 +654,7 @@ const Sales: React.FC = () => {
 						</Button>
 
 						{currentStep === 'artist-records' && unmatchedArtists.length === 0 && (
-							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={publishArtists} isLoading={loadingComplete}>
+							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={() => setShowPublishTagModal(true)} isLoading={loadingComplete}>
 								Publish Matched Artists
 							</Button>
 						)}
@@ -626,6 +671,7 @@ const Sales: React.FC = () => {
 			</div>
 
 			{showSuccessModal && <SuccessModal type={showSuccessModal} artistName={createdArtist?.artistName} artistRealName={createdArtist?.fullName} onClose={handleCloseSuccessModal} />}
+			{showPublishTagModal && <PublishTagModal onClose={() => setShowPublishTagModal(false)} onPublish={publishArtists} isLoading={loadingComplete} />}
 		</div>
 	);
 };
@@ -635,6 +681,7 @@ interface DropdownOption {
 	id: string;
 	label: string;
 	value?: string;
+	symbol?: string;
 }
 
 interface CustomDropdownProps {

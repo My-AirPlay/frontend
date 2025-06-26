@@ -39,6 +39,6 @@ export function formatCurrency(amount: number, currency?: SupportedCurrency): st
 	return new Intl.NumberFormat(locale, {
 		style: 'currency',
 		currency: currency,
-		minimumFractionDigits: 2
+		minimumFractionDigits: 3
 	}).format(amount);
 }

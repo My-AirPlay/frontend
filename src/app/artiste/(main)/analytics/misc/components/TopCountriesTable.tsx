@@ -9,9 +9,10 @@ function getLocaleForCurrency(currency: Currency): string {
 	const currencyToLocaleMap: Record<Currency, string> = {
 		USD: 'en-US',
 		EUR: 'en-GB',
-		NGN: 'en-NG'
+		NGN: 'en-NG',
+		GBP: 'en-GB'
 	};
-	return currencyToLocaleMap[currency] || 'en-US';
+	return currencyToLocaleMap[currency] || 'en-NG';
 }
 
 interface TopCountriesTableProps {
