@@ -18,8 +18,8 @@ const Header: React.FC = () => {
 	const logoutArtist = () => {
 		setIsLoggingOut(true);
 		setTimeout(() => {
-			logout(false);
-			router.push('/artiste/login');
+			logout({ redirect: true });
+			//router.push('/artiste/login');
 		}, 1500);
 	};
 	return (
