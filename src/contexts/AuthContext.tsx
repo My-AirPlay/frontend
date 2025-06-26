@@ -149,7 +149,7 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType>({
 	...initialAuthState,
 	dispatch: () => {},
-	logout: () => {},
+	logout: async () => {},
 	checkAuthStatus: async () => {}
 });
 
@@ -159,9 +159,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 	const pathname = usePathname();
 	const isAdminRoute = pathname.includes('/admin');
 
-	const logout = (reroute?: boolean) => {
-		clearArtistTokens();
-		clearAdminTokens();
+	const logout = async (reroute?: boolean) => {
+		await clearArtistTokens();
+		await clearAdminTokens();
 		dispatch({ type: 'LOGOUT' });
 		if (reroute) {
 			router.replace('/artiste/login');
