@@ -22,7 +22,7 @@ import { loginArtistUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mu
 
 const AdminLoginPageClient = () => {
 	const router = useRouter();
-	const { checkAuthStatus } = useAuthContext(); // Changed from useArtisteContext
+	const { checkAuthStatus, logout } = useAuthContext(); // Changed from useArtisteContext
 	const { mutate, status } = useMutation({
 		mutationFn: loginArtistUser,
 		onSuccess: async data => {
@@ -65,6 +65,8 @@ const AdminLoginPageClient = () => {
 			if (user) {
 				// If admin is already logged in, redirect to dashboard
 				redirect('/admin/dashboard');
+			} else {
+				logout();
 			}
 		};
 		fetchUser();

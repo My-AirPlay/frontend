@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2, Menu } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu } from '@/components/ui';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -10,13 +10,11 @@ import Sidebar from './Sidebar';
 
 const Header: React.FC = () => {
 	const { admin, logout } = useAuthContext();
-	const router = useRouter();
 
 	const logoutArtist = () => {
 		setIsLoggingOut(true);
-		setTimeout(() => {
-			logout(false);
-			router.push('/admin/login');
+		setTimeout(async () => {
+			await logout();
 		}, 1500);
 	};
 	const [isSheetOpen, setIsSheetOpen] = useState(false);

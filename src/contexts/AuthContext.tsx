@@ -1,11 +1,13 @@
 'use client';
-import { Reducer, useLayoutEffect } from 'react';
+
+import { Reducer, useCallback, useLayoutEffect } from 'react';
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import APIAxios, { setAxiosDefaultToken } from '@/utils/axios';
 import { usePathname, useRouter } from 'next/navigation';
 import { clearAdminTokens, clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
 import { AppLogo } from '@/components/icons';
+
 interface IArtistUser {
 	_id: string;
 	email: string;
@@ -69,6 +71,7 @@ export interface AuthState {
 	error: string | null;
 }
 
+// --- INITIAL STATE AND REDUCER (No changes needed here) ---
 export const initialAuthState: AuthState = {
 	artist: null,
 	admin: null,
@@ -83,15 +86,9 @@ export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | 
 export const authReducer: Reducer<AuthState, AuthActionType> = (state, action) => {
 	switch (action.type) {
 		case 'SET_AUTHENTICATING':
-			return {
-				...state,
-				isAuthenticating: action.payload
-			};
+			return { ...state, isAuthenticating: action.payload };
 		case 'SET_LOADING':
-			return {
-				...state,
-				isLoading: action.payload
-			};
+			return { ...state, isLoading: action.payload };
 		case 'ARTISTE_LOGIN_SUCCESS':
 			return {
 				...state,
@@ -116,6 +113,7 @@ export const authReducer: Reducer<AuthState, AuthActionType> = (state, action) =
 			return {
 				...state,
 				artist: null,
+				admin: null,
 				isAuthenticated: false,
 				isLoading: false,
 				isAuthenticating: false,
@@ -128,21 +126,20 @@ export const authReducer: Reducer<AuthState, AuthActionType> = (state, action) =
 				admin: null,
 				isAuthenticated: false,
 				isLoading: false,
+				isAuthenticating: false, // Ensure this is set to false on logout
 				error: null
 			};
 		case 'SET_ERROR':
-			return {
-				...state,
-				error: action.payload
-			};
+			return { ...state, error: action.payload };
 		default:
 			return state;
 	}
 };
 
+// --- CONTEXT DEFINITION ---
 interface AuthContextType extends AuthState {
 	dispatch: React.Dispatch<AuthActionType>;
-	logout: (reroute?: boolean) => void;
+	logout: (options?: { redirect?: boolean }) => Promise<void>;
 	checkAuthStatus: () => Promise<void>;
 }
 
@@ -153,22 +150,31 @@ const AuthContext = createContext<AuthContextType>({
 	checkAuthStatus: async () => {}
 });
 
+// --- AUTH PROVIDER (Key Changes Here) ---
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [state, dispatch] = useReducer(authReducer, initialAuthState);
 	const router = useRouter();
 	const pathname = usePathname();
 	const isAdminRoute = pathname.includes('/admin');
 
-	const logout = async (reroute?: boolean) => {
-		await clearArtistTokens();
-		await clearAdminTokens();
-		dispatch({ type: 'LOGOUT' });
-		if (reroute) {
-			router.replace('/artiste/login');
-		}
-	};
+	const handleLogout = useCallback(
+		async (options: { redirect?: boolean } = { redirect: true }) => {
+			dispatch({ type: 'LOGOUT' });
 
-	const checkAuthStatus = React.useCallback(async () => {
+			// Clear tokens and axios headers
+			await clearArtistTokens();
+			await clearAdminTokens();
+			setAxiosDefaultToken('');
+
+			// Reroute after state has been cleared
+			if (options.redirect) {
+				router.replace(isAdminRoute ? '/admin/login' : '/artiste/login');
+			}
+		},
+		[router, pathname]
+	);
+
+	const checkAuthStatus = useCallback(async () => {
 		const token = await getArtistAccessToken();
 		if (!token) {
 			if (isAdminRoute) {
@@ -181,49 +187,49 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 			return;
 		}
-		setAxiosDefaultToken(token);
-		const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
-		const isTokenExpired = decodedToken.exp * 1000 < Date.now();
 
-		if (isTokenExpired) {
-			await clearArtistTokens();
-			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
-			return;
-		}
-
+		// Decode token to check for expiration
 		try {
-			const { data } = await APIAxios.get<IArtistUser>('/artist/profile', {
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
-			console.log(process.env.NEXT_PUBLIC_ADMIN_EMAIL, 'admin email in auth context');
+			const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
+			const isTokenExpired = decodedToken.exp * 1000 < Date.now();
+
+			if (isTokenExpired) {
+				await handleLogout();
+				return;
+			}
+
+			setAxiosDefaultToken(token);
+			const { data } = await APIAxios.get<IArtistUser>('/artist/profile');
+
 			if (data.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
 				dispatch({ type: 'ADMIN_LOGIN_SUCCESS', payload: data });
 			} else {
 				dispatch({ type: 'ARTISTE_LOGIN_SUCCESS', payload: data });
 			}
 		} catch (error) {
-			if (error instanceof AxiosError) {
-				console.log(error.response?.data, token);
-				if (error.response?.status === 401) {
-					await logout();
-					dispatch({ type: 'SET_AUTHENTICATING', payload: false });
-				}
+			console.error('Authentication check failed:', error);
+			if (error instanceof AxiosError && error.response?.status === 401) {
+				await handleLogout();
+			} else {
+				// Handle other errors, maybe show a generic error message
+				dispatch({ type: 'LOGIN_FAILURE', payload: 'Failed to verify session.' });
 			}
 		}
-	}, [router, dispatch, isAdminRoute]);
+	}, [handleLogout]);
 
 	useLayoutEffect(() => {
-		checkAuthStatus();
-	}, [checkAuthStatus]);
+		// Only run check if we don't have a user and are still authenticating
+		if (state.isAuthenticating && !state.isAuthenticated) {
+			checkAuthStatus();
+		}
+	}, [checkAuthStatus, state.isAuthenticating, state.isAuthenticated]);
 
 	return (
 		<AuthContext.Provider
 			value={{
 				...state,
 				dispatch,
-				logout,
+				logout: handleLogout,
 				checkAuthStatus
 			}}
 		>
@@ -238,6 +244,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 	);
 };
 
+// --- HOOK AND UTILITY FUNCTIONS ---
 export const useAuthContext = () => {
 	const context = useContext(AuthContext);
 	if (!context) {
@@ -263,20 +270,9 @@ export async function getArtistProfile() {
 		if (error instanceof AxiosError) {
 			console.log(error.response?.data, accessToken);
 			if (error.response?.status === 401) {
-				await logout();
+				return null;
 			}
 		}
 		return null;
 	}
 }
-
-const logout = async () => {
-	try {
-		await fetch('/api/auth/logout', {
-			method: 'POST'
-		});
-		//router.replace('/artiste/login')
-	} catch (error) {
-		console.error('Error during logout:', error);
-	}
-};
