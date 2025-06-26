@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { Loader2, Menu } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu } from '@/components/ui';
@@ -13,10 +13,14 @@ const Header: React.FC = () => {
 	const router = useRouter();
 
 	const logoutArtist = () => {
-		logout(false);
-		router.push('/admin/login');
+		setIsLoggingOut(true);
+		setTimeout(() => {
+			logout(false);
+			router.push('/admin/login');
+		}, 1500);
 	};
 	const [isSheetOpen, setIsSheetOpen] = useState(false);
+	const [isLoggingOut, setIsLoggingOut] = useState(false);
 	const path = usePathname();
 	const getPageTitle = () => {
 		if (path === '/') return 'Overview';
@@ -35,39 +39,49 @@ const Header: React.FC = () => {
 	};
 
 	return (
-		<header className="h-16 border-b flex items-center justify-between px-6">
-			<h1 className="text-xl font-semibold">{getPageTitle()}</h1>
+		<>
+			<header className="h-16 border-b flex items-center justify-between px-6">
+				<h1 className="text-xl font-semibold">{getPageTitle()}</h1>
 
-			<div className="flex items-center space-x-4">
-				<div className="flex items-center space-x-2">
-					<ReusableDropdownMenu
-						trigger={
-							<Avatar className="cursor-pointer">
-								<AvatarImage alt="@shadcn" />
-								<AvatarFallback>{getInitials(admin?.firstName + ' ' + admin?.lastName || admin?.artistName || 'FN')}</AvatarFallback>
-							</Avatar>
-						}
-						items={[
-							{
-								label: 'Logout',
-								onClick: logoutArtist
+				<div className="flex items-center space-x-4">
+					<div className="flex items-center space-x-2">
+						<ReusableDropdownMenu
+							trigger={
+								<Avatar className="cursor-pointer">
+									<AvatarImage alt="@shadcn" />
+									<AvatarFallback>{getInitials(admin?.firstName + ' ' + admin?.lastName || admin?.artistName || 'FN')}</AvatarFallback>
+								</Avatar>
 							}
-						]}
-					/>
-				</div>
+							items={[
+								{
+									label: 'Logout',
+									onClick: logoutArtist
+								}
+							]}
+						/>
+					</div>
 
-				{/* Control the Sheet's open state */}
-				<Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-					<SheetTrigger className="md:hidden text-primary" onClick={() => setIsSheetOpen(true)}>
-						<Menu size={24} className="text-primary" />
-					</SheetTrigger>
-					<SheetContent side="right" className="w-64 !p-0">
-						{/* Pass the function to close the sheet */}
-						<Sidebar onClose={() => setIsSheetOpen(false)} />
-					</SheetContent>
-				</Sheet>
-			</div>
-		</header>
+					{/* Control the Sheet's open state */}
+					<Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+						<SheetTrigger className="md:hidden text-primary" onClick={() => setIsSheetOpen(true)}>
+							<Menu size={24} className="text-primary" />
+						</SheetTrigger>
+						<SheetContent side="right" className="w-64 !p-0">
+							{/* Pass the function to close the sheet */}
+							<Sidebar onClose={() => setIsSheetOpen(false)} />
+						</SheetContent>
+					</Sheet>
+				</div>
+			</header>
+			{isLoggingOut && (
+				<div className="fixed inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center z-[9999]">
+					<div className="bg-background text-gray-800 p-8 rounded-xl shadow-2xl flex items-center space-x-4">
+						<Loader2 className="animate-spin h-8 w-8 text-primary" />
+						<span className="text-xl font-semibold text-primary">Logging you out...</span>
+					</div>
+				</div>
+			)}
+		</>
 	);
 };
 

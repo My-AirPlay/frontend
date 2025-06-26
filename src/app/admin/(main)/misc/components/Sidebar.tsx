@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken } from 'iconsax-react';
+import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken, Clock } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -33,6 +33,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 				title: 'Accounting',
 				items: [
 					{ href: '/admin/sales', icon: Calculator, label: 'Sales' },
+					{ href: '/admin/sales-history', icon: Clock, label: 'Sales History' },
 					{ href: '/admin/artist-revenue', icon: User, label: 'Artist Revenue' }
 				]
 			},
