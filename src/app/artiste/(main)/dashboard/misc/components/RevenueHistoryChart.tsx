@@ -1,6 +1,8 @@
 import type React from 'react';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { SupportedCurrency } from '@/utils/currency';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 interface RevenueHistoryChartProps {
 	data: Array<{
@@ -9,18 +11,34 @@ interface RevenueHistoryChartProps {
 	}>;
 }
 
+export function getLocaleForCurrency(currency: SupportedCurrency): string {
+	switch (currency) {
+		case 'NGN':
+			return 'en-NG';
+		case 'USD':
+			return 'en-US';
+		case 'EUR':
+			return 'en-GB'; // Common locale for EUR
+		case 'GBP':
+			return 'en-GB';
+		default:
+			return 'en-NG';
+	}
+}
 // Helper function to format currency for the Y-axis (e.g., 1500 -> $1.5K)
-const formatAxisCurrency = (value: number): string => {
-	return new Intl.NumberFormat('en-US', {
+const formatAxisCurrency = (value: number, currency: SupportedCurrency): string => {
+	const locale = getLocaleForCurrency(currency);
+	return new Intl.NumberFormat(locale, {
 		style: 'currency',
-		currency: 'USD',
-		notation: 'compact', // Creates K, M, B for thousands, millions, etc.
+		currency: currency,
+		notation: 'compact', // This creates K, M, B for thousands, millions, etc.
 		maximumFractionDigits: 1
 	}).format(value);
 };
 
 export const RevenueHistoryChart: React.FC<RevenueHistoryChartProps> = ({ data }) => {
 	// REFACTORED: Define the chart config for better integration
+	const { currency } = useCurrency();
 	const chartConfig = {
 		value: {
 			label: 'Revenue',
@@ -49,7 +67,7 @@ export const RevenueHistoryChart: React.FC<RevenueHistoryChartProps> = ({ data }
 						stroke="#888888"
 						fontSize={12}
 						// CHANGE: Use the currency formatter for the Y-axis
-						tickFormatter={formatAxisCurrency}
+						tickFormatter={value => formatAxisCurrency(value, currency)}
 					/>
 					<XAxis
 						dataKey="period"

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button, DataTable } from '@/components/ui';
 import { ReportItem } from '@/lib/types';
@@ -12,8 +12,17 @@ interface SendEmailsToArtistTableProps {
 }
 
 const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artists, onRowSelectionChange, onSendEmails }) => {
-	// keep track of selected rows locally
 	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
+
+	const uniqueArtists = useMemo(() => {
+		const uniqueMap = new Map<string, ReportItem>();
+		artists.forEach(artist => {
+			if (artist.artistId && !uniqueMap.has(artist.artistId)) {
+				uniqueMap.set(artist.artistId, artist);
+			}
+		});
+		return Array.from(uniqueMap.values());
+	}, [artists]);
 
 	const getRoyalty = (row: any): string => {
 		const reports = row.fullReports || [];
@@ -91,7 +100,7 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 
 			<h3 className="text-lg font-medium mb-2">Send Report Emails to Artists</h3>
 
-			<DataTable data={artists} columns={columns} pagination defaultRowsPerPage={50} showCheckbox onRowSelectionChange={handleSelectionChange} />
+			<DataTable data={uniqueArtists} columns={columns} pagination defaultRowsPerPage={50} showCheckbox onRowSelectionChange={handleSelectionChange} />
 		</div>
 	);
 };
