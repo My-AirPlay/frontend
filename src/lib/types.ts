@@ -246,7 +246,7 @@ export interface SharedRevenue {
 	artistId: string | null;
 	artistName: string | null;
 	percentage: number;
-	activityPeriod?: string;
+	activityPeriod?: string | null;
 }
 
 // Represents the entire structure of the placeholderParseData object

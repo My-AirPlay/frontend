@@ -452,11 +452,15 @@ const Sales: React.FC = () => {
 				const newMatchedArtistData = {
 					...reportItemToMove,
 					artistId: systemArtistIdForMatch,
-					realName: 'Updated Name', // This should ideally come from the matched system artist
 					status: 'completed' as const,
-					shareRevenue: {
-						artistId: systemArtistIdForMatch
-					}
+					sharedRevenue: [
+						{
+							artistId: systemArtistIdForMatch || null,
+							artistName: reportItemToMove.artistName || null,
+							activityPeriod: reportItemToMove.activityPeriod || null,
+							percentage: 100
+						}
+					]
 				};
 
 				setMatchedArtists(currentMatched => [...currentMatched, newMatchedArtistData]);
