@@ -235,6 +235,7 @@ export interface ReportItem {
 	artistId: string | null;
 	sharedRevenue: SharedRevenue[] | [];
 	artistName: string;
+	artistRealName?: string;
 	activityPeriod: string; // e.g., "September 2023"
 	fullReports: FullReport[];
 	createdAt: string | Date; // ISO Date String

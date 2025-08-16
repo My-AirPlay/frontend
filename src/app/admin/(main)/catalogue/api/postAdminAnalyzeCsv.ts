@@ -7,10 +7,12 @@ interface CurrencyPair {
 	exchangeRate: number | null;
 }
 
-export const analyzeCsv = async (file: File, exchangeRates: CurrencyPair[]) => {
+export const analyzeCsv = async (file: File, exchangeRates: CurrencyPair[], tag: string, reportingPeriod: string) => {
 	const payload = new FormData();
 	payload.append('file', file);
 	payload.append('exchangeRates', JSON.stringify(exchangeRates));
+	payload.append('tag', tag);
+	payload.append('reportingPeriod', reportingPeriod);
 
 	const response = await APIAxios.post(`/admin/analyze_csv`, payload, {
 		headers: {
@@ -23,7 +25,7 @@ export const analyzeCsv = async (file: File, exchangeRates: CurrencyPair[]) => {
 
 export const useAdminAnalyzeCsv = () => {
 	return useMutation({
-		mutationFn: ({ file, exchangeRates }: { file: File; exchangeRates: CurrencyPair[] }) => analyzeCsv(file, exchangeRates),
+		mutationFn: ({ file, exchangeRates, tag, reportingPeriod }: { file: File; exchangeRates: CurrencyPair[]; tag: string; reportingPeriod: string }) => analyzeCsv(file, exchangeRates, tag, reportingPeriod),
 		onSuccess: data => {
 			console.log('CSV analyzed successfully:', data);
 		},
