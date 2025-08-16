@@ -23,6 +23,7 @@ import { currencySymbols, ReportItem, SharedRevenue } from '@/lib/types';
 import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
 import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/SendEmailsToArtistsTable';
 import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueShareForm';
+import ReportingModal from '@/app/admin/(main)/sales/misc/components/ReportingModal';
 
 type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'add-revenue-share' | 'send-emails';
 
@@ -66,7 +67,7 @@ const PublishTagModal: React.FC<PublishTagModalProps> = ({ onClose, onPublish, i
 
 	const handlePublish = () => {
 		if (!selectedTag) {
-			toast.error('Please select a tag to publish.');
+			toast.error('Please select a tag to continue.');
 			return;
 		}
 		onPublish(selectedTag);
@@ -89,7 +90,7 @@ const PublishTagModal: React.FC<PublishTagModalProps> = ({ onClose, onPublish, i
 						Cancel
 					</Button>
 					<Button className="bg-primary hover:bg-primary/90" onClick={handlePublish} disabled={!selectedTag || isLoading} isLoading={isLoading}>
-						Publish
+						Continue
 					</Button>
 				</div>
 			</motion.div>
@@ -176,10 +177,28 @@ const Sales: React.FC = () => {
 	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
+	const [systemArtistNameForMatch, setSystemArtistNameForMatch] = useState<string | null>(null);
 	const [activityPeriod, setActivityPeriod] = useState<string>('');
 	const [showPublishTagModal, setShowPublishTagModal] = useState(false);
+	const [showReportingPeriodModal, setShowReportingPeriodModal] = useState(false);
+	const [tagValue, setTagValue] = useState<string | null>(null);
+	const [reportingPeriod, setReportingPeriod] = useState<string | null>(null);
 
+	const navigateToReportingModal = (tag: string | null) => {
+		if (tag) {
+			setTagValue(tag);
+		}
+		setShowPublishTagModal(false);
+		setShowReportingPeriodModal(true);
+	};
+
+	const setReportingPeriodValue = (reportingPeriod: string) => {
+		setReportingPeriod(reportingPeriod);
+		setShowReportingPeriodModal(false);
+		navigateToNextStep();
+	};
 	const navigateToNextStep = () => {
+		setShowReportingPeriodModal(false);
 		if (currentStep === 'exchange-rate') {
 			setCurrentStep('csv-upload');
 			setShowExchangeRates(false);
@@ -224,9 +243,13 @@ const Sales: React.FC = () => {
 		}));
 
 		console.log('normalizedCurrencyPairs', normalizedCurrencyPairs);
-
 		analyzeCsv(
-			{ file, exchangeRates: normalizedCurrencyPairs },
+			{
+				file,
+				exchangeRates: normalizedCurrencyPairs,
+				tag: tagValue as string,
+				reportingPeriod: reportingPeriod as string
+			},
 			{
 				onSuccess: apiResponse => {
 					console.log('apiResponse', apiResponse);
@@ -283,7 +306,7 @@ const Sales: React.FC = () => {
 										sharedRevenue: [
 											{
 												artistId: firstItem?.artistId || null,
-												artistName: firstItem?.artistName || 'Unknown Artist',
+												artistName: firstItem?.artistRealName || firstItem?.artistName || 'Unknown Artist',
 												activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
 												percentage: 100
 											}
@@ -343,21 +366,21 @@ const Sales: React.FC = () => {
 			}, 1500);
 		}, 1000);
 	};
-	const publishArtists = async (tag: string) => {
+	const publishArtists = async () => {
 		if (matchedArtists.length === 0) {
 			toast.info('No matched artists to publish.');
 			return;
 		}
 		setLoadingComplete(true);
 		publishCsv(
-			{ artists: matchedArtists, tag: tag },
+			{ artists: matchedArtists, tag: tagValue as string },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
 					console.log('API Response:', data);
 					toast.success(data.message || 'Published successfully!');
 					setLoadingComplete(false);
-					setShowPublishTagModal(false);
+					//setShowPublishTagModal(false);
 					//setMatchedArtists([]);
 					setCurrentStep('send-emails');
 				},
@@ -377,7 +400,6 @@ const Sales: React.FC = () => {
 		}
 
 		const artistIdsToPublish = rows.map((artist: any) => artist.artistId);
-		console.log(artistIdsToPublish);
 		sendEmails(
 			{ artistIds: artistIdsToPublish },
 			{
@@ -405,9 +427,11 @@ const Sales: React.FC = () => {
 		setCurrentStep('add-revenue-share');
 	};
 
-	const handleMatchArtist = (systemArtistId: string) => {
+	const handleMatchArtist = (systemArtistId: string, systemArtistName: string) => {
+		console.log('Matched with system artist name:', systemArtistName);
 		console.log('Matched with system artist ID:', systemArtistId);
 		setSystemArtistIdForMatch(systemArtistId);
+		setSystemArtistNameForMatch(systemArtistName);
 		setShowSuccessModal('matched');
 	};
 
@@ -437,6 +461,7 @@ const Sales: React.FC = () => {
 
 		setSelectedUnmatchedArtist(null);
 		setSystemArtistIdForMatch(null);
+		setSystemArtistNameForMatch(null);
 	};
 
 	const handleCloseSuccessModal = () => {
@@ -456,7 +481,7 @@ const Sales: React.FC = () => {
 					sharedRevenue: [
 						{
 							artistId: systemArtistIdForMatch || null,
-							artistName: reportItemToMove.artistName || null,
+							artistName: systemArtistNameForMatch || reportItemToMove.artistName || null,
 							activityPeriod: reportItemToMove.activityPeriod || null,
 							percentage: 100
 						}
@@ -473,6 +498,7 @@ const Sales: React.FC = () => {
 
 		setSelectedUnmatchedArtist(null);
 		setSystemArtistIdForMatch(null);
+		setSystemArtistNameForMatch(null);
 	};
 
 	const getProgressPercentage = () => {
@@ -566,7 +592,7 @@ const Sales: React.FC = () => {
 
 							{currentStep === 'exchange-rate' && (
 								<div className="flex justify-center mt-8 ">
-									<Button className=" flex items-center gap-2 rounded-full" size="lg" onClick={navigateToNextStep}>
+									<Button className=" flex items-center gap-2 rounded-full" size="lg" onClick={() => setShowPublishTagModal(true)}>
 										Submit <ArrowRight size={16} />
 									</Button>
 								</div>
@@ -658,7 +684,7 @@ const Sales: React.FC = () => {
 						</Button>
 
 						{currentStep === 'artist-records' && unmatchedArtists.length === 0 && (
-							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={() => setShowPublishTagModal(true)} isLoading={loadingComplete}>
+							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={publishArtists} isLoading={loadingComplete}>
 								Publish Matched Artists
 							</Button>
 						)}
@@ -666,7 +692,7 @@ const Sales: React.FC = () => {
 						{currentStep === 'artist-records' ? (
 							''
 						) : (
-							<Button className={`bg-primary hover:bg-primary/90 text-white flex items-center gap-2`} onClick={navigateToNextStep} disabled={(currentStep === 'csv-upload' && !csvUploaded) || (currentStep === 'processing' && !processingComplete)}>
+							<Button className={`bg-primary hover:bg-primary/90 text-white flex items-center gap-2`} onClick={() => navigateToNextStep()} disabled={(currentStep === 'csv-upload' && !csvUploaded) || (currentStep === 'processing' && !processingComplete)}>
 								Proceed <ArrowRight size={16} />
 							</Button>
 						)}
@@ -675,7 +701,8 @@ const Sales: React.FC = () => {
 			</div>
 
 			{showSuccessModal && <SuccessModal type={showSuccessModal} artistName={createdArtist?.artistName} artistRealName={createdArtist?.fullName} onClose={handleCloseSuccessModal} />}
-			{showPublishTagModal && <PublishTagModal onClose={() => setShowPublishTagModal(false)} onPublish={publishArtists} isLoading={loadingComplete} />}
+			{showPublishTagModal && <PublishTagModal onClose={() => setShowPublishTagModal(false)} onPublish={navigateToReportingModal} isLoading={loadingComplete} />}
+			{showReportingPeriodModal && <ReportingModal onClose={() => setShowReportingPeriodModal(false)} onSave={period => setReportingPeriodValue(period)} isLoading={loadingComplete} />}
 		</div>
 	);
 };

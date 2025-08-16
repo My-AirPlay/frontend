@@ -19,7 +19,7 @@ interface ApiResponse {
 // --- End: Local Type Definitions ---
 
 interface MatchArtistFormProps {
-	onMatch: (artistId: string, success: boolean, message?: string) => void;
+	onMatch: (artistId: string, artistRealName: string, success: boolean, message?: string) => void;
 	onCreateNew: () => void;
 	unmatchedArtistName?: ReportItem;
 	activityPeriod?: string;
@@ -81,7 +81,7 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 					// Use ApiResponse type for data
 					console.log('API Response:', data);
 					toast.success(data.message || 'Artist matched successfully!');
-					onMatch(artist._id, true, data.message); // Notify parent of success
+					onMatch(artist._id, artist.artistName, true, data.message); // Notify parent of success
 				},
 				onError: (error: Error | AxiosError<ApiResponse>) => {
 					console.error('Match failed (Request error):', error);

@@ -3,7 +3,7 @@
 import { AppLogo } from '@/components/icons';
 import { LinkButton } from '@/components/ui';
 import { Button } from '@/components/ui/button';
-import { Star, MoveRight } from 'lucide-react';
+import { Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -192,9 +192,7 @@ export default function Home() {
 								Explore Your Music with <span className="bg-gradient-to-r from-white to-[#FF8C42] text-transparent bg-clip-text">My AirPlay</span> Today
 							</h2>
 							<p className="text-gray-300 text-lg mb-10">Tap into the power of global radio and streaming platforms. Don&#39;t just create—be heard. Start your journey with Airplay and make every beat count!</p>
-							<Button className="group bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full px-8 py-3 text-lg transition-transform hover:scale-105">
-								Read More <MoveRight className="ml-2 transition-transform group-hover:translate-x-1" />
-							</Button>
+							<Button className="group bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white rounded-full px-8 py-3 text-lg transition-transform hover:scale-105">Read More</Button>
 						</div>
 						{/* Right Side: Curated Artist Image Collage */}
 						<div className="relative h-96 w-full">
