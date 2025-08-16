@@ -63,10 +63,11 @@ export const usePublishArtistReports = (): UseMutationResult<ApiResponse, Error 
 
 export interface SendEmailReportsParams {
 	artistIds: string[];
+	activityPeriod: string;
 }
 
 export const sendEmailReports = async (params: SendEmailReportsParams): Promise<ApiResponse> => {
-	const response = await APIAxios.post('/admin/publish_records', params.artistIds, {});
+	const response = await APIAxios.post('/admin/publish_records', params, {});
 	return response.data;
 };
 

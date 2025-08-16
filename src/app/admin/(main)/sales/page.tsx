@@ -401,7 +401,7 @@ const Sales: React.FC = () => {
 
 		const artistIdsToPublish = rows.map((artist: any) => artist.artistId);
 		sendEmails(
-			{ artistIds: artistIdsToPublish },
+			{ artistIds: artistIdsToPublish, activityPeriod: reportingPeriod as string },
 			{
 				onSuccess: (data: ApiResponse) => {
 					console.log('API Response:', data);
