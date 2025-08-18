@@ -253,7 +253,10 @@ const ArtistTransactions: React.FC = ({}) => {
 			<div className="flex flex-wrap gap-4 justify-between items-center">
 				<h3 className="text-md font-semibold bg-primary/10 text-primary px-3 py-1 rounded">Transactions History</h3>
 				<div className="flex flex-wrap items-center gap-2">
-					<Button variant="link" className="p-0 h-auto font-mono text-xs text-primary hover:underline" onClick={() => router.push(`/admin/artist-revenue/${artist_id}/withdraw/1}`)}>
+					<Button variant="secondary" onClick={() => router.push(`/admin/artist-revenue/${artist_id}/credit/1}`)}>
+						Credit
+					</Button>
+					<Button variant="destructive" onClick={() => router.push(`/admin/artist-revenue/${artist_id}/withdraw/1}`)}>
 						Withdraw
 					</Button>
 					{/* Search Input */}

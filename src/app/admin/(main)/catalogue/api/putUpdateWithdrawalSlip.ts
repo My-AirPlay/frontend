@@ -12,6 +12,12 @@ interface UpdateWithdrawalPayload {
 	// notes?: string;
 }
 
+interface CreditPayload {
+	transactionId: string;
+	artistId: string;
+	finalAmount: number;
+	notes: string;
+}
 // Define the expected API response interface (adjust as needed)
 interface UpdateWithdrawalResponse {
 	success: boolean;
@@ -36,6 +42,12 @@ const updateWithdrawalSlip = async (payload: UpdateWithdrawalPayload): Promise<U
 	return response.data;
 };
 
+const credit = async (payload: CreditPayload): Promise<UpdateWithdrawalResponse> => {
+	const { artistId, ...updateData } = payload;
+	const response = await APIAxios.put<UpdateWithdrawalResponse>(`/admin/creditArtist`, updateData, { params: { artistId } });
+	return response.data;
+};
+
 // React Query mutation hook
 export const useUpdateWithdrawalSlip = () => {
 	const queryClient = useQueryClient();
@@ -55,6 +67,22 @@ export const useUpdateWithdrawalSlip = () => {
 		},
 		onError: error => {
 			toast.error(error.message || 'Failed to update withdrawal slip.');
+		}
+	});
+};
+
+export const useCredits = () => {
+	const queryClient = useQueryClient();
+	return useMutation<UpdateWithdrawalResponse, Error, CreditPayload>({
+		mutationFn: credit,
+		onSuccess: (data, variables) => {
+			toast.success(data.message || 'Amount added to account successfully!');
+			queryClient.invalidateQueries({ queryKey: ['oneWithdrawalSlip', variables.transactionId] });
+			queryClient.invalidateQueries({ queryKey: ['withdrawalSlips', { artistId: variables.artistId }] }); // Adjust key structure if needed
+			queryClient.invalidateQueries({ queryKey: ['oneArtist', variables.artistId] });
+		},
+		onError: error => {
+			toast.error(error.message || 'Failed to update artist account.');
 		}
 	});
 };
