@@ -14,7 +14,7 @@ interface FileUploaderProps {
 	id: string;
 }
 
-const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected, supportedFormats = ['PDF', 'MSDOC'], maxFileSize = 40, uploadText = 'Upload or', browseText = 'Browse', containerClassName = '', icon = <Download size={24} className="text-white/60" />, id }) => {
+const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected, supportedFormats = ['PDF', 'MSDOC'], maxFileSize = 512, uploadText = 'Upload or', browseText = 'Browse', containerClassName = '', icon = <Download size={24} className="text-white/60" />, id }) => {
 	const [isDragging, setIsDragging] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
