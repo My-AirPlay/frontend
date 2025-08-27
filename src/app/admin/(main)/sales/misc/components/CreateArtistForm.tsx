@@ -129,9 +129,6 @@ const CreateArtistForm: React.FC<CreateArtistFormProps> = ({ onSave }) => {
 									)}
 								/>
 								<Controller control={control} name="email" render={({ field }) => <Input label="Email" type="email" value={field.value} onChange={field.onChange} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400 focus:ring-primary-500" placeholder="Enter Email" />} />
-								<Controller control={control} name="bankName" render={({ field }) => <Input label="Bank Name" type="text" value={field.value} onChange={field.onChange} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400 focus:ring-primary-500" placeholder="Enter Bank Name" />} />
-								<Controller control={control} name="accountName" render={({ field }) => <Input label="Account Name" type="text" value={field.value} onChange={field.onChange} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400 focus:ring-primary-500" placeholder="Enter Account Name" />} />
-								<Controller control={control} name="accountNumber" render={({ field }) => <Input label="Account Number" type="text" value={field.value} onChange={field.onChange} className="w-full bg-zinc-800 border-zinc-700 text-zinc-100 placeholder-zinc-400 focus:ring-primary-500" placeholder="Enter Account Number" />} />
 							</div>
 
 							{/* The commented out "Terms" section (remains commented out as per your original code) */}

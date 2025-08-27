@@ -1,14 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
-import { DataTable } from '@/components/ui';
+import React, { useCallback, useState } from 'react';
+import { Button, DataTable } from '@/components/ui';
 import { ReportItem } from '@/lib/types'; // Changed Artist to ReportItem
 
 interface UnmatchedArtistsTableProps {
 	artists: ReportItem[]; // Changed Artist[] to ReportItem[]
 	onArtistMatch: (row: ReportItem) => void;
+	onBulkArtistMatch: () => void;
+	onRowSelectionChange?: (selectedData: ReportItem[]) => void;
 }
 
-const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, onArtistMatch }) => {
+const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, onArtistMatch, onBulkArtistMatch, onRowSelectionChange }) => {
+	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
+	const handleSelectionChange = useCallback(
+		(rows: ReportItem[]) => {
+			setSelectedRows(rows);
+			onRowSelectionChange?.(rows);
+		},
+		[onRowSelectionChange]
+	);
 	function getRoyalty(fullReport: any) {
 		const value = parseFloat(fullReport.totalRoyaltyUSD?.royaltyConverted[0].amount)?.toFixed(2);
 		const currency = fullReport.totalRoyaltyUSD.royaltyConverted[0].toCurrency;
@@ -64,8 +74,13 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 
 	return (
 		<div className="space-y-6 mt-12">
-			<h3 className="text-lg font-medium">Unmatched Artists</h3>
-			<DataTable data={artists} columns={columns} pagination={false} defaultRowsPerPage={50} onRowClick={row => onArtistMatch(row)} />
+			<div className="flex justify-between">
+				<h3 className="text-lg font-medium">Unmatched Artists</h3>
+				<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={onBulkArtistMatch} disabled={selectedRows.length <= 0}>
+					Bulk Match Artists
+				</Button>
+			</div>
+			<DataTable data={artists} columns={columns} pagination={false} defaultRowsPerPage={50} onRowClick={row => onArtistMatch(row)} showCheckbox onRowSelectionChange={handleSelectionChange} />
 		</div>
 	);
 };

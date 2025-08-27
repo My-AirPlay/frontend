@@ -24,6 +24,7 @@ import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)
 import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/SendEmailsToArtistsTable';
 import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueShareForm';
 import ReportingModal from '@/app/admin/(main)/sales/misc/components/ReportingModal';
+import { PublishingOverlay } from '@/app/admin/(main)/artist-revenue/misc/components/LoadingOverlay';
 
 type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'add-revenue-share' | 'send-emails';
 
@@ -175,6 +176,7 @@ const Sales: React.FC = () => {
 	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>([]);
 
 	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
+	const [selectedMatchRows, setSelectedMatchRows] = useState<ReportItem[]>([]);
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
 	const [systemArtistNameForMatch, setSystemArtistNameForMatch] = useState<string | null>(null);
@@ -241,6 +243,16 @@ const Sales: React.FC = () => {
 			...pair,
 			exchangeRate: Math.abs(parseFloat(pair.exchangeRate))
 		}));
+
+		if (!tagValue) {
+			toast.error('Reporting Period not set. Please refresh page and start again');
+			return;
+		}
+
+		if (!reportingPeriod) {
+			toast.error('Tag not set. Please refresh page and start again');
+			return;
+		}
 
 		console.log('normalizedCurrencyPairs', normalizedCurrencyPairs);
 		analyzeCsv(
@@ -371,6 +383,9 @@ const Sales: React.FC = () => {
 			toast.info('No matched artists to publish.');
 			return;
 		}
+		if (!tagValue) {
+			toast.error('Oops you have not selected a tag yet. Please refresh page to start the session again');
+		}
 		setLoadingComplete(true);
 		publishCsv(
 			{ artists: matchedArtists, tag: tagValue as string },
@@ -421,6 +436,11 @@ const Sales: React.FC = () => {
 		setCurrentStep('match-artist');
 	};
 
+	const handleBulkArtistMatch = () => {
+		setActivityPeriod(reportingPeriod as string);
+		setCurrentStep('match-artist');
+	};
+
 	const handleRevenueShare = (row: any) => {
 		setSelectedUnmatchedArtist(row._id);
 		setActivityPeriod(row.activityPeriod);
@@ -452,6 +472,10 @@ const Sales: React.FC = () => {
 		setSelectedRows(selectedData);
 	}, []);
 
+	const handleSelectionMatchChange = useCallback((selectedData: ReportItem[]) => {
+		setSelectedMatchRows(selectedData);
+	}, []);
+
 	const handleOnSave = (value: SharedRevenue[]) => {
 		setCurrentStep('artist-records');
 		const newMatchedArtist = matchedArtists.find(artist => artist._id === selectedUnmatchedArtist);
@@ -467,36 +491,47 @@ const Sales: React.FC = () => {
 	const handleCloseSuccessModal = () => {
 		setShowSuccessModal(null);
 		setCurrentStep('artist-records');
+		const idsToMove = selectedMatchRows.length > 0 ? selectedMatchRows.map(row => row._id) : selectedUnmatchedArtist ? [selectedUnmatchedArtist] : [];
 
-		if (selectedUnmatchedArtist && systemArtistIdForMatch) {
-			const reportItemToMove = unmatchedArtists.find(artist => artist._id === selectedUnmatchedArtist);
+		// Proceed only if there are artists to move and a system artist to match them to.
+		if (idsToMove.length > 0 && systemArtistIdForMatch) {
+			// 1. Find all the full artist objects from the unmatched list that correspond to the selected IDs.
+			const artistsToMove = unmatchedArtists.filter(artist => idsToMove.includes(artist._id));
 
-			if (reportItemToMove) {
-				setUnmatchedArtists(currentUnmatched => currentUnmatched.filter(artist => artist._id !== selectedUnmatchedArtist));
+			// 2. Create the new data structure for each artist being moved.
+			const newMatchedArtists = artistsToMove.map(reportItem => ({
+				...reportItem,
+				artistId: systemArtistIdForMatch,
+				status: 'completed' as const,
+				sharedRevenue: [
+					{
+						artistId: systemArtistIdForMatch,
+						artistName: systemArtistNameForMatch || reportItem.artistName || null,
+						activityPeriod: reportItem.activityPeriod || null,
+						percentage: 100
+					}
+				]
+			}));
 
-				const newMatchedArtistData = {
-					...reportItemToMove,
-					artistId: systemArtistIdForMatch,
-					status: 'completed' as const,
-					sharedRevenue: [
-						{
-							artistId: systemArtistIdForMatch || null,
-							artistName: systemArtistNameForMatch || reportItemToMove.artistName || null,
-							activityPeriod: reportItemToMove.activityPeriod || null,
-							percentage: 100
-						}
-					]
-				};
+			// 3. Update state in bulk for better performance.
+			// Remove all moved artists from the unmatched list.
+			setUnmatchedArtists(currentUnmatched => currentUnmatched.filter(artist => !idsToMove.includes(artist._id)));
 
-				setMatchedArtists(currentMatched => [...currentMatched, newMatchedArtistData]);
-			} else {
-				console.warn('Could not find the artist to move from unmatched to matched.');
+			// Add all newly matched artists to the matched list.
+			setMatchedArtists(currentMatched => [...currentMatched, ...newMatchedArtists]);
+
+			if (artistsToMove.length !== idsToMove.length) {
+				console.warn('Could not find all selected artists to move.');
 			}
 		} else {
-			console.warn('Missing selectedUnmatchedArtist or systemArtistIdForMatch in handleCloseSuccessModal.');
+			console.warn('Missing artists to move or systemArtistIdForMatch in handleCloseSuccessModal.');
 		}
 
+		// Reset state for both single and multiple selection modes.
+		setShowSuccessModal(null);
+		setCurrentStep('artist-records');
 		setSelectedUnmatchedArtist(null);
+		setSelectedMatchRows([]);
 		setSystemArtistIdForMatch(null);
 		setSystemArtistNameForMatch(null);
 	};
@@ -660,7 +695,7 @@ const Sales: React.FC = () => {
 
 						<MatchedArtistsTable artists={matchedArtists} onArtistRevenueClick={handleRevenueShare} />
 
-						<UnmatchedArtistsTable artists={unmatchedArtists} onArtistMatch={handleArtistMatch} />
+						<UnmatchedArtistsTable artists={unmatchedArtists} onArtistMatch={handleArtistMatch} onBulkArtistMatch={handleBulkArtistMatch} onRowSelectionChange={handleSelectionMatchChange} />
 					</div>
 				)}
 				{currentStep === 'send-emails' && (
@@ -700,6 +735,7 @@ const Sales: React.FC = () => {
 				)}
 			</div>
 
+			<AnimatePresence>{loadingComplete && <PublishingOverlay />}</AnimatePresence>
 			{showSuccessModal && <SuccessModal type={showSuccessModal} artistName={createdArtist?.artistName} artistRealName={createdArtist?.fullName} onClose={handleCloseSuccessModal} />}
 			{showPublishTagModal && <PublishTagModal onClose={() => setShowPublishTagModal(false)} onPublish={navigateToReportingModal} isLoading={loadingComplete} />}
 			{showReportingPeriodModal && <ReportingModal onClose={() => setShowReportingPeriodModal(false)} onSave={period => setReportingPeriodValue(period)} isLoading={loadingComplete} />}
