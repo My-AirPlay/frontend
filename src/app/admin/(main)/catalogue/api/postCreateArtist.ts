@@ -5,10 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 interface CreateArtistPayload {
 	email: string;
 	artistName: string;
-	bankName: string;
 	fullName: string;
-	accountName: string;
-	accountNumber: string;
 	currency: string;
 	rate: string;
 	dealType?: string;
@@ -25,9 +22,6 @@ export const createArtist = async (payload: CreateArtistPayload) => {
 	formData.append('artistName', payload.artistName);
 	formData.append('fullName', payload.fullName);
 	formData.append('email', payload.email);
-	formData.append('bankName', payload.bankName);
-	formData.append('accountName', payload.accountName);
-	formData.append('accountNumber', payload.accountNumber);
 	formData.append('currency', payload.currency);
 	formData.append('rate', payload.rate);
 	if (payload.dealType) formData.append('dealType', payload.dealType);

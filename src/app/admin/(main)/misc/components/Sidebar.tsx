@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken, Clock } from 'iconsax-react';
+import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken, Clock, SecurityCard } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -50,6 +50,10 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 						...(supportTicketCount && supportTicketCount > 0 && { badge: supportTicketCount })
 					}
 				]
+			},
+			{
+				title: 'Security',
+				items: [{ href: '/admin/password', icon: SecurityCard, label: 'Super Admin Password' }]
 			}
 		],
 		[supportTicketCount, contractsCount]
