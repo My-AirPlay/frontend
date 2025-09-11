@@ -16,7 +16,7 @@ export const TopDSPsTable: React.FC<TopDSPsTableProps> = ({ dspData }) => {
 		<Table>
 			<TableHeader>
 				<TableRow>
-					<TableHead>Country</TableHead>
+					<TableHead>Platform</TableHead>
 					<TableHead className="text-right">Streams</TableHead>
 					<TableHead className="text-right">Revenue</TableHead>
 					<TableHead className="text-right">Avg. per Stream</TableHead>

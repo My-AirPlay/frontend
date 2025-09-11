@@ -27,9 +27,10 @@ const Wallet2 = ({ size, className }: any) => (
 interface RevenueSummaryCardProps {
 	grossRevenue: string | number;
 	netRevenue: string | number;
+	analysisLoading: boolean;
 }
 
-const RevenueSummaryCard: React.FC<RevenueSummaryCardProps> = ({ grossRevenue, netRevenue }) => {
+const RevenueSummaryCard: React.FC<RevenueSummaryCardProps> = ({ grossRevenue, netRevenue, analysisLoading }) => {
 	return (
 		<div className="p-6 bg-gradient-to-br from-zinc-800 to-zinc-900 rounded-xl shadow-2xl border border-zinc-700 text-zinc-100 transform hover:scale-[1.01] transition-all duration-300 ease-in-out">
 			<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -40,9 +41,7 @@ const RevenueSummaryCard: React.FC<RevenueSummaryCardProps> = ({ grossRevenue, n
 					</div>
 					<div>
 						<p className="text-sm font-medium text-zinc-300">Gross Revenue</p>
-						<h3 className="text-2xl font-bold text-white mt-1">
-							{typeof grossRevenue === 'number' ? grossRevenue.toLocaleString() : grossRevenue} {/* Display Naira sign */}
-						</h3>
+						<h3 className="text-2xl font-bold text-white mt-1">{analysisLoading ? <div className={`animate-pulse bg-zinc-600 rounded-md h-8 w-36`} /> : typeof grossRevenue === 'number' ? grossRevenue.toLocaleString() : grossRevenue}</h3>
 					</div>
 				</div>
 
@@ -56,7 +55,7 @@ const RevenueSummaryCard: React.FC<RevenueSummaryCardProps> = ({ grossRevenue, n
 					<div>
 						<p className="text-sm font-medium text-zinc-300">Net Revenue</p>
 						<h3 className="text-2xl font-bold text-white mt-1">
-							{typeof netRevenue === 'number' ? netRevenue.toLocaleString() : netRevenue} {/* Display Naira sign */}
+							{analysisLoading ? <div className={`animate-pulse bg-zinc-600 rounded-md h-8 w-36`} /> : typeof netRevenue === 'number' ? netRevenue.toLocaleString() : netRevenue} {/* Display Naira sign */}
 						</h3>
 					</div>
 				</div>
@@ -205,7 +204,7 @@ const ArtistRevenue: React.FC = () => {
 			{/* Added PreviousPageButton */}
 			<PreviousPageButton />
 			{/* Revenue Summary Box - Kept as is */}
-			<RevenueSummaryCard grossRevenue={grossRevenue} netRevenue={totalRevenue} />
+			<RevenueSummaryCard grossRevenue={grossRevenue} netRevenue={totalRevenue} analysisLoading={analysisLoading} />
 			{/* Main Content Area */}
 			<div>
 				{/* Header and Controls */}
