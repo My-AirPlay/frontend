@@ -3,7 +3,7 @@ import { LoadingBox } from '@/components/ui/LoadingBox';
 import { Artist } from '@/lib/types';
 import { Save } from 'lucide-react';
 import React, { useState } from 'react';
-import { useUpdateArtistPaymentDetails } from '../../../catalogue/api/putArtistPaymentDetails';
+import { useUpdateArtistDetails, useUpdateArtistPaymentDetails } from '../../../catalogue/api/putArtistPaymentDetails';
 import { toast } from 'sonner';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query'; // Import necessary types
 
@@ -17,28 +17,45 @@ interface ArtistOverviewProps {
 
 const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }) => {
 	const { mutate, isPending } = useUpdateArtistPaymentDetails();
+	const { mutate: detailsMutate, isPending: detailsPending } = useUpdateArtistDetails();
 
 	// State to manage form inputs
 	const [dealType, setDealType] = useState<string>(artist?.bankDetails?.dealType || 'Net Receipts');
+	const [name, setName] = useState<string>(artist?.artistName || '');
+	const [fullName, setFullName] = useState<string>(`${artist?.firstName || ''} ${artist?.lastName || ''}`);
 	const [rate, setRate] = useState<number>(artist?.bankDetails?.rate || 80);
 	const [currency, setCurrency] = useState<string>(artist?.bankDetails?.currency || 'USD');
 
 	// Handle form submission
 	const handleSubmit = () => {
-		mutate(
+		detailsMutate(
 			{
-				artistId: artist._id, // Assuming artist._id exists
-				paymentCurrency: currency,
-				dealType,
-				rate
+				artistId: artist._id,
+				artistFullName: fullName,
+				artistName: name
 			},
 			{
-				onSuccess: () => {
-					artistRefetch();
-					toast.success('Artist deal updated');
-				},
 				onError: error => {
-					toast.error(error.message || 'Failed to update deal');
+					toast.error(error.message || 'Failed to update details');
+				},
+				onSuccess: () => {
+					mutate(
+						{
+							artistId: artist._id,
+							paymentCurrency: currency,
+							dealType,
+							rate
+						},
+						{
+							onSuccess: () => {
+								artistRefetch();
+								toast.success('Artist details updated');
+							},
+							onError: error => {
+								toast.error(error.message || 'Failed to update details');
+							}
+						}
+					);
 				}
 			}
 		);
@@ -47,9 +64,8 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 			<div className="space-y-6">
-				<Input label="Artist Name" value={artist?.artistName} readOnly />
-
-				<Input label="Full Name" value={`${artist?.firstName || ''} ${artist?.lastName || ''}`} readOnly />
+				<Input label="Artist Name" type={'text'} value={name} onChange={e => setName(e.target.value)} />
+				<Input label="Full Name" type={'text'} value={fullName} onChange={e => setFullName(e.target.value)} />
 
 				<Input label="Email" value={artist?.email} readOnly type="email" />
 				<Textarea label="Bio" value={artist?.bio} readOnly />
@@ -122,7 +138,7 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }
 					</div>
 
 					<div className="flex justify-end items-center">
-						<Button className="max-md:size-10 max-md:p-0 mt-[26px]" disabled={isPending} onClick={handleSubmit}>
+						<Button className="max-md:size-10 max-md:p-0 mt-[26px]" disabled={isPending || detailsPending} onClick={handleSubmit}>
 							{isPending ? (
 								<div className="flex items-center justify-center w-full h-full">
 									<LoadingBox size={24} color="white" />
