@@ -29,7 +29,7 @@ const RevenueShareForm: React.FC<MatchArtistFormProps> = ({ onSave, matchedArtis
 	useEffect(() => {
 		if (!matchedArtistName) return;
 
-		const songTitles = matchedArtistName.fullReports.map((r: any) => r.trackTitle);
+		const songTitles = [...matchedArtistName.otherTitles, matchedArtistName.firstTitle];
 		setSongs(songTitles);
 
 		if (matchedArtistName.sharedRevenue && matchedArtistName.sharedRevenue.length > 0) {

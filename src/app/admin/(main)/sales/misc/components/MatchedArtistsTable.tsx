@@ -12,34 +12,26 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists, onAr
 	console.log('artists prop', artists);
 
 	const getRoyalty = (row: any): string => {
-		const reports = row.original.fullReports || [];
-
-		/* eslint-disable @typescript-eslint/no-explicit-any */
-		const total = reports.reduce((sum: number, rep: any) => {
-			const amt = parseFloat(rep.totalRoyaltyUSD?.royaltyConverted?.[0]?.amount ?? '0');
-			return sum + amt;
-		}, 0);
-
 		// Use the currency from the first report (or “USD” fallback)
-		const currency = reports[0]?.totalRoyaltyUSD?.royaltyConverted?.[0]?.toCurrency || 'USD';
+		const currency = row.original.currency || 'USD';
 
 		// Format as currency
 		return new Intl.NumberFormat('en-GB', {
 			style: 'currency',
 			currency,
 			minimumFractionDigits: 2
-		}).format(total);
+		}).format(row.original.total);
 	};
 
 	const getTrackTitleCell = (row: any) => {
-		const reports = row.original.fullReports || [];
-		if (reports.length <= 1) {
-			return <span>{reports[0]?.trackTitle ?? '—'}</span>;
+		//const reports = row.original.fullReports || [];
+		if (row.original.count <= 1) {
+			return <span>{row.original.firstTitle ?? '—'}</span>;
 		}
 
-		const firstTitle = reports[0].trackTitle;
-		const others = reports.slice(1).map((r: any) => r.trackTitle);
-		const count = others.length;
+		const firstTitle = row.original.firstTitle;
+		const others = row.original.otherTitles;
+		const count = row.original.titleCount;
 
 		// Build tooltip text
 		const tooltipText = others.slice(0, count).join('\n');
@@ -86,14 +78,14 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists, onAr
 			header: 'Catalogue ID',
 			accessorKey: 'catalogueId',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.catalogueId} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.catalogueId} </p>
 		},
 		{
 			id: 'isrcCode',
 			header: 'ISRC Code ',
 			accessorKey: 'isrcCode',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.isrcCode} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.isrcCode} </p>
 		}
 	];
 

@@ -19,15 +19,16 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 		},
 		[onRowSelectionChange]
 	);
-	function getRoyalty(fullReport: any) {
-		const value = parseFloat(fullReport.totalRoyaltyUSD?.royaltyConverted[0].amount)?.toFixed(2);
-		const currency = fullReport.totalRoyaltyUSD.royaltyConverted[0].toCurrency;
+	const getRoyalty = (row: any): string => {
+		const currency = row.original.currency || 'USD';
+
+		// Format as currency
 		return new Intl.NumberFormat('en-GB', {
 			style: 'currency',
-			currency: currency,
+			currency,
 			minimumFractionDigits: 2
-		}).format(Number(value));
-	}
+		}).format(row.original.total);
+	};
 	const columns = [
 		{
 			id: 'artistName',
@@ -40,7 +41,7 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 			header: 'Track Title',
 			accessorKey: 'realName',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary hover:underline"> {info.row.original?.fullReports[0]?.trackTitle} </p>
+			cell: (info: any) => <p className="text-admin-primary hover:underline"> {info.row.original?.firstTitle} </p>
 		},
 		{
 			id: 'activityperiod',
@@ -54,21 +55,21 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 			header: 'Gross Revenue(₦)',
 			accessorKey: 'totalroyalty',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row.original?.fullReports[0])} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {getRoyalty(info.row)} </p>
 		},
 		{
 			id: 'catalogueId',
 			header: 'Catalogue ID',
 			accessorKey: 'catalogueId',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.catalogueId} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.catalogueId} </p>
 		},
 		{
 			id: 'isrcCode',
 			header: 'ISRC Code ',
 			accessorKey: 'isrcCode',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.fullReports[0]?.isrcCode} </p>
+			cell: (info: any) => <p className="text-admin-primary "> {info.row.original?.isrcCode} </p>
 		}
 	];
 

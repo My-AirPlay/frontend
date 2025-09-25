@@ -240,6 +240,13 @@ export interface ReportItem {
 	fullReports: FullReport[];
 	createdAt: string | Date; // ISO Date String
 	updatedAt: string | Date; // ISO Date String
+	firstTitle: string;
+	otherTitles: [];
+	titleCount: number;
+	total: number;
+	catalogueId: string;
+	isrcCode: string;
+	currency: string;
 	__v?: number; // MongoDB version key (Made optional)
 }
 
