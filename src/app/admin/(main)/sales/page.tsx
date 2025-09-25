@@ -315,6 +315,13 @@ const Sales: React.FC = () => {
 										_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
 										createdAt: firstItem?.createdAt || new Date(),
 										updatedAt: firstItem?.updatedAt || new Date(),
+										firstTitle: firstItem.firstTitle,
+										otherTitles: firstItem.otherTitles,
+										titleCount: firstItem.titleCount,
+										total: firstItem.total,
+										catalogueId: firstItem.catalogueId,
+										isrcCode: firstItem.isrcCode,
+										currency: firstItem.currency,
 										sharedRevenue: [
 											{
 												artistId: firstItem?.artistId || null,
