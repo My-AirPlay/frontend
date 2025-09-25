@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowLeftRight, ArrowRight, ChevronDown, Upload } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import { toast } from 'sonner'; // Import toast
 import { AxiosError } from 'axios'; // Import AxiosError
 import { AnimatePresence, motion } from 'framer-motion';
 import useOnclickOutside from 'react-cool-onclickoutside';
-import { useAdminAnalyzeCsv } from '../catalogue/api/postAdminAnalyzeCsv';
+import { useAdminAnalyzeCsv, useGetReportStatus } from '../catalogue/api/postAdminAnalyzeCsv';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { currencySymbols, ReportItem, SharedRevenue } from '@/lib/types';
 import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
@@ -25,6 +25,7 @@ import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueSh
 import ReportingModal from '@/app/admin/(main)/sales/misc/components/ReportingModal';
 import { PublishingOverlay } from '@/app/admin/(main)/artist-revenue/misc/components/LoadingOverlay';
 import useSessionStorageState from '@/hooks/useSessionStorageState';
+import { RestartButton } from '@/components/ui/restart-button';
 
 type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'add-revenue-share' | 'send-emails';
 
@@ -184,6 +185,105 @@ const Sales: React.FC = () => {
 	const [showReportingPeriodModal, setShowReportingPeriodModal] = useSessionStorageState('showReportingPeriodModal', false);
 	const [tagValue, setTagValue] = useSessionStorageState<string | null>('tagValue', null);
 	const [reportingPeriod, setReportingPeriod] = useSessionStorageState<string | null>('reportingPeriod', null);
+	const [currentReportId, setCurrentReportId] = useSessionStorageState<string | null>('currentReportId', null);
+
+	// NEW: Polling logic using the hook
+	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(
+		currentReportId!,
+		!!currentReportId // This enables/disables the query
+	);
+
+	useEffect(() => {
+		console.log(reportStatusData);
+		if (reportStatusData?.status === 'completed') {
+			toast.success('Report processing is complete!');
+
+			// Stop polling by clearing the report ID
+			setCurrentReportId(null);
+
+			// --- This is your original data processing logic, moved here ---
+			const reportItems: ReportItem[] = reportStatusData.data || [];
+			setAnalyzedApiData(reportItems);
+
+			const groupedByArtistAndPeriod: { [artistName: string]: { [activityPeriod: string]: ReportItem[] } } = reportItems.reduce(
+				(acc, report) => {
+					acc[report.artistName] = acc[report.artistName] || {};
+					acc[report.artistName][report.activityPeriod] = acc[report.artistName][report.activityPeriod] || [];
+					acc[report.artistName][report.activityPeriod].push(report);
+					return acc;
+				},
+				{} as { [artistName: string]: { [activityPeriod: string]: ReportItem[] } }
+			);
+			const transformedArtistReports: ReportItem[] = Object.values(groupedByArtistAndPeriod).flatMap(
+				// The outer flatMap iterates through each artist's group of periods.
+				// 'artistPeriodGroup' looks like: { "Jun-24": [...], "Jul-24": [...] }
+				artistPeriodGroup =>
+					Object.values(artistPeriodGroup).map(
+						// The inner map iterates through the array of reports for a single period.
+						// 'periodItemGroup' is the array of reports for ONE artist in ONE period.
+						(periodItemGroup: ReportItem[]) => {
+							// Since all items in this group have the same artist and period,
+							// we can safely take the metadata from the first item.
+							const firstItem = periodItemGroup[0];
+
+							return {
+								artistId: firstItem?.artistId || null,
+								artistName: firstItem?.artistName || 'Unknown Artist',
+								activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
+
+								// This now correctly flattens reports for only this specific group
+								fullReports: periodItemGroup.flatMap(item => item.fullReports),
+
+								// The rest of your logic remains the same
+								_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
+								createdAt: firstItem?.createdAt || new Date(),
+								updatedAt: firstItem?.updatedAt || new Date(),
+								firstTitle: firstItem.firstTitle,
+								otherTitles: firstItem.otherTitles,
+								titleCount: firstItem.titleCount,
+								total: firstItem.total,
+								catalogueId: firstItem.catalogueId,
+								isrcCode: firstItem.isrcCode,
+								currency: firstItem.currency,
+								sharedRevenue: [
+									{
+										artistId: firstItem?.artistId || null,
+										artistName: firstItem?.artistRealName || firstItem?.artistName || 'Unknown Artist',
+										activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
+										percentage: 100
+									}
+								],
+								__v: firstItem?.__v || 0
+							};
+						}
+					)
+			);
+			const unmatched: ReportItem[] = transformedArtistReports.filter(ar => !ar.artistId);
+			const matched: ReportItem[] = transformedArtistReports.filter(ar => ar.artistId);
+
+			setUnmatchedArtists(unmatched);
+			setMatchedArtists(matched);
+			// --- End of original data processing logic ---
+
+			// Move the user to the next step
+			setProcessingSteps(prev => ({ ...prev, collectionFromBackend: true, completed: true }));
+			setProcessingComplete(true);
+			setCurrentStep('artist-records');
+		} else if (reportStatusData?.status === 'failed' || reportStatusError) {
+			toast.error('Report generation failed. Please try again.');
+			setCurrentReportId(null); // Stop polling
+			// Reset UI to the upload step
+			setCurrentStep('csv-upload');
+			setCsvUploaded(false);
+			setProcessingComplete(false);
+			setProcessingSteps({
+				uploadSuccessful: false,
+				sortingInformation: false,
+				collectionFromBackend: false,
+				completed: false
+			});
+		}
+	}, [reportStatusData, reportStatusError, setAnalyzedApiData, setMatchedArtists, setUnmatchedArtists, setCurrentStep, setCurrentReportId, setProcessingComplete, setProcessingSteps]);
 
 	const navigateToReportingModal = (tag: string | null) => {
 		if (tag) {
@@ -279,79 +379,10 @@ const Sales: React.FC = () => {
 			},
 			{
 				onSuccess: apiResponse => {
-					// Mark final step as complete
-					setProcessingSteps(prev => ({ ...prev, collectionFromBackend: true }));
-					setProcessingSteps(prev => ({ ...prev, completed: true }));
-					setProcessingComplete(true);
+					const { reportId, message } = apiResponse;
+					toast.success(message || 'Report generation started.');
 					setCsvUploaded(true);
-
-					const reportItems: ReportItem[] = apiResponse || [];
-					setAnalyzedApiData(reportItems);
-
-					const groupedByArtistAndPeriod: { [artistName: string]: { [activityPeriod: string]: ReportItem[] } } = reportItems.reduce(
-						(acc, report) => {
-							acc[report.artistName] = acc[report.artistName] || {};
-							acc[report.artistName][report.activityPeriod] = acc[report.artistName][report.activityPeriod] || [];
-							acc[report.artistName][report.activityPeriod].push(report);
-							return acc;
-						},
-						{} as { [artistName: string]: { [activityPeriod: string]: ReportItem[] } }
-					);
-
-					console.log('apiResponse', apiResponse);
-					console.log('groupedByArtist', groupedByArtistAndPeriod);
-
-					// Assuming your input data is named 'groupedByArtistAndPeriod' from the previous step
-					const transformedArtistReports: ReportItem[] = Object.values(groupedByArtistAndPeriod).flatMap(
-						// The outer flatMap iterates through each artist's group of periods.
-						// 'artistPeriodGroup' looks like: { "Jun-24": [...], "Jul-24": [...] }
-						artistPeriodGroup =>
-							Object.values(artistPeriodGroup).map(
-								// The inner map iterates through the array of reports for a single period.
-								// 'periodItemGroup' is the array of reports for ONE artist in ONE period.
-								(periodItemGroup: ReportItem[]) => {
-									// Since all items in this group have the same artist and period,
-									// we can safely take the metadata from the first item.
-									const firstItem = periodItemGroup[0];
-
-									return {
-										artistId: firstItem?.artistId || null,
-										artistName: firstItem?.artistName || 'Unknown Artist',
-										activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
-
-										// This now correctly flattens reports for only this specific group
-										fullReports: periodItemGroup.flatMap(item => item.fullReports),
-
-										// The rest of your logic remains the same
-										_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
-										createdAt: firstItem?.createdAt || new Date(),
-										updatedAt: firstItem?.updatedAt || new Date(),
-										firstTitle: firstItem.firstTitle,
-										otherTitles: firstItem.otherTitles,
-										titleCount: firstItem.titleCount,
-										total: firstItem.total,
-										catalogueId: firstItem.catalogueId,
-										isrcCode: firstItem.isrcCode,
-										currency: firstItem.currency,
-										sharedRevenue: [
-											{
-												artistId: firstItem?.artistId || null,
-												artistName: firstItem?.artistRealName || firstItem?.artistName || 'Unknown Artist',
-												activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
-												percentage: 100
-											}
-										],
-										__v: firstItem?.__v || 0
-									};
-								}
-							)
-					);
-
-					const unmatched: ReportItem[] = transformedArtistReports.filter(ar => !ar.artistId);
-					const matched: ReportItem[] = transformedArtistReports.filter(ar => ar.artistId);
-
-					setUnmatchedArtists(unmatched);
-					setMatchedArtists(matched);
+					setCurrentReportId(reportId);
 				},
 				onError: (error: Error) => {
 					console.error('Failed to analyze CSV:', error);
@@ -541,10 +572,13 @@ const Sales: React.FC = () => {
 
 	return (
 		<div className="space-y-8">
-			<div className="flex items-center">
-				<Button variant="outline" className="flex items-center gap-2 bg-background text-foreground border-border" onClick={navigateToPreviousStep}>
+			<div className="flex items-center justify-between">
+				{' '}
+				{/* 2. Use flexbox to space out buttons */}
+				<Button variant="outline" className="flex items-center gap-2" onClick={navigateToPreviousStep}>
 					Previous Page
 				</Button>
+				<RestartButton />
 			</div>
 
 			<h1 className="text-2xl font-semibold">Sales</h1>
