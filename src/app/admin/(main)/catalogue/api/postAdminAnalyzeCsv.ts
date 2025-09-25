@@ -1,5 +1,6 @@
 import APIAxios from '@/utils/axios';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { ReportItem } from '@/lib/types';
 
 interface CurrencyPair {
 	fromCurrency: string | null;
@@ -32,5 +33,25 @@ export const useAdminAnalyzeCsv = () => {
 		onError: error => {
 			console.error('Error analyzing CSV:', error);
 		}
+	});
+};
+
+interface ReportStatusResponse {
+	status: 'processing' | 'completed' | 'failed';
+	data?: ReportItem[];
+}
+
+const getReportStatus = async (reportId: string): Promise<ReportStatusResponse> => {
+	const { data } = await APIAxios.get(`/admin/report/${reportId}`);
+	return data;
+};
+
+export const useGetReportStatus = (reportId: string, enabled: boolean) => {
+	return useQuery<ReportStatusResponse, Error>({
+		queryKey: ['reportStatus', reportId],
+		queryFn: () => getReportStatus(reportId),
+		enabled: enabled, // Only run the query when this is true
+		refetchInterval: 5000, // Poll every 5 seconds
+		refetchIntervalInBackground: true
 	});
 };
