@@ -17,7 +17,6 @@ import { AxiosError } from 'axios'; // Import AxiosError
 import { AnimatePresence, motion } from 'framer-motion';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { useAdminAnalyzeCsv } from '../catalogue/api/postAdminAnalyzeCsv';
-import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { currencySymbols, ReportItem, SharedRevenue } from '@/lib/types';
 import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
@@ -25,6 +24,7 @@ import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/S
 import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueShareForm';
 import ReportingModal from '@/app/admin/(main)/sales/misc/components/ReportingModal';
 import { PublishingOverlay } from '@/app/admin/(main)/artist-revenue/misc/components/LoadingOverlay';
+import useSessionStorageState from '@/hooks/useSessionStorageState';
 
 type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'add-revenue-share' | 'send-emails';
 
@@ -103,7 +103,7 @@ const Sales: React.FC = () => {
 	const { rawData } = useStaticAppInfo();
 
 	const currencyOptions = mapCurrencyToOptions(rawData?.Currency);
-	const [analyzedApiData, setAnalyzedApiData] = useState<ReportItem[] | null>(null);
+	const [analyzedApiData, setAnalyzedApiData] = useSessionStorageState<ReportItem[] | null>('analyzedApiData', null);
 
 	// Initialize react-hook-form with simplified CurrencyPair
 	const { control, watch } = useForm<{ currencyPairs: CurrencyPair[] }>({
@@ -155,36 +155,35 @@ const Sales: React.FC = () => {
 			remove(index);
 		}
 	};
+	const [currentStep, setCurrentStep] = useSessionStorageState<SalesStep>('salesCurrentStep', 'exchange-rate');
+	const [showExchangeRates, setShowExchangeRates] = useSessionStorageState('showExchangeRates', true);
+	const [showSuccessModal, setShowSuccessModal] = useSessionStorageState<'created' | 'matched' | null>('showSuccessModal', null);
+	const [createdArtist, setCreatedArtist] = useSessionStorageState<createdArtistProp>('createdArtist', { artistName: '', fullName: '' });
 
-	const [currentStep, setCurrentStep] = useState<SalesStep>('exchange-rate');
-	const [showExchangeRates, setShowExchangeRates] = useState(true);
-	const [showSuccessModal, setShowSuccessModal] = useState<'created' | 'matched' | null>(null);
-	const [createdArtist, setCreatedArtist] = useState<createdArtistProp>({ artistName: '', fullName: '' });
+	const [csvUploaded, setCsvUploaded] = useSessionStorageState('csvUploaded', false);
+	const [processingComplete, setProcessingComplete] = useSessionStorageState('processingComplete', false);
+	const [loadingComplete, setLoadingComplete] = useSessionStorageState('loadingComplete', false);
 
-	const [csvUploaded, setCsvUploaded] = useState(false);
-	const [processingComplete, setProcessingComplete] = useState(false);
-	const [loadingComplete, setLoadingComplete] = useState(false);
-
-	const [processingSteps, setProcessingSteps] = useState({
+	const [processingSteps, setProcessingSteps] = useSessionStorageState('processingSteps', {
 		uploadSuccessful: false,
 		sortingInformation: false,
 		collectionFromBackend: false,
 		completed: false
 	});
 
-	const [matchedArtists, setMatchedArtists] = useState<ReportItem[]>([]);
-	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>([]);
+	const [matchedArtists, setMatchedArtists] = useSessionStorageState<ReportItem[]>('matchedArtists', []);
+	const [unmatchedArtists, setUnmatchedArtists] = useSessionStorageState<ReportItem[]>('unmatchedArtists', []);
 
-	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
-	const [selectedMatchRows, setSelectedMatchRows] = useState<ReportItem[]>([]);
-	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
-	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
-	const [systemArtistNameForMatch, setSystemArtistNameForMatch] = useState<string | null>(null);
-	const [activityPeriod, setActivityPeriod] = useState<string>('');
-	const [showPublishTagModal, setShowPublishTagModal] = useState(false);
-	const [showReportingPeriodModal, setShowReportingPeriodModal] = useState(false);
-	const [tagValue, setTagValue] = useState<string | null>(null);
-	const [reportingPeriod, setReportingPeriod] = useState<string | null>(null);
+	const [selectedRows, setSelectedRows] = useSessionStorageState<ReportItem[]>('selectedRows', []);
+	const [selectedMatchRows, setSelectedMatchRows] = useSessionStorageState<ReportItem[]>('selectedMatchRows', []);
+	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useSessionStorageState<string | null>('selectedUnmatchedArtist', null);
+	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useSessionStorageState<string | null>('systemArtistIdForMatch', null);
+	const [systemArtistNameForMatch, setSystemArtistNameForMatch] = useSessionStorageState<string | null>('systemArtistNameForMatch', null);
+	const [activityPeriod, setActivityPeriod] = useSessionStorageState<string>('activityPeriod', '');
+	const [showPublishTagModal, setShowPublishTagModal] = useSessionStorageState('showPublishTagModal', false);
+	const [showReportingPeriodModal, setShowReportingPeriodModal] = useSessionStorageState('showReportingPeriodModal', false);
+	const [tagValue, setTagValue] = useSessionStorageState<string | null>('tagValue', null);
+	const [reportingPeriod, setReportingPeriod] = useSessionStorageState<string | null>('reportingPeriod', null);
 
 	const navigateToReportingModal = (tag: string | null) => {
 		if (tag) {
@@ -206,7 +205,6 @@ const Sales: React.FC = () => {
 			setShowExchangeRates(false);
 		} else if (currentStep === 'csv-upload' && csvUploaded) {
 			setCurrentStep('processing');
-			startProcessing();
 		} else if (currentStep === 'processing' && processingComplete) {
 			setCurrentStep('artist-records');
 		}
@@ -233,7 +231,7 @@ const Sales: React.FC = () => {
 		}
 	};
 
-	const { mutate: analyzeCsv, isPending: isAnalyzeCsv } = useAdminAnalyzeCsv();
+	const { mutate: analyzeCsv } = useAdminAnalyzeCsv();
 	const { mutate: publishCsv } = usePublishArtistReports();
 	const { mutate: sendEmails } = useSendEmailReports();
 
@@ -253,8 +251,25 @@ const Sales: React.FC = () => {
 			toast.error('Tag not set. Please refresh page and start again');
 			return;
 		}
+		// --- END: VALIDATION ---
 
-		console.log('normalizedCurrencyPairs', normalizedCurrencyPairs);
+		// --- START: PROCESSING UI LOGIC ---
+		setCurrentStep('processing');
+		setProcessingComplete(false); // Ensure this is reset
+		setProcessingSteps({
+			uploadSuccessful: true,
+			sortingInformation: false,
+			collectionFromBackend: false,
+			completed: false
+		});
+
+		// Simulate intermediate steps while API call is in flight
+		setTimeout(() => {
+			setProcessingSteps(prev => ({ ...prev, sortingInformation: true }));
+		}, 1000);
+
+		// --- END: PROCESSING UI LOGIC ---
+
 		analyzeCsv(
 			{
 				file,
@@ -264,24 +279,20 @@ const Sales: React.FC = () => {
 			},
 			{
 				onSuccess: apiResponse => {
-					console.log('apiResponse', apiResponse);
+					// Mark final step as complete
+					setProcessingSteps(prev => ({ ...prev, collectionFromBackend: true }));
+					setProcessingSteps(prev => ({ ...prev, completed: true }));
 					setProcessingComplete(true);
+					setCsvUploaded(true);
 
-					console.log('apiResponse?.data', apiResponse);
 					const reportItems: ReportItem[] = apiResponse || [];
 					setAnalyzedApiData(reportItems);
 
 					const groupedByArtistAndPeriod: { [artistName: string]: { [activityPeriod: string]: ReportItem[] } } = reportItems.reduce(
 						(acc, report) => {
-							// Ensure the object for the artist exists
 							acc[report.artistName] = acc[report.artistName] || {};
-
-							// Ensure the array for the activity period exists within the artist's object
 							acc[report.artistName][report.activityPeriod] = acc[report.artistName][report.activityPeriod] || [];
-
-							// Push the current report into the correct nested array
 							acc[report.artistName][report.activityPeriod].push(report);
-
 							return acc;
 						},
 						{} as { [artistName: string]: { [activityPeriod: string]: ReportItem[] } }
@@ -336,55 +347,34 @@ const Sales: React.FC = () => {
 							)
 					);
 
-					console.log('transformedArtistReports', transformedArtistReports);
-
 					const unmatched: ReportItem[] = transformedArtistReports.filter(ar => !ar.artistId);
 					const matched: ReportItem[] = transformedArtistReports.filter(ar => ar.artistId);
 
-					console.log('unmatched', unmatched);
-					console.log('matched', matched);
-
 					setUnmatchedArtists(unmatched);
 					setMatchedArtists(matched);
-
-					setCsvUploaded(true);
-					setCurrentStep('processing');
-					startProcessing();
 				},
 				onError: (error: Error) => {
 					console.error('Failed to analyze CSV:', error);
-					setCsvUploaded(false);
 					const axiosError = error as AxiosError;
 					const apiErrorMessage = axiosError?.response?.data && typeof axiosError.response.data === 'object' && 'message' in axiosError.response.data && typeof axiosError.response.data.message === 'string' && axiosError.response.data.message;
 					const errorMessage = apiErrorMessage || error.message || 'Failed to analyze CSV';
 					toast.error(String(errorMessage));
+
+					// Reset state on error
+					setCurrentStep('csv-upload');
+					setCsvUploaded(false);
+					setProcessingComplete(false);
+					setProcessingSteps({
+						uploadSuccessful: false,
+						sortingInformation: false,
+						collectionFromBackend: false,
+						completed: false
+					});
 				}
 			}
 		);
 	};
 
-	const startProcessing = () => {
-		setProcessingSteps({
-			uploadSuccessful: true,
-			sortingInformation: false,
-			collectionFromBackend: false,
-			completed: false
-		});
-
-		// Simulate processing steps with delays
-		setTimeout(() => {
-			setProcessingSteps(prev => ({ ...prev, sortingInformation: true }));
-
-			setTimeout(() => {
-				setProcessingSteps(prev => ({ ...prev, collectionFromBackend: true }));
-
-				setTimeout(() => {
-					setProcessingSteps(prev => ({ ...prev, completed: true }));
-					setProcessingComplete(true);
-				}, 700);
-			}, 1500);
-		}, 1000);
-	};
 	const publishArtists = async () => {
 		if (matchedArtists.length === 0) {
 			toast.info('No matched artists to publish.');
@@ -685,16 +675,11 @@ const Sales: React.FC = () => {
 				{currentStep === 'csv-upload' && (
 					<div className="mt-8 mb-4 max-w-3xl">
 						<h2 className="text-lg font-medium mb-4">Upload CSV</h2>
-
-						{isAnalyzeCsv ? (
-							<div className="w-full px-6 py-4 flex justify-center items-center">
-								<LoadingBox size={42} />
-							</div>
-						) : (
-							<FileUploader onFileSelected={handleFileSelected} supportedFormats={['CSV']} icon={<Upload size={24} className="text-muted" />} id="csv-upload" />
-						)}
+						<FileUploader onFileSelected={handleFileSelected} supportedFormats={['CSV']} icon={<Upload size={24} className="text-muted" />} id="csv-upload" />
 					</div>
 				)}
+
+				{/* Note: The 'isAnalyzeCsv' spinner is implicitly handled by the 'processing' step UI now, so we can remove the conditional rendering here to avoid UI flicker. */}
 
 				{currentStep === 'artist-records' && (
 					<div className="space-y-6">
