@@ -13,10 +13,10 @@ import CreateArtistForm from './misc/components/CreateArtistForm';
 import SuccessModal from './misc/components/SuccessModal';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 import { toast } from 'sonner'; // Import toast
-import { AxiosError } from 'axios'; // Import AxiosError
+import axios, { AxiosError } from 'axios'; // Import AxiosError
 import { AnimatePresence, motion } from 'framer-motion';
 import useOnclickOutside from 'react-cool-onclickoutside';
-import { useAdminAnalyzeCsv, useGetReportStatus } from '../catalogue/api/postAdminAnalyzeCsv';
+import { getUploadUrl, useAdminAnalyzeCsv, useGetReportStatus } from '../catalogue/api/postAdminAnalyzeCsv';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { currencySymbols, ReportItem, SharedRevenue } from '@/lib/types';
 import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
@@ -186,7 +186,6 @@ const Sales: React.FC = () => {
 	const [tagValue, setTagValue] = useSessionStorageState<string | null>('tagValue', null);
 	const [reportingPeriod, setReportingPeriod] = useSessionStorageState<string | null>('reportingPeriod', null);
 	const [currentReportId, setCurrentReportId] = useSessionStorageState<string | null>('currentReportId', null);
-
 	// NEW: Polling logic using the hook
 	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(
 		currentReportId!,
@@ -335,75 +334,77 @@ const Sales: React.FC = () => {
 	const { mutate: publishCsv } = usePublishArtistReports();
 	const { mutate: sendEmails } = useSendEmailReports();
 
-	const handleFileSelected = (file: File) => {
-		// Convert exchange rates to positive numbers before sending
+	const handleFileSelected = async (file: File) => {
+		if (!file) return;
+
+		// --- VALIDATION (Correct as is) ---
 		const normalizedCurrencyPairs = currencyPairs.map(pair => ({
 			...pair,
 			exchangeRate: Math.abs(parseFloat(pair.exchangeRate))
 		}));
-
-		if (!tagValue) {
-			toast.error('Reporting Period not set. Please refresh page and start again');
+		if (!tagValue || !reportingPeriod) {
+			toast.error('Tag or Reporting Period not set. Please refresh and start again.');
 			return;
 		}
 
-		if (!reportingPeriod) {
-			toast.error('Tag not set. Please refresh page and start again');
-			return;
-		}
-		// --- END: VALIDATION ---
-
-		// --- START: PROCESSING UI LOGIC ---
+		// --- START: UI LOGIC ---
 		setCurrentStep('processing');
-		setProcessingComplete(false); // Ensure this is reset
+		setProcessingComplete(false);
 		setProcessingSteps({
-			uploadSuccessful: true,
+			uploadSuccessful: false,
 			sortingInformation: false,
 			collectionFromBackend: false,
 			completed: false
 		});
 
-		// Simulate intermediate steps while API call is in flight
-		setTimeout(() => {
-			setProcessingSteps(prev => ({ ...prev, sortingInformation: true }));
-		}, 1000);
+		try {
+			toast.info('Preparing secure upload...');
+			const { signedUrl, finalUrl } = await getUploadUrl(file.name, file.type);
 
-		// --- END: PROCESSING UI LOGIC ---
+			// STEP 2: Upload the file directly to S3
+			toast.info('Uploading file...');
+			await axios.put(signedUrl, file, {
+				headers: { 'Content-Type': file.type }
+			});
 
-		analyzeCsv(
-			{
-				file,
-				exchangeRates: normalizedCurrencyPairs,
-				tag: tagValue as string,
-				reportingPeriod: reportingPeriod as string
-			},
-			{
-				onSuccess: apiResponse => {
-					const { reportId, message } = apiResponse;
-					toast.success(message || 'Report generation started.');
-					setCsvUploaded(true);
-					setCurrentReportId(reportId);
+			setProcessingSteps(prev => ({ ...prev, uploadSuccessful: true }));
+			toast.success('File upload complete! Starting analysis...');
+
+			analyzeCsv(
+				{
+					s3FileUrl: finalUrl, // Pass the final S3 URL
+					fileMetadata: {
+						// Pass the necessary metadata
+						originalname: file.name,
+						mimetype: file.type,
+						size: file.size
+					},
+					exchangeRates: normalizedCurrencyPairs,
+					tag: tagValue,
+					reportingPeriod: reportingPeriod
 				},
-				onError: (error: Error) => {
-					console.error('Failed to analyze CSV:', error);
-					const axiosError = error as AxiosError;
-					const apiErrorMessage = axiosError?.response?.data && typeof axiosError.response.data === 'object' && 'message' in axiosError.response.data && typeof axiosError.response.data.message === 'string' && axiosError.response.data.message;
-					const errorMessage = apiErrorMessage || error.message || 'Failed to analyze CSV';
-					toast.error(String(errorMessage));
-
-					// Reset state on error
-					setCurrentStep('csv-upload');
-					setCsvUploaded(false);
-					setProcessingComplete(false);
-					setProcessingSteps({
-						uploadSuccessful: false,
-						sortingInformation: false,
-						collectionFromBackend: false,
-						completed: false
-					});
+				{
+					onSuccess: apiResponse => {
+						const { reportId, message } = apiResponse;
+						toast.success(message || 'Report processing has started.');
+						setCsvUploaded(true);
+						setCurrentReportId(reportId); // This kicks off the polling useEffect
+						setProcessingSteps(prev => ({ ...prev, sortingInformation: true }));
+					},
+					onError: (error: any) => {
+						// Handle failure to *start* the job
+						const errorMessage = error.response?.data?.message || 'Failed to start the processing job.';
+						toast.error(errorMessage);
+						setCurrentStep('csv-upload'); // Go back to upload step
+					}
 				}
-			}
-		);
+			);
+		} catch (error: any) {
+			console.error('An error occurred during the S3 upload process:', error);
+			const errorMessage = error.response?.data?.message || 'The file upload failed. Please try again.';
+			toast.error(errorMessage);
+			setCurrentStep('csv-upload'); // Go back to upload step
+		}
 	};
 
 	const publishArtists = async () => {
