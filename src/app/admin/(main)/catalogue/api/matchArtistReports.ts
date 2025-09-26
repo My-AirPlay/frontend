@@ -9,7 +9,8 @@ interface MatchArtistReportsParams {
 	artistId: string;
 	artistName?: boolean;
 	activityPeriod?: string;
-	reports: ReportItem[];
+	analyticsId?: string;
+	rows?: string[];
 }
 
 // Define the response type (adjust based on your API's response structure)
@@ -30,15 +31,14 @@ interface PublishArtistReportsParams {
 	tag: string;
 }
 
-export const matchArtistReports = async ({ artistId, activityPeriod, artistName = false, reports }: MatchArtistReportsParams) => {
+export const matchArtistReports = async ({ artistId, activityPeriod, artistName = false, analyticsId, rows }: MatchArtistReportsParams) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const reportsWithoutId = reports.map(({ _id, ...rest }) => rest);
-	console.log(reports);
-	console.log(reportsWithoutId);
-	const response = await APIAxios.post(`/admin/match/${artistId}`, [...reportsWithoutId], {
+	const response = await APIAxios.post(`/admin/match/${artistId}`, null, {
 		params: {
 			artistName,
-			activityPeriod
+			activityPeriod,
+			analyticsId,
+			rows
 		}
 	});
 	return response.data;

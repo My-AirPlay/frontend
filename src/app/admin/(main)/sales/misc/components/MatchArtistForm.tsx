@@ -24,14 +24,15 @@ interface MatchArtistFormProps {
 	unmatchedArtistName?: ReportItem;
 	activityPeriod?: string;
 	unmatchedReports?: ReportItem[];
+	rows?: ReportItem[];
 }
 
-const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew, unmatchedArtistName, activityPeriod }) => {
+const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew, unmatchedArtistName, rows, activityPeriod }) => {
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 
-	const { data: artists, isLoading: artistsLoading } = useGetAllArtists({ page: '1', limit: '100' });
+	const { data: artists, isLoading: artistsLoading } = useGetAllArtists({ page: '1', limit: '500' });
 	const { mutate: matchArtist, isPending: isMatching } = useMatchArtistReports();
 
 	const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -74,8 +75,9 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 		setIsDropdownOpen(false);
 		setSearchTerm('');
 
+		const selectedRows = rows?.map(row => row._id);
 		matchArtist(
-			{ artistId: artist._id, activityPeriod, reports: unmatchedArtistName ? [unmatchedArtistName] : [] },
+			{ artistId: artist._id, activityPeriod, analyticsId: unmatchedArtistName?._id, rows: selectedRows },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
