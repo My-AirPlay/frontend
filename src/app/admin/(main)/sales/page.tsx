@@ -234,7 +234,7 @@ const Sales: React.FC = () => {
 								fullReports: periodItemGroup.flatMap(item => item.fullReports),
 
 								// The rest of your logic remains the same
-								_id: firstItem?._id || `${firstItem?.artistName}-${firstItem?.activityPeriod}-${Math.random().toString(36).substring(2, 9)}`,
+								_id: firstItem._id,
 								createdAt: firstItem?.createdAt || new Date(),
 								updatedAt: firstItem?.updatedAt || new Date(),
 								firstTitle: firstItem.firstTitle,
@@ -731,7 +731,7 @@ const Sales: React.FC = () => {
 					</div>
 				)}
 
-				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedArtists} onCreateNew={handleCreateNewArtist} activityPeriod={activityPeriod} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)} />}
+				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedArtists} onCreateNew={handleCreateNewArtist} activityPeriod={activityPeriod} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)} rows={selectedMatchRows} />}
 
 				{currentStep === 'create-artist' && <CreateArtistForm onSave={handleSaveArtist} />}
 
