@@ -719,10 +719,8 @@ const Sales: React.FC = () => {
 				{currentStep === 'artist-records' && (
 					<div className="space-y-6">
 						<h2 className="text-xl font-semibold mb-4">Artists Records</h2>
-
-						<MatchedArtistsTable artists={matchedArtists} onArtistRevenueClick={handleRevenueShare} />
-
 						<UnmatchedArtistsTable artists={unmatchedArtists} onArtistMatch={handleArtistMatch} onBulkArtistMatch={handleBulkArtistMatch} onRowSelectionChange={handleSelectionMatchChange} />
+						<MatchedArtistsTable artists={matchedArtists} onArtistRevenueClick={handleRevenueShare} />
 					</div>
 				)}
 				{currentStep === 'send-emails' && (
