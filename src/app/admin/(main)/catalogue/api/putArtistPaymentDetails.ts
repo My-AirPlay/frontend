@@ -12,6 +12,7 @@ interface UpdateArtistDetailsParams {
 	artistId: string;
 	artistFullName: string;
 	artistName: string;
+	email: string;
 }
 interface UpdateArtistPaymentDetailsResponse {
 	success: boolean;
@@ -35,10 +36,11 @@ export const useUpdateArtistPaymentDetails = (): UseMutationResult<UpdateArtistP
 	});
 };
 
-export const updateArtistDetails = async ({ artistId, artistName, artistFullName }: UpdateArtistDetailsParams): Promise<UpdateArtistPaymentDetailsResponse> => {
+export const updateArtistDetails = async ({ artistId, artistName, artistFullName, email }: UpdateArtistDetailsParams): Promise<UpdateArtistPaymentDetailsResponse> => {
 	const response = await APIAxios.put(`/admin/update_artist_details/${artistId}`, {
 		artistName,
-		artistFullName
+		artistFullName,
+		email
 	});
 	return response.data;
 };
