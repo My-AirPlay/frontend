@@ -8,30 +8,31 @@ interface CurrencyPair {
 	exchangeRate: number | null;
 }
 
-export const analyzeCsv = async (file: File, exchangeRates: CurrencyPair[], tag: string, reportingPeriod: string) => {
-	const payload = new FormData();
-	payload.append('file', file);
-	payload.append('exchangeRates', JSON.stringify(exchangeRates));
-	payload.append('tag', tag);
-	payload.append('reportingPeriod', reportingPeriod);
+export const analyzeCsv = async (file: string, fileMetadata: { originalname: string; mimetype: string; size: number }, exchangeRates: CurrencyPair[], tag: string, reportingPeriod: string) => {
+	const payload = {
+		s3FileUrl: file,
+		fileMetadata,
+		exchangeRates,
+		tag,
+		reportingPeriod
+	};
 
-	const response = await APIAxios.post(`/admin/analyze_csv`, payload, {
-		headers: {
-			'Content-Type': 'multipart/form-data'
-		}
-	});
+	const response = await APIAxios.post(`/admin/analyze_csv`, payload);
 
 	return response.data;
 };
 
 export const useAdminAnalyzeCsv = () => {
 	return useMutation({
-		mutationFn: ({ file, exchangeRates, tag, reportingPeriod }: { file: File; exchangeRates: CurrencyPair[]; tag: string; reportingPeriod: string }) => analyzeCsv(file, exchangeRates, tag, reportingPeriod),
-		onSuccess: data => {
-			console.log('CSV analyzed successfully:', data);
+		// Update the type hint for the mutation function's arguments
+		mutationFn: ({ s3FileUrl, fileMetadata, exchangeRates, tag, reportingPeriod }: { s3FileUrl: string; fileMetadata: { originalname: string; mimetype: string; size: number }; exchangeRates: CurrencyPair[]; tag: string; reportingPeriod: string }) => analyzeCsv(s3FileUrl, fileMetadata, exchangeRates, tag, reportingPeriod),
+
+		onSuccess: response => {
+			console.log('Job started successfully:', response.data);
+			// The response.data will contain { reportId, message }
 		},
 		onError: error => {
-			console.error('Error analyzing CSV:', error);
+			console.error('Error starting analysis job:', error);
 		}
 	});
 };
@@ -54,4 +55,16 @@ export const useGetReportStatus = (reportId: string, enabled: boolean) => {
 		refetchInterval: 5000, // Poll every 5 seconds
 		refetchIntervalInBackground: true
 	});
+};
+
+interface UploadUrlResponse {
+	signedUrl: string;
+	finalUrl: string;
+}
+
+export const getUploadUrl = async (filename: string, fileType: string): Promise<UploadUrlResponse> => {
+	const { data } = await APIAxios.get('/admin/generate-upload-url', {
+		params: { filename, fileType }
+	});
+	return data;
 };
