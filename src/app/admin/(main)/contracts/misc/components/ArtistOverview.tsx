@@ -25,6 +25,7 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }
 	const [fullName, setFullName] = useState<string>(`${artist?.firstName || ''} ${artist?.lastName || ''}`);
 	const [rate, setRate] = useState<number>(artist?.bankDetails?.rate || 80);
 	const [currency, setCurrency] = useState<string>(artist?.bankDetails?.currency || 'USD');
+	const [email, setEmail] = useState<string>(artist?.email || '');
 
 	// Handle form submission
 	const handleSubmit = () => {
@@ -32,7 +33,8 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }
 			{
 				artistId: artist._id,
 				artistFullName: fullName,
-				artistName: name
+				artistName: name,
+				email: email
 			},
 			{
 				onError: error => {
@@ -67,7 +69,7 @@ const ArtistOverview: React.FC<ArtistOverviewProps> = ({ artist, artistRefetch }
 				<Input label="Artist Name" type={'text'} value={name} onChange={e => setName(e.target.value)} />
 				<Input label="Full Name" type={'text'} value={fullName} onChange={e => setFullName(e.target.value)} />
 
-				<Input label="Email" value={artist?.email} readOnly type="email" />
+				<Input label="Email" type={'text'} value={email} onChange={e => setEmail(e.target.value)} />
 				<Textarea label="Bio" value={artist?.bio} readOnly />
 			</div>
 
