@@ -19,13 +19,9 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 		artists.forEach(artist => {
 			artist.sharedRevenue.forEach(sharedArtist => {
 				if (sharedArtist.artistId) {
-					const totalRoyalty = artist.fullReports.reduce((sum: number, rep: any) => {
-						const amt = parseFloat(rep.totalRoyaltyUSD?.royaltyConverted?.[0]?.amount ?? '0');
-						return sum + amt * (sharedArtist.percentage / 100);
-					}, 0);
-
-					const catalogueIds = artist.fullReports.map(r => r.catalogueId).join(', ');
-					const isrcCodes = artist.fullReports.map(r => r.isrcCode).join(', ');
+					const totalRoyalty = artist.total;
+					const catalogueIds = artist.catalogueId;
+					const isrcCodes = artist.isrcCode;
 
 					if (uniqueMap.has(sharedArtist.artistId)) {
 						const existingArtist = uniqueMap.get(sharedArtist.artistId);

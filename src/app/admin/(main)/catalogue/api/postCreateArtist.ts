@@ -7,13 +7,6 @@ interface CreateArtistPayload {
 	artistName: string;
 	fullName: string;
 	currency: string;
-	rate: string;
-	dealType?: string;
-	contractDetails: {
-		startDate: Date;
-		endDate: Date;
-	};
-	contractFile?: File | undefined;
 }
 
 export const createArtist = async (payload: CreateArtistPayload) => {
@@ -23,11 +16,6 @@ export const createArtist = async (payload: CreateArtistPayload) => {
 	formData.append('fullName', payload.fullName);
 	formData.append('email', payload.email);
 	formData.append('currency', payload.currency);
-	formData.append('rate', payload.rate);
-	if (payload.dealType) formData.append('dealType', payload.dealType);
-	formData.append('contractDetails[startDate]', payload.contractDetails.startDate.toISOString());
-	formData.append('contractDetails[endDate]', payload.contractDetails.endDate.toISOString());
-	if (payload.contractFile) formData.append('contractFile', payload.contractFile);
 
 	const response = await APIAxios.post(`/admin/create-artist`, formData, {
 		headers: {

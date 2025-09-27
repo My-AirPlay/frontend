@@ -3,20 +3,34 @@ import React from 'react';
 // import { Save } from 'lucide-react';
 // import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PreviousPageButton } from '@/components/ui';
+import { Button, PreviousPageButton } from '@/components/ui';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArtistAnalytics, ArtistOverview, ArtistContract } from '../../misc/components';
-import { useGetOneArtist } from '../../../catalogue/api/getOneArtist';
+import { useDeleteArtist, useGetOneArtist } from '../../../catalogue/api/getOneArtist';
 import { LoadingBox } from '@/components/ui/LoadingBox';
+import { Delete } from 'lucide-react';
 
 const ArtistDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
 	const { data: artist, isLoading: artistLoading, refetch: artistRefetch } = useGetOneArtist({ artistId: artist_id });
+	const { mutate: deleteArtist, isPending: isDeleting } = useDeleteArtist();
+
+	const handleDelete = () => {
+		if (window.confirm('Are you sure you want to delete this artist? This action cannot be undone.')) {
+			deleteArtist(artist_id);
+		}
+	};
 
 	return (
 		<div className="space-y-6">
-			<PreviousPageButton />
+			<div className="flex justify-between">
+				<PreviousPageButton />
+				<Button variant="destructive" className="flex items-center gap-2" onClick={handleDelete} isLoading={isDeleting} disabled={isDeleting}>
+					<Delete size={16} />
+					Delete Artist
+				</Button>
+			</div>
 
 			<div className="flex justify-between items-center">
 				<h1 className="text-xl md:text-2xl font-semibold">Artist Details</h1>

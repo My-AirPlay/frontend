@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react'; // Removed useRef
-import { Filter, ArrowUp, ArrowDown } from 'lucide-react'; // Added ArrowUp, ArrowDown
+import { Filter, ArrowUp, ArrowDown, Plus } from 'lucide-react'; // Added ArrowUp, ArrowDown
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Badge, DataTable, PreviousPageButton, Input } from '@/components/ui'; // Added Input
@@ -11,6 +11,8 @@ import { useGetAllArtists } from '../catalogue/api/getAllArtistsParams';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import moment from 'moment';
+import CreateArtistForm from '@/app/admin/(main)/sales/misc/components/CreateArtistForm';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const Contracts = () => {
 	const router = useRouter();
@@ -24,7 +26,7 @@ const Contracts = () => {
 	const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('searchTerm') || '');
 	const [sortBy, setSortBy] = useState<string>(searchParams.get('sortBy') || 'createdAt'); // Default sort
 	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>((searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc');
-
+	const [isCreateModalOpen, setCreateModalOpen] = useState(false);
 	// State for the input field's value
 	const [inputValue, setInputValue] = useState<string>(searchTerm);
 
@@ -106,7 +108,7 @@ const Contracts = () => {
 	if (searchTerm) apiParams.searchTerm = searchTerm; // Use the actual searchTerm state for API call
 
 	// Fetch data with filters and sorting
-	const { data: contracts, isLoading: contractsLoading } = useGetAllArtists(apiParams);
+	const { data: contracts, isLoading: contractsLoading, refetch } = useGetAllArtists(apiParams);
 
 	const totalContracts = contracts?.total || 0;
 	const pageCount = contracts?.totalPages || 0;
@@ -129,6 +131,10 @@ const Contracts = () => {
 		}
 	};
 
+	const handleArtistCreated = () => {
+		setCreateModalOpen(false); // Close the modal
+		refetch();
+	};
 	const columns = [
 		{
 			id: 'artistName',
@@ -180,7 +186,13 @@ const Contracts = () => {
 
 	return (
 		<div className="space-y-6">
-			<PreviousPageButton />
+			<div className="flex justify-between">
+				<PreviousPageButton />
+				<Button className="bg-primary hover:bg-primary/90" onClick={() => setCreateModalOpen(true)}>
+					<Plus size={16} className="md:mr-2" />
+					<span className="hidden md:inline">Create Artist</span>
+				</Button>
+			</div>
 
 			<div className="flex flex-wrap gap-4 justify-between items-center">
 				<h1 className="text-xl md:text-2xl font-semibold">Contracts</h1>
@@ -265,11 +277,6 @@ const Contracts = () => {
 							</DropdownMenuGroup>
 						</DropdownMenuContent>
 					</DropdownMenu>
-
-					{/* <Button className="max-md:size-10 max-md:p-0">
-						<Download size={16} className="md:mr-2" />
-						<span className="max-md:sr-only">Download</span>
-					</Button> */}
 				</div>
 			</div>
 
@@ -282,6 +289,23 @@ const Contracts = () => {
 			) : (
 				<DataTable data={contracts?.data} columns={columns} showCheckbox={false} pagination={true} defaultRowsPerPage={Number(limit)} pageCount={pageCount} />
 			)}
+			<AnimatePresence>
+				{isCreateModalOpen && (
+					<div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex justify-center items-center p-4 overflow-y-auto">
+						{' '}
+						{/* Added overflow-y-auto */}
+						<motion.div
+							initial={{ opacity: 0, y: -20 }} // Changed initial animation slightly
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -20 }}
+							transition={{ duration: 0.2 }}
+							className="relative"
+						>
+							<CreateArtistForm onSave={handleArtistCreated} onCancel={() => setCreateModalOpen(false)} />
+						</motion.div>
+					</div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 };
