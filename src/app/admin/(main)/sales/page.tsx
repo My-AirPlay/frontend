@@ -186,6 +186,7 @@ const Sales: React.FC = () => {
 	const [tagValue, setTagValue] = useSessionStorageState<string | null>('tagValue', null);
 	const [reportingPeriod, setReportingPeriod] = useSessionStorageState<string | null>('reportingPeriod', null);
 	const [currentReportId, setCurrentReportId] = useSessionStorageState<string | null>('currentReportId', null);
+	const [currentReportTag, setCurrentReportTag] = useSessionStorageState<string | null>('currentReportId', null);
 	// NEW: Polling logic using the hook
 	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(
 		currentReportId!,
@@ -202,6 +203,8 @@ const Sales: React.FC = () => {
 
 			// --- This is your original data processing logic, moved here ---
 			const reportItems: ReportItem[] = reportStatusData.data || [];
+			console.log(reportItems[0]);
+			setCurrentReportTag(reportItems[0].reportId);
 			setAnalyzedApiData(reportItems);
 
 			const groupedByArtistAndPeriod: { [artistName: string]: { [activityPeriod: string]: ReportItem[] } } = reportItems.reduce(
@@ -244,6 +247,7 @@ const Sales: React.FC = () => {
 								catalogueId: firstItem.catalogueId,
 								isrcCode: firstItem.isrcCode,
 								currency: firstItem.currency,
+								reportId: firstItem.reportId,
 								sharedRevenue: [
 									{
 										artistId: firstItem?.artistId || null,
@@ -412,12 +416,12 @@ const Sales: React.FC = () => {
 			toast.info('No matched artists to publish.');
 			return;
 		}
-		if (!tagValue) {
+		if (!currentReportTag) {
 			toast.error('Oops you have not selected a tag yet. Please refresh page to start the session again');
 		}
 		setLoadingComplete(true);
 		publishCsv(
-			{ artists: matchedArtists, tag: tagValue as string },
+			{ artists: matchedArtists, reportId: currentReportTag as string },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
@@ -426,6 +430,8 @@ const Sales: React.FC = () => {
 					setLoadingComplete(false);
 					//setShowPublishTagModal(false);
 					//setMatchedArtists([]);
+					setCurrentReportTag(null);
+					setCurrentReportId(null);
 					setCurrentStep('send-emails');
 				},
 				onError: (error: Error | AxiosError<ApiResponse> | null) => {
@@ -449,6 +455,8 @@ const Sales: React.FC = () => {
 			{
 				onSuccess: (data: ApiResponse) => {
 					console.log('API Response:', data);
+					setCurrentReportTag(null);
+					setCurrentReportId(null);
 					toast.success(data.message || 'Emails sent successfully!');
 				},
 				onError: (error: Error | AxiosError<ApiResponse>) => {
@@ -733,7 +741,11 @@ const Sales: React.FC = () => {
 
 				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedArtists} onCreateNew={handleCreateNewArtist} activityPeriod={activityPeriod} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)} rows={selectedMatchRows} />}
 
-				{currentStep === 'create-artist' && <CreateArtistForm onSave={handleSaveArtist} />}
+				{currentStep === 'create-artist' && (
+					<div className="flex w-full justify-center">
+						<CreateArtistForm onSave={handleSaveArtist} onCancel={() => setCurrentStep('match-artist')} />
+					</div>
+				)}
 
 				{currentStep === 'add-revenue-share' && <RevenueShareForm matchedArtistName={matchedArtists.find(a => a._id === selectedUnmatchedArtist)} matchedReports={matchedArtists} onSave={handleOnSave} />}
 
