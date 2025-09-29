@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Trash2, Eye } from 'lucide-react';
+import { Trash2, Eye, RefreshCw } from 'lucide-react';
 import { ColumnDef } from '@tanstack/react-table';
-
+import { Badge } from '@/components/ui';
 import { useDeleteSalesHistory, useGetSalesHistory } from '@/app/admin/(main)/catalogue/api/getSalesHistory';
 import { Button } from '@/components/ui/button';
 import { DataTable, PreviousPageButton } from '@/components/ui';
 import { LoadingBox } from '@/components/ui/LoadingBox';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ReportModal from '@/components/ui/report-modal';
 import DeletionProgressModal from '@/components/ui/delete-records-modal';
 import { formatCurrency } from '@/utils/currency';
@@ -22,6 +22,7 @@ interface Report {
 	artistNames: string[];
 	revenue: number;
 	createdAt: string;
+	status: 'Complete' | 'Incomplete' | 'Pending';
 }
 
 const SalesHistory: React.FC = () => {
@@ -41,7 +42,7 @@ const SalesHistory: React.FC = () => {
 		}),
 		[page, limit]
 	);
-
+	const router = useRouter();
 	const { data: salesHistoryResponse, isLoading: salesHistoryLoading, refetch: refetchSalesHistory } = useGetSalesHistory(apiParams);
 	const { mutate: deleteRecords } = useDeleteSalesHistory();
 	const tableData = useMemo(() => salesHistoryResponse?.data || [], [salesHistoryResponse]);
@@ -57,6 +58,10 @@ const SalesHistory: React.FC = () => {
 	const handleCloseDetailsModal = () => {
 		setIsDetailsModalOpen(false);
 		setSelectedReport(null);
+	};
+
+	const handleReprocess = (reportId: string) => {
+		router.push(`/admin/sales-history/process/${reportId}`);
 	};
 
 	const handleDeleteSelected = () => {
@@ -106,6 +111,22 @@ const SalesHistory: React.FC = () => {
 				}
 			},
 			{
+				accessorKey: 'status',
+				header: 'Status',
+				cell: ({ row }) => {
+					const status = row.original.status;
+					let variant: 'success' | 'destructive' | 'secondary' = 'success'; // Default variant
+
+					if (status === 'Incomplete') {
+						variant = 'secondary';
+					} else if (status === 'Pending') {
+						variant = 'secondary';
+					}
+
+					return <Badge variant={variant}>{status || '-'}</Badge>;
+				}
+			},
+			{
 				accessorKey: 'activityPeriods',
 				header: 'Targeted Period(s)',
 				cell: ({ row }) => {
@@ -149,10 +170,15 @@ const SalesHistory: React.FC = () => {
 				id: 'actions',
 				header: 'Actions',
 				cell: ({ row }) => (
-					<Button variant="ghost" size="sm" onClick={() => handleViewDetails(row.original)}>
-						<Eye size={16} className="mr-2" />
-						View
-					</Button>
+					<div className="flex items-center gap-2">
+						<Button variant="ghost" size="sm" onClick={() => handleViewDetails(row.original)}>
+							<Eye size={16} />
+						</Button>
+						{/* Conditionally render the Re-process button */}
+						<Button variant="ghost" size="sm" onClick={() => handleReprocess(row.original.reportId)}>
+							<RefreshCw size={16} />
+						</Button>
+					</div>
 				)
 			}
 		],

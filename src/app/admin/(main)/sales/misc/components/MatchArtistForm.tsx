@@ -32,7 +32,7 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 	const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 
-	const { data: artists, isLoading: artistsLoading } = useGetAllArtists({ page: '1', limit: '500' });
+	const { data: artists, isLoading: artistsLoading } = useGetAllArtists({ page: '1', limit: '700' });
 	const { mutate: matchArtist, isPending: isMatching } = useMatchArtistReports();
 
 	const dropdownRef = useRef<HTMLDivElement | null>(null);

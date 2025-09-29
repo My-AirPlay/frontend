@@ -29,7 +29,7 @@ const ReportModal: React.FC<ReportModalProps> = ({ report, onClose }) => {
 	});
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
 			<div className="bg-background rounded-lg shadow-xl p-6 w-full max-w-lg relative">
 				{/* Close Button */}
 				<button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
@@ -62,12 +62,22 @@ const ReportModal: React.FC<ReportModalProps> = ({ report, onClose }) => {
 						</div>
 					</div>
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						{/* ✨ UPDATED ARTIST LIST SECTION ✨ */}
 						<div className="p-4 rounded-md border">
 							<div className="flex items-center text-sm text-gray-500 mb-2">
 								<Mic size={16} className="mr-2" /> Artist(s)
 							</div>
-							<p className="font-medium">{report.artistNames.join(', ')}</p>
+							{/* Scrollable container for artist names */}
+							<div className="max-h-24 overflow-y-auto flex flex-wrap gap-2">
+								{report.artistNames.map((name, index) => (
+									<span key={index} className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">
+										{name}
+									</span>
+								))}
+							</div>
 						</div>
+						{/* END OF UPDATED SECTION */}
+
 						<div className="p-4 rounded-md border">
 							<div className="flex items-center text-sm text-gray-500 mb-2">
 								<BarChart2 size={16} className="mr-2" /> Activity Periods
