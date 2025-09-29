@@ -36,6 +36,8 @@ export function getLocaleForCurrency(currency: SupportedCurrency): string {
 }
 export function formatCurrency(amount: number, currency?: SupportedCurrency): string {
 	const locale = getLocaleForCurrency(currency || 'USD');
+	console.log(locale);
+	console.log(currency);
 	return new Intl.NumberFormat(locale, {
 		style: 'currency',
 		currency: currency,

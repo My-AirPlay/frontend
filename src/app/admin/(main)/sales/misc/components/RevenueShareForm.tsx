@@ -14,7 +14,7 @@ interface MatchArtistFormProps {
 const RevenueShareForm: React.FC<MatchArtistFormProps> = ({ onSave, matchedArtistName }) => {
 	const { data: artists, isLoading: artistsLoading } = useGetAllArtists({
 		page: '1',
-		limit: '100'
+		limit: '500'
 	});
 
 	const [assignments, setAssignments] = useState<SharedRevenue[]>(matchedArtistName?.sharedRevenue || []);
@@ -27,13 +27,23 @@ const RevenueShareForm: React.FC<MatchArtistFormProps> = ({ onSave, matchedArtis
 
 	// Initialize assignments and song titles
 	useEffect(() => {
+		console.log(matchedArtistName);
 		if (!matchedArtistName) return;
 
 		const songTitles = [...matchedArtistName.otherTitles, matchedArtistName.firstTitle];
 		setSongs(songTitles);
 
-		if (matchedArtistName.sharedRevenue && matchedArtistName.sharedRevenue.length > 0) {
-			setAssignments(matchedArtistName.sharedRevenue);
+		if (artists?.data && matchedArtistName.sharedRevenue && matchedArtistName.sharedRevenue.length > 0) {
+			const enrichedAssignments = matchedArtistName.sharedRevenue.map(share => {
+				const artist = artists.data.find((a: any) => a._id === share.artistId);
+				return {
+					...share,
+					artistName: artist ? artist.artistName : 'Unknown Artist',
+					activityPeriod: matchedArtistName.activityPeriod
+				};
+			});
+
+			setAssignments(enrichedAssignments);
 			return;
 		}
 

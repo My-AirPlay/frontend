@@ -186,7 +186,7 @@ const Sales: React.FC = () => {
 	const [tagValue, setTagValue] = useSessionStorageState<string | null>('tagValue', null);
 	const [reportingPeriod, setReportingPeriod] = useSessionStorageState<string | null>('reportingPeriod', null);
 	const [currentReportId, setCurrentReportId] = useSessionStorageState<string | null>('currentReportId', null);
-	const [currentReportTag, setCurrentReportTag] = useSessionStorageState<string | null>('currentReportId', null);
+	const [currentReportTag, setCurrentReportTag] = useSessionStorageState<string | null>('setCurrentReportTag', null);
 	// NEW: Polling logic using the hook
 	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(
 		currentReportId!,
@@ -420,6 +420,7 @@ const Sales: React.FC = () => {
 			toast.error('Oops you have not selected a tag yet. Please refresh page to start the session again');
 		}
 		setLoadingComplete(true);
+		console.log(matchedArtists);
 		publishCsv(
 			{ artists: matchedArtists, reportId: currentReportTag as string },
 			{

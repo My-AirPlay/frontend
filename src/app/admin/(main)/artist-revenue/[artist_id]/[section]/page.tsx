@@ -8,7 +8,7 @@ import { ArtistOverview, ArtistAnalytics, ArtistTransactions } from '../../misc/
 import { AccountCoins } from '../../misc/icons';
 import { useGetOneArtist } from '../../../catalogue/api/getOneArtist';
 import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips'; // Added import
-import { WithdrawalSlipData } from '@/lib/types'; // Added import
+import { WithdrawalSlipData } from '@/lib/types';
 
 const ArtistRevenueDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
@@ -39,6 +39,8 @@ const ArtistRevenueDetails: React.FC = () => {
 		const royalty = Number(slip.totalRevenue) || 0;
 		return sum + royalty;
 	}, 0);
+
+	const balance = totalCreditRoyalty - totalPendingRoyalty;
 
 	const tabs = [
 		{
@@ -90,7 +92,7 @@ const ArtistRevenueDetails: React.FC = () => {
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Balance</p>
-							<p className="font-medium">{`₦${parseFloat(parseFloat(artist?.totalRoyaltyUSD || '0').toFixed(2)).toLocaleString()}`}</p>
+							<p className="font-medium">{`₦${parseFloat(balance.toFixed(2)).toLocaleString()}`}</p>
 						</div>
 						<div className="flex flex-col">
 							<p className="text-white/60 text-xs font-light">Credits</p>

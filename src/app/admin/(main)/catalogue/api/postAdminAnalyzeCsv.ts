@@ -56,7 +56,18 @@ export const useGetReportStatus = (reportId: string, enabled: boolean) => {
 		refetchIntervalInBackground: true
 	});
 };
+const getReprocessData = async (reportId: string): Promise<ReportItem[]> => {
+	const { data } = await APIAxios.get(`/admin/reprocess-data/${reportId}`);
+	return data;
+};
 
+export const useGetReprocessData = (reportId: string) => {
+	return useQuery<ReportItem[], Error>({
+		queryKey: ['reprocessData', reportId],
+		queryFn: () => getReprocessData(reportId),
+		enabled: !!reportId
+	});
+};
 interface UploadUrlResponse {
 	signedUrl: string;
 	finalUrl: string;
