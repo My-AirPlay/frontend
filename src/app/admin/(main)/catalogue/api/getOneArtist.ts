@@ -1,5 +1,5 @@
 import APIAxios from '@/utils/axios';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -17,10 +17,16 @@ export const getOneArtist = async ({ artistId }: GetOneArtistParams) => {
 	return response.data;
 };
 
-export const useGetOneArtist = (params: GetOneArtistParams) => {
+export const useGetOneArtist = (
+	params: GetOneArtistParams,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	options?: Omit<UseQueryOptions<any, Error, any, (string | GetOneArtistParams)[]>, 'queryKey' | 'queryFn'>
+) => {
 	return useQuery({
-		queryKey: ['oneArtist', params.artistId], // Unique key for caching
-		queryFn: () => getOneArtist(params)
+		queryKey: ['one-Artist', params.artistId],
+		queryFn: () => getOneArtist(params),
+		enabled: !!params.artistId,
+		...options
 	});
 };
 
