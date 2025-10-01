@@ -14,6 +14,30 @@ export const useGetDashboardData = () => {
 	});
 };
 
+interface GetAllWithdrawalSlipsParams {
+	page: number;
+	limit: number;
+	artistId: string;
+}
+
+export const getAllWithdrawalSlips = async ({ page, limit, artistId }: GetAllWithdrawalSlipsParams) => {
+	const response = await APIAxios.get(`/artist/all_withdrawalslips`, {
+		params: {
+			page,
+			limit,
+			artistId
+		}
+	});
+	return response.data;
+};
+
+export const useGetAllWithdrawalSlips = (params: GetAllWithdrawalSlipsParams) => {
+	return useQuery({
+		queryKey: ['withdrawalSlips', params.page, params.limit, params.artistId], // Unique key for caching
+		queryFn: () => getAllWithdrawalSlips(params)
+	});
+};
+
 // Core data types
 export interface PeriodMetrics {
 	totalStreams: number;

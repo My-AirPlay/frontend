@@ -129,7 +129,7 @@ export interface WithdrawalSlipData {
 	requestedAmount: number; // Amount requested by the artist
 	finalAmountSent?: number; // Actual amount sent after processing/fees
 	notes?: string; // Admin notes or reasons
-	activityPeriod: string; // e.g., "September 2023"
+	activityPeriods: []; // e.g., "September 2023"
 	createdAt: string; // ISO Date String
 	updatedAt: string; // ISO Date String
 	__v?: number; // MongoDB version key
