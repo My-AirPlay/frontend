@@ -4,11 +4,12 @@ import React, { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useAuthContext } from '@/contexts/AuthContext'; // Assumes you have an auth context
 import { WithdrawalSlipData } from '@/lib/types';
-import { DataTable, Badge } from '@/components/ui';
+import { DataTable, Badge, Button } from '@/components/ui';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { formatCurrency } from '@/utils/currency';
-import { ArrowDownLeft, ArrowUpRight, Wallet } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Download, Wallet } from 'lucide-react';
 import { useGetAllWithdrawalSlips } from '@/app/artiste/(main)/dashboard/misc/api';
+import { useRouter } from 'next/navigation';
 
 // A new, simplified type for the artist's transaction view
 type Transaction = {
@@ -22,7 +23,7 @@ type Transaction = {
 const ArtistRevenuePage: React.FC = () => {
 	const { artist } = useAuthContext();
 	const artistId = artist!._id;
-
+	const router = useRouter();
 	const { data: withdrawalsData, isLoading } = useGetAllWithdrawalSlips({
 		page: 1,
 		limit: 2000,
@@ -121,6 +122,12 @@ const ArtistRevenuePage: React.FC = () => {
 
 	return (
 		<div className="space-y-8">
+			<div className="flex justify-end">
+				<Button className="max-md:size-10 max-md:p-0" onClick={() => router.push('/artiste/revenue/export')}>
+					<Download size={16} className="md:mr-2" />
+					<span className="max-md:sr-only">Export Reports</span>
+				</Button>
+			</div>
 			<h1 className="text-2xl font-semibold">My Revenue</h1>
 
 			{/* Summary Section */}
