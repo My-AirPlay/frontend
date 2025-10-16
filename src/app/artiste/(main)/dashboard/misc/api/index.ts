@@ -1,5 +1,6 @@
 import APIAxios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 const getData = async () => {
 	const response = await APIAxios.get('/artist/artist_analytics');
@@ -103,3 +104,47 @@ export interface APIResponse {
 	topDSPs: NamedPerformanceItem[];
 	topCountries: NamedPerformanceItem[];
 }
+export interface ReportPeriodPair {
+	reportId: string;
+	activityPeriod: string;
+}
+
+// --- React Query Hook to Fetch Available Reports ---
+const getReportPeriodPairs = async (): Promise<ReportPeriodPair[]> => {
+	const { data } = await APIAxios.get(`/artist/activity-periods`);
+	return data;
+};
+
+export const useGetReportPeriodPairs = (artistId: string) => {
+	return useQuery<ReportPeriodPair[], Error>({
+		queryKey: ['reportPeriodPairs', artistId],
+		queryFn: () => getReportPeriodPairs(),
+		enabled: !!artistId, // Only run if artistId is available
+		staleTime: 1000 * 60 * 5 // Cache for 5 minutes
+	});
+};
+
+export const exportAnalyticsCsv = async (artistId: string, reportId: string, activityPeriod: string) => {
+	try {
+		const response = await APIAxios.get(`/artist/export-analytics/${reportId}/${activityPeriod}`, {
+			responseType: 'blob'
+		});
+		console.log(response);
+		const url = window.URL.createObjectURL(new Blob([response.data]));
+
+		const link = document.createElement('a');
+		link.href = url;
+
+		const filename = `royalty-report-${reportId.split(':')[0]}-${activityPeriod}.csv`;
+		link.setAttribute('download', filename);
+		document.body.appendChild(link);
+		link.click();
+		link.parentNode?.removeChild(link);
+		window.URL.revokeObjectURL(url);
+
+		toast.success('Your report is downloading!');
+	} catch (error) {
+		console.error('Failed to export CSV:', error);
+		toast.error('Could not generate the report. Please try again.');
+	}
+};
