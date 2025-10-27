@@ -29,10 +29,10 @@ APIAxios.interceptors.response.use(
 			toast.error('We are having a problem on our end -- SERVER ERROR PLACEHOLDER', { duration: 10000, id: '900' });
 			return Promise.reject(error);
 		}
-		if (error?.message === 'Network Error' || error?.code == 'ERR_NETWORK') {
+		/*if (error?.message === 'Network Error' || error?.code == 'ERR_NETWORK') {
 			toast.error('Check your internet connection -- NETWORK ERROR PLACEHOLDER', { duration: 10000, id: '90009' });
 			return Promise.reject(error);
-		}
+		}*/
 		if (error?.code == 'token_not_valid') {
 			toast.error('Session Expired, Login in again to continue', {
 				duration: 10000
