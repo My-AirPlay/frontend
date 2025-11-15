@@ -65,7 +65,7 @@ interface PublishTagModalProps {
 
 const PublishTagModal: React.FC<PublishTagModalProps> = ({ onClose, onPublish, isLoading }) => {
 	const [selectedTag, setSelectedTag] = useState<string>('');
-	const tags = ['MyAirplay-F', 'MyAirplay-S', 'Sound on'];
+	const tags = ['MyAirplay-F', 'MyAirplay-S', 'Sound on', 'Youtube'];
 
 	const handlePublish = () => {
 		if (!selectedTag) {
@@ -178,6 +178,7 @@ const Sales: React.FC = () => {
 	const [selectedRows, setSelectedRows] = useSessionStorageState<ReportItem[]>('selectedRows', []);
 	const [selectedMatchRows, setSelectedMatchRows] = useSessionStorageState<ReportItem[]>('selectedMatchRows', []);
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useSessionStorageState<string | null>('selectedUnmatchedArtist', null);
+	const [selectedRow, setSelectedRow] = useSessionStorageState<string | null>('selectedRow', null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useSessionStorageState<string | null>('systemArtistIdForMatch', null);
 	const [systemArtistNameForMatch, setSystemArtistNameForMatch] = useSessionStorageState<string | null>('systemArtistNameForMatch', null);
 	const [activityPeriod, setActivityPeriod] = useSessionStorageState<string>('activityPeriod', '');
@@ -469,6 +470,7 @@ const Sales: React.FC = () => {
 	};
 
 	const handleArtistMatch = (row: any) => {
+		setSelectedRow(row);
 		setSelectedUnmatchedArtist(row._id);
 		setActivityPeriod(row.activityPeriod);
 		setCurrentStep('match-artist');
@@ -567,11 +569,12 @@ const Sales: React.FC = () => {
 
 		// Reset state for both single and multiple selection modes.
 		setShowSuccessModal(null);
-		setCurrentStep('artist-records');
 		setSelectedUnmatchedArtist(null);
 		setSelectedMatchRows([]);
 		setSystemArtistIdForMatch(null);
 		setSystemArtistNameForMatch(null);
+		handleRevenueShare(selectedRow);
+		setSelectedRow(null);
 	};
 
 	const getProgressPercentage = () => {
