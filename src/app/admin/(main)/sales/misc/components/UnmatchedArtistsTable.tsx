@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { Button, DataTable } from '@/components/ui';
-import { ReportItem } from '@/lib/types'; // Changed Artist to ReportItem
+import { ReportItem } from '@/lib/types';
+import { ArrowUpDown } from 'lucide-react';
 
 interface UnmatchedArtistsTableProps {
-	artists: ReportItem[]; // Changed Artist[] to ReportItem[]
+	artists: ReportItem[];
 	onArtistMatch: (row: ReportItem) => void;
 	onBulkArtistMatch: () => void;
 	onRowSelectionChange?: (selectedData: ReportItem[]) => void;
@@ -12,6 +13,31 @@ interface UnmatchedArtistsTableProps {
 
 const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, onArtistMatch, onBulkArtistMatch, onRowSelectionChange }) => {
 	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
+	const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | 'none'>('none');
+
+	const sortedArtists = useMemo(() => {
+		if (sortOrder === 'none') return artists;
+
+		return [...artists].sort((a, b) => {
+			const nameA = (a.artistName || '').toLowerCase();
+			const nameB = (b.artistName || '').toLowerCase();
+
+			if (sortOrder === 'asc') {
+				return nameA.localeCompare(nameB);
+			} else {
+				return nameB.localeCompare(nameA);
+			}
+		});
+	}, [artists, sortOrder]);
+
+	const toggleSort = () => {
+		setSortOrder(current => {
+			if (current === 'none') return 'asc';
+			if (current === 'asc') return 'desc';
+			return 'none';
+		});
+	};
+
 	const handleSelectionChange = useCallback(
 		(rows: ReportItem[]) => {
 			setSelectedRows(rows);
@@ -19,6 +45,7 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 		},
 		[onRowSelectionChange]
 	);
+
 	const getRoyalty = (row: any): string => {
 		const currency = row.original.currency || 'USD';
 
@@ -29,13 +56,13 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 			minimumFractionDigits: 2
 		}).format(row.original.total);
 	};
+
 	const columns = [
 		{
 			id: 'artistName',
 			header: 'Artist Name',
 			accessorKey: 'artistName'
 		},
-
 		{
 			id: 'realName',
 			header: 'Track Title',
@@ -75,13 +102,19 @@ const UnmatchedArtistsTable: React.FC<UnmatchedArtistsTableProps> = ({ artists, 
 
 	return (
 		<div className="space-y-6 mt-12">
-			<div className="flex justify-between">
-				<h3 className="text-lg font-medium">Unmatched Artists</h3>
+			<div className="flex justify-between items-center">
+				<div className="flex items-center gap-3">
+					<h3 className="text-lg font-medium">Unmatched Artists</h3>
+					<Button variant="outline" size="sm" className="flex items-center gap-2" onClick={toggleSort}>
+						<ArrowUpDown className="h-4 w-4" />
+						Sort by Name {sortOrder === 'asc' ? '(A-Z)' : sortOrder === 'desc' ? '(Z-A)' : ''}
+					</Button>
+				</div>
 				<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={onBulkArtistMatch} disabled={selectedRows.length <= 0}>
 					Bulk Match Artists
 				</Button>
 			</div>
-			<DataTable data={artists} columns={columns} pagination={false} defaultRowsPerPage={50} onRowClick={row => onArtistMatch(row)} showCheckbox onRowSelectionChange={handleSelectionChange} />
+			<DataTable data={sortedArtists} columns={columns} pagination={false} defaultRowsPerPage={50} onRowClick={row => onArtistMatch(row)} showCheckbox onRowSelectionChange={handleSelectionChange} />
 		</div>
 	);
 };
