@@ -249,14 +249,16 @@ const Sales: React.FC = () => {
 								isrcCode: firstItem.isrcCode,
 								currency: firstItem.currency,
 								reportId: firstItem.reportId,
-								sharedRevenue: [
-									{
-										artistId: firstItem?.artistId || null,
-										artistName: firstItem?.artistRealName || firstItem?.artistName || 'Unknown Artist',
-										activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
-										percentage: 100
-									}
-								],
+								sharedRevenue: firstItem.sharedRevenue?.length
+									? firstItem.sharedRevenue
+									: [
+											{
+												artistId: firstItem?.artistId ?? null,
+												artistName: firstItem?.artistRealName ?? firstItem?.artistName ?? 'Unknown Artist',
+												activityPeriod: firstItem?.activityPeriod ?? 'Unknown Period',
+												percentage: 100
+											}
+										],
 								__v: firstItem?.__v || 0
 							};
 						}
@@ -265,6 +267,10 @@ const Sales: React.FC = () => {
 			const unmatched: ReportItem[] = transformedArtistReports.filter(ar => !ar.artistId);
 			const matched: ReportItem[] = transformedArtistReports.filter(ar => ar.artistId);
 
+			console.log('transformedArtistReports');
+			console.log(transformedArtistReports);
+			console.log(matched);
+			console.log(unmatched);
 			setUnmatchedArtists(unmatched);
 			setMatchedArtists(matched);
 			// --- End of original data processing logic ---

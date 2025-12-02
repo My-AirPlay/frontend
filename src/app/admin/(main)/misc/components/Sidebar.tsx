@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken, Clock, SecurityCard } from 'iconsax-react';
+import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken, Clock, SecurityCard, Musicnote } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -23,9 +23,13 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 		() => [
 			{
 				title: null,
+				items: [{ href: '/admin/dashboard', icon: Category, label: 'Dashboard' }]
+			},
+			{
+				title: 'Artists',
 				items: [
-					{ href: '/admin/dashboard', icon: Category, label: 'Dashboard' },
 					{ href: '/admin/contracts', icon: Edit2, label: 'Contracts', ...(contractsCount && contractsCount > 0 && { badge: contractsCount }) },
+					{ href: '/admin/tracks', icon: Musicnote, label: 'Tracks/Releases' },
 					{ href: '/admin/catalogue', icon: Document, label: 'Catalogue' }
 				]
 			},
