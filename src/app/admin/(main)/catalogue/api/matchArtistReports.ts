@@ -27,7 +27,7 @@ interface ApiResponse {
 }
 
 interface PublishArtistReportsParams {
-	artists: ReportItem[];
+	tracks: ReportItem[];
 	reportId: string;
 }
 
@@ -50,8 +50,8 @@ export const useMatchArtistReports = (): UseMutationResult<MatchArtistReportsRes
 	});
 };
 
-export const publishArtistReports = async ({ artists, reportId }: PublishArtistReportsParams): Promise<{ success: boolean /* other response fields */ }> => {
-	const response = await APIAxios.post(`/admin/publish_csv`, { artists, reportId }, {});
+export const publishArtistReports = async ({ tracks, reportId }: PublishArtistReportsParams): Promise<{ success: boolean /* other response fields */ }> => {
+	const response = await APIAxios.post(`/admin/publish_csv`, { tracks, reportId }, {});
 	return response.data;
 };
 
