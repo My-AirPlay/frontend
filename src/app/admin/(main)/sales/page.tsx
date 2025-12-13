@@ -12,8 +12,8 @@ import MatchArtistForm from './misc/components/MatchArtistForm';
 import CreateArtistForm from './misc/components/CreateArtistForm';
 import SuccessModal from './misc/components/SuccessModal';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
-import { toast } from 'sonner';
-import axios, { AxiosError } from 'axios';
+import { toast } from 'sonner'; // Import toast
+import axios, { AxiosError } from 'axios'; // Import AxiosError
 import { AnimatePresence, motion } from 'framer-motion';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { getUploadUrl, useAdminAnalyzeCsv, useGetReportStatus } from '../catalogue/api/postAdminAnalyzeCsv';
@@ -40,13 +40,14 @@ interface createdArtistProp {
 	fullName: string;
 }
 
+// Function to map rawData?.Currency to DropdownOption[]
 const mapCurrencyToOptions = (currencyData?: Record<string, string>): DropdownOption[] => {
-	if (!currencyData) return [];
+	if (!currencyData) return []; // Return empty array if no data
 
 	return Object.keys(currencyData).map(key => ({
-		id: key,
-		label: key,
-		symbol: (currencySymbols as Record<string, string>)[key] || key
+		id: key, // Use the key as the ID (e.g., "USD")
+		label: key, // Use the key as the label
+		symbol: (currencySymbols as Record<string, string>)[key] || key // Use the symbol if available, otherwise fall back to the currency code
 	}));
 };
 
@@ -78,7 +79,7 @@ const PublishTagModal: React.FC<PublishTagModalProps> = ({ onClose, onPublish, i
 		<div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
 			<motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="bg-[#272727] p-6 rounded-lg shadow-xl w-full max-w-md space-y-4">
 				<h2 className="text-xl font-semibold text-white">Choose a tag to publish</h2>
-				<p className="text-sm text-gray-400">Select one of the following tags. This will be associated with the published track records.</p>
+				<p className="text-sm text-gray-400">Select one of the following tags. This will be associated with the published artist records.</p>
 				<div className="space-y-2">
 					{tags.map(tag => (
 						<div key={tag} className={`p-3 rounded-md cursor-pointer transition-colors ${selectedTag === tag ? 'bg-primary text-white' : 'bg-secondary hover:bg-primary/20'}`} onClick={() => setSelectedTag(tag)}>
@@ -105,23 +106,25 @@ const Sales: React.FC = () => {
 	const currencyOptions = mapCurrencyToOptions(rawData?.Currency);
 	const [analyzedApiData, setAnalyzedApiData] = useSessionStorageState<ReportItem[] | null>('analyzedApiData', null);
 
+	// Initialize react-hook-form with simplified CurrencyPair
 	const { control, watch } = useForm<{ currencyPairs: CurrencyPair[] }>({
 		defaultValues: {
 			currencyPairs: [
 				{
 					fromCurrency: 'USD',
 					toCurrency: 'NGN',
-					exchangeRate: '1610'
+					exchangeRate: '1610' // Default rate for the first pair
 				},
 				{
 					fromCurrency: 'EUR',
 					toCurrency: 'NGN',
-					exchangeRate: '2600'
+					exchangeRate: '2600' // Default rate for the second pair
 				}
 			]
 		}
 	});
 
+	// Use useFieldArray to manage the array of currency pairs
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'currencyPairs'
@@ -129,28 +132,30 @@ const Sales: React.FC = () => {
 
 	const currencyPairs = watch('currencyPairs');
 
+	// Function to add a new currency pair (max 5)
 	const addCurrencyPair = () => {
 		if (fields.length < 5) {
 			append({
 				fromCurrency: 'USD',
 				toCurrency: 'NGN',
-				exchangeRate: '1610'
+				exchangeRate: '1610' // Default rate for new pairs
 			});
 		}
 	};
 
 	interface ApiResponse {
-		success: boolean;
+		success: boolean; // Assume API includes this field
 		message?: string;
-		data?: unknown;
+		data?: unknown; // Keep data flexible or define more specifically if known
+		// Add other potential fields if known
 	}
 
+	// Function to remove a currency pair (index: number)
 	const removeCurrencyPair = (index: number) => {
 		if (fields.length > 1) {
 			remove(index);
 		}
 	};
-
 	const [currentStep, setCurrentStep] = useSessionStorageState<SalesStep>('salesCurrentStep', 'exchange-rate');
 	const [showExchangeRates, setShowExchangeRates] = useSessionStorageState('showExchangeRates', true);
 	const [showSuccessModal, setShowSuccessModal] = useSessionStorageState<'created' | 'matched' | null>('showSuccessModal', null);
@@ -167,13 +172,12 @@ const Sales: React.FC = () => {
 		completed: false
 	});
 
-	// Changed: Track-centric state naming
-	const [matchedTracks, setMatchedTracks] = useSessionStorageState<ReportItem[]>('matchedTracks', []);
-	const [unmatchedTracks, setUnmatchedTracks] = useSessionStorageState<ReportItem[]>('unmatchedTracks', []);
+	const [matchedArtists, setMatchedArtists] = useSessionStorageState<ReportItem[]>('matchedArtists', []);
+	const [unmatchedArtists, setUnmatchedArtists] = useSessionStorageState<ReportItem[]>('unmatchedArtists', []);
 
 	const [selectedRows, setSelectedRows] = useSessionStorageState<ReportItem[]>('selectedRows', []);
 	const [selectedMatchRows, setSelectedMatchRows] = useSessionStorageState<ReportItem[]>('selectedMatchRows', []);
-	const [selectedUnmatchedTrack, setSelectedUnmatchedTrack] = useSessionStorageState<string | null>('selectedUnmatchedTrack', null);
+	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useSessionStorageState<string | null>('selectedUnmatchedArtist', null);
 	const [selectedRow, setSelectedRow] = useSessionStorageState<string | null>('selectedRow', null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useSessionStorageState<string | null>('systemArtistIdForMatch', null);
 	const [systemArtistNameForMatch, setSystemArtistNameForMatch] = useSessionStorageState<string | null>('systemArtistNameForMatch', null);
@@ -184,87 +188,101 @@ const Sales: React.FC = () => {
 	const [reportingPeriod, setReportingPeriod] = useSessionStorageState<string | null>('reportingPeriod', null);
 	const [currentReportId, setCurrentReportId] = useSessionStorageState<string | null>('currentReportId', null);
 	const [currentReportTag, setCurrentReportTag] = useSessionStorageState<string | null>('setCurrentReportTag', null);
-
-	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(currentReportId!, !!currentReportId);
+	// NEW: Polling logic using the hook
+	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(
+		currentReportId!,
+		!!currentReportId // This enables/disables the query
+	);
 
 	useEffect(() => {
 		console.log(reportStatusData);
 		if (reportStatusData?.status === 'completed') {
 			toast.success('Report processing is complete!');
 
+			// Stop polling by clearing the report ID
 			setCurrentReportId(null);
 
+			// --- This is your original data processing logic, moved here ---
 			const reportItems: ReportItem[] = reportStatusData.data || [];
 			console.log(reportItems[0]);
 			setCurrentReportTag(reportItems[0].reportId);
 			setAnalyzedApiData(reportItems);
 
-			// Changed: Group by track (using firstTitle, isrcCode, catalogueId) and period
-			const groupedByTrackAndPeriod: { [trackKey: string]: { [activityPeriod: string]: ReportItem[] } } = reportItems.reduce(
+			const groupedByArtistAndPeriod: { [artistName: string]: { [activityPeriod: string]: ReportItem[] } } = reportItems.reduce(
 				(acc, report) => {
-					// Create a unique key for each track based on title and identifiers
-					const trackKey = `${report.firstTitle}-${report.isrcCode || ''}-${report.catalogueId || ''}`;
-					acc[trackKey] = acc[trackKey] || {};
-					acc[trackKey][report.activityPeriod] = acc[trackKey][report.activityPeriod] || [];
-					acc[trackKey][report.activityPeriod].push(report);
+					acc[report.artistName] = acc[report.artistName] || {};
+					acc[report.artistName][report.activityPeriod] = acc[report.artistName][report.activityPeriod] || [];
+					acc[report.artistName][report.activityPeriod].push(report);
 					return acc;
 				},
-				{} as { [trackKey: string]: { [activityPeriod: string]: ReportItem[] } }
+				{} as { [artistName: string]: { [activityPeriod: string]: ReportItem[] } }
 			);
+			const transformedArtistReports: ReportItem[] = Object.values(groupedByArtistAndPeriod).flatMap(
+				// The outer flatMap iterates through each artist's group of periods.
+				// 'artistPeriodGroup' looks like: { "Jun-24": [...], "Jul-24": [...] }
+				artistPeriodGroup =>
+					Object.values(artistPeriodGroup).map(
+						// The inner map iterates through the array of reports for a single period.
+						// 'periodItemGroup' is the array of reports for ONE artist in ONE period.
+						(periodItemGroup: ReportItem[]) => {
+							// Since all items in this group have the same artist and period,
+							// we can safely take the metadata from the first item.
+							const firstItem = periodItemGroup[0];
 
-			// Changed: Transform to track-centric reports
-			const transformedTrackReports: ReportItem[] = Object.values(groupedByTrackAndPeriod).flatMap(trackPeriodGroup =>
-				Object.values(trackPeriodGroup).map((periodItemGroup: ReportItem[]) => {
-					const firstItem = periodItemGroup[0];
+							return {
+								artistId: firstItem?.artistId || null,
+								artistName: firstItem?.artistName || 'Unknown Artist',
+								activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
 
-					return {
-						artistId: firstItem?.artistId || null,
-						artistName: firstItem?.artistName || 'Unknown Artist',
-						activityPeriod: firstItem?.activityPeriod || 'Unknown Period',
-						fullReports: periodItemGroup.flatMap(item => item.fullReports),
-						_id: firstItem._id,
-						createdAt: firstItem?.createdAt || new Date(),
-						updatedAt: firstItem?.updatedAt || new Date(),
-						firstTitle: firstItem.firstTitle,
-						otherTitles: firstItem.otherTitles,
-						titleCount: firstItem.titleCount,
-						total: firstItem.total,
-						catalogueId: firstItem.catalogueId,
-						isrcCode: firstItem.isrcCode,
-						currency: firstItem.currency,
-						reportId: firstItem.reportId,
-						sharedRevenue: firstItem.sharedRevenue?.length
-							? firstItem.sharedRevenue
-							: [
-									{
-										artistId: firstItem?.artistId ?? null,
-										artistName: firstItem?.artistRealName ?? firstItem?.artistName ?? 'Unknown Artist',
-										activityPeriod: firstItem?.activityPeriod ?? 'Unknown Period',
-										percentage: 100
-									}
-								],
-						__v: firstItem?.__v || 0
-					};
-				})
+								// This now correctly flattens reports for only this specific group
+								fullReports: periodItemGroup.flatMap(item => item.fullReports),
+
+								// The rest of your logic remains the same
+								_id: firstItem._id,
+								createdAt: firstItem?.createdAt || new Date(),
+								updatedAt: firstItem?.updatedAt || new Date(),
+								firstTitle: firstItem.firstTitle,
+								otherTitles: firstItem.otherTitles,
+								titleCount: firstItem.titleCount,
+								total: firstItem.total,
+								catalogueId: firstItem.catalogueId,
+								isrcCode: firstItem.isrcCode,
+								currency: firstItem.currency,
+								reportId: firstItem.reportId,
+								sharedRevenue: firstItem.sharedRevenue?.length
+									? firstItem.sharedRevenue
+									: [
+											{
+												artistId: firstItem?.artistId ?? null,
+												artistName: firstItem?.artistRealName ?? firstItem?.artistName ?? 'Unknown Artist',
+												activityPeriod: firstItem?.activityPeriod ?? 'Unknown Period',
+												percentage: 100
+											}
+										],
+								__v: firstItem?.__v || 0
+							};
+						}
+					)
 			);
+			const unmatched: ReportItem[] = transformedArtistReports.filter(ar => !ar.artistId);
+			const matched: ReportItem[] = transformedArtistReports.filter(ar => ar.artistId);
 
-			// Changed: Filter based on track matching criteria (artistId + sharedRevenue)
-			const unmatched: ReportItem[] = transformedTrackReports.filter(tr => !tr.artistId || tr.sharedRevenue.length === 0);
-			const matched: ReportItem[] = transformedTrackReports.filter(tr => tr.artistId && tr.sharedRevenue.length > 0);
-
-			console.log('transformedTrackReports');
-			console.log(transformedTrackReports);
+			console.log('transformedArtistReports');
+			console.log(transformedArtistReports);
 			console.log(matched);
 			console.log(unmatched);
-			setUnmatchedTracks(unmatched);
-			setMatchedTracks(matched);
+			setUnmatchedArtists(unmatched);
+			setMatchedArtists(matched);
+			// --- End of original data processing logic ---
 
+			// Move the user to the next step
 			setProcessingSteps(prev => ({ ...prev, collectionFromBackend: true, completed: true }));
 			setProcessingComplete(true);
 			setCurrentStep('artist-records');
 		} else if (reportStatusData?.status === 'failed' || reportStatusError) {
 			toast.error('Report generation failed. Please try again.');
-			setCurrentReportId(null);
+			setCurrentReportId(null); // Stop polling
+			// Reset UI to the upload step
 			setCurrentStep('csv-upload');
 			setCsvUploaded(false);
 			setProcessingComplete(false);
@@ -275,7 +293,7 @@ const Sales: React.FC = () => {
 				completed: false
 			});
 		}
-	}, [reportStatusData, reportStatusError, setAnalyzedApiData, setMatchedTracks, setUnmatchedTracks, setCurrentStep, setCurrentReportId, setProcessingComplete, setProcessingSteps]);
+	}, [reportStatusData, reportStatusError, setAnalyzedApiData, setMatchedArtists, setUnmatchedArtists, setCurrentStep, setCurrentReportId, setProcessingComplete, setProcessingSteps]);
 
 	const navigateToReportingModal = (tag: string | null) => {
 		if (tag) {
@@ -290,7 +308,6 @@ const Sales: React.FC = () => {
 		setShowReportingPeriodModal(false);
 		navigateToNextStep();
 	};
-
 	const navigateToNextStep = () => {
 		setShowReportingPeriodModal(false);
 		if (currentStep === 'exchange-rate') {
@@ -313,14 +330,14 @@ const Sales: React.FC = () => {
 			setCurrentStep('processing');
 		} else if (currentStep === 'match-artist') {
 			setCurrentStep('artist-records');
-			setSelectedUnmatchedTrack(null);
+			setSelectedUnmatchedArtist(null);
 		} else if (currentStep === 'create-artist') {
 			setCurrentStep('match-artist');
 		} else if (currentStep === 'send-emails') {
 			setCurrentStep('artist-records');
 		} else if (currentStep === 'add-revenue-share') {
 			setCurrentStep('artist-records');
-			setSelectedUnmatchedTrack(null);
+			setSelectedUnmatchedArtist(null);
 		}
 	};
 
@@ -331,6 +348,7 @@ const Sales: React.FC = () => {
 	const handleFileSelected = async (file: File) => {
 		if (!file) return;
 
+		// --- VALIDATION (Correct as is) ---
 		const normalizedCurrencyPairs = currencyPairs.map(pair => ({
 			...pair,
 			exchangeRate: Math.abs(parseFloat(pair.exchangeRate))
@@ -340,6 +358,7 @@ const Sales: React.FC = () => {
 			return;
 		}
 
+		// --- START: UI LOGIC ---
 		setCurrentStep('processing');
 		setProcessingComplete(false);
 		setProcessingSteps({
@@ -353,6 +372,7 @@ const Sales: React.FC = () => {
 			toast.info('Preparing secure upload...');
 			const { signedUrl, finalUrl } = await getUploadUrl(file.name, file.type);
 
+			// STEP 2: Upload the file directly to S3
 			toast.info('Uploading file...');
 			await axios.put(signedUrl, file, {
 				headers: { 'Content-Type': file.type }
@@ -363,8 +383,9 @@ const Sales: React.FC = () => {
 
 			analyzeCsv(
 				{
-					s3FileUrl: finalUrl,
+					s3FileUrl: finalUrl, // Pass the final S3 URL
 					fileMetadata: {
+						// Pass the necessary metadata
 						originalname: file.name,
 						mimetype: file.type,
 						size: file.size
@@ -378,13 +399,14 @@ const Sales: React.FC = () => {
 						const { reportId, message } = apiResponse;
 						toast.success(message || 'Report processing has started.');
 						setCsvUploaded(true);
-						setCurrentReportId(reportId);
+						setCurrentReportId(reportId); // This kicks off the polling useEffect
 						setProcessingSteps(prev => ({ ...prev, sortingInformation: true }));
 					},
 					onError: (error: any) => {
+						// Handle failure to *start* the job
 						const errorMessage = error.response?.data?.message || 'Failed to start the processing job.';
 						toast.error(errorMessage);
-						setCurrentStep('csv-upload');
+						setCurrentStep('csv-upload'); // Go back to upload step
 					}
 				}
 			);
@@ -392,49 +414,48 @@ const Sales: React.FC = () => {
 			console.error('An error occurred during the S3 upload process:', error);
 			const errorMessage = error.response?.data?.message || 'The file upload failed. Please try again.';
 			toast.error(errorMessage);
-			setCurrentStep('csv-upload');
+			setCurrentStep('csv-upload'); // Go back to upload step
 		}
 	};
 
-	// Changed: Publish tracks instead of artists
-	const publishTracks = async () => {
-		if (matchedTracks.length === 0) {
-			toast.info('No matched tracks to publish.');
+	const publishArtists = async () => {
+		if (matchedArtists.length === 0) {
+			toast.info('No matched artists to publish.');
 			return;
 		}
 		if (!currentReportTag) {
 			toast.error('Oops you have not selected a tag yet. Please refresh page to start the session again');
 		}
 		setLoadingComplete(true);
-		console.log('matchedTracks');
-		console.log(matchedTracks);
+		console.log(matchedArtists);
 		publishCsv(
-			{ tracks: matchedTracks, reportId: currentReportTag as string },
+			{ artists: matchedArtists, reportId: currentReportTag as string },
 			{
 				onSuccess: (data: ApiResponse) => {
+					// Use ApiResponse type for data
 					console.log('API Response:', data);
 					toast.success(data.message || 'Published successfully!');
 					setLoadingComplete(false);
+					//setShowPublishTagModal(false);
+					//setMatchedArtists([]);
 					setCurrentReportTag(null);
 					setCurrentReportId(null);
 					setCurrentStep('send-emails');
 				},
 				onError: (error: Error | AxiosError<ApiResponse> | null) => {
-					console.error('Error publishing matched tracks:', error);
-					toast.error('An unexpected error occurred while publishing tracks.');
+					console.error('Error publishing matched artists:', error);
+					toast.error('An unexpected error occurred while publishing artists.');
 					setLoadingComplete(false);
 				}
 			}
 		);
 	};
 
-	// Changed: Extract artist IDs from sharedRevenue for email sending
 	const handleSendEmails = async (rows: any) => {
 		if (selectedRows.length === 0) {
-			toast.info('No matched tracks to send emails.');
+			toast.info('No matched artists to send emails.');
 			return;
 		}
-		console.log(rows);
 
 		const artistIdsToPublish = rows.map((artist: any) => artist.artistId);
 		sendEmails(
@@ -454,21 +475,20 @@ const Sales: React.FC = () => {
 		);
 	};
 
-	// Changed: Track matching handlers
-	const handleTrackMatch = (row: any) => {
+	const handleArtistMatch = (row: any) => {
 		setSelectedRow(row);
-		setSelectedUnmatchedTrack(row._id);
+		setSelectedUnmatchedArtist(row._id);
 		setActivityPeriod(row.activityPeriod);
 		setCurrentStep('match-artist');
 	};
 
-	const handleBulkTrackMatch = () => {
+	const handleBulkArtistMatch = () => {
 		setActivityPeriod(reportingPeriod as string);
 		setCurrentStep('match-artist');
 	};
 
 	const handleRevenueShare = (row: any) => {
-		setSelectedUnmatchedTrack(row._id);
+		setSelectedUnmatchedArtist(row._id);
 		setActivityPeriod(row.activityPeriod);
 		setCurrentStep('add-revenue-share');
 	};
@@ -486,9 +506,11 @@ const Sales: React.FC = () => {
 		setCurrentStep('create-artist');
 	};
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const handleSaveArtist = (artistData: any) => {
 		console.log('New artist data:', artistData);
 		setCreatedArtist(artistData);
+		// Here we would call an API to create the artist
 		setShowSuccessModal('created');
 	};
 
@@ -502,26 +524,28 @@ const Sales: React.FC = () => {
 
 	const handleOnSave = (value: SharedRevenue[]) => {
 		setCurrentStep('artist-records');
-		const matchedTrack = matchedTracks.find(track => track._id === selectedUnmatchedTrack);
-		if (matchedTrack) {
-			matchedTrack.sharedRevenue = value;
+		const newMatchedArtist = matchedArtists.find(artist => artist._id === selectedUnmatchedArtist);
+		if (newMatchedArtist) {
+			newMatchedArtist.sharedRevenue = value;
 		}
 
-		setSelectedUnmatchedTrack(null);
+		setSelectedUnmatchedArtist(null);
 		setSystemArtistIdForMatch(null);
 		setSystemArtistNameForMatch(null);
 	};
 
-	// Changed: Handle track matching success
 	const handleCloseSuccessModal = () => {
 		setShowSuccessModal(null);
 		setCurrentStep('artist-records');
-		const idsToMove = selectedMatchRows.length > 0 ? selectedMatchRows.map(row => row._id) : selectedUnmatchedTrack ? [selectedUnmatchedTrack] : [];
+		const idsToMove = selectedMatchRows.length > 0 ? selectedMatchRows.map(row => row._id) : selectedUnmatchedArtist ? [selectedUnmatchedArtist] : [];
 
+		// Proceed only if there are artists to move and a system artist to match them to.
 		if (idsToMove.length > 0 && systemArtistIdForMatch) {
-			const tracksToMove = unmatchedTracks.filter(track => idsToMove.includes(track._id));
+			// 1. Find all the full artist objects from the unmatched list that correspond to the selected IDs.
+			const artistsToMove = unmatchedArtists.filter(artist => idsToMove.includes(artist._id));
 
-			const newMatchedTracks = tracksToMove.map(reportItem => ({
+			// 2. Create the new data structure for each artist being moved.
+			const newMatchedArtists = artistsToMove.map(reportItem => ({
 				...reportItem,
 				artistId: systemArtistIdForMatch,
 				status: 'completed' as const,
@@ -535,19 +559,23 @@ const Sales: React.FC = () => {
 				]
 			}));
 
-			setUnmatchedTracks(currentUnmatched => currentUnmatched.filter(track => !idsToMove.includes(track._id)));
-			setMatchedTracks(currentMatched => [...currentMatched, ...newMatchedTracks]);
-			console.log('MATCHED TRacKs');
+			// 3. Update state in bulk for better performance.
+			// Remove all moved artists from the unmatched list.
+			setUnmatchedArtists(currentUnmatched => currentUnmatched.filter(artist => !idsToMove.includes(artist._id)));
 
-			if (tracksToMove.length !== idsToMove.length) {
-				console.warn('Could not find all selected tracks to move.');
+			// Add all newly matched artists to the matched list.
+			setMatchedArtists(currentMatched => [...currentMatched, ...newMatchedArtists]);
+
+			if (artistsToMove.length !== idsToMove.length) {
+				console.warn('Could not find all selected artists to move.');
 			}
 		} else {
-			console.warn('Missing tracks to move or systemArtistIdForMatch in handleCloseSuccessModal.');
+			console.warn('Missing artists to move or systemArtistIdForMatch in handleCloseSuccessModal.');
 		}
 
+		// Reset state for both single and multiple selection modes.
 		setShowSuccessModal(null);
-		setSelectedUnmatchedTrack(null);
+		setSelectedUnmatchedArtist(null);
 		setSelectedMatchRows([]);
 		setSystemArtistIdForMatch(null);
 		setSystemArtistNameForMatch(null);
@@ -564,6 +592,8 @@ const Sales: React.FC = () => {
 	return (
 		<div className="space-y-8">
 			<div className="flex items-center justify-between">
+				{' '}
+				{/* 2. Use flexbox to space out buttons */}
 				<Button variant="outline" className="flex items-center gap-2" onClick={navigateToPreviousStep}>
 					Previous Page
 				</Button>
@@ -575,7 +605,7 @@ const Sales: React.FC = () => {
 			<div className="py-6">
 				{currentStep === 'exchange-rate' || currentStep === 'csv-upload' ? (
 					<>
-						<p className="mb-2">You are required to upload a Csv file to be able to access and match tracks. This will help you give access to artist payouts</p>
+						<p className="mb-2">You are required to upload a Csv file to be able to access and match artists. This will help you give access to artist payouts</p>
 						<p className="text-primary mb-6">* Kindly follow these steps below.</p>
 					</>
 				) : null}
@@ -603,6 +633,7 @@ const Sales: React.FC = () => {
 
 													<Controller control={control} name={`currencyPairs.${index}.exchangeRate`} render={({ field: { onChange, value } }) => <AmountInput value={value} onChange={onChange} className="w-full rounded-md h-[4rem] text-center border-border p-3 focus:outline-none focus:ring-1 focus:ring-primary" />} />
 
+													{/* Add/Remove Buttons */}
 													<div className="flex justify-end gap-2 mt-4">
 														{fields.length > 3 && (
 															<Button variant="destructive" size="sm" onClick={() => removeCurrencyPair(index)}>
@@ -701,22 +732,24 @@ const Sales: React.FC = () => {
 					</div>
 				)}
 
+				{/* Note: The 'isAnalyzeCsv' spinner is implicitly handled by the 'processing' step UI now, so we can remove the conditional rendering here to avoid UI flicker. */}
+
 				{currentStep === 'artist-records' && (
 					<div className="space-y-6">
-						<h2 className="text-xl font-semibold mb-4">Track Records</h2>
-						<UnmatchedArtistsTable artists={unmatchedTracks} onArtistMatch={handleTrackMatch} onBulkArtistMatch={handleBulkTrackMatch} onRowSelectionChange={handleSelectionMatchChange} />
-						<MatchedArtistsTable artists={matchedTracks} onArtistRevenueClick={handleRevenueShare} />
+						<h2 className="text-xl font-semibold mb-4">Artists Records</h2>
+						<UnmatchedArtistsTable artists={unmatchedArtists} onArtistMatch={handleArtistMatch} onBulkArtistMatch={handleBulkArtistMatch} onRowSelectionChange={handleSelectionMatchChange} />
+						<MatchedArtistsTable artists={matchedArtists} onArtistRevenueClick={handleRevenueShare} />
 					</div>
 				)}
 				{currentStep === 'send-emails' && (
 					<div>
 						<div className="mt-8 mb-4">
-							<SendEmailsToArtistsTable artists={matchedTracks} onRowSelectionChange={handleSelectionChange} onSendEmails={handleSendEmails} />
+							<SendEmailsToArtistsTable artists={matchedArtists} onRowSelectionChange={handleSelectionChange} onSendEmails={handleSendEmails} />
 						</div>
 					</div>
 				)}
 
-				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedTracks} onCreateNew={handleCreateNewArtist} activityPeriod={activityPeriod} unmatchedArtistName={unmatchedTracks.find(a => a._id === selectedUnmatchedTrack)} rows={selectedMatchRows} />}
+				{currentStep === 'match-artist' && analyzedApiData && <MatchArtistForm onMatch={handleMatchArtist} unmatchedReports={unmatchedArtists} onCreateNew={handleCreateNewArtist} activityPeriod={activityPeriod} unmatchedArtistName={unmatchedArtists.find(a => a._id === selectedUnmatchedArtist)} rows={selectedMatchRows} />}
 
 				{currentStep === 'create-artist' && (
 					<div className="flex w-full justify-center">
@@ -724,7 +757,7 @@ const Sales: React.FC = () => {
 					</div>
 				)}
 
-				{currentStep === 'add-revenue-share' && <RevenueShareForm matchedArtistName={matchedTracks.find(a => a._id === selectedUnmatchedTrack)} matchedReports={matchedTracks} onSave={handleOnSave} />}
+				{currentStep === 'add-revenue-share' && <RevenueShareForm matchedArtistName={matchedArtists.find(a => a._id === selectedUnmatchedArtist)} matchedReports={matchedArtists} onSave={handleOnSave} />}
 
 				{(currentStep === 'csv-upload' || currentStep === 'processing' || currentStep === 'artist-records') && (
 					<div className="flex justify-between mt-8">
@@ -732,9 +765,9 @@ const Sales: React.FC = () => {
 							Back
 						</Button>
 
-						{currentStep === 'artist-records' && unmatchedTracks.length === 0 && (
-							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={publishTracks} isLoading={loadingComplete}>
-								Publish Matched Tracks
+						{currentStep === 'artist-records' && unmatchedArtists.length === 0 && (
+							<Button variant="outline" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={publishArtists} isLoading={loadingComplete}>
+								Publish Matched Artists
 							</Button>
 						)}
 
@@ -757,6 +790,7 @@ const Sales: React.FC = () => {
 	);
 };
 
+// Define types for the options and props
 interface DropdownOption {
 	id: string;
 	label: string;
@@ -765,22 +799,24 @@ interface DropdownOption {
 }
 
 interface CustomDropdownProps {
-	label?: string;
-	buttonText: string;
-	buttonIcon?: React.ReactNode;
-	options: DropdownOption[];
-	onOptionChange?: (option: DropdownOption) => void;
-	buttonClassName?: string;
-	dropdownClassName?: string;
-	optionClassName?: string;
-	width?: string;
+	label?: string; // Text above the button (e.g., "From")
+	buttonText: string; // Main text in the button (e.g., "Euro")
+	buttonIcon?: React.ReactNode; // Icon or element before the text (e.g., € symbol)
+	options: DropdownOption[]; // List of dropdown options
+	onOptionChange?: (option: DropdownOption) => void; // Callback for option selection
+	buttonClassName?: string; // Custom classes for the button
+	dropdownClassName?: string; // Custom classes for the dropdown
+	optionClassName?: string; // Custom classes for each option
+	width?: string; // Dropdown width (e.g., "w-48")
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({ label, buttonText, buttonIcon, options, onOptionChange, buttonClassName = '', dropdownClassName = '', optionClassName = '', width = 'w-48' }) => {
 	const [isOpen, setIsOpen] = useState(false);
 
+	// Close dropdown when clicking outside
 	const ref = useOnclickOutside(() => setIsOpen(false));
 
+	// Animation variants for Framer Motion
 	const dropdownVariants = {
 		hidden: { opacity: 0, y: -10, scale: 0.95 },
 		visible: { opacity: 1, y: 0, scale: 1 },
@@ -789,6 +825,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({ label, buttonText, butt
 
 	return (
 		<div className="relative w-fit" ref={ref}>
+			{/* Button */}
 			<button type="button" className={`flex flex-col items-start gap-2 ${buttonClassName}`} onClick={() => setIsOpen(!isOpen)}>
 				{label && <span className="text-sm">{label}</span>}
 				<div className="flex items-center space-x-2 rounded-full py-1">
@@ -798,6 +835,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({ label, buttonText, butt
 				</div>
 			</button>
 
+			{/* Dropdown */}
 			<AnimatePresence>
 				{isOpen && (
 					<motion.div className={`absolute z-10 ${width} bg-[#1e1e1e] rounded-lg shadow-sm ${dropdownClassName}`} variants={dropdownVariants} initial="hidden" animate="visible" exit="exit" transition={{ duration: 0.2 }}>

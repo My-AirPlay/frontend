@@ -27,7 +27,7 @@ export interface DataTableProps<TData, TValue> {
 	pageCount?: number;
 }
 
-export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading, showCheckbox = false, onRowClick, pagination = true, className = '', rowsPerPageOptions = [3, 10, 20, 50, 100], defaultRowsPerPage = 10, filterComponent, onRowSelectionChange, pageCount }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ data, columns, isFetching, isLoading, showCheckbox = false, onRowClick, pagination = true, className = '', rowsPerPageOptions = [3, 10, 20, 50], defaultRowsPerPage = 10, filterComponent, onRowSelectionChange, pageCount }: DataTableProps<TData, TValue>) {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 

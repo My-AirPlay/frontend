@@ -74,31 +74,21 @@ export const useDeleteTrack = () => {
 interface GetAllTracksParams {
 	page: string;
 	limit: string;
-	search: string;
-	sortBy: string;
-	sortOrder: string;
 }
 
-export const trackHooks = async ({ page, limit, search, sortBy, sortOrder }: GetAllTracksParams) => {
+export const trackHooks = async ({ page, limit }: GetAllTracksParams) => {
 	const response = await APIAxios.get(`/admin/all_tracks`, {
 		params: {
 			page,
-			limit,
-			...(search && { search }),
-			...(sortBy && { sortBy }),
-			...(sortOrder && { sortOrder })
+			limit
 		}
 	});
 	return response.data;
 };
 
-export const useGetAllTracks = (params: GetAllTracksParams) => {
+export const useGetAllTracks = ({ page, limit }: GetAllTracksParams) => {
 	return useQuery({
-		queryKey: ['tracks', params.page, params.limit, params.search, params.sortBy, params.sortOrder],
-		queryFn: () => trackHooks(params),
-		staleTime: 30000,
-		gcTime: 5 * 60 * 1000,
-		refetchOnWindowFocus: false,
-		retry: 2
+		queryKey: ['getAllTracks', page, limit],
+		queryFn: () => trackHooks({ page, limit })
 	});
 };
