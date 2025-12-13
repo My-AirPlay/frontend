@@ -67,20 +67,21 @@ const ReportModal: React.FC<ReportModalProps> = ({ report, onClose }) => {
 							<div className="flex items-center text-sm text-gray-500 mb-2">
 								<Mic size={16} className="mr-2" /> Artist(s)
 							</div>
+							<div className="max-h-24 overflow-y-auto flex flex-wrap gap-2">click into report to view</div>
 							{/* Scrollable container for artist names */}
-							<div className="max-h-24 overflow-y-auto flex flex-wrap gap-2">
+							{/*<div className="max-h-24 overflow-y-auto flex flex-wrap gap-2">
 								{report.artistNames.map((name, index) => (
 									<span key={index} className="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">
 										{name}
 									</span>
 								))}
-							</div>
+							</div>*/}
 						</div>
 						{/* END OF UPDATED SECTION */}
 
 						<div className="p-4 rounded-md border">
 							<div className="flex items-center text-sm text-gray-500 mb-2">
-								<BarChart2 size={16} className="mr-2" /> Activity Periods
+								<BarChart2 size={16} className="mr-2" /> Activity Period
 							</div>
 							<p className="font-medium">{report.activityPeriods.join(', ')}</p>
 						</div>

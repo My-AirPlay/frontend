@@ -23,29 +23,6 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists, onAr
 		}).format(row.original.total);
 	};
 
-	const getTrackTitleCell = (row: any) => {
-		//const reports = row.original.fullReports || [];
-		if (row.original.count <= 1) {
-			return <span>{row.original.firstTitle ?? '—'}</span>;
-		}
-
-		const firstTitle = row.original.firstTitle;
-		const others = row.original.otherTitles;
-		const count = row.original.titleCount;
-
-		// Build tooltip text
-		const tooltipText = others.slice(0, count).join('\n');
-
-		return (
-			<span className="flex items-center">
-				<span>{firstTitle}</span>
-				<span className="ml-1 px-1 text-[10px] font-medium bg-gray-200 text-gray-700 rounded cursor-help" title={tooltipText}>
-					+{count}
-				</span>
-			</span>
-		);
-	};
-
 	const columns = [
 		{
 			id: 'artistName',
@@ -55,9 +32,9 @@ const MatchedArtistsTable: React.FC<MatchedArtistsTableProps> = ({ artists, onAr
 
 		{
 			id: 'trackTitle',
-			header: 'Track Title(s)',
+			header: 'Track Title',
 			accessorFn: (row: any) => row.fullReports?.[0]?.trackTitle ?? '—',
-			cell: (info: any) => <p className="text-admin-primary hover:underline">{getTrackTitleCell(info.row)}</p>
+			cell: (info: any) => <p className="text-admin-primary hover:underline">{info.row.original?.firstTitle} </p>
 		},
 		{
 			id: 'activityperiod',

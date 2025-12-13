@@ -234,7 +234,7 @@ const ReprocessSalesPage: React.FC = () => {
 		}
 		setLoadingComplete(true);
 		publishCsv(
-			{ artists: matchedArtists, reportId: currentReportTag as string },
+			{ tracks: matchedArtists, reportId: currentReportTag as string },
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
