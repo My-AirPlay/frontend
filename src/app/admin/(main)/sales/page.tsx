@@ -188,8 +188,7 @@ const Sales: React.FC = () => {
 	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(currentReportId!, !!currentReportId);
 
 	useEffect(() => {
-		console.log(reportStatusData);
-		if (reportStatusData?.status === 'completed') {
+		if (reportStatusData?.status === 'completed' && reportStatusData?.data) {
 			toast.success('Report processing is complete!');
 
 			setCurrentReportId(null);
@@ -262,7 +261,7 @@ const Sales: React.FC = () => {
 			setProcessingSteps(prev => ({ ...prev, collectionFromBackend: true, completed: true }));
 			setProcessingComplete(true);
 			setCurrentStep('artist-records');
-		} else if (reportStatusData?.status === 'failed' || reportStatusError) {
+		} else if (reportStatusData?.status === 'failed' || reportStatusError || reportStatusData?.data == []) {
 			toast.error('Report generation failed. Please try again.');
 			setCurrentReportId(null);
 			setCurrentStep('csv-upload');
