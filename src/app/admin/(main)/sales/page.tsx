@@ -261,7 +261,7 @@ const Sales: React.FC = () => {
 			setProcessingSteps(prev => ({ ...prev, collectionFromBackend: true, completed: true }));
 			setProcessingComplete(true);
 			setCurrentStep('artist-records');
-		} else if (reportStatusData?.status === 'failed' || reportStatusError || reportStatusData?.data == []) {
+		} else if (reportStatusData?.status === 'failed' || reportStatusError) {
 			toast.error('Report generation failed. Please try again.');
 			setCurrentReportId(null);
 			setCurrentStep('csv-upload');
