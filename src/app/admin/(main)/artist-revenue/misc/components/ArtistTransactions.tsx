@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useMemo } from 'react'; // Import useEffect, useMemo
 import { Button } from '@/components/ui/button';
-import { Filter, ArrowUp, ArrowDown } from 'lucide-react'; // Added ArrowUp, ArrowDown
+import { Filter, ArrowUp, ArrowDown, XCircle } from 'lucide-react'; // Added ArrowUp, ArrowDown, XCircle
 import { DataTable, Input } from '@/components/ui'; // Added Input
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'; // Added DropdownMenu components
 import { useParams, useSearchParams, useRouter, usePathname } from 'next/navigation'; // Added hooks
 import { formatCurrency } from '@/utils/currency';
 import { useGetAllWithdrawalSlips } from '@/app/admin/(main)/catalogue/api/getAllWithdrawalSlips';
+import { useCancelWithdrawalSlip } from '@/app/admin/(main)/catalogue/api/cancelWithdrawalSlip';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 // Updated interface to match API response for withdrawal slips
@@ -49,6 +50,10 @@ const ArtistTransactions: React.FC = ({}) => {
 	// State for Show All/Less
 	const [showAllCredits, setShowAllCredits] = useState(false);
 	const [showAllDebits, setShowAllDebits] = useState(false);
+	const [showAllCancelled, setShowAllCancelled] = useState(false);
+
+	// Cancel mutation
+	const cancelMutation = useCancelWithdrawalSlip();
 
 	// State for search & sorting
 	const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('searchTerm') || '');
@@ -155,14 +160,36 @@ const ArtistTransactions: React.FC = ({}) => {
 		// Updated dependencies to reflect the change
 	}, [withdrawalsData, searchTerm, sortBy, sortOrder]);
 
-	// Filter based on status: Pending = Debit, Others = Credit (using the filtered/sorted list)
-	const allCreditTransactions = allWithdrawalSlipsFilteredSorted.filter(slip => slip.status !== 'Pending');
+	// Filter based on status: Pending = Debit, Cancelled = Cancelled, Others = Credit (using the filtered/sorted list)
+	const allCreditTransactions = allWithdrawalSlipsFilteredSorted.filter(slip => slip.status !== 'Pending' && slip.status !== 'Cancelled');
 	const allDebitTransactions = allWithdrawalSlipsFilteredSorted.filter(slip => slip.status === 'Pending');
+	const allCancelledTransactions = allWithdrawalSlipsFilteredSorted.filter(slip => slip.status === 'Cancelled');
 
 	// Conditionally slice data based on state
 	const creditTransactions = showAllCredits ? allCreditTransactions : allCreditTransactions.slice(0, 3);
 	const debitTransactions = showAllDebits ? allDebitTransactions : allDebitTransactions.slice(0, 3);
+	const cancelledTransactions = showAllCancelled ? allCancelledTransactions : allCancelledTransactions.slice(0, 3);
+
+	// Handle cancel transaction
+	const handleCancelTransaction = (transactionId: string) => {
+		if (window.confirm('Are you sure you want to cancel this transaction?')) {
+			cancelMutation.mutate({ transactionId, artistId: artist_id });
+		}
+	};
 	const { convertCurrency, currency: contextCurrency } = useCurrency();
+
+	// Status badge helper
+	const getStatusBadge = (status: string) => {
+		const statusStyles: Record<string, string> = {
+			Pending: 'bg-yellow-100 text-yellow-800',
+			Processing: 'bg-blue-100 text-blue-800',
+			Cancelled: 'bg-red-100 text-red-800',
+			Approved: 'bg-green-100 text-green-800',
+			Paid: 'bg-green-100 text-green-800'
+		};
+		return <span className={`px-2 py-1 text-xs font-medium rounded-full ${statusStyles[status] || 'bg-gray-100 text-gray-800'}`}>{status}</span>;
+	};
+
 	// Updated columns for Credit Transactions (Status != Pending)
 	const creditColumns = [
 		{
@@ -176,8 +203,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			header: 'Description', // Using activityPeriod as description
 			accessorKey: 'activityPeriods',
 			cell: (info: any) => {
-				console.log(info?.row?.original.activityPeriods[0]);
-				return <span className="font-medium">Payment For : {info?.row?.original.activityPeriods[0] || 'N/A'}</span>;
+				return <span className="font-medium">Payment For : {info?.row?.original.activityPeriods?.[0] || 'N/A'}</span>;
 			}
 		},
 		{
@@ -187,11 +213,35 @@ const ArtistTransactions: React.FC = ({}) => {
 			cell: (info: any) => formatDate(info.getValue()) // Format date
 		},
 		{
+			id: 'status',
+			header: 'Status',
+			accessorKey: 'status',
+			cell: (info: any) => getStatusBadge(info.getValue())
+		},
+		{
 			id: 'finalAmountSent',
 			header: 'Amount',
 			accessorKey: 'totalRevenue',
 			// Assuming positive amounts are credits here
 			cell: (info: any) => <span className="text-primary">{formatCurrency(convertCurrency(info.getValue()), contextCurrency)}</span>
+		},
+		{
+			id: 'actions',
+			header: 'Action',
+			accessorKey: '_id',
+			cell: (info: any) => {
+				const transactionId = info.getValue();
+				const status = info.row.original.status;
+				// Only show cancel button for Pending or Processing status
+				if (status === 'Pending' || status === 'Processing') {
+					return (
+						<Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleCancelTransaction(transactionId)} disabled={cancelMutation.isPending} title="Cancel Transaction">
+							<XCircle size={18} />
+						</Button>
+					);
+				}
+				return null;
+			}
 		}
 	];
 
@@ -216,7 +266,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			id: 'activityPeriods',
 			header: 'Description', // Using activityPeriod as description
 			accessorKey: 'activityPeriods',
-			cell: (info: any) => <span className="font-medium">{info.getValue()[0] || 'Payout'}</span>
+			cell: (info: any) => <span className="font-medium">{info.getValue()?.[0] || 'Payout'}</span>
 		},
 		{
 			id: 'createdAt',
@@ -229,13 +279,54 @@ const ArtistTransactions: React.FC = ({}) => {
 			header: 'Amount',
 			accessorKey: 'totalRevenue',
 			cell: (info: any) => <span className="text-red-500">{formatCurrency(convertCurrency(info.getValue()), contextCurrency)}</span>
+		},
+		{
+			id: 'actions',
+			header: 'Action',
+			accessorKey: '_id',
+			cell: (info: any) => {
+				const transactionId = info.getValue();
+				return (
+					<Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleCancelTransaction(transactionId)} disabled={cancelMutation.isPending} title="Cancel Transaction">
+						<XCircle size={18} />
+					</Button>
+				);
+			}
 		}
-		// Add other relevant columns like 'status' if needed
-		// {
-		// 	id: 'status',
-		// 	header: 'Status',
-		// 	accessorKey: 'status',
-		// }
+	];
+
+	// Columns for Cancelled Transactions
+	const cancelledColumns = [
+		{
+			id: 'shortId',
+			header: 'ID',
+			accessorKey: '_id',
+			cell: (info: any) => <span className="font-mono text-xs">{info.getValue()?.slice(-6) || 'N/A'}</span>
+		},
+		{
+			id: 'activityPeriods',
+			header: 'Description',
+			accessorKey: 'activityPeriods',
+			cell: (info: any) => <span className="font-medium">{info?.row?.original.activityPeriods?.[0] || 'N/A'}</span>
+		},
+		{
+			id: 'createdAt',
+			header: 'Date',
+			accessorKey: 'createdAt',
+			cell: (info: any) => formatDate(info.getValue())
+		},
+		{
+			id: 'status',
+			header: 'Status',
+			accessorKey: 'status',
+			cell: (info: any) => getStatusBadge(info.getValue())
+		},
+		{
+			id: 'totalRevenue',
+			header: 'Amount',
+			accessorKey: 'totalRevenue',
+			cell: (info: any) => <span className="text-muted-foreground line-through">{formatCurrency(convertCurrency(info.getValue()), contextCurrency)}</span>
+		}
 	];
 
 	if (withdrawalsLoading) {
@@ -354,6 +445,22 @@ const ArtistTransactions: React.FC = ({}) => {
 					) : (
 						<p className="text-sm text-muted-foreground">No debit transactions found.</p>
 					)}
+				</div>
+
+				{/* Cancelled Transactions */}
+				<div className="space-y-4 mt-8">
+					<div className="flex justify-between items-center">
+						<h4 className="text-sm font-medium">Your Cancelled Transactions</h4>
+						<div className="flex gap-2">
+							{allCancelledTransactions.length > 3 && (
+								<Button variant="outline" size="sm" className="text-xs border-border" onClick={() => setShowAllCancelled(!showAllCancelled)}>
+									{showAllCancelled ? 'Show Less' : 'Show All'}
+								</Button>
+							)}
+						</div>
+					</div>
+
+					{allCancelledTransactions.length > 0 ? <DataTable data={cancelledTransactions} columns={cancelledColumns} pagination={false} className="bg-secondary/30" /> : <p className="text-sm text-muted-foreground">No cancelled transactions found.</p>}
 				</div>
 			</div>
 		</div>
