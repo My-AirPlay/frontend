@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useMemo } from 'react'; // Import useEffect, useMemo
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
-import { Filter, ArrowUp, ArrowDown, XCircle } from 'lucide-react'; // Added ArrowUp, ArrowDown, XCircle
-import { DataTable, Input } from '@/components/ui'; // Added Input
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'; // Added DropdownMenu components
-import { useParams, useSearchParams, useRouter, usePathname } from 'next/navigation'; // Added hooks
+import { Filter, ArrowUp, ArrowDown, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { DataTable, Input } from '@/components/ui';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { useParams, useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { formatCurrency } from '@/utils/currency';
 import { useGetAllWithdrawalSlips } from '@/app/admin/(main)/catalogue/api/getAllWithdrawalSlips';
 import { useCancelWithdrawalSlip } from '@/app/admin/(main)/catalogue/api/cancelWithdrawalSlip';
@@ -51,6 +52,10 @@ const ArtistTransactions: React.FC = ({}) => {
 	const [showAllCredits, setShowAllCredits] = useState(false);
 	const [showAllDebits, setShowAllDebits] = useState(false);
 	const [showAllCancelled, setShowAllCancelled] = useState(false);
+
+	// State for cancel modal
+	const [cancelModalOpen, setCancelModalOpen] = useState(false);
+	const [transactionToCancel, setTransactionToCancel] = useState<{ id: string; amount: number } | null>(null);
 
 	// Cancel mutation
 	const cancelMutation = useCancelWithdrawalSlip();
@@ -170,10 +175,24 @@ const ArtistTransactions: React.FC = ({}) => {
 	const debitTransactions = showAllDebits ? allDebitTransactions : allDebitTransactions.slice(0, 3);
 	const cancelledTransactions = showAllCancelled ? allCancelledTransactions : allCancelledTransactions.slice(0, 3);
 
+	// Open cancel modal
+	const openCancelModal = (transactionId: string, amount: number) => {
+		setTransactionToCancel({ id: transactionId, amount });
+		setCancelModalOpen(true);
+	};
+
 	// Handle cancel transaction
-	const handleCancelTransaction = (transactionId: string) => {
-		if (window.confirm('Are you sure you want to cancel this transaction?')) {
-			cancelMutation.mutate({ transactionId, artistId: artist_id });
+	const handleCancelTransaction = () => {
+		if (transactionToCancel) {
+			cancelMutation.mutate(
+				{ transactionId: transactionToCancel.id, artistId: artist_id },
+				{
+					onSuccess: () => {
+						setCancelModalOpen(false);
+						setTransactionToCancel(null);
+					}
+				}
+			);
 		}
 	};
 	const { convertCurrency, currency: contextCurrency } = useCurrency();
@@ -231,16 +250,12 @@ const ArtistTransactions: React.FC = ({}) => {
 			accessorKey: '_id',
 			cell: (info: any) => {
 				const transactionId = info.getValue();
-				const status = info.row.original.status;
-				// Only show cancel button for Pending or Processing status
-				if (status === 'Pending' || status === 'Processing') {
-					return (
-						<Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleCancelTransaction(transactionId)} disabled={cancelMutation.isPending} title="Cancel Transaction">
-							<XCircle size={18} />
-						</Button>
-					);
-				}
-				return null;
+				const amount = info.row.original.totalRevenue || 0;
+				return (
+					<Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => openCancelModal(transactionId, amount)} disabled={cancelMutation.isPending} title="Cancel Transaction">
+						<XCircle size={18} />
+					</Button>
+				);
 			}
 		}
 	];
@@ -286,8 +301,9 @@ const ArtistTransactions: React.FC = ({}) => {
 			accessorKey: '_id',
 			cell: (info: any) => {
 				const transactionId = info.getValue();
+				const amount = info.row.original.totalRevenue || 0;
 				return (
-					<Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => handleCancelTransaction(transactionId)} disabled={cancelMutation.isPending} title="Cancel Transaction">
+					<Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => openCancelModal(transactionId, amount)} disabled={cancelMutation.isPending} title="Cancel Transaction">
 						<XCircle size={18} />
 					</Button>
 				);
@@ -463,6 +479,53 @@ const ArtistTransactions: React.FC = ({}) => {
 					{allCancelledTransactions.length > 0 ? <DataTable data={cancelledTransactions} columns={cancelledColumns} pagination={false} className="bg-secondary/30" /> : <p className="text-sm text-muted-foreground">No cancelled transactions found.</p>}
 				</div>
 			</div>
+
+			{/* Cancel Confirmation Modal */}
+			<Dialog open={cancelModalOpen} onOpenChange={setCancelModalOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<div className="flex items-center gap-3">
+							<div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+								<AlertTriangle className="w-6 h-6 text-red-600" />
+							</div>
+							<div>
+								<DialogTitle>Cancel Transaction</DialogTitle>
+								<DialogDescription>This action cannot be undone.</DialogDescription>
+							</div>
+						</div>
+					</DialogHeader>
+					<div className="py-4">
+						<p className="text-sm text-muted-foreground mb-3">Are you sure you want to cancel this transaction?</p>
+						{transactionToCancel && (
+							<div className="bg-muted/50 rounded-lg p-4 space-y-2">
+								<div className="flex justify-between text-sm">
+									<span className="text-muted-foreground">Transaction ID:</span>
+									<span className="font-mono font-medium">{transactionToCancel.id.slice(-6)}</span>
+								</div>
+								<div className="flex justify-between text-sm">
+									<span className="text-muted-foreground">Amount:</span>
+									<span className="font-semibold text-red-500">{formatCurrency(convertCurrency(transactionToCancel.amount), contextCurrency)}</span>
+								</div>
+							</div>
+						)}
+					</div>
+					<DialogFooter className="gap-2 sm:gap-0">
+						<Button variant="outline" onClick={() => setCancelModalOpen(false)} disabled={cancelMutation.isPending}>
+							Keep Transaction
+						</Button>
+						<Button variant="destructive" onClick={handleCancelTransaction} disabled={cancelMutation.isPending}>
+							{cancelMutation.isPending ? (
+								<>
+									<Loader2 className="w-4 h-4 mr-2 animate-spin" />
+									Cancelling...
+								</>
+							) : (
+								'Yes, Cancel Transaction'
+							)}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };

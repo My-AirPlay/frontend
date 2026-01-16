@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button'; // Removed duplicate Button
 import { Input } from '@/components/ui/input'; // Removed duplicate Input
 import { User, Loader2, ChevronRight } from 'lucide-react'; // Removed unused AlertCircle
 import { useGetOneArtist } from '../../../../catalogue/api/getOneArtist'; // Corrected path
-// Removed useGetOneWithdrawalSlip import
+import { useGetAllWithdrawalSlips } from '../../../../catalogue/api/getAllWithdrawalSlips';
 import { useUpdateWithdrawalSlip } from '../../../../catalogue/api/putUpdateWithdrawalSlip'; // Corrected path
+import { WithdrawalSlipData } from '@/lib/types';
 import { formatCurrency } from '@/utils/currency';
 import { PreviousPageButton } from '@/components/ui';
 import { toast } from 'sonner';
@@ -29,7 +30,29 @@ const WithdrawalUpdatePage: React.FC = () => {
 		artistId: artist_id
 	});
 
-	// Removed Withdrawal Slip Fetch
+	// Fetch withdrawal slips to calculate correct balance
+	const { data: withdrawalsData, isLoading: isLoadingWithdrawals } = useGetAllWithdrawalSlips({
+		page: 1,
+		limit: 2000,
+		artistId: artist_id
+	});
+
+	// Calculate balance the same way as parent page
+	const allWithdrawalSlipsRaw: WithdrawalSlipData[] = withdrawalsData?.data || [];
+	const allDebitTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending');
+	const allCreditTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status !== 'Pending' && slip.status !== 'Cancelled');
+
+	const totalPendingRoyalty = allDebitTransactions.reduce((sum, slip) => {
+		const royalty = Number(slip.totalRevenue) || 0;
+		return sum + royalty;
+	}, 0);
+
+	const totalCreditRoyalty = allCreditTransactions.reduce((sum, slip) => {
+		const royalty = Number(slip.totalRevenue) || 0;
+		return sum + royalty;
+	}, 0);
+
+	const balance = totalCreditRoyalty - totalPendingRoyalty;
 
 	// Update Withdrawal Slip Mutation
 	const { mutate: updateWithdrawalMutate, isPending: isUpdatingWithdrawal } = useUpdateWithdrawalSlip();
@@ -88,7 +111,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 	};
 
 	// Simplified Loading State
-	const isLoading = isLoadingArtist;
+	const isLoading = isLoadingArtist || isLoadingWithdrawals;
 
 	if (isLoading) {
 		return (
@@ -112,11 +135,10 @@ const WithdrawalUpdatePage: React.FC = () => {
 							<h2 className="text-xl font-semibold">{artistName}</h2>
 						</div>
 					</div>
-					{/* Transaction ID - Use transaction_id from params */}
+					{/* Artist Account Balance - calculated from credits minus pending debits */}
 					<div>
 						<p className="text-sm text-primary-foreground/80">Artist Account Balance</p>
-						{/* Display full or partial ID as needed */}
-						<h2 className="text-xl font-mono font-semibold">{formatCurrency(convertCurrency(artistData?.totalRoyaltyUSD || 0), contextCurrency)}</h2>
+						<h2 className="text-xl font-mono font-semibold">{formatCurrency(convertCurrency(balance), contextCurrency)}</h2>
 					</div>
 				</div>
 			</div>
@@ -148,7 +170,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 
 					{/* Update Button */}
 					<div className="flex justify-center">
-						<Button className="bg-primary hover:bg-primary/90" onClick={handleUpdate} disabled={isUpdatingWithdrawal || !finalAmount || parseFloat(finalAmount) < 0 || parseFloat(finalAmount) > artistData?.totalRoyaltyUSD}>
+						<Button className="bg-primary hover:bg-primary/90" onClick={handleUpdate} disabled={isUpdatingWithdrawal || !finalAmount || parseFloat(finalAmount) < 0 || parseFloat(finalAmount) > balance}>
 							{isUpdatingWithdrawal ? 'Updating...' : 'Withdraw'}
 							{isUpdatingWithdrawal ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ChevronRight className="h-4 w-4 " />}
 						</Button>
