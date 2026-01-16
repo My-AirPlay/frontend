@@ -16,7 +16,7 @@ interface CancelWithdrawalResponse {
 }
 
 const cancelWithdrawalSlip = async (payload: CancelWithdrawalPayload): Promise<CancelWithdrawalResponse> => {
-	const response = await APIAxios.put<CancelWithdrawalResponse>(`/admin/withdrawalslip/${payload.transactionId}/cancel`);
+	const response = await APIAxios.patch<CancelWithdrawalResponse>(`/admin/withdrawalslip/${payload.transactionId}/cancel`);
 	return response.data;
 };
 
@@ -28,8 +28,10 @@ export const useCancelWithdrawalSlip = () => {
 		onSuccess: (data, variables) => {
 			toast.success(data.message || 'Transaction cancelled successfully!');
 			queryClient.invalidateQueries({ queryKey: ['oneWithdrawalSlip', variables.transactionId] });
-			queryClient.invalidateQueries({ queryKey: ['withdrawalSlips', { artistId: variables.artistId }] });
+			// Invalidate all withdrawalSlips queries (partial match)
+			queryClient.invalidateQueries({ queryKey: ['withdrawalSlips'] });
 			queryClient.invalidateQueries({ queryKey: ['oneArtist', variables.artistId] });
+			queryClient.invalidateQueries({ queryKey: ['artistAnalytics'] });
 		},
 		onError: error => {
 			toast.error(error.message || 'Failed to cancel transaction.');

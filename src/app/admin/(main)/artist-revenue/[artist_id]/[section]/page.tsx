@@ -7,40 +7,64 @@ import { useParams } from 'next/navigation';
 import { ArtistOverview, ArtistAnalytics, ArtistTransactions } from '../../misc/components';
 import { AccountCoins } from '../../misc/icons';
 import { useGetOneArtist } from '../../../catalogue/api/getOneArtist';
-import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips'; // Added import
+import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips';
+import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { WithdrawalSlipData } from '@/lib/types';
+import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, DollarSign, Receipt } from 'lucide-react';
+import { formatCurrency } from '@/utils/currency';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 const ArtistRevenueDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
+	const { convertCurrency, currency: contextCurrency } = useCurrency();
 
 	const { data: artist } = useGetOneArtist({ artistId: artist_id });
 
 	// Fetch withdrawal slips
 	const { data: withdrawalsData } = useGetAllWithdrawalSlips({
 		page: 1,
-		limit: 2000, // Fetching a large limit to get all pending ones
+		limit: 2000,
 		artistId: artist_id
 	});
+
+	// Fetch artist analytics for additional stats
+	const { data: artistAnalytics } = useGetArtistAnalytics({ artistId: artist_id });
+
 	const allWithdrawalSlipsRaw: WithdrawalSlipData[] = withdrawalsData?.data || [];
 
-	// Filter pending withdrawal slips
-	const allDebitTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending');
+	// Filter transactions by status
+	const allPendingDebits = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending');
+	const allDebitTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending' || slip.status === 'Approved' || slip.status === 'Paid');
+	const allCreditTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status !== 'Pending' && slip.status !== 'Cancelled');
+	const allCancelledTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Cancelled');
 
-	const allCreditTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status !== 'Pending');
-	// Calculate total pending royalty
-	const totalPendingRoyalty = allDebitTransactions.reduce((sum, slip) => {
-		// Ensure totalRoyalty is treated as a number, default to 0 if undefined or null
+	// Calculate totals
+	const totalPendingRoyalty = allPendingDebits.reduce((sum, slip) => {
+		const royalty = Number(slip.totalRevenue) || 0;
+		return sum + royalty;
+	}, 0);
+
+	const totalDebitRoyalty = allDebitTransactions.reduce((sum, slip) => {
 		const royalty = Number(slip.totalRevenue) || 0;
 		return sum + royalty;
 	}, 0);
 
 	const totalCreditRoyalty = allCreditTransactions.reduce((sum, slip) => {
-		// Ensure totalRoyalty is treated as a number, default to 0 if undefined or null
+		const royalty = Number(slip.totalRevenue) || 0;
+		return sum + royalty;
+	}, 0);
+
+	const totalCancelledAmount = allCancelledTransactions.reduce((sum, slip) => {
 		const royalty = Number(slip.totalRevenue) || 0;
 		return sum + royalty;
 	}, 0);
 
 	const balance = totalCreditRoyalty - totalPendingRoyalty;
+
+	// Calculate analytics stats
+	const totalStreams = artistAnalytics?.totalStreams || 0;
+	const totalCountries = artistAnalytics?.countryBreakdown ? Object.keys(artistAnalytics.countryBreakdown).length : 0;
+	const totalPlatforms = artistAnalytics?.dspBreakdown ? Object.keys(artistAnalytics.dspBreakdown).length : 0;
 
 	const tabs = [
 		{
@@ -66,54 +90,152 @@ const ArtistRevenueDetails: React.FC = () => {
 	];
 
 	return (
-		<div className="space-y-8">
-			<section className="flex flex-col gap-10 rounded-lg p-4 md:p-6 bg-custom-gradient">
-				<div className="flex gap-4 items-center">
-					<AccountCoins className="size-12" />
-					<div>
-						<p className="text-sm text-white/60">Total Revenue Made</p>
-						<h3 className="text-2xl font-bold">{`₦${parseFloat(totalCreditRoyalty.toFixed(2)).toLocaleString() || 0}`}</h3>
+		<div className="space-y-6">
+			{/* Artist Header Section */}
+			<section className="rounded-lg p-6 bg-custom-gradient">
+				<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+					<div className="flex gap-4 items-center">
+						<div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
+							<AccountCoins className="size-8" />
+						</div>
+						<div>
+							<h2 className="text-xl font-bold">{artist?.artistName || 'Loading...'}</h2>
+							<p className="text-sm text-white/60">{`${artist?.firstName || ''} ${artist?.lastName || ''}`}</p>
+							<p className="text-xs text-white/50">{artist?.email || ''}</p>
+						</div>
 					</div>
-				</div>
-
-				<div className=" pb-5">
-					<div className="flex flex-wrap gap-6 gap-y-4 md:gap-x-8 text-sm">
-						<div className="flex flex-col">
-							<p className="text-white/60 text-xs font-light">Artist Name</p>
-							<p className="font-normal">{artist?.artistName || '-'}</p>
-						</div>
-						<div className="flex flex-col">
-							<p className="text-white/60 text-xs font-light">Artist Real Name</p>
-							<p className="font-normal">{`${artist?.firstName || '-'} ${artist?.lastName || '-'}`}</p>
-						</div>
-						<div className="flex flex-col">
-							<p className="text-white/60 text-xs font-light">Email Address</p>
-							<p className="font-normal">{artist?.email || '-'}</p>
-						</div>
-						<div className="flex flex-col">
-							<p className="text-white/60 text-xs font-light">Balance</p>
-							<p className="font-medium">{`₦${parseFloat(balance.toFixed(2)).toLocaleString()}`}</p>
-						</div>
-						<div className="flex flex-col">
-							<p className="text-white/60 text-xs font-light">Credits</p>
-							<p className="font-normal">{`₦${parseFloat(totalCreditRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
-						</div>
-						<div className="flex flex-col">
-							<p className="text-white/60 text-xs font-light">Debits</p>
-							{/* Display calculated pending royalty */}
-							<p className="font-normal">{`₦${parseFloat(totalPendingRoyalty.toFixed(2)).toLocaleString() || 0}`}</p>
-						</div>
+					<div className="text-right">
+						<p className="text-xs text-white/60 uppercase tracking-wider">Available Balance</p>
+						<h3 className="text-3xl font-bold text-primary">{formatCurrency(convertCurrency(balance), contextCurrency)}</h3>
 					</div>
 				</div>
 			</section>
 
-			<h2 className="text-xl font-semibold">Overview</h2>
+			{/* Revenue Stats Cards */}
+			<div className="grid grid-cols-2 gap-4">
+				{/* Net Revenue (Total Revenue Made) */}
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
+							<DollarSign className="w-5 h-5 text-emerald-500" />
+						</div>
+						<TrendingUp className="w-4 h-4 text-emerald-500" />
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Net Revenue</p>
+					<p className="text-lg font-semibold text-emerald-500">{formatCurrency(convertCurrency(totalCreditRoyalty), contextCurrency)}</p>
+					<p className="text-xs text-muted-foreground mt-1">Total revenue made</p>
+				</div>
 
-			<Tabs value={section} className="w-full bg-custom-gradient p-4 rounded-lg">
-				<TabsList className="bg-transparent border-b border-border w-full justify-start gap-4 h-auto p-0">
+				{/* Balance */}
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+							<Wallet className="w-5 h-5 text-primary" />
+						</div>
+						<span className={`text-xs font-medium px-2 py-0.5 rounded ${balance >= 0 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>{balance >= 0 ? 'Positive' : 'Negative'}</span>
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Available Balance</p>
+					<p className={`text-lg font-semibold ${balance >= 0 ? 'text-primary' : 'text-red-500'}`}>{formatCurrency(convertCurrency(balance), contextCurrency)}</p>
+					<p className="text-xs text-muted-foreground mt-1">Credits - Pending Debits</p>
+				</div>
+			</div>
+
+			{/* Financial Stats Cards */}
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+				{/* Total Credits */}
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+							<ArrowUpRight className="w-5 h-5 text-green-500" />
+						</div>
+						<TrendingUp className="w-4 h-4 text-green-500" />
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Total Credits</p>
+					<p className="text-lg font-semibold text-green-500">{formatCurrency(convertCurrency(totalCreditRoyalty), contextCurrency)}</p>
+					<p className="text-xs text-muted-foreground mt-1">{allCreditTransactions.length} transactions</p>
+				</div>
+
+				{/* Total Debits */}
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-orange-500/10 flex items-center justify-center">
+							<ArrowDownRight className="w-5 h-5 text-orange-500" />
+						</div>
+						<Wallet className="w-4 h-4 text-orange-500" />
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Total Debits</p>
+					<p className="text-lg font-semibold text-orange-500">{formatCurrency(convertCurrency(totalDebitRoyalty), contextCurrency)}</p>
+					<p className="text-xs text-muted-foreground mt-1">
+						{allDebitTransactions.length} withdrawals ({allPendingDebits.length} pending)
+					</p>
+				</div>
+
+				{/* Cancelled */}
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center">
+							<CreditCard className="w-5 h-5 text-red-500" />
+						</div>
+						<TrendingDown className="w-4 h-4 text-red-500" />
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Cancelled</p>
+					<p className="text-lg font-semibold text-red-500">{formatCurrency(convertCurrency(totalCancelledAmount), contextCurrency)}</p>
+					<p className="text-xs text-muted-foreground mt-1">{allCancelledTransactions.length} cancelled</p>
+				</div>
+
+				{/* Total Transactions */}
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+							<Receipt className="w-5 h-5 text-blue-500" />
+						</div>
+						<span className="text-xs font-medium px-2 py-0.5 rounded bg-blue-500/10 text-blue-500">All</span>
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Total Transactions</p>
+					<p className="text-lg font-semibold text-blue-500">{allWithdrawalSlipsRaw.length}</p>
+					<p className="text-xs text-muted-foreground mt-1">Credits + Debits + Cancelled</p>
+				</div>
+			</div>
+
+			{/* Performance Stats */}
+			<div className="grid grid-cols-3 gap-4">
+				<div className="rounded-lg p-4 bg-card border border-border flex items-center gap-4">
+					<div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center">
+						<Music className="w-6 h-6 text-purple-500" />
+					</div>
+					<div>
+						<p className="text-xs text-muted-foreground">Total Streams</p>
+						<p className="text-xl font-bold">{totalStreams.toLocaleString()}</p>
+					</div>
+				</div>
+
+				<div className="rounded-lg p-4 bg-card border border-border flex items-center gap-4">
+					<div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+						<Globe className="w-6 h-6 text-blue-500" />
+					</div>
+					<div>
+						<p className="text-xs text-muted-foreground">Countries</p>
+						<p className="text-xl font-bold">{totalCountries}</p>
+					</div>
+				</div>
+
+				<div className="rounded-lg p-4 bg-card border border-border flex items-center gap-4">
+					<div className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center">
+						<CreditCard className="w-6 h-6 text-orange-500" />
+					</div>
+					<div>
+						<p className="text-xs text-muted-foreground">Platforms</p>
+						<p className="text-xl font-bold">{totalPlatforms}</p>
+					</div>
+				</div>
+			</div>
+
+			{/* Tabs Section */}
+			<Tabs value={section} className="w-full bg-card border border-border p-4 rounded-lg">
+				<TabsList className="bg-transparent border-b border-border w-full justify-start gap-6 h-auto p-0 mb-2">
 					{tabs.map(tab => (
 						<Link href={tab.path} key={tab.value} replace>
-							<TabsTrigger key={tab.value} value={tab.value} className={`pb-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 data-[state=active]:bg-transparent`}>
+							<TabsTrigger value={tab.value} className="pb-3 rounded-none border-b-2 border-transparent data-[state=active]:border-primary px-0 data-[state=active]:bg-transparent text-sm font-medium">
 								{tab.title}
 							</TabsTrigger>
 						</Link>
