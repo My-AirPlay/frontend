@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { Filter, ArrowUp, ArrowDown, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
 import { DataTable, Input } from '@/components/ui';
@@ -56,6 +56,10 @@ const ArtistTransactions: React.FC = ({}) => {
 	// State for cancel modal
 	const [cancelModalOpen, setCancelModalOpen] = useState(false);
 	const [transactionToCancel, setTransactionToCancel] = useState<{ id: string; amount: number } | null>(null);
+
+	// Navigation loading states
+	const [isPending, startTransition] = useTransition();
+	const [navigatingTo, setNavigatingTo] = useState<'credit' | 'withdraw' | null>(null);
 
 	// Cancel mutation
 	const cancelMutation = useCancelWithdrawalSlip();
@@ -222,7 +226,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			header: 'Description', // Using activityPeriod as description
 			accessorKey: 'activityPeriods',
 			cell: (info: any) => {
-				return <span className="font-medium">Payment For : {info?.row?.original.activityPeriods?.[0] || 'N/A'}</span>;
+				return <span className="font-medium">Payment For : {info?.row?.original.activityPeriods?.[0] || info?.row?.original.notes || 'N/A'}</span>;
 			}
 		},
 		{
@@ -360,11 +364,43 @@ const ArtistTransactions: React.FC = ({}) => {
 			<div className="flex flex-wrap gap-4 justify-between items-center">
 				<h3 className="text-md font-semibold bg-primary/10 text-primary px-3 py-1 rounded">Transactions History</h3>
 				<div className="flex flex-wrap items-center gap-2">
-					<Button variant="secondary" onClick={() => router.push(`/admin/artist-revenue/${artist_id}/credit/1}`)}>
-						Credit
+					<Button
+						variant="secondary"
+						disabled={isPending}
+						onClick={() => {
+							setNavigatingTo('credit');
+							startTransition(() => {
+								router.push(`/admin/artist-revenue/${artist_id}/credit/1`);
+							});
+						}}
+					>
+						{isPending && navigatingTo === 'credit' ? (
+							<>
+								<Loader2 className="w-4 h-4 mr-2 animate-spin" />
+								Loading...
+							</>
+						) : (
+							'Credit'
+						)}
 					</Button>
-					<Button variant="destructive" onClick={() => router.push(`/admin/artist-revenue/${artist_id}/withdraw/1}`)}>
-						Withdraw
+					<Button
+						variant="destructive"
+						disabled={isPending}
+						onClick={() => {
+							setNavigatingTo('withdraw');
+							startTransition(() => {
+								router.push(`/admin/artist-revenue/${artist_id}/withdraw/1`);
+							});
+						}}
+					>
+						{isPending && navigatingTo === 'withdraw' ? (
+							<>
+								<Loader2 className="w-4 h-4 mr-2 animate-spin" />
+								Loading...
+							</>
+						) : (
+							'Withdraw'
+						)}
 					</Button>
 					{/* Search Input */}
 					<Input placeholder="Search transactions..." value={inputValue} onChange={e => setInputValue(e.target.value)} className="h-9 w-full sm:w-auto md:w-56" />
