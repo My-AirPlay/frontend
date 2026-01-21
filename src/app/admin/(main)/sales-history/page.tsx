@@ -1,225 +1,182 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
-import { Trash2, Eye, RefreshCw } from 'lucide-react';
+import React, { useMemo, useState, useTransition } from 'react';
+import { TrendingUp, DollarSign, Calendar, FileText, ChevronRight, Users, Loader2 } from 'lucide-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui';
-import { useDeleteSalesHistory, useGetSalesHistory } from '@/app/admin/(main)/catalogue/api/getSalesHistory';
-import { Button } from '@/components/ui/button';
+import { useGetGroupedSalesHistory, GroupedSalesHistoryItem } from '@/app/admin/(main)/catalogue/api/getGroupedSalesHistory';
 import { DataTable, PreviousPageButton } from '@/components/ui';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useRouter, useSearchParams } from 'next/navigation';
-import ReportModal from '@/components/ui/report-modal';
-import DeletionProgressModal from '@/components/ui/delete-records-modal';
 import { formatCurrency } from '@/utils/currency';
-import { toast } from 'sonner';
-
-// Updated Report interface to include artistNames
-interface Report {
-	name: string;
-	reportId: string;
-	activityPeriods: string[];
-	artistNames: string[];
-	revenue: number;
-	createdAt: string;
-	status: 'Complete' | 'Incomplete' | 'Pending';
-}
 
 const SalesHistory: React.FC = () => {
-	const [selectedReportIds, setSelectedReportIds] = useState<string[]>([]);
-	const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-	const [isDeletionModalOpen, setIsDeletionModalOpen] = useState(false); // State for deletion modal
-	const [selectedReport, setSelectedReport] = useState<Report | null>(null);
-
 	const searchParams = useSearchParams();
-	const page = searchParams.get('page') || '1';
-	const limit = searchParams.get('limit') || '10';
+	const page = parseInt(searchParams.get('page') || '1');
+	const limit = parseInt(searchParams.get('limit') || '10');
+	const sortBy = (searchParams.get('sortBy') as 'activityPeriod' | 'createdAt' | 'netRevenue' | 'grossRevenue') || 'activityPeriod';
+	const sortOrder = (searchParams.get('sortOrder') as 'asc' | 'desc') || 'desc';
 
-	const apiParams = useMemo(
-		() => ({
-			page,
-			limit
-		}),
-		[page, limit]
-	);
 	const router = useRouter();
-	const { data: salesHistoryResponse, isLoading: salesHistoryLoading, refetch: refetchSalesHistory } = useGetSalesHistory(apiParams);
-	const { mutate: deleteRecords } = useDeleteSalesHistory();
-	const tableData = useMemo(() => salesHistoryResponse?.data || [], [salesHistoryResponse]);
-	const pageCount = salesHistoryResponse?.totalPages || 0;
+	const [isPending, startTransition] = useTransition();
+	const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
 
-	// Function to open the details modal
-	const handleViewDetails = (report: Report) => {
-		setSelectedReport(report);
-		setIsDetailsModalOpen(true);
+	const { data: groupedSalesResponse, isLoading } = useGetGroupedSalesHistory({ page, limit, sortBy, sortOrder });
+
+	const tableData = useMemo(() => groupedSalesResponse?.data || [], [groupedSalesResponse]);
+	const pageCount = groupedSalesResponse?.totalPages || 0;
+	const summary = groupedSalesResponse?.summary || { totalNetRevenue: 0, totalGrossRevenue: 0 };
+
+	const handleRowClick = (activityPeriod: string) => {
+		setNavigatingTo(activityPeriod);
+		startTransition(() => {
+			router.push(`/admin/sales-history/${encodeURIComponent(activityPeriod)}`);
+		});
 	};
 
-	// Function to close the details modal
-	const handleCloseDetailsModal = () => {
-		setIsDetailsModalOpen(false);
-		setSelectedReport(null);
-	};
-
-	const handleReprocess = (reportId: string) => {
-		router.push(`/admin/sales-history/process/${reportId}`);
-	};
-
-	const handleDeleteSelected = () => {
-		if (selectedReportIds.length > 0) {
-			setIsDeletionModalOpen(true);
-		}
-		deleteRecords(
-			{ reportIds: selectedReportIds },
-			{
-				onSuccess: () => {
-					toast.success('Records Deletion in progress!');
-				},
-				onError: () => {
-					handleCloseDeletionModal();
-					toast.error('Error deleting records, please try again');
-				}
-			}
-		);
-	};
-
-	// Function to close the deletion modal and clear selection
-	const handleCloseDeletionModal = () => {
-		setIsDeletionModalOpen(false);
-		setSelectedReportIds([]);
-		refetchSalesHistory();
-	};
-
-	const columns = useMemo<ColumnDef<Report>[]>(
+	const columns = useMemo<ColumnDef<GroupedSalesHistoryItem>[]>(
 		() => [
-			// ... your other columns remain the same
 			{
-				accessorKey: 'name',
-				header: 'Tag Name',
-				cell: ({ row }) => <p className="font-medium">{row.original.name || '-'}</p>
-			},
-			{
-				accessorKey: 'reportId',
-				header: 'Report ID',
+				accessorKey: 'activityPeriod',
+				header: 'Activity Period',
 				cell: ({ row }) => {
-					const id = row.original.reportId;
-					const truncatedId = id.length > 20 ? `${id.substring(0, 12)}...${id.substring(id.length - 4)}` : id;
+					const isNavigating = isPending && navigatingTo === row.original.activityPeriod;
 					return (
-						<p className="text-sm text-gray-500" title={id}>
-							{truncatedId}
-						</p>
+						<div className="flex items-center gap-3 cursor-pointer group" onClick={() => handleRowClick(row.original.activityPeriod)}>
+							<div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">{isNavigating ? <Loader2 className="w-5 h-5 text-primary animate-spin" /> : <Calendar className="w-5 h-5 text-primary" />}</div>
+							<div>
+								<span className="font-semibold group-hover:text-primary transition-colors">{row.original.activityPeriod || '-'}</span>
+								<p className="text-xs text-muted-foreground">{isNavigating ? 'Loading...' : `${row.original.reportIds?.length || 0} reports`}</p>
+							</div>
+						</div>
 					);
 				}
 			},
 			{
-				accessorKey: 'status',
-				header: 'Status',
+				accessorKey: 'artistNames',
+				header: 'Artists',
 				cell: ({ row }) => {
-					const status = row.original.status;
-					let variant: 'success' | 'destructive' | 'secondary' = 'success'; // Default variant
-
-					if (status === 'Incomplete') {
-						variant = 'secondary';
-					} else if (status === 'Pending') {
-						variant = 'secondary';
-					}
-
-					return <Badge variant={variant}>{status || '-'}</Badge>;
+					const artists = row.original.artistNames || [];
+					const count = artists.length;
+					return (
+						<div className="flex items-center gap-2">
+							<Users className="w-4 h-4 text-muted-foreground" />
+							<span className="text-sm">
+								{count} artist{count !== 1 ? 's' : ''}
+							</span>
+						</div>
+					);
 				}
 			},
 			{
-				accessorKey: 'activityPeriods',
-				header: 'Targeted Period(s)',
-				cell: ({ row }) => {
-					const periods = row.original.activityPeriods;
-					if (!periods || periods.length === 0) {
-						return <p className="text-sm text-gray-500">-</p>;
-					}
-					const displayPeriods = periods.length > 2 ? `${periods.slice(0, 2).join(', ')}...` : periods.join(', ');
-					return (
-						<p className="text-sm" title={periods.join(', ')}>
-							{displayPeriods}
-						</p>
-					);
-				}
+				accessorKey: 'trackCount',
+				header: 'Tracks',
+				cell: ({ row }) => <span className="text-sm font-medium">{row.original.trackCount?.toLocaleString() || 0}</span>
 			},
 			{
 				accessorKey: 'grossRevenue',
 				header: 'Gross Revenue',
-				cell: ({ row }) => {
-					const grossRevenue = row.original.revenue / 0.8;
-					return <p className="text-sm">{formatCurrency(grossRevenue, 'NGN')}</p>;
-				}
+				cell: ({ row }) => <span className="text-sm font-medium text-purple-500">{formatCurrency(row.original.grossRevenue || 0, 'NGN')}</span>
 			},
 			{
-				accessorKey: 'revenue',
-				header: 'NET Revenue',
-				cell: ({ row }) => <p className="text-sm">{formatCurrency(row.original.revenue, 'NGN')}</p>
+				accessorKey: 'netRevenue',
+				header: 'Net Revenue',
+				cell: ({ row }) => <span className="text-sm font-semibold text-green-500">{formatCurrency(row.original.netRevenue || 0, 'NGN')}</span>
+			},
+			{
+				accessorKey: 'avgDealRate',
+				header: 'Avg Deal Rate',
+				cell: ({ row }) => (
+					<Badge variant="secondary" className="font-mono">
+						{row.original.avgDealRate || 0}%
+					</Badge>
+				)
 			},
 			{
 				accessorKey: 'createdAt',
-				header: 'Date Published',
+				header: 'Date',
 				cell: ({ row }) => {
-					if (!row.original.createdAt) {
-						return <p>-</p>;
-					}
+					if (!row.original.createdAt) return <p>-</p>;
 					const date = new Date(row.original.createdAt);
-					return <p>{date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>;
+					return <p className="text-sm text-muted-foreground">{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>;
 				}
 			},
 			{
-				id: 'actions',
-				header: 'Actions',
-				cell: ({ row }) => (
-					<div className="flex items-center gap-2">
-						<Button variant="ghost" size="sm" onClick={() => handleViewDetails(row.original)}>
-							<Eye size={16} />
-						</Button>
-						{/* Conditionally render the Re-process button */}
-						<Button variant="ghost" size="sm" onClick={() => handleReprocess(row.original.reportId)}>
-							<RefreshCw size={16} />
-						</Button>
-					</div>
-				)
+				id: 'action',
+				header: '',
+				cell: ({ row }) => {
+					const isNavigating = isPending && navigatingTo === row.original.activityPeriod;
+					return (
+						<div className="cursor-pointer p-2 hover:bg-muted rounded-full transition-colors" onClick={() => handleRowClick(row.original.activityPeriod)}>
+							{isNavigating ? <Loader2 className="w-5 h-5 text-primary animate-spin" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
+						</div>
+					);
+				}
 			}
 		],
-		[]
+		[isPending, navigatingTo]
 	);
 
-	const handleSelectionChange = useCallback((selectedRows: Report[]) => {
-		const ids = selectedRows.map(row => row.reportId);
-		setSelectedReportIds(ids);
-	}, []);
-
 	return (
-		<>
-			<div className="space-y-6">
-				<PreviousPageButton />
+		<div className="space-y-6">
+			<PreviousPageButton />
 
-				<div>
-					<div className="flex flex-wrap gap-4 justify-between items-center mb-6">
-						<h1 className="text-xl md:text-2xl font-semibold">Published Sales History</h1>
-						<Button variant="destructive" onClick={handleDeleteSelected} disabled={selectedReportIds.length === 0} className="flex items-center gap-2">
-							<Trash2 size={16} />
-							<span>Delete ({selectedReportIds.length})</span>
-						</Button>
-					</div>
+			{/* Header */}
+			<div>
+				<h1 className="text-xl md:text-2xl font-semibold">Sales History</h1>
+				<p className="text-sm text-muted-foreground mt-1">View sales grouped by activity period</p>
+			</div>
 
-					{salesHistoryLoading ? (
-						<div className="flex justify-center items-center rounded-md border min-h-[50vh]">
-							<LoadingBox size={62} />
+			{/* Summary Cards */}
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
+							<DollarSign className="w-5 h-5 text-purple-500" />
 						</div>
-					) : (
-						<DataTable data={tableData} columns={columns} showCheckbox={true} onRowSelectionChange={handleSelectionChange} defaultRowsPerPage={Number(limit)} pageCount={pageCount} />
-					)}
+						<TrendingUp className="w-4 h-4 text-purple-500" />
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Total Gross Revenue</p>
+					<p className="text-xl font-bold text-purple-500">{formatCurrency(summary.totalGrossRevenue, 'NGN')}</p>
+					<p className="text-xs text-muted-foreground mt-1">Before artist deals</p>
+				</div>
+
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+							<DollarSign className="w-5 h-5 text-green-500" />
+						</div>
+						<TrendingUp className="w-4 h-4 text-green-500" />
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Total Net Revenue</p>
+					<p className="text-xl font-bold text-green-500">{formatCurrency(summary.totalNetRevenue, 'NGN')}</p>
+					<p className="text-xs text-muted-foreground mt-1">After artist deals</p>
+				</div>
+
+				<div className="rounded-lg p-4 bg-card border border-border">
+					<div className="flex items-center justify-between mb-2">
+						<div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
+							<FileText className="w-5 h-5 text-blue-500" />
+						</div>
+						<ChevronRight className="w-4 h-4 text-blue-500" />
+					</div>
+					<p className="text-xs text-muted-foreground mb-1">Activity Periods</p>
+					<p className="text-xl font-bold text-blue-500">{groupedSalesResponse?.total || tableData.length}</p>
+					<p className="text-xs text-muted-foreground mt-1">Click to view details</p>
 				</div>
 			</div>
 
-			{/* Modal for viewing report details */}
-			{isDetailsModalOpen && <ReportModal report={selectedReport} onClose={handleCloseDetailsModal} />}
-
-			{/* Modal for deletion progress */}
-			<DeletionProgressModal isOpen={isDeletionModalOpen} onClose={handleCloseDeletionModal} reportIdsToDelete={selectedReportIds} />
-		</>
+			{/* Table */}
+			{isLoading ? (
+				<div className="flex justify-center items-center rounded-md border min-h-[50vh]">
+					<LoadingBox size={62} />
+				</div>
+			) : (
+				<div className="rounded-lg border border-border overflow-hidden">
+					<DataTable data={tableData} columns={columns} showCheckbox={false} defaultRowsPerPage={limit} pageCount={pageCount} />
+				</div>
+			)}
+		</div>
 	);
 };
 

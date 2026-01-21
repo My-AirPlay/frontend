@@ -170,7 +170,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 
 					{/* Update Button */}
 					<div className="flex justify-center">
-						<Button className="bg-primary hover:bg-primary/90" onClick={handleUpdate} disabled={isUpdatingWithdrawal || !finalAmount || parseFloat(finalAmount) < 0 || parseFloat(finalAmount) > balance}>
+						<Button className="bg-primary hover:bg-primary/90" onClick={handleUpdate} disabled={isUpdatingWithdrawal || !finalAmount || parseFloat(finalAmount) < 0}>
 							{isUpdatingWithdrawal ? 'Updating...' : 'Withdraw'}
 							{isUpdatingWithdrawal ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <ChevronRight className="h-4 w-4 " />}
 						</Button>
