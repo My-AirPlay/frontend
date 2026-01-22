@@ -13,6 +13,7 @@ export interface ReportByPeriod {
 	createdAt: string;
 	status: 'Complete' | 'Incomplete' | 'Pending';
 	activityPeriod: string;
+	activityPeriods?: string[];
 }
 
 export interface ReportsByPeriodResponse {
@@ -77,6 +78,9 @@ export const getReportsByPeriod = async (params: ReportsByPeriodParams): Promise
 	// Transform the reports
 	const transformedReports = reports.map((report: Record<string, unknown>) => {
 		const artists = report.artistNames ?? report.artist_names ?? report.artists ?? [];
+		// Get activity periods - can be array or string
+		const reportPeriods = report.activityPeriods || report.activity_periods || [];
+		const singlePeriod = report.activityPeriod || report.activity_period || '';
 
 		return {
 			_id: (report._id || report.id || '') as string,
@@ -88,16 +92,25 @@ export const getReportsByPeriod = async (params: ReportsByPeriodParams): Promise
 			trackCount: Number(report.trackCount || report.track_count || 0),
 			createdAt: (report.createdAt || report.created_at || '') as string,
 			status: (report.status || 'Complete') as 'Complete' | 'Incomplete' | 'Pending',
-			activityPeriod: (report.activityPeriod || report.activity_period || params.activityPeriod) as string
+			activityPeriod: (singlePeriod || (Array.isArray(reportPeriods) && reportPeriods[0]) || params.activityPeriod) as string,
+			activityPeriods: (Array.isArray(reportPeriods) ? reportPeriods : singlePeriod ? [singlePeriod] : []) as string[]
 		};
 	});
 
+	// Filter reports to only include those that match the requested activity period
+	const filteredReports = transformedReports.filter(report => {
+		const periods = report.activityPeriods || [];
+		const singlePeriod = report.activityPeriod || '';
+		// Check if the requested period is in the report's periods array or matches the single period
+		return periods.includes(params.activityPeriod) || singlePeriod === params.activityPeriod;
+	});
+
 	return {
-		data: transformedReports,
-		total: reportsResponse.data?.total || transformedReports.length,
-		page: reportsResponse.data?.page || params.page || 1,
-		limit: reportsResponse.data?.limit || params.limit || 50,
-		totalPages: reportsResponse.data?.totalPages || Math.ceil(transformedReports.length / (params.limit || 50)) || 1,
+		data: filteredReports,
+		total: filteredReports.length,
+		page: params.page || 1,
+		limit: params.limit || 50,
+		totalPages: Math.ceil(filteredReports.length / (params.limit || 50)) || 1,
 		summary
 	};
 };
