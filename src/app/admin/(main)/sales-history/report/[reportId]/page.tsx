@@ -101,7 +101,7 @@ const ReportAnalyticsPage: React.FC = () => {
 		);
 	}
 
-	const { summary, trackBreakdown, dspBreakdown, countryBreakdown, exchangeRateInfo, activityPeriods } = analytics;
+	const { summary, trackBreakdown, exchangeRateInfo, activityPeriods } = analytics;
 
 	return (
 		<div className="space-y-6">
