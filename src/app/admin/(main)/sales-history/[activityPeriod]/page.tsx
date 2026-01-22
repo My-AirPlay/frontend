@@ -1,17 +1,20 @@
 'use client';
 
-import React, { useMemo, useState, useTransition } from 'react';
+import React, { useMemo, useState, useTransition, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { useGetReportsByPeriod, ReportByPeriod } from '@/app/admin/(main)/catalogue/api/getReportsByPeriod';
+import { useDeleteSalesHistory } from '@/app/admin/(main)/catalogue/api/getSalesHistory';
 import { PreviousPageButton, DataTable } from '@/components/ui';
 import { Badge } from '@/components/ui';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingBox } from '@/components/ui/LoadingBox';
+import DeletionProgressModal from '@/components/ui/delete-records-modal';
 import { formatCurrency } from '@/utils/currency';
-import { Calendar, BarChart3, FileText, DollarSign, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2 } from 'lucide-react';
+import { Calendar, BarChart3, FileText, DollarSign, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const CHART_COLORS = ['#8b5cf6', '#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316'];
 
@@ -22,8 +25,11 @@ const ActivityPeriodPage: React.FC = () => {
 	const [activeTab, setActiveTab] = useState('overview');
 	const [isPending, startTransition] = useTransition();
 	const [navigatingTo, setNavigatingTo] = useState<string | null>(null);
+	const [selectedReportIds, setSelectedReportIds] = useState<string[]>([]);
+	const [isDeletionModalOpen, setIsDeletionModalOpen] = useState(false);
 
-	const { data: periodData, isLoading, isError } = useGetReportsByPeriod({ activityPeriod });
+	const { data: periodData, isLoading, isError, refetch } = useGetReportsByPeriod({ activityPeriod });
+	const { mutate: deleteRecords } = useDeleteSalesHistory();
 
 	const reports = useMemo(() => periodData?.data || [], [periodData]);
 	const summary = periodData?.summary || { totalNetRevenue: 0, totalGrossRevenue: 0, totalTracks: 0, totalArtists: 0 };
@@ -58,6 +64,35 @@ const ActivityPeriodPage: React.FC = () => {
 		startTransition(() => {
 			router.push(`/admin/sales-history/report/${encodeURIComponent(reportId)}`);
 		});
+	};
+
+	const handleSelectionChange = useCallback((selectedRows: ReportByPeriod[]) => {
+		const ids = selectedRows.map(row => row.reportId || row._id);
+		setSelectedReportIds(ids);
+	}, []);
+
+	const handleDeleteSelected = () => {
+		if (selectedReportIds.length > 0) {
+			setIsDeletionModalOpen(true);
+			deleteRecords(
+				{ reportIds: selectedReportIds },
+				{
+					onSuccess: () => {
+						toast.success('Records deletion in progress!');
+					},
+					onError: () => {
+						handleCloseDeletionModal();
+						toast.error('Error deleting records, please try again');
+					}
+				}
+			);
+		}
+	};
+
+	const handleCloseDeletionModal = () => {
+		setIsDeletionModalOpen(false);
+		setSelectedReportIds([]);
+		refetch();
 	};
 
 	const columns = useMemo<ColumnDef<ReportByPeriod>[]>(
@@ -169,14 +204,20 @@ const ActivityPeriodPage: React.FC = () => {
 			<PreviousPageButton />
 
 			{/* Header */}
-			<div className="flex items-center gap-4">
-				<div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
-					<Calendar className="w-7 h-7 text-primary" />
+			<div className="flex items-center justify-between">
+				<div className="flex items-center gap-4">
+					<div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+						<Calendar className="w-7 h-7 text-primary" />
+					</div>
+					<div>
+						<h1 className="text-xl md:text-2xl font-semibold">{activityPeriod}</h1>
+						<p className="text-sm text-muted-foreground">{reports.length} reports in this period</p>
+					</div>
 				</div>
-				<div>
-					<h1 className="text-xl md:text-2xl font-semibold">{activityPeriod}</h1>
-					<p className="text-sm text-muted-foreground">{reports.length} reports in this period</p>
-				</div>
+				<Button variant="destructive" onClick={handleDeleteSelected} disabled={selectedReportIds.length === 0} className="flex items-center gap-2">
+					<Trash2 size={16} />
+					<span>Delete ({selectedReportIds.length})</span>
+				</Button>
 			</div>
 
 			{/* Summary Cards */}
@@ -329,10 +370,13 @@ const ActivityPeriodPage: React.FC = () => {
 				{/* Sales Tab */}
 				<TabsContent value="sales" className="mt-6">
 					<div className="rounded-lg border border-border overflow-hidden">
-						<DataTable data={reports} columns={columns} showCheckbox={false} defaultRowsPerPage={10} pageCount={periodData?.totalPages || 1} />
+						<DataTable data={reports} columns={columns} showCheckbox={true} onRowSelectionChange={handleSelectionChange} defaultRowsPerPage={10} pageCount={periodData?.totalPages || 1} />
 					</div>
 				</TabsContent>
 			</Tabs>
+
+			{/* Modal for deletion progress */}
+			<DeletionProgressModal isOpen={isDeletionModalOpen} onClose={handleCloseDeletionModal} reportIdsToDelete={selectedReportIds} />
 		</div>
 	);
 };
