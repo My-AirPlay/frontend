@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { ArrowLeft, Trash2, Copy, Save, Plus, Loader2, DollarSign, Calendar, Search, User } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ArrowLeft, Trash2, Copy, Save, Plus, Loader2, DollarSign, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useRouter, useParams } from 'next/navigation';
 import { useDeleteTrack, useGetTrack, useUpdateTrack } from '@/app/admin/(main)/tracks/api/trackHooks';
-import { useGetAllArtists } from '@/app/admin/(main)/catalogue/api/getAllArtistsParams';
+
+// --- Types based on your getReportData structure ---
 
 interface StreamAnalyticsData {
 	_id: string;
@@ -18,11 +19,11 @@ interface StreamAnalyticsData {
 	artistName: string;
 	artistId: string;
 	artistRealName: string;
-	activityPeriod: string;
+	activityPeriod: string; // e.g., "2023-10" or "Q3 2023"
 	catalogueId?: string;
 	isrcCode?: string;
 	currency: string;
-	total: number;
+	total: number; // This is the calculated revenue sum
 	reportId: string;
 	sharedRevenue: {
 		artistId: string;
@@ -46,129 +47,56 @@ interface TrackData {
 	upcCode?: string;
 	catalogueId?: string;
 	sharedRevenue: SharedRevenueItem[];
+	// The backend populates this array using getReportData logic
 	streamAnalyticsRefs: StreamAnalyticsData[];
 	createdAt: string;
 	updatedAt: string;
 }
 
-interface Artist {
-	_id: string;
-	artistName: string;
-	email?: string;
-}
-
-interface ArtistSearchInputProps {
-	value: string;
-	artists: Artist[];
-	onSelect: (artistId: string, artistName: string) => void;
-	placeholder?: string;
-}
-
-const ArtistSearchInput = ({ value, artists, onSelect, placeholder }: ArtistSearchInputProps) => {
-	const [isOpen, setIsOpen] = useState(false);
-	const [searchTerm, setSearchTerm] = useState(value);
-	const wrapperRef = useRef<HTMLDivElement | null>(null);
-	const inputRef = useRef<HTMLInputElement | null>(null);
-
-	useEffect(() => {
-		setSearchTerm(value);
-	}, [value]);
-
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (wrapperRef.current && !wrapperRef.current?.contains(event.target as Node)) {
-				setIsOpen(false);
-			}
-		};
-		document.addEventListener('mousedown', handleClickOutside);
-		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, []);
-
-	const filteredArtists = useMemo(() => {
-		if (!searchTerm) return artists.slice(0, 50);
-		return artists.filter(artist => artist.artistName.toLowerCase().includes(searchTerm.toLowerCase())).slice(0, 50);
-	}, [artists, searchTerm]);
-
-	const handleSelect = (artist: Artist) => {
-		setSearchTerm(artist.artistName);
-		onSelect(artist._id, artist.artistName);
-		setIsOpen(false);
-	};
-
-	return (
-		<div className="relative w-full" ref={wrapperRef}>
-			<div className="relative">
-				<Input
-					ref={inputRef}
-					value={searchTerm}
-					onChange={e => {
-						setSearchTerm(e.target.value);
-						setIsOpen(true);
-						onSelect('', e.target.value);
-					}}
-					onFocus={() => setIsOpen(true)}
-					className="bg-secondary border-border pr-8"
-					placeholder={placeholder}
-				/>
-				<Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-			</div>
-
-			{isOpen && (
-				<div className="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-md max-h-60 overflow-y-auto">
-					{filteredArtists.length === 0 ? (
-						<div className="p-2 text-sm text-muted-foreground text-center">No artists found</div>
-					) : (
-						filteredArtists.map(artist => (
-							<div key={artist._id} onClick={() => handleSelect(artist)} className="flex items-center gap-2 p-2 hover:bg-accent hover:text-accent-foreground cursor-pointer text-sm">
-								<div className="w-6 h-6 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
-									<User size={12} />
-								</div>
-								<span className="truncate">{artist.artistName}</span>
-							</div>
-						))
-					)}
-				</div>
-			)}
-		</div>
-	);
-};
-
 const TrackDetailPage = () => {
 	const router = useRouter();
 	const { track_id } = useParams<{ track_id: string }>();
+	console.log(track_id);
 
+	// 1. API Hooks
 	const { data: fetchedTrack, isLoading, isError } = useGetTrack(track_id);
-	const { data: artistsData } = useGetAllArtists({ page: '1', limit: '1000' });
-
 	const updateMutation = useUpdateTrack();
 	const deleteMutation = useDeleteTrack();
 
+	// 2. Local State
 	const [track, setTrack] = useState<TrackData | null>(null);
 	const [activeTab, setActiveTab] = useState('overview');
 	const [salesContracts, setSalesContracts] = useState<SharedRevenueItem[]>([]);
 	const [costsContracts, setCostsContracts] = useState<SharedRevenueItem[]>([]);
 
-	const artistsList = useMemo(() => artistsData?.data || [], [artistsData]);
-
+	// 3. Sync State
 	useEffect(() => {
 		if (fetchedTrack) {
 			setTrack(fetchedTrack);
 			setSalesContracts(fetchedTrack.sharedRevenue || []);
-			setCostsContracts([]);
+			setCostsContracts([]); // Default empty for now
 		}
 	}, [fetchedTrack]);
 
+	// 4. Calculate Analytics (Updated for getReportData structure)
 	const analyticsSummary = useMemo(() => {
 		if (!track || !track.streamAnalyticsRefs || track.streamAnalyticsRefs.length === 0) {
 			return { totalRevenue: 0, currency: 'USD', history: [] };
 		}
 
+		// Sum up the 'total' field from all reports
 		const totalRevenue = track.streamAnalyticsRefs.reduce((acc, curr) => acc + (curr.total || 0), 0);
+
+		// Grab currency from first report (fallback USD)
 		const currency = track.streamAnalyticsRefs[0]?.currency || 'USD';
+
+		// Sort history by activity period (assuming strings like ISO dates or similar sortable formats)
 		const history = [...track.streamAnalyticsRefs].sort((a, b) => (b.activityPeriod || '').localeCompare(a.activityPeriod || ''));
 
 		return { totalRevenue, currency, history };
 	}, [track]);
+
+	// --- Handlers ---
 
 	const handleInputChange = (field: keyof TrackData, value: string) => {
 		setTrack(prev => (prev ? { ...prev, [field]: value } : null));
@@ -195,17 +123,9 @@ const TrackDetailPage = () => {
 
 	const handleCopy = () => console.log('Copy not implemented');
 
-	const addSalesContract = () =>
-		setSalesContracts([
-			...salesContracts,
-			{
-				artistId: '',
-				artistName: '',
-				percentage: 0
-			}
-		]);
+	// --- Contract Handlers ---
+	const addSalesContract = () => setSalesContracts([...salesContracts, { artistId: '', artistName: '', percentage: 0 }]);
 	const removeSalesContract = (index: number) => setSalesContracts(salesContracts.filter((_, i) => i !== index));
-
 	const updateSalesContract = (index: number, field: keyof SharedRevenueItem, value: string | number) => {
 		const updated = [...salesContracts];
 		// @ts-expect-error dynamic assignment
@@ -213,22 +133,7 @@ const TrackDetailPage = () => {
 		setSalesContracts(updated);
 	};
 
-	const updateSalesContractArtist = (index: number, artistId: string, artistName: string) => {
-		const updated = [...salesContracts];
-		updated[index].artistId = artistId;
-		updated[index].artistName = artistName;
-		setSalesContracts(updated);
-	};
-
-	const addCostsContract = () =>
-		setCostsContracts([
-			...costsContracts,
-			{
-				artistId: '',
-				artistName: '',
-				percentage: 0
-			}
-		]);
+	const addCostsContract = () => setCostsContracts([...costsContracts, { artistId: '', artistName: '', percentage: 0 }]);
 	const removeCostsContract = (index: number) => setCostsContracts(costsContracts.filter((_, i) => i !== index));
 	const updateCostsContract = (index: number, field: keyof SharedRevenueItem, value: string | number) => {
 		const updated = [...costsContracts];
@@ -236,14 +141,9 @@ const TrackDetailPage = () => {
 		updated[index][field] = field === 'percentage' ? Number(value) : value;
 		setCostsContracts(updated);
 	};
-	const updateCostsContractArtist = (index: number, artistId: string, artistName: string) => {
-		const updated = [...costsContracts];
-		updated[index].artistId = artistId;
-		updated[index].artistName = artistName;
-		setCostsContracts(updated);
-	};
-
 	const copyFromSales = () => setCostsContracts([...salesContracts]);
+
+	// --- Render ---
 
 	if (isLoading) {
 		return (
@@ -267,6 +167,7 @@ const TrackDetailPage = () => {
 
 	return (
 		<div className="min-h-screen bg-background p-6 space-y-6">
+			{/* Header */}
 			<div className="flex items-center justify-between">
 				<button onClick={() => router.back()} className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
 					<ArrowLeft size={20} />
@@ -294,6 +195,7 @@ const TrackDetailPage = () => {
 				<p className="text-muted-foreground text-lg">{track.artist}</p>
 			</div>
 
+			{/* Tabs */}
 			<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
 				<TabsList className="bg-transparent border-b border-border w-full justify-start overflow-x-auto">
 					{['overview', 'rights', 'aliases', 'releases', 'analytics'].map(tab => (
@@ -303,6 +205,7 @@ const TrackDetailPage = () => {
 					))}
 				</TabsList>
 
+				{/* Overview Tab */}
 				<TabsContent value="overview" className="space-y-6 mt-6">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div className="space-y-2">
@@ -332,6 +235,7 @@ const TrackDetailPage = () => {
 					</div>
 				</TabsContent>
 
+				{/* Rights Tab */}
 				<TabsContent value="rights" className="space-y-6 mt-6">
 					<div>
 						<h2 className="text-2xl font-light text-foreground mb-2">Participation Rates</h2>
@@ -345,7 +249,7 @@ const TrackDetailPage = () => {
 									<div key={index} className="grid grid-cols-[1fr_100px_40px] gap-3 items-end">
 										<div className="space-y-2">
 											<Label className="text-xs text-muted-foreground">CONTRACT</Label>
-											<ArtistSearchInput value={contract.artistName} artists={artistsList} onSelect={(id, name) => updateSalesContractArtist(index, id, name)} placeholder="Search Artist..." />
+											<Input value={contract.artistName} onChange={e => updateSalesContract(index, 'artistName', e.target.value)} className="bg-secondary border-border" placeholder="Artist Name" />
 										</div>
 										<div className="space-y-2">
 											<Label className="text-xs text-muted-foreground">RATE (%)</Label>
@@ -375,7 +279,7 @@ const TrackDetailPage = () => {
 									<div key={index} className="grid grid-cols-[1fr_100px_40px] gap-3 items-end">
 										<div className="space-y-2">
 											<Label className="text-xs text-muted-foreground">CONTRACT</Label>
-											<ArtistSearchInput value={contract.artistName} artists={artistsList} onSelect={(id, name) => updateCostsContractArtist(index, id, name)} placeholder="Search Artist..." />
+											<Input value={contract.artistName} onChange={e => updateCostsContract(index, 'artistName', e.target.value)} className="bg-secondary border-border" />
 										</div>
 										<div className="space-y-2">
 											<Label className="text-xs text-muted-foreground">RATE (%)</Label>
@@ -406,7 +310,9 @@ const TrackDetailPage = () => {
 					</div>
 				</TabsContent>
 
+				{/* Analytics Tab - Updated for getReportData */}
 				<TabsContent value="analytics" className="space-y-6 mt-6">
+					{/* Main Revenue Card */}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 						<div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg p-6 text-white shadow-lg relative overflow-hidden">
 							<div className="relative z-10">
@@ -415,17 +321,14 @@ const TrackDetailPage = () => {
 									<span>TOTAL REVENUE</span>
 								</div>
 								<div className="text-4xl font-bold tracking-tight">
-									{analyticsSummary.currency}{' '}
-									{analyticsSummary.totalRevenue.toLocaleString(undefined, {
-										minimumFractionDigits: 2,
-										maximumFractionDigits: 2
-									})}
+									{analyticsSummary.currency} {analyticsSummary.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 								</div>
 								<p className="text-sm text-blue-200 mt-2 opacity-80">Lifetime earnings from stream analytics</p>
 							</div>
 						</div>
 					</div>
 
+					{/* Revenue History Table */}
 					<div className="space-y-4">
 						<div className="flex items-center gap-2">
 							<Calendar className="text-muted-foreground" size={20} />
