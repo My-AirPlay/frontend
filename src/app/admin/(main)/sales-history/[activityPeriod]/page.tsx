@@ -18,7 +18,7 @@ import { toast } from 'sonner';
 
 const CHART_COLORS = ['#8b5cf6', '#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316'];
 
-const ActivityPeriodPage: React.FC = () => {
+const ActivityPeriodContent: React.FC = () => {
 	const params = useParams<{ activityPeriod: string }>();
 	const activityPeriod = decodeURIComponent(params.activityPeriod);
 	const router = useRouter();
@@ -379,6 +379,11 @@ const ActivityPeriodPage: React.FC = () => {
 			<DeletionProgressModal isOpen={isDeletionModalOpen} onClose={handleCloseDeletionModal} reportIdsToDelete={selectedReportIds} />
 		</div>
 	);
+};
+
+const ActivityPeriodPage: React.FC = () => {
+	const params = useParams<{ activityPeriod: string }>();
+	return <ActivityPeriodContent key={params.activityPeriod} />;
 };
 
 export default ActivityPeriodPage;
