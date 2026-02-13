@@ -13,8 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import DeletionProgressModal from '@/components/ui/delete-records-modal';
 import { formatCurrency } from '@/utils/currency';
-import { Calendar, BarChart3, FileText, DollarSign, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+import { Calendar, BarChart3, FileText, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { NairaIcon } from '@/components/ui/naira-icon';
 
 const CHART_COLORS = ['#8b5cf6', '#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316'];
 
@@ -224,7 +225,7 @@ const ActivityPeriodContent: React.FC = () => {
 			<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 				<div className="rounded-lg p-4 bg-card border border-border">
 					<div className="flex items-center gap-2 mb-2">
-						<DollarSign className="w-4 h-4 text-purple-500" />
+						<NairaIcon className="w-4 h-4 text-purple-500" />
 						<p className="text-xs text-muted-foreground">Gross Revenue</p>
 					</div>
 					<p className="text-lg font-bold text-purple-500">{formatCurrency(summary.totalGrossRevenue, 'NGN')}</p>

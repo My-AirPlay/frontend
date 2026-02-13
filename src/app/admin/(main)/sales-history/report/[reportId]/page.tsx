@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatCurrency } from '@/utils/currency';
-import { BarChart3, Music, Globe, Users, DollarSign, TrendingUp, RefreshCw, Loader2, ArrowRight, AlertTriangle, FileText, Settings } from 'lucide-react';
+import { BarChart3, Music, Globe, Users, TrendingUp, RefreshCw, Loader2, ArrowRight, AlertTriangle, FileText, Settings } from 'lucide-react';
+import { NairaIcon } from '@/components/ui/naira-icon';
 
 const CHART_COLORS = ['#8b5cf6', '#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316'];
 
@@ -129,7 +130,7 @@ const ReportAnalyticsPage: React.FC = () => {
 				</div>
 				<div className="rounded-lg p-4 bg-card border border-border">
 					<div className="flex items-center gap-2 mb-2">
-						<DollarSign className="w-4 h-4 text-purple-500" />
+						<NairaIcon className="w-4 h-4 text-purple-500" />
 						<p className="text-xs text-muted-foreground">Gross</p>
 					</div>
 					<p className="text-lg font-bold text-purple-500">{formatCurrency(summary.totalGrossRevenue, 'NGN')}</p>
@@ -334,7 +335,7 @@ const ReportAnalyticsPage: React.FC = () => {
 
 							<div className="flex items-center gap-3 mb-6">
 								<div className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center">
-									<DollarSign className="w-6 h-6 text-orange-500" />
+									<NairaIcon className="w-6 h-6 text-orange-500" />
 								</div>
 								<div>
 									<h3 className="text-lg font-semibold">Update Exchange Rate</h3>

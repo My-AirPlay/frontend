@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { ArrowLeft, Trash2, Copy, Save, Plus, Loader2, DollarSign, Calendar, Search, User } from 'lucide-react';
+import { ArrowLeft, Trash2, Copy, Save, Plus, Loader2, Calendar, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useRouter, useParams } from 'next/navigation';
 import { useDeleteTrack, useGetTrack, useUpdateTrack } from '@/app/admin/(main)/tracks/api/trackHooks';
 import { useGetAllArtists } from '@/app/admin/(main)/catalogue/api/getAllArtistsParams';
+import { NairaIcon } from '@/components/ui/naira-icon';
 
 interface StreamAnalyticsData {
 	_id: string;
@@ -411,7 +412,7 @@ const TrackDetailPage = () => {
 						<div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg p-6 text-white shadow-lg relative overflow-hidden">
 							<div className="relative z-10">
 								<div className="flex items-center gap-2 text-blue-100 mb-2 font-medium">
-									<DollarSign size={18} />
+									<NairaIcon size={18} />
 									<span>TOTAL REVENUE</span>
 								</div>
 								<div className="text-4xl font-bold tracking-tight">
