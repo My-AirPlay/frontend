@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useMemo, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
-import { Filter, ArrowUp, ArrowDown, XCircle, AlertTriangle, Loader2, Download } from 'lucide-react';
+import { Filter, ArrowUp, ArrowDown, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
 import { DataTable, Input } from '@/components/ui';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -10,8 +10,6 @@ import { formatCurrency } from '@/utils/currency';
 import { useGetAllWithdrawalSlips } from '@/app/admin/(main)/catalogue/api/getAllWithdrawalSlips';
 import { useCancelWithdrawalSlip } from '@/app/admin/(main)/catalogue/api/cancelWithdrawalSlip';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
-import { exportArtistCsvByActivityPeriod } from '@/app/admin/(main)/catalogue/api/exportArtistCsv';
-import { toast } from 'sonner';
 
 // Updated interface to match API response for withdrawal slips
 interface WithdrawalSlipData {
@@ -65,20 +63,6 @@ const ArtistTransactions: React.FC = ({}) => {
 
 	// Cancel mutation
 	const cancelMutation = useCancelWithdrawalSlip();
-
-	const [isExportingCsv, setIsExportingCsv] = useState(false);
-
-	const handleExportCsv = async () => {
-		setIsExportingCsv(true);
-		const allSlips: WithdrawalSlipData[] = withdrawalsData?.data || [];
-		const activityPeriod = allSlips.find(s => s.activityPeriod)?.activityPeriod;
-		if (activityPeriod) {
-			await exportArtistCsvByActivityPeriod(artist_id, activityPeriod);
-		} else {
-			toast.error('No activity period found for this artist.');
-		}
-		setIsExportingCsv(false);
-	};
 
 	// State for search & sorting
 	const [searchTerm, setSearchTerm] = useState<string>(searchParams.get('searchTerm') || '');
@@ -380,19 +364,6 @@ const ArtistTransactions: React.FC = ({}) => {
 			<div className="flex flex-wrap gap-4 justify-between items-center">
 				<h3 className="text-md font-semibold bg-primary/10 text-primary px-3 py-1 rounded">Transactions History</h3>
 				<div className="flex flex-wrap items-center gap-2">
-					<Button variant="secondary" disabled={isExportingCsv} onClick={handleExportCsv}>
-						{isExportingCsv ? (
-							<>
-								<Loader2 className="w-4 h-4 mr-2 animate-spin" />
-								Exporting...
-							</>
-						) : (
-							<>
-								<Download className="w-4 h-4 mr-2" />
-								Export CSV
-							</>
-						)}
-					</Button>
 					<Button
 						variant="secondary"
 						disabled={isPending}
