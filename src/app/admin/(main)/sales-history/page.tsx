@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useMemo, useState, useTransition } from 'react';
-import { TrendingUp, DollarSign, Calendar, FileText, ChevronRight, Users, Loader2 } from 'lucide-react';
+import { TrendingUp, Calendar, FileText, ChevronRight, Users, Loader2 } from 'lucide-react';
+import { NairaIcon } from '@/components/ui/naira-icon';
 import { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '@/components/ui';
 import { useGetGroupedSalesHistory, GroupedSalesHistoryItem } from '@/app/admin/(main)/catalogue/api/getGroupedSalesHistory';
@@ -132,7 +133,7 @@ const SalesHistory: React.FC = () => {
 				<div className="rounded-lg p-4 bg-card border border-border">
 					<div className="flex items-center justify-between mb-2">
 						<div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-							<DollarSign className="w-5 h-5 text-purple-500" />
+							<NairaIcon className="w-5 h-5 text-purple-500" />
 						</div>
 						<TrendingUp className="w-4 h-4 text-purple-500" />
 					</div>
@@ -144,7 +145,7 @@ const SalesHistory: React.FC = () => {
 				<div className="rounded-lg p-4 bg-card border border-border">
 					<div className="flex items-center justify-between mb-2">
 						<div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
-							<DollarSign className="w-5 h-5 text-green-500" />
+							<NairaIcon className="w-5 h-5 text-green-500" />
 						</div>
 						<TrendingUp className="w-4 h-4 text-green-500" />
 					</div>

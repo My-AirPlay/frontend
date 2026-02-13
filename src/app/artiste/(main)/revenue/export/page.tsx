@@ -6,7 +6,7 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { Button, DataTable } from '@/components/ui';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { Download, FileText } from 'lucide-react';
-import { exportAnalyticsCsv, ReportPeriodPair, useGetReportPeriodPairs } from '@/app/artiste/(main)/dashboard/misc/api';
+import { exportAnalyticsCsv, exportByActivityPeriodCsv, ReportPeriodPair, useGetReportPeriodPairs } from '@/app/artiste/(main)/dashboard/misc/api';
 
 const ExportPage: React.FC = () => {
 	const { artist } = useAuthContext();
@@ -14,11 +14,16 @@ const ExportPage: React.FC = () => {
 
 	const { data: reports, isLoading } = useGetReportPeriodPairs(artistId!);
 
-	// State to track which specific report is currently being downloaded
 	const [exportingId, setExportingId] = useState<string | null>(null);
 
 	const handleExport = async (report: ReportPeriodPair) => {
-		setExportingId(report.reportId + report.activityPeriod); // Create a unique ID for the loading state
+		setExportingId(report.reportId + report.activityPeriod);
+		await exportByActivityPeriodCsv(report.activityPeriod, report.reportId);
+		setExportingId(null);
+	};
+
+	const handleExportLegacy = async (report: ReportPeriodPair) => {
+		setExportingId('legacy-' + report.reportId + report.activityPeriod);
 		await exportAnalyticsCsv(artistId!, report.reportId, report.activityPeriod);
 		setExportingId(null);
 	};
@@ -29,7 +34,6 @@ const ExportPage: React.FC = () => {
 				accessorKey: 'reportId',
 				header: 'Report Name',
 				cell: ({ row }) => {
-					// Extract the name part from the reportId (e.g., "MyAirplay-F")
 					const name = row.original.reportId.split(':')[0];
 					return (
 						<div className="flex items-center gap-3">
@@ -51,20 +55,25 @@ const ExportPage: React.FC = () => {
 				header: () => <div className="text-right">Actions</div>,
 				cell: ({ row }) => {
 					const uniqueId = row.original.reportId + row.original.activityPeriod;
-					const isExporting = exportingId === uniqueId;
+					const isExportingDetailed = exportingId === uniqueId;
+					const isExportingLegacy = exportingId === 'legacy-' + uniqueId;
 
 					return (
-						<div className="text-right">
-							<Button variant="ghost" size="sm" onClick={() => handleExport(row.original)} disabled={isExporting} isLoading={isExporting}>
+						<div className="text-right flex justify-end gap-2">
+							<Button variant="ghost" size="sm" onClick={() => handleExport(row.original)} disabled={!!exportingId} isLoading={isExportingDetailed}>
 								<Download size={16} className="mr-2" />
-								Export
+								Detailed Export
+							</Button>
+							<Button variant="outline" size="sm" onClick={() => handleExportLegacy(row.original)} disabled={!!exportingId} isLoading={isExportingLegacy}>
+								<Download size={16} className="mr-2" />
+								Summary
 							</Button>
 						</div>
 					);
 				}
 			}
 		],
-		[exportingId, artistId] // Dependency array for useMemo
+		[exportingId, artistId]
 	);
 
 	return (

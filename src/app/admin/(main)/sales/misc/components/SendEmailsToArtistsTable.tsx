@@ -64,7 +64,12 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 	};
 
 	const columns = [
-		{ id: 'artistName', header: 'Artist Name', accessorKey: 'artistName' },
+		{
+			id: 'artistName',
+			header: 'Artist Name',
+			accessorKey: 'artistName',
+			cell: (info: any) => <span>{info.row.original?.artistName || 'Unknown Artist'}</span>
+		},
 		{ id: 'activityPeriod', header: 'Activity Period', accessorKey: 'activityPeriod' },
 		{ id: 'totalRoyalty', header: 'Gross Revenue(₦)', accessorFn: (row: any) => getRoyalty(row) }
 	];

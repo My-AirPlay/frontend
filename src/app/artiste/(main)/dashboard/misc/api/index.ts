@@ -148,3 +148,26 @@ export const exportAnalyticsCsv = async (artistId: string, reportId: string, act
 		toast.error('Could not generate the report. Please try again.');
 	}
 };
+
+export const exportByActivityPeriodCsv = async (activityPeriod: string, reportId?: string) => {
+	try {
+		const params = reportId ? `?reportId=${encodeURIComponent(reportId)}` : '';
+		const response = await APIAxios.get(`/artist/export-by-activity-period/${encodeURIComponent(activityPeriod)}${params}`, { responseType: 'blob' });
+
+		const url = window.URL.createObjectURL(new Blob([response.data]));
+		const link = document.createElement('a');
+		link.href = url;
+
+		const filename = `revenue-report-${activityPeriod}${reportId ? '-' + reportId.split(':')[0] : ''}.csv`;
+		link.setAttribute('download', filename);
+		document.body.appendChild(link);
+		link.click();
+		link.parentNode?.removeChild(link);
+		window.URL.revokeObjectURL(url);
+
+		toast.success('Your report is downloading!');
+	} catch (error) {
+		console.error('Failed to export CSV:', error);
+		toast.error('Could not generate the report. Please try again.');
+	}
+};

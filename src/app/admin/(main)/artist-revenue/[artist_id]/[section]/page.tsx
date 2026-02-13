@@ -10,9 +10,10 @@ import { useGetOneArtist } from '../../../catalogue/api/getOneArtist';
 import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips';
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { WithdrawalSlipData } from '@/lib/types';
-import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, DollarSign, Receipt } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, Receipt } from 'lucide-react';
 import { formatCurrency } from '@/utils/currency';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
+import { NairaIcon } from '@/components/ui/naira-icon';
 
 const ArtistRevenueDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
@@ -117,7 +118,7 @@ const ArtistRevenueDetails: React.FC = () => {
 				<div className="rounded-lg p-4 bg-card border border-border">
 					<div className="flex items-center justify-between mb-2">
 						<div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-							<DollarSign className="w-5 h-5 text-emerald-500" />
+							<NairaIcon className="w-5 h-5 text-emerald-500" />
 						</div>
 						<TrendingUp className="w-4 h-4 text-emerald-500" />
 					</div>

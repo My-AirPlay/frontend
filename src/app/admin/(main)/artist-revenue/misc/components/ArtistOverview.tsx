@@ -1,10 +1,13 @@
-import React from 'react';
-import { Loader2 } from 'lucide-react'; // Removed ArrowRight
+import React, { useState, useMemo } from 'react';
+import { Loader2, Download } from 'lucide-react';
 import { formatCurrency } from '@/utils/currency';
 import { useParams } from 'next/navigation';
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
-// Removed Button and Image imports as they are no longer used in this component's core logic
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { exportArtistCsvByActivityPeriod } from '@/app/admin/(main)/catalogue/api/exportArtistCsv';
 
 // Define interfaces for the delivery breakdown structure
 interface PeriodBreakdownItem {
@@ -34,13 +37,78 @@ const ArtistOverview: React.FC = ({}) => {
 	});
 	const { convertCurrency, currency: contextCurrency } = useCurrency();
 
-	// Removed mock data (streamingItems, downloadItems)
+	// Export CSV state
+	const [exportDialogOpen, setExportDialogOpen] = useState(false);
+	const [selectedPeriod, setSelectedPeriod] = useState<string>('');
+	const [isExportingCsv, setIsExportingCsv] = useState(false);
 
-	// The main return now maps each platform in the breakdown to its own section
+	// Extract unique activity periods from analytics periodSummary
+	const activityPeriods = useMemo(() => {
+		if (!artistAnalytics?.periodSummary) return [];
+		return Object.keys(artistAnalytics.periodSummary).sort();
+	}, [artistAnalytics]);
+
+	const handleExportCsv = async () => {
+		if (!selectedPeriod) return;
+		setIsExportingCsv(true);
+		await exportArtistCsvByActivityPeriod(artist_id, selectedPeriod);
+		setIsExportingCsv(false);
+		setExportDialogOpen(false);
+		setSelectedPeriod('');
+	};
+
 	return (
 		<div className="space-y-8">
-			{' '}
-			{/* Restored original outer div class */}
+			{/* Export CSV Button */}
+			<div className="flex justify-end">
+				<Button variant="secondary" onClick={() => setExportDialogOpen(true)} disabled={activityPeriods.length === 0 || artistAnalyticsLoading}>
+					<Download className="w-4 h-4 mr-2" />
+					Export CSV
+				</Button>
+			</div>
+
+			{/* Export CSV Dialog */}
+			<Dialog open={exportDialogOpen} onOpenChange={setExportDialogOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>Export Revenue CSV</DialogTitle>
+						<DialogDescription>Select an activity period to export the revenue report.</DialogDescription>
+					</DialogHeader>
+					<div className="py-4">
+						<Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+							<SelectTrigger className="w-full">
+								<SelectValue placeholder="Select activity period" />
+							</SelectTrigger>
+							<SelectContent>
+								{activityPeriods.map(period => (
+									<SelectItem key={period} value={period}>
+										{period}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+					<DialogFooter className="gap-2 sm:gap-0">
+						<Button variant="outline" onClick={() => setExportDialogOpen(false)} disabled={isExportingCsv}>
+							Cancel
+						</Button>
+						<Button onClick={handleExportCsv} disabled={!selectedPeriod || isExportingCsv}>
+							{isExportingCsv ? (
+								<>
+									<Loader2 className="w-4 h-4 mr-2 animate-spin" />
+									Exporting...
+								</>
+							) : (
+								<>
+									<Download className="w-4 h-4 mr-2" />
+									Export
+								</>
+							)}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
 			{artistAnalyticsLoading ? (
 				// Display a single loading indicator for the whole overview
 				<div className="flex items-center justify-center p-8 text-admin-muted rounded-lg border-[0.5px] border-[#383838] bg-[#1f1f1f]">
