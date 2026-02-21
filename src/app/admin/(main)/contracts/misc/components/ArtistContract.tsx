@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SelectSimple, SingleDatePicker } from '@/components/ui';
+import { SingleDatePicker } from '@/components/ui';
 import { Artist } from '@/lib/types';
 import Link from 'next/link';
 import { useUpdateArtistContract, useUploadArtistContract } from '../../../catalogue/api/postAdminUploadArtistContract';
@@ -118,23 +118,6 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 				<SingleDatePicker label="Start Date" value={startDate} onChange={setStartDate} />
 
 				<SingleDatePicker label="End Date" value={endDate} onChange={() => {}} disabled />
-			</div>
-
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<SelectSimple
-					label="Payment Currency"
-					options={[
-						{ value: 'USD', label: 'USD' },
-						{ value: 'EUR', label: 'EUR' },
-						{ value: 'GBP', label: 'GBP' },
-						{ value: 'NGN', label: 'NGN' }
-					]}
-					valueKey="value"
-					labelKey="label"
-					defaultValue={artist?.contractDetails?.status || ''}
-					placeholder="Select currency"
-					onChange={setStatus}
-				/>
 			</div>
 
 			{artist?.contractDetails?.contract && (

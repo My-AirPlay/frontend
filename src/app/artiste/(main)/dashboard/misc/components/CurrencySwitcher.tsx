@@ -7,9 +7,19 @@ import { Currency, useCurrency } from '@/app/artiste/context/CurrencyContext';
 const normalizeCurrency = (currency?: string | null): Currency => {
 	switch (currency?.toLowerCase()) {
 		case 'naira':
+		case 'ngn':
 			return 'NGN';
+		case 'dollar':
+		case 'usd':
+			return 'USD';
+		case 'euro':
+		case 'eur':
+			return 'EUR';
+		case 'pounds':
+		case 'gbp':
+			return 'GBP';
 		default:
-			return (currency as Currency) || 'NGN';
+			return 'NGN';
 	}
 };
 export const CurrencySwitcher: FC = () => {

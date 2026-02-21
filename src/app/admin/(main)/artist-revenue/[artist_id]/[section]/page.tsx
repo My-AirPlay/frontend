@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -10,16 +10,50 @@ import { useGetOneArtist } from '../../../catalogue/api/getOneArtist';
 import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips';
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { WithdrawalSlipData } from '@/lib/types';
-import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, Receipt } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, Receipt, ArrowLeftRight } from 'lucide-react';
 import { formatCurrency } from '@/utils/currency';
-import { useCurrency } from '@/app/artiste/context/CurrencyContext';
+import { Currency, useCurrency } from '@/app/artiste/context/CurrencyContext';
 import { NairaIcon } from '@/components/ui/naira-icon';
+import { Button } from '@/components/ui/button';
+
+const normalizeCurrency = (currency?: string | null): Currency => {
+	switch (currency?.toLowerCase()) {
+		case 'naira':
+		case 'ngn':
+			return 'NGN';
+		case 'dollar':
+		case 'usd':
+			return 'USD';
+		case 'euro':
+		case 'eur':
+			return 'EUR';
+		case 'pounds':
+		case 'gbp':
+			return 'GBP';
+		default:
+			return 'NGN';
+	}
+};
 
 const ArtistRevenueDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
-	const { convertCurrency, currency: contextCurrency } = useCurrency();
+	const { convertCurrency, currency: contextCurrency, setCurrency } = useCurrency();
 
 	const { data: artist } = useGetOneArtist({ artistId: artist_id });
+
+	// Detect artist's currency from bank details
+	const artistCurrency = normalizeCurrency(artist?.bankDetails?.currency);
+	const hasOtherCurrency = artistCurrency !== 'NGN';
+
+	// Reset to NGN when entering this page and on unmount
+	useEffect(() => {
+		setCurrency('NGN');
+		return () => setCurrency('NGN');
+	}, [setCurrency]);
+
+	const toggleCurrency = () => {
+		setCurrency(contextCurrency === 'NGN' ? artistCurrency : 'NGN');
+	};
 
 	// Fetch withdrawal slips
 	const { data: withdrawalsData } = useGetAllWithdrawalSlips({
@@ -105,9 +139,17 @@ const ArtistRevenueDetails: React.FC = () => {
 							<p className="text-xs text-white/50">{artist?.email || ''}</p>
 						</div>
 					</div>
-					<div className="text-right">
-						<p className="text-xs text-white/60 uppercase tracking-wider">Available Balance</p>
-						<h3 className="text-3xl font-bold text-primary">{formatCurrency(convertCurrency(balance), contextCurrency)}</h3>
+					<div className="flex items-center gap-4">
+						{hasOtherCurrency && (
+							<Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10 hover:text-white gap-2" onClick={toggleCurrency}>
+								<ArrowLeftRight className="w-4 h-4" />
+								{contextCurrency === 'NGN' ? `View in ${artistCurrency}` : 'View in NGN'}
+							</Button>
+						)}
+						<div className="text-right">
+							<p className="text-xs text-white/60 uppercase tracking-wider">Available Balance</p>
+							<h3 className="text-3xl font-bold text-primary">{formatCurrency(convertCurrency(balance), contextCurrency)}</h3>
+						</div>
 					</div>
 				</div>
 			</section>

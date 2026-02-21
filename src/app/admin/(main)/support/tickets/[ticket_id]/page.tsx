@@ -1,9 +1,9 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Send, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, MessageSquare, Send, X } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui';
+import { Button, Input } from '@/components/ui';
 import Link from 'next/link';
 import { useUpdateComplaintStatus } from '../../api/patchComplaintStatus';
 import { useGetAllComplaintById, useGetSingleComplaint, useReportIssue } from '../../api/getSingleComplaint';
@@ -11,6 +11,12 @@ import moment from 'moment';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { LoadingBox } from '@/components/ui/LoadingBox';
+
+const statusBadgeClasses: Record<string, string> = {
+	Pending: 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
+	Processing: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+	Resolved: 'bg-green-500/20 text-green-400 border border-green-500/30'
+};
 
 const TicketDetails: React.FC = () => {
 	const searchParams = useSearchParams();
@@ -22,11 +28,16 @@ const TicketDetails: React.FC = () => {
 	const [previewAttachmentUrl, setPreviewAttachmentUrl] = useState<string | null>(null);
 	const [previewAttachmentType, setPreviewAttachmentType] = useState<'image' | 'video' | null>(null);
 
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+
 	const { data: messages, refetch: refetchMessages } = useGetAllComplaintById({ complaintId });
 	const { data: ticket, isPending: isPendingTicket, refetch: refetchTicket } = useGetSingleComplaint({ complaintId: complaintId });
 
 	const { mutate, isPending } = useUpdateComplaintStatus();
 	const { mutate: createComplaint, isPending: isCreatingComplaint } = useReportIssue();
+
+	const isResolved = ticket?.complain?.status === 'Resolved';
+	const artistName = ticket?.artistName || 'Artist';
 
 	// Sync message list from API
 	useEffect(() => {
@@ -35,8 +46,13 @@ const TicketDetails: React.FC = () => {
 		}
 	}, [messages]);
 
+	// Auto-scroll to bottom on new messages
+	useEffect(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+	}, [messageList]);
+
 	const sendMessage = () => {
-		if (!newMessage.trim()) return;
+		if (!newMessage.trim() || isResolved) return;
 
 		// Append locally for instant UI feedback (optional)
 		const newMsg = {
@@ -68,6 +84,13 @@ const TicketDetails: React.FC = () => {
 		setNewMessage('');
 	};
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			sendMessage();
+		}
+	};
+
 	const openAttachmentPreview = (url: string) => {
 		// Simple extension check
 		const ext = url.split('.').pop()?.toLowerCase() || '';
@@ -84,6 +107,12 @@ const TicketDetails: React.FC = () => {
 		setPreviewAttachmentUrl(null);
 		setPreviewAttachmentType(null);
 	};
+
+	const renderStatusBadge = (status: string) => {
+		const classes = statusBadgeClasses[status] || 'bg-gray-500/20 text-gray-400 border border-gray-500/30';
+		return <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${classes}`}>{status}</span>;
+	};
+
 	return (
 		<div className="bg-custom-gradient rounded-lg text-white min-h-[70vh] flex flex-col justify-between">
 			<div className="mx-auto px-6 py-4 w-full">
@@ -103,28 +132,30 @@ const TicketDetails: React.FC = () => {
 						{/* Ticket Info */}
 						<div className="rounded-lg p-6 mb-6 mr-10">
 							<div className="grid md:grid-cols-2 gap-4 max-w-2xl">
-								{[
-									{ label: 'User', value: ticket?.artistName },
-									{ label: 'Email Address', value: ticket?.email },
-									{
-										label: 'Subject Title',
-										value: ticket?.complain?.complaintType
-									},
-									{
-										label: 'Date Submitted',
-										value: moment(ticket?.dateSubmitted).format('DD MMM, YYYY')
-									},
-									{ label: 'Status', value: ticket?.complain?.status },
-									{
-										label: 'Ticket ID',
-										value: ticket?.complain?.complaintId
-									}
-								].map(({ label, value }) => (
-									<div key={label}>
-										<p className="text-[#D8D8D8] text-sm mb-1">{label}</p>
-										<p className="font-medium">{value || '-'}</p>
-									</div>
-								))}
+								<div>
+									<p className="text-[#D8D8D8] text-sm mb-1">User</p>
+									<p className="font-medium">{ticket?.artistName || '-'}</p>
+								</div>
+								<div>
+									<p className="text-[#D8D8D8] text-sm mb-1">Email Address</p>
+									<p className="font-medium">{ticket?.email || '-'}</p>
+								</div>
+								<div>
+									<p className="text-[#D8D8D8] text-sm mb-1">Subject Title</p>
+									<p className="font-medium">{ticket?.complain?.complaintType || '-'}</p>
+								</div>
+								<div>
+									<p className="text-[#D8D8D8] text-sm mb-1">Date Submitted</p>
+									<p className="font-medium">{moment(ticket?.dateSubmitted).format('DD MMM, YYYY')}</p>
+								</div>
+								<div>
+									<p className="text-[#D8D8D8] text-sm mb-1">Status</p>
+									<div className="mt-1">{ticket?.complain?.status ? renderStatusBadge(ticket.complain.status) : <p className="font-medium">-</p>}</div>
+								</div>
+								<div>
+									<p className="text-[#D8D8D8] text-sm mb-1">Ticket ID</p>
+									<p className="font-medium">{ticket?.complain?.complaintId || '-'}</p>
+								</div>
 							</div>
 						</div>
 
@@ -133,33 +164,45 @@ const TicketDetails: React.FC = () => {
 							<h3 className="text-white mb-2">Ticket Conversation</h3>
 
 							<div className="p-4 space-y-4 min-h-[400px] max-h-[500px] overflow-y-auto bg-muted/10 rounded-md">
-								{messageList.map(msg => (
-									<div key={msg.id} className={`flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}>
-										<div className={`max-w-[70%] w-[70%] p-3 rounded-lg ${msg.sender === 'admin' ? 'bg-primary text-white' : 'bg-white text-black'}`}>
-											<p className="text-sm">{msg.content}</p>
-											{msg.time && <p className="text-xs text-right mt-1 text-white/60">{msg.time}</p>}
-											{msg.isAttachment && (
-												<div className="w-full justify-end flex p-8 bg-background cursor-pointer" onClick={() => openAttachmentPreview(msg.isAttachment)} title="Click to preview attachment">
-													<Image src={msg.isAttachment} className="rounded-md mt-4 justify-end aspect-video object-contain" width={200} height={200} alt="ticket attachment" />
-												</div>
-											)}
-										</div>
+								{messageList.length === 0 ? (
+									<div className="flex flex-col items-center justify-center h-[380px] text-muted-foreground">
+										<MessageSquare size={48} className="mb-4 opacity-40" />
+										<p className="text-sm opacity-60">No messages yet. Start the conversation below.</p>
 									</div>
-								))}
+								) : (
+									messageList.map(msg => {
+										const isAdmin = msg.sender === 'admin';
+										return (
+											<div key={msg.id} className={`flex flex-col ${isAdmin ? 'items-end' : 'items-start'}`}>
+												<p className={`text-xs mb-1 px-1 ${isAdmin ? 'text-white/50' : 'text-white/50'}`}>{isAdmin ? 'You' : artistName}</p>
+												<div className={`max-w-[70%] p-3 rounded-lg ${isAdmin ? 'bg-primary text-white rounded-br-none' : 'bg-muted text-white rounded-bl-none'}`}>
+													<p className="text-sm">{msg.content}</p>
+													{msg.time && <p className={`text-xs text-right mt-1 ${isAdmin ? 'text-white/60' : 'text-white/40'}`}>{msg.time}</p>}
+													{msg.isAttachment && (
+														<div className="w-full justify-end flex p-8 bg-background cursor-pointer" onClick={() => openAttachmentPreview(msg.isAttachment)} title="Click to preview attachment">
+															<Image src={msg.isAttachment} className="rounded-md mt-4 justify-end aspect-video object-contain" width={200} height={200} alt="ticket attachment" />
+														</div>
+													)}
+												</div>
+											</div>
+										);
+									})
+								)}
+								<div ref={messagesEndRef} />
 							</div>
 						</div>
 
 						{/* Message Input */}
 						<div className="flex items-center gap-4 px-4 py-2 bg-background rounded-lg">
-							<input value={newMessage} onChange={e => setNewMessage(e.target.value)} className="flex-grow p-2 rounded-md text-black text-sm" placeholder="Type your message..." />
-							<Button size="icon" onClick={sendMessage} disabled={isPending || isCreatingComplaint}>
+							{isResolved ? <p className="flex-grow text-sm text-muted-foreground py-2 px-2">This ticket is resolved. Re-open to reply.</p> : <Input value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={handleKeyDown} className="flex-grow text-sm" placeholder="Type your message..." disabled={isResolved} />}
+							<Button size="icon" onClick={sendMessage} disabled={isPending || isCreatingComplaint || isResolved}>
 								<Send size={16} />
 							</Button>
 						</div>
 
 						{/* Status Actions */}
 						<div className="flex flex-col gap-4 items-center justify-center mt-6 mb-4">
-							{ticket?.complain?.status === 'Resolved' ? (
+							{isResolved ? (
 								<Button
 									variant="outline"
 									disabled={isPending}
@@ -171,7 +214,7 @@ const TicketDetails: React.FC = () => {
 													toast.success('Ticket has been Re-opened');
 													refetchTicket();
 												},
-												onError: error => toast.error(error.message || 'Failed to update ticket')
+												onError: (error: any) => toast.error(error.message || 'Failed to update ticket')
 											}
 										)
 									}
@@ -190,7 +233,7 @@ const TicketDetails: React.FC = () => {
 													toast.success('Ticket has been closed');
 													refetchTicket();
 												},
-												onError: error => toast.error(error.message || 'Failed to update ticket')
+												onError: (error: any) => toast.error(error.message || 'Failed to update ticket')
 											}
 										)
 									}
