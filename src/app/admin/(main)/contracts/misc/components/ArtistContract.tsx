@@ -60,7 +60,7 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 		setEndDate(newEndDate);
 	}, [startDate]); // The dependency array makes this effect reactive to startDate changes.
 
-	const [status, setStatus] = useState<string>(artist?.contractDetails?.status || 'ACTIVE');
+	const [status] = useState<string>(artist?.contractDetails?.status || 'ACTIVE');
 
 	const handlePrimaryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
