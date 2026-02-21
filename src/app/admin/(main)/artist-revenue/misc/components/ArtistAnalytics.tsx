@@ -32,25 +32,6 @@ interface TopItem {
 	totalRevenue: number;
 }
 
-type Breakdown = {
-	streams: number;
-	revenue: number;
-};
-
-type PeriodBreakdown = {
-	[period: string]: Breakdown;
-};
-
-type CountryBreakdown = {
-	[countryCode: string]: {
-		periodBreakdown: PeriodBreakdown;
-	};
-};
-
-type ArtistAnalyticsData = {
-	countryBreakdown?: CountryBreakdown;
-};
-
 export type ProcessedCountryPeriodData = {
 	streams: ChartDatum[];
 	revenue: ChartDatum[];

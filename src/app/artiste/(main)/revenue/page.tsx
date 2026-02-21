@@ -39,8 +39,8 @@ const ArtistRevenuePage: React.FC = () => {
 	const balance = totalCredits - totalDebits;
 
 	// 4. Combine and sort all transactions for display in the table
-	const allTransactions = useMemo(() => {
-		const formattedCredits = creditTransactions.map(slip => {
+	const allTransactions = useMemo<Transaction[]>(() => {
+		const formattedCredits: Transaction[] = creditTransactions.map(slip => {
 			let description = `Royalty Payout (${slip.activityPeriods.join(', ')})`;
 			if (slip.activityPeriods.length == 0) {
 				description = 'Account credit by Admin';
@@ -50,17 +50,15 @@ const ArtistRevenuePage: React.FC = () => {
 				description: description,
 				type: 'Credit' as const,
 				status: slip.status,
-				action: 'Processed',
 				amount: Number(slip.totalRevenue) || 0
 			};
 		});
 
-		const formattedDebits = debitTransactions.map(slip => ({
+		const formattedDebits: Transaction[] = debitTransactions.map(slip => ({
 			date: slip.createdAt,
-			description: slip.notes,
+			description: slip.notes || '',
 			type: 'Debit' as const,
 			status: slip.status,
-			action: 'Processed',
 			amount: Number(slip.totalRevenue) || 0
 		}));
 
