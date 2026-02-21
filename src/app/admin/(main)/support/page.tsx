@@ -84,7 +84,7 @@ const Help: React.FC = () => {
 					<div className="flex justify-between items-center mb-4">
 						<h2 className="text-lg font-medium">Most Recent Ticket</h2>
 						{recentTicket?._id && (
-							<Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => router.push(`/admin/support/tickets/${recentTicket?._id}`)}>
+							<Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => router.push(`/admin/support/tickets/${recentTicket?._id}?complaintId=${recentTicket?.complaintId}`)}>
 								See Details
 							</Button>
 						)}

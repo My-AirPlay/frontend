@@ -57,7 +57,7 @@ const ArtistRevenuePage: React.FC = () => {
 
 		const formattedDebits = debitTransactions.map(slip => ({
 			date: slip.createdAt,
-			description: 'Withdrawal to artist account by Admin',
+			description: slip.notes,
 			type: 'Debit' as const,
 			status: slip.status,
 			action: 'Processed',

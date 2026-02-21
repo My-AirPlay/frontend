@@ -23,7 +23,7 @@ export default function SectionBankDetails() {
 		sortCode: artist?.bankDetails?.sortCode?.toString() || '',
 		ibanSwiftCode: artist?.bankDetails?.ibanSwiftCode || '',
 		payoutOption: artist?.bankDetails?.paymentOption || 'monthly',
-		currency: artist?.bankDetails?.currency || 'naira'
+		currency: artist?.bankDetails?.currency || 'NGN'
 	};
 
 	const form = useForm<BankFormValues>({
@@ -62,10 +62,10 @@ export default function SectionBankDetails() {
 	];
 
 	const currencyOptions = [
-		{ label: '₦ (Naira)', value: 'naira' },
-		{ label: '$ (USD)', value: 'usd' },
-		{ label: '€ (EUR)', value: 'eur' },
-		{ label: '£ (GBP)', value: 'gbp' }
+		{ label: '₦ (NGN)', value: 'NGN' },
+		{ label: '$ (USD)', value: 'USD' },
+		{ label: '€ (EUR)', value: 'EUR' },
+		{ label: '£ (GBP)', value: 'GBP' }
 	];
 
 	if (isLoading) {

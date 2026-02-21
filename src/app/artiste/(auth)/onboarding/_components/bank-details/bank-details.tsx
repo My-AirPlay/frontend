@@ -83,7 +83,7 @@ const OnboardingBankDetail = ({ email, setCurrentStep }: OnboardingBankDetailPro
 			ibanSwiftCode: artist?.bankDetails?.ibanSwiftCode ?? '',
 			bvn: artist?.bankDetails?.bvn ?? '',
 			bankCode: artist?.bankDetails?.bankCode ?? '',
-			currency: artist?.bankDetails?.currency ?? 'naira',
+			currency: artist?.bankDetails?.currency ?? 'NGN',
 			sortCode: '',
 			paymentOption: 'Monthly'
 		}

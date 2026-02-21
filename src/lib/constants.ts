@@ -253,20 +253,20 @@ export const paymentOptions = [
 
 export const currencyOptions = [
 	{
-		label: '₦ (Naira)',
-		value: '₦ (Naira)'
+		label: '₦ (NGN)',
+		value: 'NGN'
 	},
 	{
 		label: '$ (USD)',
-		value: '$ (USD)'
+		value: 'USD'
 	},
 	{
-		label: '€ (Euro)',
-		value: '€ (Euro)'
+		label: '€ (EUR)',
+		value: 'EUR'
 	},
 	{
-		label: '£ (Pounds)',
-		value: '£ (Pounds)'
+		label: '£ (GBP)',
+		value: 'GBP'
 	}
 ];
 

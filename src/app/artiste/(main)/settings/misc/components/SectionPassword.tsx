@@ -40,7 +40,7 @@ export default function SectionPassword() {
 						<div className="text-center">
 							<p className="text-muted-foreground mb-4">Change your password to keep your account secure</p>
 							<Button onClick={handleRequestOTP} className="px-8">
-								Request OTP to Change Password
+								Send Password Reset Link
 								{isPending && <SmallSpinner />}
 							</Button>
 						</div>
