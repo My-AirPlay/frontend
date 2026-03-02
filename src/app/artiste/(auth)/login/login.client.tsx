@@ -24,15 +24,15 @@ const LoginPageClient = () => {
 		mutationFn: loginArtistUser,
 		onSuccess: async ({ data, error }) => {
 			await checkAuthStatus();
-			console.log(process.env.ADMIN_EMAIL, 'admin email');
-			if (data?.user.email == process.env.ADMIN_EMAIL) {
-				router.replace('/admin/dashboard');
-				return;
-			}
+			console.log(error);
 			if (error) {
 				if (error.code === '500') return;
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				toast.error((error.response?.data as any).message);
+				return;
+			}
+			if (!data) {
+				toast.error('Invalid credentials');
 				return;
 			}
 			if (data.user.stage === userProfileStage.verifyEmail) {

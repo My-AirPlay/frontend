@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useMemo, ReactNode, FC, useEffect } from 'react';
-import { useGetRates } from '@/app/admin/(main)/catalogue/api/getRates';
+import { useGetRates } from '@/app/artiste/(main)/misc/api/getRates';
 
 // Define the currency types for type safety
 export type Currency = 'NGN' | 'USD' | 'EUR' | 'GBP';

@@ -18,13 +18,13 @@ import AuthWrapper from '@/app/artiste/(auth)/misc/components/auth-wrapper';
 import AuthActions from '@/app/artiste/(auth)/misc/components/auth-actions';
 import { setArtistAccessToken } from '@/actions/auth/auth.action'; // To set tokens
 import { AxiosError } from 'axios';
-import { loginArtistUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
+import { loginAdminUser } from '@/app/artiste/(auth)/misc/api/mutations/auth.mutations';
 
 const AdminLoginPageClient = () => {
 	const router = useRouter();
 	const { checkAuthStatus, logout } = useAuthContext(); // Changed from useArtisteContext
 	const { mutate, status } = useMutation({
-		mutationFn: loginArtistUser,
+		mutationFn: loginAdminUser,
 		onSuccess: async data => {
 			// Simplified success logic for admin
 			// Assuming data contains { access: string, refresh: string, user: object }
