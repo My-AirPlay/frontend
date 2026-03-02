@@ -59,6 +59,34 @@ export const useListAllIssue = (params: GetAllIssues) => {
 	});
 };
 
+interface GetSingleComplaintParams {
+	complaintId: string;
+}
+
+const getSingleComplaint = async ({ complaintId }: GetSingleComplaintParams) => {
+	const response = await APIAxios.get(`/artist/single_complaint/${complaintId}`);
+	return response.data;
+};
+
+const getAllComplaintMessages = async ({ complaintId }: GetSingleComplaintParams) => {
+	const response = await APIAxios.get(`/artist/complaint/${complaintId}`);
+	return response.data;
+};
+
+export const useGetAllComplaintById = (params: GetSingleComplaintParams) => {
+	return useQuery({
+		queryKey: ['allComplaint', params.complaintId],
+		queryFn: () => getAllComplaintMessages(params)
+	});
+};
+
+export const useGetSingleComplaint = (params: GetSingleComplaintParams) => {
+	return useQuery({
+		queryKey: ['singleComplaint', params.complaintId],
+		queryFn: () => getSingleComplaint(params)
+	});
+};
+
 interface APIResponse {
 	total: number;
 	page: null;

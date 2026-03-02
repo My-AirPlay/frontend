@@ -8,7 +8,7 @@ import moment from 'moment';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { LoadingBox } from '@/components/ui/LoadingBox';
-import { useGetAllComplaintById, useGetSingleComplaint } from '@/app/admin/(main)/support/api/getSingleComplaint';
+import { useGetAllComplaintById, useGetSingleComplaint } from '@/app/artiste/(main)/support/misc/api';
 import { useReportIssue } from '@/app/artiste/(main)/support/misc/api';
 
 const getStatusBadge = (status: string | undefined) => {

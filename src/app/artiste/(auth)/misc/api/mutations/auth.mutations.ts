@@ -92,6 +92,27 @@ export const loginArtistUser = async (userInfo: InferType<typeof loginSchema>) =
 	}
 };
 
+export const loginAdminUser = async (userInfo: InferType<typeof loginSchema>) => {
+	try {
+		const { data } = await APIAxios.post<IArtistLoginAPIResponse>('/artist/signin?as=admin', userInfo);
+		setAxiosDefaultToken(data.accessToken);
+		await setArtistAccessToken({
+			access: data.accessToken,
+			refresh: data.refreshToken
+		});
+
+		return {
+			data,
+			error: null
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error as AxiosError
+		};
+	}
+};
+
 export const verifyUser = async ({ email, verificationCode }: { email: string; verificationCode: string }) => {
 	try {
 		const { data } = await APIAxios.post('/artist/verify-email', {
