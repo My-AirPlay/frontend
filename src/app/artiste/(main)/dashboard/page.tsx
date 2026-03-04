@@ -4,7 +4,7 @@ import { useGetDashboardData } from './misc/api';
 import { formatCurrency } from '@/utils/currency';
 import { RevenueHistoryChart, StreamsHistoryChart } from './misc/components';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { BarChart2, ChevronsRight, Globe, Music } from 'lucide-react';
+import { AlertTriangle, BarChart2, ChevronsRight, Globe, Music } from 'lucide-react';
 import { LinkButton } from '@/components/ui';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
@@ -70,6 +70,16 @@ const MusicDashboard = () => {
 
 	return (
 		<div className="container mx-auto px-4 py-6">
+			{artist?.contractDetails?.status === 'PENDING_SIGNATURE' && (
+				<div className="mb-6 flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700 p-4">
+					<AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+					<p className="text-sm text-amber-800 dark:text-amber-200 flex-1 font-medium">You have a contract pending your signature</p>
+					<LinkButton href="/artiste/settings?section=contract" size="thin" className="text-xs rounded-full shrink-0">
+						Review & Sign
+					</LinkButton>
+				</div>
+			)}
+
 			<header className="mb-8">
 				<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
 					<div>

@@ -81,3 +81,22 @@ export const useUpdateProfilePicture = () => {
 		}
 	});
 };
+
+const signContract = async (signature: Blob) => {
+	const formData = new FormData();
+	formData.append('signature', signature, 'signature.png');
+	formData.append('agreedToTerms', 'true');
+
+	const { data } = await APIAxios.post('/artist/sign-contract', formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data'
+		}
+	});
+	return data;
+};
+
+export const useSignContract = () => {
+	return useMutation({
+		mutationFn: signContract
+	});
+};

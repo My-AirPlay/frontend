@@ -7,6 +7,9 @@ interface ContractDetails {
 	endDate: string;
 	contract: string;
 	status: string;
+	signedAt?: string;
+	signatureUrl?: string;
+	agreedToTerms?: boolean;
 }
 
 interface RoyaltyConverted {
