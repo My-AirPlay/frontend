@@ -59,6 +59,12 @@ export default function MediaTypeSelection() {
 	const [showContinueDialog, setShowContinueDialog] = useState(false);
 
 	useEffect(() => {
+		if (artist && !artist.bankDetails?.paidRegistrationFee) {
+			router.replace('/artiste/onboarding?step=registration_fee');
+		}
+	}, [artist, router]);
+
+	useEffect(() => {
 		if (mediaType) {
 			setSelectedType(mediaType);
 		}
