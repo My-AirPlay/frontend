@@ -8,6 +8,7 @@ import { Avatar, AvatarImage, AvatarFallback, ReusableDropdownMenu, Skeleton } f
 import { getInitials } from '@/utils/strings';
 import { useRouter } from 'next/navigation';
 import { CurrencySwitcher } from '@/app/artiste/(main)/dashboard/misc/components/CurrencySwitcher';
+import NotificationBell from './NotificationBell';
 
 const Header: React.FC = () => {
 	const { artist, logout, isLoading } = useAuthContext();
@@ -27,6 +28,7 @@ const Header: React.FC = () => {
 			<header className="h-16 flex items-center justify-between px-6">
 				<div className="flex items-center space-x-4 ml-auto">
 					<CurrencySwitcher />
+					<NotificationBell />
 
 					{isLoading ? (
 						<Skeleton className="w-8 h-8 rounded-full bg-muted animate-pulse" />

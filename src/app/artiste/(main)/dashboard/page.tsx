@@ -70,6 +70,16 @@ const MusicDashboard = () => {
 
 	return (
 		<div className="container mx-auto px-4 py-6">
+			{artist?.bankDetails?.paidRegistrationFee === false && (
+				<div className="mb-6 flex items-center gap-3 rounded-lg border border-rose-300 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-700 p-4">
+					<AlertTriangle className="h-5 w-5 text-rose-600 shrink-0" />
+					<p className="text-sm text-rose-800 dark:text-rose-200 flex-1 font-medium">Complete your registration by paying the registration fee</p>
+					<LinkButton href="/artiste/onboarding?step=registration_fee" size="thin" className="text-xs rounded-full shrink-0">
+						Pay Now
+					</LinkButton>
+				</div>
+			)}
+
 			{artist?.contractDetails?.status === 'PENDING_SIGNATURE' && (
 				<div className="mb-6 flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700 p-4">
 					<AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />

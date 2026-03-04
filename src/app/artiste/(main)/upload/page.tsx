@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui';
-import { MoveRight } from 'lucide-react';
+import { Button, LinkButton } from '@/components/ui';
+import { AlertTriangle, MoveRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { redirect, useRouter } from 'next/navigation';
 import { useMediaUploadStore } from './misc/store';
@@ -129,6 +129,16 @@ export default function MediaTypeSelection() {
 
 	return (
 		<div className="container mx-auto w-[80vw] max-w-3xl">
+			{artist?.bankDetails?.paidRegistrationFee === false && (
+				<div className="mb-6 flex items-center gap-3 rounded-lg border border-rose-300 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-700 p-4">
+					<AlertTriangle className="h-5 w-5 text-rose-600 shrink-0" />
+					<p className="text-sm text-rose-800 dark:text-rose-200 flex-1 font-medium">Complete your registration by paying the registration fee</p>
+					<LinkButton href="/artiste/onboarding?step=registration_fee" size="thin" className="text-xs rounded-full shrink-0">
+						Pay Now
+					</LinkButton>
+				</div>
+			)}
+
 			<div className="bg-card rounded-2xl p-6 px-4 md:p-10 md:px-16">
 				<h2 className="text-primary text-center text-xl font-semibold mb-2">MUSIC UPLOAD</h2>
 				<h1 className="text-white text-center text-2xl font-bold mb-8">Kindly choose what kind of music you want to upload</h1>
