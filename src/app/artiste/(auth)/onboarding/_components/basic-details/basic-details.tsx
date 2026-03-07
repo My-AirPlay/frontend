@@ -67,7 +67,7 @@ const OnboardingBasciDetail = ({ setCurrentStep, email }: OnboardingBasciDetailP
 			},
 			{
 				id: 'phoneNumber',
-				label: 'Phone Number (Optional)',
+				label: 'Phone Number',
 				props: {
 					type: 'number',
 					placeholder: 'Phone Number'
