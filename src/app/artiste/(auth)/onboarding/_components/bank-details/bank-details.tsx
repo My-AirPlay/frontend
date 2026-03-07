@@ -19,7 +19,7 @@ export const onboardingBankDetailSchema = z.object({
 	accountName: z.string().min(1, 'Account name is required'),
 	accountNumber: z.string().min(10, 'Account number must be at least 10 digits'),
 	ibanSwiftCode: z.string().optional(),
-	bvn: z.string().min(11, 'BVN must be at least 11 digits'),
+	bvn: z.string().optional(),
 	bankCode: z.string().min(1, 'Bank code is required'),
 	currency: z.string().min(1, 'Currency is required'),
 	sortCode: z.string().optional(),
@@ -37,7 +37,7 @@ export const bankDetailSchema = z.object({
 	accountName: z.string().min(1, 'Account name is required'),
 	accountNumber: z.string().min(10, 'Account number must be at least 10 digits'),
 	ibanSwiftCode: z.string().optional(),
-	bvn: z.string().min(11, 'BVN must be at least 11 digits'),
+	bvn: z.string().optional(),
 	bankCode: z.string().min(1, 'Bank code is required'),
 	currency: z.string().min(1, 'Currency is required'),
 	sortCode: z.string().optional(),
@@ -160,7 +160,7 @@ const OnboardingBankDetail = ({ email, setCurrentStep }: OnboardingBankDetailPro
 
 				{/* BVN */}
 				<div>
-					<Input label="BVN" placeholder="BVN" {...register('bvn')} hasError={!!errors.bvn} errormessage={errors.bvn?.message} />
+					<Input label="BVN (Optional)" placeholder="BVN" {...register('bvn')} hasError={!!errors.bvn} errormessage={errors.bvn?.message} />
 				</div>
 
 				{/* Bank Code */}
