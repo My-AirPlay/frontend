@@ -90,10 +90,18 @@ export default function Step4AlbumDistributionDetails() {
 	const [differentReleaseDate, setDifferentReleaseDate] = useState(false);
 	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
 
-	// State for the distribution agreement
-	const [isTermsAccepted, setIsTermsAccepted] = useState(false);
+	// State for the distribution agreement — skip if artist already has a signed contract
+	const hasContract = !!artist?.contractDetails?.contract;
+	const [isTermsAccepted, setIsTermsAccepted] = useState(hasContract);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const agreementPdfUrl = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'; // Placeholder PDF URL
+
+	// Auto-accept terms when artist data loads and they already have a contract
+	useEffect(() => {
+		if (hasContract) {
+			setIsTermsAccepted(true);
+		}
+	}, [hasContract]);
 
 	const allPlatformValues = formattedData?.StreamingPlatform.map(p => p.value) || [];
 

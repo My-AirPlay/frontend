@@ -50,9 +50,9 @@ const Step3AlbumCoverUpload = () => {
 			return;
 		}
 
-		// Validate file size (35MB max)
-		if (file.size > 35 * 1024 * 1024) {
-			toast.error('File size exceeds the 35MB limit. Please upload a smaller file.');
+		// Validate file size (5MB max)
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error('File size exceeds the 5MB limit. Please upload a smaller file.');
 			return;
 		}
 
@@ -107,9 +107,9 @@ const Step3AlbumCoverUpload = () => {
 			return;
 		}
 
-		// Validate file size (35MB max)
-		if (file.size > 35 * 1024 * 1024) {
-			toast.error('File size exceeds the 35MB limit. Please upload a smaller file.');
+		// Validate file size (5MB max)
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error('File size exceeds the 5MB limit. Please upload a smaller file.');
 			return;
 		}
 
