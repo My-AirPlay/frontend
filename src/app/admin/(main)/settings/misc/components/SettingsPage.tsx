@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import TeamTab from './TeamTab';
 import RolesTab from './RolesTab';
+import ActivityTab from './ActivityTab';
 
-const tabs = ['Team', 'Roles'] as const;
+const tabs = ['Team', 'Roles', 'Activity'] as const;
 
 export default function SettingsPage() {
 	const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>('Team');
@@ -21,7 +22,9 @@ export default function SettingsPage() {
 				))}
 			</div>
 
-			{activeTab === 'Team' ? <TeamTab /> : <RolesTab />}
+			{activeTab === 'Team' && <TeamTab />}
+			{activeTab === 'Roles' && <RolesTab />}
+			{activeTab === 'Activity' && <ActivityTab />}
 		</div>
 	);
 }
