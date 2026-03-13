@@ -4,11 +4,11 @@ import { Reducer, useCallback, useLayoutEffect } from 'react';
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import APIAxios, { setAxiosDefaultToken } from '@/utils/axios';
 import { usePathname, useRouter } from 'next/navigation';
-import { clearAdminTokens, clearArtistTokens, getArtistAccessToken } from '@/actions/auth/auth.action';
+import { clearAdminTokens, clearArtistTokens, getArtistAccessToken, getAdminAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
 import { AppLogo } from '@/components/icons';
 
-interface IArtistUser {
+export interface IArtistUser {
 	_id: string;
 	email: string;
 	stage: string;
@@ -27,6 +27,21 @@ interface IArtistUser {
 	totalRoyaltyUSD: number;
 	totalStreams: number;
 	paidRoyalty: number;
+}
+
+export interface IAdminUser {
+	_id: string;
+	email: string;
+	firstName: string;
+	lastName: string;
+	isSuperAdmin: boolean;
+	mustChangePassword: boolean;
+	status: 'Active' | 'Inactive';
+	role: {
+		_id: string;
+		name: string;
+		allowedPages: string[];
+	} | null;
 }
 
 interface SocialLinks {
@@ -67,7 +82,7 @@ interface BankDetails {
 
 export interface AuthState {
 	artist: IArtistUser | null;
-	admin: IArtistUser | null;
+	admin: IAdminUser | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
 	isAuthenticating: boolean;
@@ -84,7 +99,7 @@ export const initialAuthState: AuthState = {
 	error: null
 };
 
-export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | { type: 'SET_LOADING'; payload: boolean } | { type: 'ARTISTE_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'ADMIN_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'LOGIN_FAILURE'; payload: string } | { type: 'LOGOUT' } | { type: 'SET_ERROR'; payload: string | null };
+export type AuthActionType = { type: 'SET_AUTHENTICATING'; payload: boolean } | { type: 'SET_LOADING'; payload: boolean } | { type: 'ARTISTE_LOGIN_SUCCESS'; payload: IArtistUser } | { type: 'ADMIN_LOGIN_SUCCESS'; payload: IAdminUser } | { type: 'LOGIN_FAILURE'; payload: string } | { type: 'LOGOUT' } | { type: 'SET_ERROR'; payload: string | null };
 
 export const authReducer: Reducer<AuthState, AuthActionType> = (state, action) => {
 	switch (action.type) {
@@ -144,13 +159,15 @@ interface AuthContextType extends AuthState {
 	dispatch: React.Dispatch<AuthActionType>;
 	logout: (options?: { redirect?: boolean }) => Promise<void>;
 	checkAuthStatus: () => Promise<void>;
+	hasPageAccess: (pageKey: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
 	...initialAuthState,
 	dispatch: () => {},
 	logout: async () => {},
-	checkAuthStatus: async () => {}
+	checkAuthStatus: async () => {},
+	hasPageAccess: () => false
 });
 
 // --- AUTH PROVIDER (Key Changes Here) ---
@@ -177,48 +194,70 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 		[router, pathname]
 	);
 
+	const hasPageAccess = useCallback(
+		(pageKey: string): boolean => {
+			if (!state.admin) return false;
+			if (state.admin.isSuperAdmin) return true;
+			return state.admin.role?.allowedPages?.includes(pageKey) ?? false;
+		},
+		[state.admin]
+	);
+
 	const checkAuthStatus = useCallback(async () => {
-		const token = await getArtistAccessToken();
-		if (!token) {
-			if (isAdminRoute) {
+		if (isAdminRoute) {
+			// Admin auth flow
+			const token = await getAdminAccessToken();
+			if (!token) {
 				router.replace('/admin/login');
-			} else {
+				dispatch({ type: 'SET_AUTHENTICATING', payload: false });
+				return;
+			}
+			try {
+				const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
+				if (decodedToken.exp * 1000 < Date.now()) {
+					await handleLogout();
+					return;
+				}
+				setAxiosDefaultToken(token);
+				const { data } = await APIAxios.get<IAdminUser>('/admin/profile');
+				dispatch({ type: 'ADMIN_LOGIN_SUCCESS', payload: data });
+			} catch (error) {
+				console.error('Admin auth check failed:', error);
+				if (error instanceof AxiosError && error.response?.status === 401) {
+					await handleLogout();
+				} else {
+					dispatch({ type: 'LOGIN_FAILURE', payload: 'Failed to verify session.' });
+				}
+			}
+		} else {
+			// Artist auth flow (existing logic)
+			const token = await getArtistAccessToken();
+			if (!token) {
 				if (!pathname.includes('password') && !pathname.startsWith('/')) {
 					router.replace('/artiste/login');
 				}
-			}
-			dispatch({ type: 'SET_AUTHENTICATING', payload: false });
-			return;
-		}
-
-		// Decode token to check for expiration
-		try {
-			const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
-			const isTokenExpired = decodedToken.exp * 1000 < Date.now();
-
-			if (isTokenExpired) {
-				await handleLogout();
+				dispatch({ type: 'SET_AUTHENTICATING', payload: false });
 				return;
 			}
-
-			setAxiosDefaultToken(token);
-			const { data } = await APIAxios.get<IArtistUser>('/artist/profile');
-
-			if (data.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
-				dispatch({ type: 'ADMIN_LOGIN_SUCCESS', payload: data });
-			} else {
+			try {
+				const decodedToken: { exp: number } = JSON.parse(atob(token.split('.')[1]));
+				if (decodedToken.exp * 1000 < Date.now()) {
+					await handleLogout();
+					return;
+				}
+				setAxiosDefaultToken(token);
+				const { data } = await APIAxios.get<IArtistUser>('/artist/profile');
 				dispatch({ type: 'ARTISTE_LOGIN_SUCCESS', payload: data });
-			}
-		} catch (error) {
-			console.error('Authentication check failed:', error);
-			if (error instanceof AxiosError && error.response?.status === 401) {
-				await handleLogout();
-			} else {
-				// Handle other errors, maybe show a generic error message
-				dispatch({ type: 'LOGIN_FAILURE', payload: 'Failed to verify session.' });
+			} catch (error) {
+				console.error('Authentication check failed:', error);
+				if (error instanceof AxiosError && error.response?.status === 401) {
+					await handleLogout();
+				} else {
+					dispatch({ type: 'LOGIN_FAILURE', payload: 'Failed to verify session.' });
+				}
 			}
 		}
-	}, [handleLogout]);
+	}, [handleLogout, isAdminRoute]);
 
 	useLayoutEffect(() => {
 		// Only run check if we don't have a user and are still authenticating
@@ -233,7 +272,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 				...state,
 				dispatch,
 				logout: handleLogout,
-				checkAuthStatus
+				checkAuthStatus,
+				hasPageAccess
 			}}
 		>
 			{state.isAuthenticating ? (
