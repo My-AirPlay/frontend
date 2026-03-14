@@ -49,7 +49,7 @@ const ChangePasswordClient = () => {
 				router.replace('/admin/dashboard');
 			} else {
 				const allowed = user?.role?.allowedPages || [];
-				const first = CANONICAL_PAGES.find((p: any) => allowed.includes(p.key));
+				const first = CANONICAL_PAGES.find((p: { key: string; path: string }) => allowed.includes(p.key));
 				router.replace(first?.path || '/admin/dashboard');
 			}
 		},
