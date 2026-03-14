@@ -2,6 +2,7 @@ import APIAxios from '@/utils/axios';
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
 
 // Define the query parameters interface
 interface GetOneArtistParams {
@@ -53,7 +54,7 @@ export const usePauseDistribution = () => {
 			toast.success('Distribution paused');
 			qc.invalidateQueries({ queryKey: ['one-Artist'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to pause distribution');
 		}
 	});
@@ -70,7 +71,7 @@ export const useResumeDistribution = () => {
 			toast.success('Distribution resumed');
 			qc.invalidateQueries({ queryKey: ['one-Artist'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to resume distribution');
 		}
 	});

@@ -73,7 +73,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 
 	const filteredSidebarItems = sidebarItems
 		.filter(section => {
-			if ((section as any).superAdminOnly && !admin?.isSuperAdmin) return false;
+			if ('superAdminOnly' in section && section.superAdminOnly && !admin?.isSuperAdmin) return false;
 			return true;
 		})
 		.map(section => ({

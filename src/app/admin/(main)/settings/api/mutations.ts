@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import APIAxios from '@/utils/axios';
+import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 export const useCreateAdminUser = () => {
@@ -13,7 +14,7 @@ export const useCreateAdminUser = () => {
 			toast.success('Sub admin created');
 			qc.invalidateQueries({ queryKey: ['admin-users'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to create sub admin');
 		}
 	});
@@ -30,7 +31,7 @@ export const useUpdateAdminUser = () => {
 			toast.success('User updated');
 			qc.invalidateQueries({ queryKey: ['admin-users'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to update user');
 		}
 	});
@@ -47,7 +48,7 @@ export const useResetAdminPassword = () => {
 			toast.success('Password reset');
 			qc.invalidateQueries({ queryKey: ['admin-users'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to reset password');
 		}
 	});
@@ -64,7 +65,7 @@ export const useCreateAdminRole = () => {
 			toast.success('Role created');
 			qc.invalidateQueries({ queryKey: ['admin-roles'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to create role');
 		}
 	});
@@ -81,7 +82,7 @@ export const useUpdateAdminRole = () => {
 			toast.success('Role updated');
 			qc.invalidateQueries({ queryKey: ['admin-roles'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to update role');
 		}
 	});
@@ -98,7 +99,7 @@ export const useDeleteAdminRole = () => {
 			toast.success('Role deleted');
 			qc.invalidateQueries({ queryKey: ['admin-roles'] });
 		},
-		onError: (err: any) => {
+		onError: (err: AxiosError<{ message?: string }>) => {
 			toast.error(err.response?.data?.message || 'Failed to delete role');
 		}
 	});
