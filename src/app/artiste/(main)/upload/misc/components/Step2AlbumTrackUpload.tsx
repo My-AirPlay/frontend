@@ -537,6 +537,10 @@ export default function TrackUpload() {
 
 		for (let i = 0; i < files.length; i++) {
 			const file = files[i];
+			if (file.size > 512 * 1024 * 1024) {
+				invalidFiles.push(`${file.name} (exceeds 512 MB)`);
+				continue;
+			}
 			if (file.type.includes('audio') || file.type.includes('video')) {
 				validFiles.push(file);
 
@@ -728,7 +732,7 @@ export default function TrackUpload() {
 						<h3 className="text-base font-semibold mb-4">Album upload requirements</h3>
 						<ul className="text-[0.9rem] text-white/70 space-y-1.5 text-left">
 							<li>• File format: MP3, MP4</li>
-							<li>File size: Files size cannot be greater than 35 MB</li>
+							<li>File size: Files size cannot be greater than 512 MB</li>
 							<li>• Video mode: Best quality</li>
 							<li>• Your track must not contain any logos, website address, release dates or advertisements of any kind.</li>
 						</ul>

@@ -47,10 +47,9 @@ export default function Step1MusicInfo() {
 		formState: { errors, isValid }
 	} = form;
 
-	const onSubmit = (data: MediaInfoFormValues) => {
-		console.log('Form submitted with:', data);
+	const onSubmit = async (data: MediaInfoFormValues) => {
+		await updateMediaInfo(data);
 		setCurrentStep('trackUpload');
-		updateMediaInfo(data);
 		toast.success('Music info saved successfully');
 	};
 	console.log(errors, isValid);

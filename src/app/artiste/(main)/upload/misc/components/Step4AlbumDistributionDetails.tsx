@@ -179,7 +179,7 @@ export default function Step4AlbumDistributionDetails() {
 										value={new Date(field.value || albumInfo.releaseDate)}
 										onChange={date => {
 											field.onChange(date?.toISOString().split('T')[0] || '');
-											updateAlbumInfo({ ...albumInfo, releaseDate: date?.toISOString().split('T')[0] || '' });
+											updateAlbumInfo({ releaseDate: date?.toISOString().split('T')[0] || '' });
 										}}
 										placeholder="Select release date"
 									/>
@@ -213,7 +213,7 @@ export default function Step4AlbumDistributionDetails() {
 											value={!!field.value ? new Date(field.value) : undefined}
 											onChange={date => {
 												field.onChange(date?.toISOString().split('T')[0] || '');
-												updateAlbumInfo({ ...albumInfo, originalReleaseDate: date?.toISOString().split('T')[0] || '' });
+												updateAlbumInfo({ originalReleaseDate: date?.toISOString().split('T')[0] || '' });
 											}}
 											placeholder="Select release date"
 										/>

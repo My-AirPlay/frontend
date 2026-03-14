@@ -47,7 +47,7 @@ const Header: React.FC = () => {
 							trigger={
 								<Avatar className="cursor-pointer">
 									<AvatarImage alt="@shadcn" />
-									<AvatarFallback>{getInitials(admin?.firstName + ' ' + admin?.lastName || admin?.artistName || 'FN')}</AvatarFallback>
+									<AvatarFallback>{getInitials(admin?.firstName + ' ' + admin?.lastName || 'FN')}</AvatarFallback>
 								</Avatar>
 							}
 							items={[

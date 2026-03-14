@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 // import { Save } from 'lucide-react';
 // import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,7 +7,7 @@ import { Button, PreviousPageButton } from '@/components/ui';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArtistAnalytics, ArtistOverview, ArtistContract } from '../../misc/components';
-import { useDeleteArtist, useGetOneArtist } from '../../../catalogue/api/getOneArtist';
+import { useDeleteArtist, useGetOneArtist, usePauseDistribution, useResumeDistribution } from '../../../catalogue/api/getOneArtist';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { Delete } from 'lucide-react';
 
@@ -15,6 +15,10 @@ const ArtistDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
 	const { data: artist, isLoading: artistLoading, refetch: artistRefetch } = useGetOneArtist({ artistId: artist_id });
 	const { mutate: deleteArtist, isPending: isDeleting } = useDeleteArtist();
+	const [showPauseModal, setShowPauseModal] = useState(false);
+	const [pauseReason, setPauseReason] = useState('');
+	const { mutate: pauseDistribution, isPending: isPausing } = usePauseDistribution();
+	const { mutate: resumeDistribution, isPending: isResuming } = useResumeDistribution();
 
 	const handleDelete = () => {
 		if (window.confirm('Are you sure you want to delete this artist? This action cannot be undone.')) {
@@ -49,6 +53,31 @@ const ArtistDetails: React.FC = () => {
 					</Button> */}
 				</div>
 			</div>
+
+			{/* Distribution Status */}
+			{artist && (
+				<div className="flex items-center gap-4 p-4 bg-secondary rounded-lg">
+					<div className="flex items-center gap-2">
+						<span className="text-sm text-muted-foreground">Distribution:</span>
+						{artist.distributionStatus === 'paused' ? <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-500/20 text-red-400 border border-red-500/30">Paused</span> : <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">Active</span>}
+					</div>
+					{artist.distributionStatus === 'paused' ? (
+						<div className="flex items-center gap-4 ml-auto">
+							<div className="text-sm text-muted-foreground">
+								<span>Reason: {artist.distributionPauseReason || 'N/A'}</span>
+								{artist.distributionPausedAt && <span className="ml-3">Since: {new Date(artist.distributionPausedAt).toLocaleDateString()}</span>}
+							</div>
+							<Button variant="outline" size="sm" onClick={() => resumeDistribution(artist_id, { onSuccess: () => artistRefetch() })} disabled={isResuming}>
+								{isResuming ? 'Resuming...' : 'Resume Distribution'}
+							</Button>
+						</div>
+					) : (
+						<Button variant="outline" size="sm" className="ml-auto text-red-400 hover:text-red-300" onClick={() => setShowPauseModal(true)}>
+							Pause Distribution
+						</Button>
+					)}
+				</div>
+			)}
 
 			<Tabs defaultValue={section || 'overview'} value={section}>
 				<TabsList className="bg-transparent border-b border-border w-full justify-start mb-4">
@@ -90,6 +119,47 @@ const ArtistDetails: React.FC = () => {
 					</>
 				)}
 			</Tabs>
+			{/* Pause Distribution Modal */}
+			{showPauseModal && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowPauseModal(false)}>
+					<div className="bg-card rounded-lg p-6 max-w-md w-full mx-4 space-y-4" onClick={e => e.stopPropagation()}>
+						<h3 className="text-lg font-semibold">Pause Distribution</h3>
+						<p className="text-sm text-muted-foreground">This will prevent the artist from uploading new content. They will be notified via email.</p>
+						<textarea className="w-full bg-secondary border border-border rounded-lg p-3 text-sm min-h-[100px] resize-none" placeholder="Enter reason for pausing..." value={pauseReason} onChange={e => setPauseReason(e.target.value)} />
+						<div className="flex justify-end gap-2">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => {
+									setShowPauseModal(false);
+									setPauseReason('');
+								}}
+							>
+								Cancel
+							</Button>
+							<Button
+								variant="destructive"
+								size="sm"
+								disabled={!pauseReason.trim() || isPausing}
+								onClick={() => {
+									pauseDistribution(
+										{ artistId: artist_id, reason: pauseReason.trim() },
+										{
+											onSuccess: () => {
+												setShowPauseModal(false);
+												setPauseReason('');
+												artistRefetch();
+											}
+										}
+									);
+								}}
+							>
+								{isPausing ? 'Pausing...' : 'Confirm Pause'}
+							</Button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

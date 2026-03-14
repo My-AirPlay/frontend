@@ -34,6 +34,11 @@ const AdminLayout: React.FC<LayoutProps> = ({ children, className }) => {
 			<div className="flex flex-col flex-1 overflow-hidden">
 				<Header />
 				<main className="flex-1 overflow-y-auto">
+					{artist?.distributionStatus === 'paused' && (
+						<div className="bg-red-500/10 border-b border-red-500/30 text-red-400 px-6 py-3">
+							<p className="font-medium text-sm">Your distribution has been paused. Contact support for details.</p>
+						</div>
+					)}
 					<div className={cn(isFullWidth ? 'p-0' : 'p-6 max-md:px-4 lg:px-10 !h-full', 'flex flex-col max-w-full')}>{children}</div>
 				</main>
 				<Footer />

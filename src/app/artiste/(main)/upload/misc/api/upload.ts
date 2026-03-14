@@ -60,6 +60,21 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 };
 
 export const uploadAlbum = async (payload: UploadAlbumPayload) => {
+	const MAX_MEDIA_SIZE = 512 * 1024 * 1024; // 512MB
+	const MAX_COVER_SIZE = 5 * 1024 * 1024; // 5MB
+
+	if (payload.albumCover && payload.albumCover.size > MAX_COVER_SIZE) {
+		throw new Error('Album cover art is too large. Please upload a file smaller than 5MB.');
+	}
+
+	if (payload.mediaFiles?.length) {
+		for (const file of payload.mediaFiles) {
+			if (file.size > MAX_MEDIA_SIZE) {
+				throw new Error(`Track "${file.name}" is too large. Please upload files smaller than 512MB.`);
+			}
+		}
+	}
+
 	const formData = new FormData();
 
 	formData.append('albumCover', payload.albumCover);

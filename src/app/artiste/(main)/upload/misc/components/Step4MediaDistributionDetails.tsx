@@ -16,6 +16,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useMediaUploadStore } from '../store';
 import Step4MediaDistributionPlatformCard from './Step4MediaDistributionPlatformCards';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { videoStreamingPlatforms } from '@/utils/stores';
 
 interface pdfModalProps {
 	isOpen: boolean;
@@ -83,10 +84,11 @@ const releaseDateFormSchema = z
 type ReleaseDateFormType = z.infer<typeof releaseDateFormSchema>;
 
 export default function Step4AlbumDistributionDetails() {
-	const { streamingPlatforms: selectedPlatforms, togglePlatform, setCurrentStep, mediaInfo, coverArtId, updateMediaInfo, getCoverArtFile, isDBInitialized, initializeDB } = useMediaUploadStore();
+	const { streamingPlatforms: selectedPlatforms, togglePlatform, setCurrentStep, mediaInfo, coverArtId, updateMediaInfo, getCoverArtFile, isDBInitialized, initializeDB, mediaType } = useMediaUploadStore();
 
 	const { artist } = useAuthContext();
 	const { formattedData, isLoading } = useStaticAppInfo();
+	const isVideo = mediaType === 'Video';
 	const [differentReleaseDate, setDifferentReleaseDate] = useState(false);
 	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
 
@@ -103,7 +105,8 @@ export default function Step4AlbumDistributionDetails() {
 		}
 	}, [hasContract]);
 
-	const allPlatformValues = formattedData?.StreamingPlatform.map(p => p.value) || [];
+	const availablePlatforms = isVideo ? formattedData?.StreamingPlatform.filter(p => videoStreamingPlatforms.includes(p.value)) || [] : formattedData?.StreamingPlatform || [];
+	const allPlatformValues = availablePlatforms.map(p => p.value);
 
 	const areAllSelected = allPlatformValues.length > 0 && allPlatformValues.every(p => selectedPlatforms.includes(p));
 
@@ -235,7 +238,7 @@ export default function Step4AlbumDistributionDetails() {
 										value={new Date(field.value || mediaInfo.releaseDate)}
 										onChange={date => {
 											field.onChange(date?.toISOString().split('T')[0] || '');
-											updateMediaInfo({ ...mediaInfo, releaseDate: date?.toISOString().split('T')[0] || '' });
+											updateMediaInfo({ releaseDate: date?.toISOString().split('T')[0] || '' });
 										}}
 										placeholder="Select release date"
 									/>
@@ -269,7 +272,7 @@ export default function Step4AlbumDistributionDetails() {
 											value={!!field.value ? new Date(field.value) : undefined}
 											onChange={date => {
 												field.onChange(date?.toISOString().split('T')[0] || '');
-												updateMediaInfo({ ...mediaInfo, originalReleaseDate: date?.toISOString().split('T')[0] || '' });
+												updateMediaInfo({ originalReleaseDate: date?.toISOString().split('T')[0] || '' });
 											}}
 											placeholder="Select release date"
 										/>
@@ -290,7 +293,11 @@ export default function Step4AlbumDistributionDetails() {
 				</label>
 			</div>
 
-			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">{formattedData?.StreamingPlatform.map((platform, index) => <Step4MediaDistributionPlatformCard handleToggle={handleToggle} key={index} platform={platform} selectedPlatforms={selectedPlatforms} index={index} />)}</div>
+			<div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+				{availablePlatforms.map((platform, index) => (
+					<Step4MediaDistributionPlatformCard handleToggle={handleToggle} key={index} platform={platform} selectedPlatforms={selectedPlatforms} index={index} />
+				))}
+			</div>
 
 			{/* --- Terms and Conditions Checkbox --- */}
 			{!artist?.contractDetails?.contract && (

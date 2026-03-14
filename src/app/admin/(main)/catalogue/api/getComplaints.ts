@@ -5,13 +5,15 @@ import { useQuery } from '@tanstack/react-query';
 interface GetComplaintsParams {
 	page: string;
 	limit: string;
+	claimStatus?: 'claimed' | 'unclaimed' | 'mine';
 }
 
-export const getComplaints = async ({ page, limit }: GetComplaintsParams) => {
+export const getComplaints = async ({ page, limit, claimStatus }: GetComplaintsParams) => {
 	const response = await APIAxios.get(`/admin/complaints`, {
 		params: {
 			page,
-			limit
+			limit,
+			...(claimStatus && { claimStatus })
 		}
 	});
 	return response.data;
@@ -19,7 +21,7 @@ export const getComplaints = async ({ page, limit }: GetComplaintsParams) => {
 
 export const useGetComplaints = (params: GetComplaintsParams) => {
 	return useQuery({
-		queryKey: ['complaints', params.page, params.limit], // Unique key for caching
+		queryKey: ['complaints', params.page, params.limit, params.claimStatus],
 		queryFn: () => getComplaints(params)
 	});
 };

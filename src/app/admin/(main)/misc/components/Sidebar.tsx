@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken, Clock, SecurityCard, Musicnote } from 'iconsax-react';
+import { Document, Headphone, Category, User, Calculator, Edit2, Lock1, ReceiptItem, HuobiToken, Clock, SecurityCard, Musicnote, Setting2 } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useGetSupportCount } from '@/app/admin/(main)/catalogue/api/getComplaints';
 import { useGetContractsCount } from '@/app/admin/(main)/catalogue/api/getArtistAnalytics';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 interface SidebarProps {
 	className?: string;
@@ -19,49 +20,70 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 	const supportTicketCount = supportData?.unreadCount;
 	console.log(contractsData);
 	const contractsCount = contractsData?.count;
+	const { admin, hasPageAccess } = useAuthContext();
 	const sidebarItems = useMemo(
 		() => [
 			{
 				title: null,
-				items: [{ href: '/admin/dashboard', icon: Category, label: 'Dashboard' }]
+				items: [{ href: '/admin/dashboard', icon: Category, label: 'Dashboard', pageKey: 'dashboard' }]
 			},
 			{
 				title: 'Artists',
 				items: [
-					{ href: '/admin/contracts', icon: Edit2, label: 'Contracts', ...(contractsCount && contractsCount > 0 && { badge: contractsCount }) },
-					{ href: '/admin/tracks', icon: Musicnote, label: 'Tracks/Releases' },
-					{ href: '/admin/catalogue', icon: Document, label: 'Catalogue' }
+					{ href: '/admin/contracts', icon: Edit2, label: 'Contracts', pageKey: 'contracts', ...(contractsCount && contractsCount > 0 && { badge: contractsCount }) },
+					{ href: '/admin/tracks', icon: Musicnote, label: 'Tracks/Releases', pageKey: 'tracks' },
+					{ href: '/admin/catalogue', icon: Document, label: 'Catalogue', pageKey: 'catalogue' }
 				]
 			},
 			{
 				title: 'Accounting',
 				items: [
-					{ href: '/admin/sales', icon: Calculator, label: 'Sales' },
-					{ href: '/admin/sales-history', icon: Clock, label: 'Sales History' },
-					{ href: '/admin/artist-revenue', icon: User, label: 'Artist Revenue' }
+					{ href: '/admin/sales', icon: Calculator, label: 'Sales', pageKey: 'sales' },
+					{ href: '/admin/sales-history', icon: Clock, label: 'Sales History', pageKey: 'sales_history' },
+					{ href: '/admin/artist-revenue', icon: User, label: 'Artist Revenue', pageKey: 'artist_revenue' }
 				]
 			},
 			{
 				title: 'Organization',
 				items: [
-					{ href: '/admin/json', icon: HuobiToken, label: 'Json Converter' },
-					{ href: '/policies/privacy', icon: Lock1, label: 'Privacy Policy' },
-					{ href: '/policies/terms', icon: ReceiptItem, label: 'Terms of Services' },
+					{ href: '/admin/json', icon: HuobiToken, label: 'Json Converter', pageKey: 'json' },
+					{ href: '/policies/privacy', icon: Lock1, label: 'Privacy Policy', pageKey: null },
+					{ href: '/policies/terms', icon: ReceiptItem, label: 'Terms of Services', pageKey: null },
 					{
 						href: '/admin/support',
 						icon: Headphone,
 						label: 'Help and Support',
+						pageKey: 'support',
 						...(supportTicketCount && supportTicketCount > 0 && { badge: supportTicketCount })
 					}
 				]
 			},
 			{
 				title: 'Security',
-				items: [{ href: '/admin/password', icon: SecurityCard, label: 'Super Admin Password' }]
+				items: [{ href: '/admin/password', icon: SecurityCard, label: 'Super Admin Password', pageKey: 'password_management' }]
+			},
+			{
+				title: 'Admin',
+				superAdminOnly: true,
+				items: [{ href: '/admin/settings', icon: Setting2, label: 'Settings', pageKey: null }]
 			}
 		],
 		[supportTicketCount, contractsCount]
 	);
+
+	const filteredSidebarItems = sidebarItems
+		.filter(section => {
+			if ((section as any).superAdminOnly && !admin?.isSuperAdmin) return false;
+			return true;
+		})
+		.map(section => ({
+			...section,
+			items: section.items.filter(item => {
+				if (item.pageKey === null) return true;
+				return hasPageAccess(item.pageKey);
+			})
+		}))
+		.filter(section => section.items.length > 0);
 
 	return (
 		<div className={cn('w-64 h-screen border-r border-admin-border flex flex-col overflow-hidden', className)}>
@@ -73,7 +95,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 			</div>
 
 			<div className="flex-1 overflow-y-auto py-4 space-y-16 px-2 font-plus-jakarta-sans">
-				{sidebarItems.map((section, index) => (
+				{filteredSidebarItems.map((section, index) => (
 					<div key={index}>
 						{section.title && <h3 className="text-muted-foreground uppercase text-sm font-medium tracking-wider px-4 mb-2">{section.title}</h3>}
 						<div className="space-y-2.5">

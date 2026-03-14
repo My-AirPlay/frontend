@@ -1,5 +1,5 @@
 import React from 'react';
-import { MusicSquare, Headphone, Category, Musicnote, Chart, Setting2, TransactionMinus } from 'iconsax-react';
+import { MusicSquare, Headphone, Category, Musicnote, Chart, Setting2, TransactionMinus, DocumentText } from 'iconsax-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -43,6 +43,11 @@ const Sidebar = ({ className, onLinkClick }: { className?: string; onLinkClick?:
 			href: '/artiste/settings',
 			icon: Setting2,
 			label: 'Settings'
+		},
+		{
+			href: '/policies/terms',
+			icon: DocumentText,
+			label: 'Terms of Service'
 		}
 	];
 

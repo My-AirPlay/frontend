@@ -15,6 +15,7 @@ import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ArrowDown, ArrowUp } from 'lucide-react';
 import { toast } from 'sonner'; // Import toast
+import moment from 'moment';
 
 // Helper function for delay - REMOVED (unused)
 // const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -170,9 +171,10 @@ const Catalogue: React.FC = () => {
 	// Fetch data with sorting
 	const { data: tracks, isLoading: tracksLoading } = useGetAdminMedia(apiParams);
 	const { data: releases, isLoading: releasesLoading } = useGetAllAlbums(apiParams);
-	const { data: artistIds } = useGetAllContractIds(); //getall_contractIds
+	const { data: contractData } = useGetAllContractIds(); //getall_contractIds
 	const { data: video, isLoading: videoLoading } = useGetAdminMedia({ ...apiParams, type: 'video' });
-	const artistIdsSet = new Set(artistIds ?? []);
+	const uploadedSet = new Set(contractData?.contractUploaded ?? []);
+	const signedSet = new Set(contractData?.contractSigned ?? []);
 
 	const releaseSortableColumns: SortableColumn[] = [
 		{ id: 'title', label: 'Title' },
@@ -231,7 +233,7 @@ const Catalogue: React.FC = () => {
 			id: 'hasContract',
 			header: 'Contract Status',
 			accessorKey: 'contractDetails',
-			cell: (info: any) => <div>{!artistIdsSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span> : <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span>}</div>
+			cell: (info: any) => <div>{signedSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Signed</span> : uploadedSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-yellow-500/20 text-yellow-500 border border-yellow-500/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span> : <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span>}</div>
 		},
 		{
 			id: 'recordLabel',
@@ -247,6 +249,12 @@ const Catalogue: React.FC = () => {
 			id: 'universalProductCode',
 			header: 'ProductCode',
 			cell: (info: any) => <p className="text-primary ">{info.row.original.universalProductCode || '-'}</p>
+		},
+		{
+			id: 'createdAt',
+			header: 'Created At',
+			accessorKey: 'createdAt',
+			cell: (info: any) => <p className="text-muted-foreground text-xs">{info.row.original.createdAt ? moment(info.row.original.createdAt).format('MMM DD, YYYY') : '-'}</p>
 		}
 	];
 
@@ -270,7 +278,7 @@ const Catalogue: React.FC = () => {
 			id: 'hasContract',
 			header: 'Contract Status',
 			accessorKey: 'contractDetails',
-			cell: (info: any) => <div>{!artistIdsSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span> : <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span>}</div>
+			cell: (info: any) => <div>{signedSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Signed</span> : uploadedSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-yellow-500/20 text-yellow-500 border border-yellow-500/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span> : <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span>}</div>
 		},
 		{
 			id: 'recordLabel',
@@ -286,6 +294,12 @@ const Catalogue: React.FC = () => {
 			id: 'universalProductCode',
 			header: 'ProductCode',
 			cell: (info: any) => <p className="text-primary ">{info.row.original.universalProductCode || '-'}</p>
+		},
+		{
+			id: 'createdAt',
+			header: 'Created At',
+			accessorKey: 'createdAt',
+			cell: (info: any) => <p className="text-muted-foreground text-xs">{info.row.original.createdAt ? moment(info.row.original.createdAt).format('MMM DD, YYYY') : '-'}</p>
 		}
 	];
 
@@ -309,7 +323,7 @@ const Catalogue: React.FC = () => {
 			id: 'hasContract',
 			header: 'Contract Status',
 			accessorKey: 'contractDetails',
-			cell: (info: any) => <div>{!artistIdsSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span> : <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span>}</div>
+			cell: (info: any) => <div>{signedSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-green/20 text-green border border-green/50 text-xs px-3 py-1 rounded-md capitalize">Contract Signed</span> : uploadedSet.has(info.row.original.artistId) ? <span className="royalty-badge bg-yellow-500/20 text-yellow-500 border border-yellow-500/50 text-xs px-3 py-1 rounded-md capitalize">Contract Uploaded</span> : <span className="royalty-badge bg-primary/20 text-primary border border-primary/50 text-xs px-3 py-1 rounded-md capitalize">Contract Required</span>}</div>
 		},
 		{
 			id: 'recordLabel',
@@ -320,6 +334,12 @@ const Catalogue: React.FC = () => {
 			id: 'universalProductCode',
 			header: 'ProductCode',
 			cell: (info: any) => <p className="text-primary ">{info.row.original.universalProductCode || '-'}</p>
+		},
+		{
+			id: 'createdAt',
+			header: 'Created At',
+			accessorKey: 'createdAt',
+			cell: (info: any) => <p className="text-muted-foreground text-xs">{info.row.original.createdAt ? moment(info.row.original.createdAt).format('MMM DD, YYYY') : '-'}</p>
 		}
 	];
 

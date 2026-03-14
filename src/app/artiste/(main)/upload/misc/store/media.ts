@@ -97,7 +97,8 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 						mediaType: null,
 						mediaFileId: null,
 						coverArtId: null,
-						mediaInfo: { ...defaultMediaInfo }
+						mediaInfo: { ...defaultMediaInfo },
+						streamingPlatforms: streamingPlatformsList
 					});
 				},
 
@@ -198,7 +199,9 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 
 				hasOngoingUpload: () => {
 					const state = get();
-					return state.mediaFileId !== null || state.coverArtId !== null || Object.values(state.mediaInfo).some(val => (val !== '' && Array.isArray(val) ? val.length > 0 : true));
+					const info = state.mediaInfo;
+					const hasInfoFilled = [info.title, info.artistName, info.mainGenre, info.description, info.recordLabel, info.publisher, info.copyright, info.explicitContent, info.lyrics, info.universalProductCode, info.releaseVersion].some(val => val !== '');
+					return state.mediaFileId !== null || state.coverArtId !== null || hasInfoFilled;
 				}
 			}),
 			{
