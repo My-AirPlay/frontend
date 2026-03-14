@@ -1,6 +1,6 @@
 // src/api/getSingleComplaint.ts
 import APIAxios from '@/utils/axios';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // Define the query parameters interface
 interface GetSingleComplaintParams {
@@ -55,5 +55,39 @@ export const useGetSingleComplaint = (params: GetSingleComplaintParams) => {
 	return useQuery({
 		queryKey: ['singleComplaint', params.complaintId],
 		queryFn: () => getSingleComplaint(params)
+	});
+};
+
+const claimComplaint = async (complaintId: string) => {
+	const response = await APIAxios.put(`/admin/complaints/${complaintId}/claim`);
+	return response.data;
+};
+
+export const useClaimComplaint = () => {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: claimComplaint,
+		onSuccess: () => {
+			qc.invalidateQueries({ queryKey: ['complaints'] });
+			qc.invalidateQueries({ queryKey: ['singleComplaint'] });
+			qc.invalidateQueries({ queryKey: ['allComplaint'] });
+		}
+	});
+};
+
+const unclaimComplaint = async (complaintId: string) => {
+	const response = await APIAxios.put(`/admin/complaints/${complaintId}/unclaim`);
+	return response.data;
+};
+
+export const useUnclaimComplaint = () => {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: unclaimComplaint,
+		onSuccess: () => {
+			qc.invalidateQueries({ queryKey: ['complaints'] });
+			qc.invalidateQueries({ queryKey: ['singleComplaint'] });
+			qc.invalidateQueries({ queryKey: ['allComplaint'] });
+		}
 	});
 };

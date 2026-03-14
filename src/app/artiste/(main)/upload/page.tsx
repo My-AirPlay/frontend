@@ -42,11 +42,6 @@ const mediaOptions: MediaOption[] = [
 		value: 'MixTape',
 		label: 'Mix Tape',
 		icon: '/images/upload/mixtape.png'
-	},
-	{
-		value: 'PlayBack',
-		label: 'Play Back',
-		icon: '/images/upload/playback.png'
 	}
 ];
 
@@ -90,7 +85,7 @@ export default function MediaTypeSelection() {
 			setAlbumType(selectedType as any);
 			setAlbumUploadCurrentStep('musicInfo');
 			router.push('/artiste/upload/album');
-		} else if (selectedType === 'Track' || selectedType === 'Video' || selectedType === 'PlayBack') {
+		} else if (selectedType === 'Track' || selectedType === 'Video') {
 			if (hasOngoingMediaUpload() && mediaType === selectedType) {
 				console.log('Ongoing media upload detected');
 				setShowContinueDialog(true);

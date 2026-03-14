@@ -6,7 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import { Button, Input } from '@/components/ui';
 import Link from 'next/link';
 import { useUpdateComplaintStatus } from '../../api/patchComplaintStatus';
-import { useGetAllComplaintById, useGetSingleComplaint, useReportIssue } from '../../api/getSingleComplaint';
+import { useGetAllComplaintById, useGetSingleComplaint, useReportIssue, useClaimComplaint, useUnclaimComplaint } from '../../api/getSingleComplaint';
+import { useAuthContext } from '@/contexts/AuthContext';
 import moment from 'moment';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -33,8 +34,11 @@ const TicketDetails: React.FC = () => {
 	const { data: messages, refetch: refetchMessages } = useGetAllComplaintById({ complaintId });
 	const { data: ticket, isPending: isPendingTicket, refetch: refetchTicket } = useGetSingleComplaint({ complaintId: complaintId });
 
+	const { admin } = useAuthContext();
 	const { mutate, isPending } = useUpdateComplaintStatus();
 	const { mutate: createComplaint, isPending: isCreatingComplaint } = useReportIssue();
+	const { mutate: claimTicket, isPending: isClaiming } = useClaimComplaint();
+	const { mutate: unclaimTicket, isPending: isUnclaiming } = useUnclaimComplaint();
 
 	const isResolved = ticket?.complain?.status === 'Resolved';
 	const artistName = ticket?.artistName || 'Artist';
@@ -156,6 +160,16 @@ const TicketDetails: React.FC = () => {
 									<p className="text-[#D8D8D8] text-sm mb-1">Ticket ID</p>
 									<p className="font-medium">{ticket?.complain?.complaintId || '-'}</p>
 								</div>
+								<div>
+									<p className="text-[#D8D8D8] text-sm mb-1">Claimed By</p>
+									{ticket?.complain?.claimedBy ? (
+										<p className="font-medium text-blue-400">
+											{ticket.complain.claimedBy.firstName} {ticket.complain.claimedBy.lastName}
+										</p>
+									) : (
+										<p className="font-medium text-white/30">Unclaimed</p>
+									)}
+								</div>
 							</div>
 						</div>
 
@@ -202,6 +216,39 @@ const TicketDetails: React.FC = () => {
 
 						{/* Status Actions */}
 						<div className="flex flex-col gap-4 items-center justify-center mt-6 mb-4">
+							{!ticket?.complain?.claimedBy ? (
+								<Button
+									variant="outline"
+									disabled={isClaiming}
+									onClick={() =>
+										claimTicket(ticket.complain.complaintId, {
+											onSuccess: () => {
+												toast.success('Ticket claimed');
+												refetchTicket();
+											},
+											onError: (error: any) => toast.error(error.response?.data?.message || 'Failed to claim ticket')
+										})
+									}
+								>
+									{isClaiming ? 'Claiming...' : 'Claim Ticket'}
+								</Button>
+							) : admin?.isSuperAdmin ? (
+								<Button
+									variant="outline"
+									disabled={isUnclaiming}
+									onClick={() =>
+										unclaimTicket(ticket.complain.complaintId, {
+											onSuccess: () => {
+												toast.success('Ticket unclaimed');
+												refetchTicket();
+											},
+											onError: (error: any) => toast.error(error.response?.data?.message || 'Failed to unclaim ticket')
+										})
+									}
+								>
+									{isUnclaiming ? 'Unclaiming...' : 'Unclaim Ticket'}
+								</Button>
+							) : null}
 							{isResolved ? (
 								<Button
 									variant="outline"

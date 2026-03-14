@@ -27,6 +27,7 @@ export interface IArtistUser {
 	totalRoyaltyUSD: number;
 	totalStreams: number;
 	paidRoyalty: number;
+	distributionStatus?: 'active' | 'paused';
 }
 
 export interface IAdminUser {

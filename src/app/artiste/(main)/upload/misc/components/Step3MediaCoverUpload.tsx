@@ -137,7 +137,11 @@ const Step3MediaCoverUpload = () => {
 
 	const handleContinue = async () => {
 		if (uploadedFile && uploadProgress === 100) {
-			await setCoverArt(uploadedFile); // Store in IndexedDB
+			const result = await setCoverArt(uploadedFile); // Store in IndexedDB
+			if (!result) {
+				toast.error('Failed to save cover art. Please try again.');
+				return;
+			}
 			setCurrentStep('distribution');
 			toast.success('Cover art uploaded successfully');
 		} else {

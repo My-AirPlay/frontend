@@ -14,7 +14,7 @@ import { useMediaUploadStore } from '../store';
 
 export default function Step2MediaTrackUpload() {
 	const { setMediaFile, setCurrentStep, mediaFileId, getMediaFile, initializeDB, isDBInitialized, mediaType } = useMediaUploadStore();
-	const isAudio = mediaType === 'Track' || mediaType === 'PlayBack';
+	const isAudio = mediaType === 'Track';
 	const [videoUrl, setVideoUrl] = useState<string | null>(null);
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 	const [uploadProgress, setUploadProgress] = useState(0);
@@ -127,11 +127,11 @@ export default function Step2MediaTrackUpload() {
 	return (
 		<div className="w-[82vw] sm:w-[55vw] max-w-[500px] md:max-w-3xl mx-auto ">
 			<section className="mb-8 grid lg:grid-cols-2 gap-8 lg:items-stretch">
-				<label className={cn('border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-h-[300px]', isDragging ? 'border-solid border-3' : 'border-primary')} onDragEnter={handleDrag} onDragOver={handleDrag} onDragLeave={handleDrag} onDrop={handleDrop} id="track-upload-input ">
+				<label className={cn('border-2 border-dashed border-primary rounded-xl flex flex-col items-center justify-center max-h-[300px] overflow-hidden', isDragging ? 'border-solid border-3' : 'border-primary')} onDragEnter={handleDrag} onDragOver={handleDrag} onDragLeave={handleDrag} onDrop={handleDrop} id="track-upload-input ">
 					{/* Video preview */}
 					{videoUrl ? (
-						<div className="mt-4">
-							<video controls width="100%">
+						<div className="w-full h-full p-2">
+							<video controls className="w-full h-full max-h-[280px] object-contain rounded-lg">
 								<source src={videoUrl} type="video/mp4" />
 								Your browser does not support the video tag.
 							</video>

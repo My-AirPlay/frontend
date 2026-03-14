@@ -42,6 +42,40 @@ export const deleteOneArtist = async (artistId: string) => {
 
 // src/app/admin/(main)/catalogue/api/deleteOneArtist.ts
 
+export const usePauseDistribution = () => {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: async ({ artistId, reason }: { artistId: string; reason: string }) => {
+			const { data } = await APIAxios.put(`/admin/artist/${artistId}/pause-distribution`, { reason });
+			return data;
+		},
+		onSuccess: () => {
+			toast.success('Distribution paused');
+			qc.invalidateQueries({ queryKey: ['one-Artist'] });
+		},
+		onError: (err: any) => {
+			toast.error(err.response?.data?.message || 'Failed to pause distribution');
+		}
+	});
+};
+
+export const useResumeDistribution = () => {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: async (artistId: string) => {
+			const { data } = await APIAxios.put(`/admin/artist/${artistId}/resume-distribution`);
+			return data;
+		},
+		onSuccess: () => {
+			toast.success('Distribution resumed');
+			qc.invalidateQueries({ queryKey: ['one-Artist'] });
+		},
+		onError: (err: any) => {
+			toast.error(err.response?.data?.message || 'Failed to resume distribution');
+		}
+	});
+};
+
 export const useDeleteArtist = () => {
 	const queryClient = useQueryClient();
 	const router = useRouter();

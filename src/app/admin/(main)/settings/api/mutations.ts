@@ -56,7 +56,7 @@ export const useResetAdminPassword = () => {
 export const useCreateAdminRole = () => {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: async (payload: { name: string; allowedPages: string[] }) => {
+		mutationFn: async (payload: { name: string; allowedPages: string[]; notifications?: string[] }) => {
 			const { data } = await APIAxios.post('/admin/settings/roles', payload);
 			return data;
 		},
@@ -73,7 +73,7 @@ export const useCreateAdminRole = () => {
 export const useUpdateAdminRole = () => {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: async ({ id, ...payload }: { id: string; name?: string; allowedPages?: string[] }) => {
+		mutationFn: async ({ id, ...payload }: { id: string; name?: string; allowedPages?: string[]; notifications?: string[] }) => {
 			const { data } = await APIAxios.put(`/admin/settings/roles/${id}`, payload);
 			return data;
 		},

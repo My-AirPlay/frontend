@@ -20,6 +20,13 @@ const ALL_PAGES = [
 	{ key: 'password_management', label: 'Password Management' }
 ];
 
+const ALL_NOTIFICATIONS = [
+	{ key: 'support', label: 'Support Tickets' },
+	{ key: 'uploads', label: 'Media Uploads' },
+	{ key: 'new_users', label: 'New Artist Signups' },
+	{ key: 'contracts', label: 'Contracts' }
+];
+
 export default function RolesTab() {
 	const { data: roles = [], isLoading } = useGetAdminRoles();
 	const createRole = useCreateAdminRole();
@@ -30,30 +37,21 @@ export default function RolesTab() {
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [name, setName] = useState('');
 	const [selectedPages, setSelectedPages] = useState<string[]>([]);
+	const [selectedNotifications, setSelectedNotifications] = useState<string[]>([]);
 
 	const togglePage = (key: string) => {
 		setSelectedPages(prev => (prev.includes(key) ? prev.filter(p => p !== key) : [...prev, key]));
 	};
 
+	const toggleNotification = (key: string) => {
+		setSelectedNotifications(prev => (prev.includes(key) ? prev.filter(n => n !== key) : [...prev, key]));
+	};
+
 	const handleSave = () => {
 		if (editingId) {
-			updateRole.mutate(
-				{ id: editingId, name, allowedPages: selectedPages },
-				{
-					onSuccess: () => {
-						resetForm();
-					}
-				}
-			);
+			updateRole.mutate({ id: editingId, name, allowedPages: selectedPages, notifications: selectedNotifications }, { onSuccess: () => resetForm() });
 		} else {
-			createRole.mutate(
-				{ name, allowedPages: selectedPages },
-				{
-					onSuccess: () => {
-						resetForm();
-					}
-				}
-			);
+			createRole.mutate({ name, allowedPages: selectedPages, notifications: selectedNotifications }, { onSuccess: () => resetForm() });
 		}
 	};
 
@@ -61,6 +59,7 @@ export default function RolesTab() {
 		setEditingId(role._id);
 		setName(role.name);
 		setSelectedPages(role.allowedPages);
+		setSelectedNotifications(role.notifications || []);
 		setShowForm(true);
 	};
 
@@ -69,6 +68,7 @@ export default function RolesTab() {
 		setEditingId(null);
 		setName('');
 		setSelectedPages([]);
+		setSelectedNotifications([]);
 	};
 
 	if (isLoading) return <div>Loading roles...</div>;
@@ -92,6 +92,17 @@ export default function RolesTab() {
 								<label key={page.key} className="flex items-center gap-2 text-sm">
 									<Checkbox checked={selectedPages.includes(page.key)} onCheckedChange={() => togglePage(page.key)} />
 									{page.label}
+								</label>
+							))}
+						</div>
+					</div>
+					<div>
+						<p className="text-sm font-medium mb-2">Notification Categories</p>
+						<div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+							{ALL_NOTIFICATIONS.map(notif => (
+								<label key={notif.key} className="flex items-center gap-2 text-sm">
+									<Checkbox checked={selectedNotifications.includes(notif.key)} onCheckedChange={() => toggleNotification(notif.key)} />
+									{notif.label}
 								</label>
 							))}
 						</div>

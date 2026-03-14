@@ -18,10 +18,15 @@ const AllTicketsPage: React.FC = () => {
 	const page = Number(searchParams.get('page') || '1');
 	const limit = Number(searchParams.get('limit') || '30');
 
-	const { data: tickets, isPending } = useGetComplaints({ page: page.toString(), limit: limit.toString() });
-	const totalTickets = tickets?.total || 0;
-
 	const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'resolved'>('all');
+	const [claimFilter, setClaimFilter] = useState<'' | 'claimed' | 'unclaimed' | 'mine'>('');
+
+	const { data: tickets, isPending } = useGetComplaints({
+		page: page.toString(),
+		limit: limit.toString(),
+		...(claimFilter && { claimStatus: claimFilter as 'claimed' | 'unclaimed' | 'mine' })
+	});
+	const totalTickets = tickets?.total || 0;
 
 	const updateQueryParams = (newParams: { page?: number; limit?: number }) => {
 		const params = new URLSearchParams(searchParams.toString());
@@ -63,6 +68,12 @@ const AllTicketsPage: React.FC = () => {
 							<option value="all">All</option>
 							<option value="open">Open</option>
 							<option value="resolved">Resolved</option>
+						</select>
+						<select className="bg-secondary border border-border text-sm rounded px-3 py-1" value={claimFilter} onChange={e => setClaimFilter(e.target.value as '' | 'claimed' | 'unclaimed' | 'mine')}>
+							<option value="">All Claims</option>
+							<option value="mine">My Claims</option>
+							<option value="claimed">Claimed</option>
+							<option value="unclaimed">Unclaimed</option>
 						</select>
 					</div>
 				</div>
@@ -107,8 +118,19 @@ const AllTicketsPage: React.FC = () => {
 									<p className="text-xs text-white/50">Ticket ID</p>
 									<p className="text-sm">{ticket?.complaintId}</p>
 								</div>
+								<div>
+									<p className="text-xs text-white/50">Claimed</p>
+									<p className="text-sm">
+										{ticket.claimedBy ? (
+											<span className="text-blue-400">
+												{ticket.claimedBy.firstName} {ticket.claimedBy.lastName}
+											</span>
+										) : (
+											<span className="text-white/30">Unclaimed</span>
+										)}
+									</p>
+								</div>
 
-								{/* --- ADD THIS SECTION --- */}
 								{ticket.unreadCount > 0 && (
 									<div className="col-span-2 mt-2">
 										<p className="text-xs text-white/50">Unread</p>
@@ -117,7 +139,6 @@ const AllTicketsPage: React.FC = () => {
 										</p>
 									</div>
 								)}
-								{/* --- END OF SECTION --- */}
 							</div>
 						</div>
 					</article>

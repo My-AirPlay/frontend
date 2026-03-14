@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/
 import { type AccountDeletionFormValues, accountDeletionSchema } from '../schemas';
 import { SelectSimple } from '@/components/ui';
 import { useDeleteAccount } from '../api';
+import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function AccountSection() {
 	const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -37,8 +38,8 @@ export default function AccountSection() {
 		setShowDeleteConfirmation(true);
 	};
 	const { mutate } = useDeleteAccount();
+	const { logout } = useAuthContext();
 	const confirmDelete = () => {
-		toast.success('Account deleted successfully');
 		setShowDeleteConfirmation(false);
 		mutate(
 			{
@@ -48,6 +49,7 @@ export default function AccountSection() {
 			{
 				onSuccess: () => {
 					toast.success('Account deleted successfully');
+					logout({ redirect: true });
 				},
 				onError: error => {
 					toast.error(error.message);

@@ -112,7 +112,10 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 						try {
 							const storedInfo = await idb.getAlbumInfo('album-info');
 							if (storedInfo) {
-								set({ albumInfo: storedInfo });
+								set({
+									albumInfo: storedInfo,
+									streamingPlatforms: storedInfo.streamingPlatforms || streamingPlatformsList
+								});
 							}
 
 							// Load tracks info
@@ -302,7 +305,9 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 
 				hasOngoingUpload: () => {
 					const state = get();
-					return state.albumTracks.length > 0 || state.mediaFileIds.length > 0 || state.coverArtId !== null || Object.values(state.albumInfo).some(val => (val !== '' && Array.isArray(val) ? val.length > 0 : true));
+					const info = state.albumInfo;
+					const hasInfoFilled = [info.title, info.artistName, info.mainGenre, info.releaseDate, info.description, info.recordLabel, info.publisher, info.copyright, info.explicitContent, info.universalProductCode, info.releaseVersion].some(val => val !== '');
+					return state.albumTracks.length > 0 || state.mediaFileIds.length > 0 || state.coverArtId !== null || hasInfoFilled;
 				}
 			}),
 			{
