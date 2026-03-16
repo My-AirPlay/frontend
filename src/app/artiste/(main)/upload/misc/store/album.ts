@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import * as idb from '../index-db/album-db';
 import { generateId } from '../index-db';
-import { streamingPlatformsList } from '@/utils/stores';
 
 export type AlbumType = 'Album' | 'ExtendedPlaylist' | 'MixTape';
 export type AlbumUploadStep = 'selection' | 'musicInfo' | 'trackUpload' | 'coverArt' | 'distribution' | 'preview' | 'complete';
@@ -87,7 +86,7 @@ const defaultAlbumInfo: AlbumInfo = {
 	explicitContent: '',
 	universalProductCode: '',
 	releaseVersion: '',
-	streamingPlatforms: streamingPlatformsList
+	streamingPlatforms: []
 };
 
 export const useAlbumUploadStore = create<AlbumUploadState>()(
@@ -100,7 +99,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 				albumInfo: { ...defaultAlbumInfo },
 				albumTracks: [],
 				mediaFileIds: [],
-				streamingPlatforms: streamingPlatformsList,
+				streamingPlatforms: [],
 				isDBInitialized: false,
 
 				initializeDB: async () => {
@@ -114,7 +113,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 							if (storedInfo) {
 								set({
 									albumInfo: storedInfo,
-									streamingPlatforms: storedInfo.streamingPlatforms || streamingPlatformsList
+									streamingPlatforms: storedInfo.streamingPlatforms || []
 								});
 							}
 
@@ -154,7 +153,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 						albumInfo: { ...defaultAlbumInfo },
 						albumTracks: [],
 						mediaFileIds: [],
-						streamingPlatforms: streamingPlatformsList
+						streamingPlatforms: []
 					});
 				},
 

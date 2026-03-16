@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import * as idb from '../index-db/media-db';
-import { streamingPlatformsList } from '@/utils/stores';
 
 export type MediaType = 'Track' | 'Video' | 'PlayBack';
 export type TMediaUploadStep = 'selection' | 'musicInfo' | 'trackUpload' | 'coverArt' | 'distribution' | 'preview' | 'complete';
@@ -61,7 +60,7 @@ const defaultMediaInfo: MediaUploadInfo = {
 	lyrics: '',
 	universalProductCode: '',
 	releaseVersion: '',
-	streamingPlatforms: streamingPlatformsList
+	streamingPlatforms: []
 };
 
 export const useMediaUploadStore = create<MediaUploadState>()(
@@ -74,7 +73,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 				mediaFileId: null,
 				coverArtId: null,
 				mediaInfo: { ...defaultMediaInfo },
-				streamingPlatforms: streamingPlatformsList,
+				streamingPlatforms: [],
 				isDBInitialized: false,
 
 				initializeDB: async () => {
@@ -98,7 +97,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 						mediaFileId: null,
 						coverArtId: null,
 						mediaInfo: { ...defaultMediaInfo },
-						streamingPlatforms: streamingPlatformsList
+						streamingPlatforms: []
 					});
 				},
 
