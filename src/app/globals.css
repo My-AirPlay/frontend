@@ -8,10 +8,12 @@
 	}
 }
 
+/* ── Keyframes ──────────────────────────────────────────────── */
+
 @keyframes fade-in-up {
 	from {
 		opacity: 0;
-		transform: translateY(20px);
+		transform: translateY(24px);
 	}
 	to {
 		opacity: 1;
@@ -28,8 +30,110 @@
 	}
 }
 
+@keyframes gradient-shift {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes pulse-slow {
+	0%,
+	100% {
+		opacity: 0.6;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes spin-very-slow {
+	from {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	to {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
 .animate-fade-in-up {
-	animation: fade-in-up 0.8s ease-out forwards;
+	animation: fade-in-up 0.8s ease-out both;
+}
+
+.animate-pulse-slow {
+	animation: pulse-slow 6s ease-in-out infinite;
+}
+
+.animate-spin-very-slow {
+	animation: spin-very-slow 40s linear infinite;
+}
+
+/* ── Hero gradient text ─────────────────────────────────────── */
+
+.hero-gradient-text {
+	background: linear-gradient(135deg, #ff6b00, #ff8c42, #ffd4a8, #ff8c42, #ff6b00);
+	background-size: 400% 400%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation: gradient-shift 5s ease infinite;
+}
+
+/* ── CTA glow button ────────────────────────────────────────── */
+
+.glow-button {
+	position: relative;
+	transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glow-button:hover {
+	box-shadow:
+		0 0 24px rgba(255, 107, 0, 0.35),
+		0 0 80px rgba(255, 107, 0, 0.12);
+	transform: translateY(-1px);
+}
+
+/* ── Feature card ───────────────────────────────────────────── */
+
+.feature-card {
+	transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.feature-card:hover {
+	box-shadow:
+		0 24px 80px -20px rgba(255, 107, 0, 0.08),
+		0 0 0 1px rgba(255, 107, 0, 0.06);
+	transform: translateY(-4px);
+}
+
+/* ── Scroll-reveal system ───────────────────────────────────── */
+
+.reveal-section .reveal-child {
+	opacity: 0;
+	transform: translateY(32px);
+	transition:
+		opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+		transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reveal-section.revealed .reveal-child {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* ── Noise / grain texture overlay ──────────────────────────── */
+
+.noise-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	pointer-events: none;
+	opacity: 0.025;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	background-repeat: repeat;
+	background-size: 128px 128px;
 }
 @layer base {
 	:root {
