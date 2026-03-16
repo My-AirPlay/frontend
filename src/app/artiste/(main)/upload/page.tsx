@@ -122,8 +122,17 @@ export default function MediaTypeSelection() {
 		}
 	};
 
+	const isPaused = artist?.distributionStatus === 'paused';
+
 	return (
 		<div className="container mx-auto w-[80vw] max-w-3xl">
+			{isPaused && (
+				<div className="mb-6 flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-700 p-4">
+					<AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+					<p className="text-sm text-amber-800 dark:text-amber-200 flex-1 font-medium">Your distribution has been paused. Uploads are temporarily disabled. Please contact support for assistance.</p>
+				</div>
+			)}
+
 			{artist?.bankDetails?.paidRegistrationFee === false && (
 				<div className="mb-6 flex items-center gap-3 rounded-lg border border-rose-300 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-700 p-4">
 					<AlertTriangle className="h-5 w-5 text-rose-600 shrink-0" />
@@ -152,7 +161,7 @@ export default function MediaTypeSelection() {
 				</div>
 
 				<div className="flex justify-center mt-8 md:mt-16">
-					<Button onClick={handleContinue} className="rounded-full" disabled={!selectedType} size={'lg'}>
+					<Button onClick={handleContinue} className="rounded-full" disabled={!selectedType || isPaused} size={'lg'}>
 						Continue <MoveRight className="ml-2 h-4 w-4" />
 					</Button>
 				</div>

@@ -15,7 +15,6 @@ import { useUploadTrack } from '../api/upload';
 import Image from 'next/image';
 import { PlatformImage } from './Step4MediaDistributionPlatformCards';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
-import { useAuthContext } from '@/contexts/AuthContext';
 
 export default function Step5MediaPreview() {
 	const { state: isUploadStatusModalOpen, setTrue: openUploadStatusModal, setFalse: closeUploadStatusModal, setState: setUploadStatusModalOpen } = useBooleanStateControl();
@@ -23,8 +22,6 @@ export default function Step5MediaPreview() {
 
 	const { mediaInfo, mediaFileId, coverArtId, setCurrentStep, mediaType, streamingPlatforms, clearStore, getMediaFile, getCoverArtFile, isDBInitialized } = useMediaUploadStore();
 	const { formattedData } = useStaticAppInfo();
-	const { artist } = useAuthContext();
-	const isPaused = artist?.distributionStatus === 'paused';
 	const [mediaFile, setMediaFile] = useState<File | null>(null);
 	const [coverArtFile, setCoverArtFile] = useState<File | null>(null);
 	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
@@ -208,7 +205,7 @@ export default function Step5MediaPreview() {
 						<Button onClick={handleBack} variant="outline" disabled={isPending} size="lg">
 							<ArrowLeft className="mr-2 h-4 w-4" /> Back
 						</Button>
-						<Button onClick={handleSubmit} className="" disabled={isPending || filesLoading || isPaused} size="lg">
+						<Button onClick={handleSubmit} className="" disabled={isPending || filesLoading} size="lg">
 							{isPending ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...
