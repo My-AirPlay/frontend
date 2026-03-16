@@ -54,6 +54,38 @@ export const useResetAdminPassword = () => {
 	});
 };
 
+export const useDeleteAdminUser = () => {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: async (id: string) => {
+			const { data } = await APIAxios.delete(`/admin/settings/users/${id}`);
+			return data;
+		},
+		onSuccess: () => {
+			toast.success('Sub admin deleted');
+			qc.invalidateQueries({ queryKey: ['admin-users'] });
+		},
+		onError: (err: AxiosError<{ message?: string }>) => {
+			toast.error(err.response?.data?.message || 'Failed to delete sub admin');
+		}
+	});
+};
+
+export const useResendWelcomeEmail = () => {
+	return useMutation({
+		mutationFn: async (id: string) => {
+			const { data } = await APIAxios.post(`/admin/settings/users/${id}/resend-welcome`);
+			return data;
+		},
+		onSuccess: () => {
+			toast.success('Welcome email resent');
+		},
+		onError: (err: AxiosError<{ message?: string }>) => {
+			toast.error(err.response?.data?.message || 'Failed to resend email');
+		}
+	});
+};
+
 export const useCreateAdminRole = () => {
 	const qc = useQueryClient();
 	return useMutation({

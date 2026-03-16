@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { SingleDatePicker } from '@/components/ui';
 import { Artist } from '@/lib/types';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useUpdateArtistContract, useUploadArtistContract } from '../../../catalogue/api/postAdminUploadArtistContract';
 import { Button } from '@/components/ui/button';
-import { Save } from 'lucide-react';
+import { Save, Download } from 'lucide-react';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { toast } from 'sonner';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
+import APIAxios from '@/utils/axios';
 
 // Helper function to safely create a Date object
 // Defaults to today's date if the provided string is invalid or missing.
@@ -41,6 +43,27 @@ interface FileWithPreview {
 
 const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }) => {
 	const [primaryFile, setPrimaryFile] = useState<FileWithPreview>({ file: null, previewUrl: null });
+	const [isDownloading, setIsDownloading] = useState(false);
+
+	const handleDownloadSigned = async () => {
+		setIsDownloading(true);
+		try {
+			const response = await APIAxios.get(`/admin/artist/${artist._id}/download-signed-contract`, {
+				responseType: 'blob'
+			});
+			const blob = new Blob([response.data], { type: 'application/pdf' });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `signed-contract-${artist.artistName || artist.firstName}.pdf`;
+			a.click();
+			URL.revokeObjectURL(url);
+		} catch {
+			toast.error('Failed to download signed contract');
+		} finally {
+			setIsDownloading(false);
+		}
+	};
 
 	// 1. State for startDate, initialized safely.
 	const [startDate, setStartDate] = useState<Date>(safeNewDate(artist?.contractDetails?.startDate));
@@ -126,6 +149,27 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 					<Link href={artist?.contractDetails?.contract} className="text-primary hover:underline" target="_blank">
 						Contract Preview
 					</Link>
+				</div>
+			)}
+
+			{artist?.contractDetails?.signatureUrl && (
+				<div className="space-y-4 p-4 bg-secondary rounded-lg">
+					<div className="flex items-center justify-between">
+						<h2 className="text-lg font-medium">Signature</h2>
+						<div className="flex items-center gap-3">
+							{artist.contractDetails.signedAt && <span className="text-sm text-muted-foreground">Signed {new Date(artist.contractDetails.signedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>}
+							<span className="text-xs px-2 py-0.5 rounded bg-green-500/20 text-green-400">Signed</span>
+						</div>
+					</div>
+					<div className="bg-white rounded-md p-4 inline-block">
+						<Image src={artist.contractDetails.signatureUrl} alt="Artist Signature" width={300} height={120} className="object-contain" unoptimized />
+					</div>
+					<div>
+						<Button variant="outline" size="sm" onClick={handleDownloadSigned} disabled={isDownloading}>
+							<Download size={16} className="mr-2" />
+							{isDownloading ? 'Preparing PDF...' : 'Download Signed Contract'}
+						</Button>
+					</div>
 				</div>
 			)}
 			<div className="space-y-4">

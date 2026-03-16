@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui';
 import { useGetAdminUsers, useGetAdminRoles } from '../../api/queries';
-import { useCreateAdminUser, useUpdateAdminUser, useResetAdminPassword } from '../../api/mutations';
+import { useCreateAdminUser, useUpdateAdminUser, useResetAdminPassword, useDeleteAdminUser, useResendWelcomeEmail } from '../../api/mutations';
 
 export default function TeamTab() {
 	const { data: users = [], isLoading } = useGetAdminUsers();
@@ -13,6 +13,8 @@ export default function TeamTab() {
 	const createUser = useCreateAdminUser();
 	const updateUser = useUpdateAdminUser();
 	const resetPassword = useResetAdminPassword();
+	const deleteUser = useDeleteAdminUser();
+	const resendWelcome = useResendWelcomeEmail();
 
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [form, setForm] = useState({
@@ -97,7 +99,7 @@ export default function TeamTab() {
 								</td>
 								<td className="p-3">
 									{!user.isSuperAdmin && (
-										<div className="flex gap-2">
+										<div className="flex gap-2 flex-wrap">
 											<Button
 												size="sm"
 												variant="outline"
@@ -119,6 +121,22 @@ export default function TeamTab() {
 												}}
 											>
 												Reset Password
+											</Button>
+											<Button size="sm" variant="outline" onClick={() => resendWelcome.mutate(user._id)} disabled={resendWelcome.isPending}>
+												{resendWelcome.isPending ? 'Sending...' : 'Resend Welcome'}
+											</Button>
+											<Button
+												size="sm"
+												variant="outline"
+												className="text-red-400 hover:text-red-300"
+												onClick={() => {
+													if (window.confirm(`Delete ${user.firstName} ${user.lastName}? This cannot be undone.`)) {
+														deleteUser.mutate(user._id);
+													}
+												}}
+												disabled={deleteUser.isPending}
+											>
+												{deleteUser.isPending ? 'Deleting...' : 'Delete'}
 											</Button>
 										</div>
 									)}
