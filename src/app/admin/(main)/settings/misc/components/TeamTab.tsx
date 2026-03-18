@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui';
+import { Pencil, X } from 'lucide-react';
 import { useGetAdminUsers, useGetAdminRoles } from '../../api/queries';
 import { useCreateAdminUser, useUpdateAdminUser, useResetAdminPassword, useDeleteAdminUser, useResendWelcomeEmail } from '../../api/mutations';
 
@@ -15,6 +16,23 @@ export default function TeamTab() {
 	const resetPassword = useResetAdminPassword();
 	const deleteUser = useDeleteAdminUser();
 	const resendWelcome = useResendWelcomeEmail();
+
+	const [roleModal, setRoleModal] = useState<{ userId: string; userName: string; currentRoleId: string } | null>(null);
+	const [selectedRoleId, setSelectedRoleId] = useState('');
+
+	const openRoleModal = (user: any) => {
+		setRoleModal({
+			userId: user._id,
+			userName: `${user.firstName} ${user.lastName}`,
+			currentRoleId: user.role?._id || ''
+		});
+		setSelectedRoleId(user.role?._id || '');
+	};
+
+	const handleRoleSave = () => {
+		if (!roleModal) return;
+		updateUser.mutate({ id: roleModal.userId, roleId: selectedRoleId || undefined }, { onSuccess: () => setRoleModal(null) });
+	};
 
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [form, setForm] = useState({
@@ -93,7 +111,16 @@ export default function TeamTab() {
 									{user.isSuperAdmin && <span className="ml-2 text-xs bg-primary/20 text-primary px-2 py-0.5 rounded">Super Admin</span>}
 								</td>
 								<td className="p-3 text-muted-foreground">{user.email}</td>
-								<td className="p-3">{user.role?.name || '—'}</td>
+								<td className="p-3">
+									<span className="inline-flex items-center gap-1.5">
+										{user.role?.name || '—'}
+										{!user.isSuperAdmin && (
+											<button onClick={() => openRoleModal(user)} className="text-muted-foreground hover:text-foreground" title="Change role">
+												<Pencil size={13} />
+											</button>
+										)}
+									</span>
+								</td>
 								<td className="p-3">
 									<span className={`text-xs px-2 py-0.5 rounded ${user.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>{user.status}</span>
 								</td>
@@ -146,6 +173,39 @@ export default function TeamTab() {
 					</tbody>
 				</table>
 			</div>
+			{roleModal && (
+				<div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+					<div className="bg-secondary border border-border rounded-lg w-full max-w-md">
+						<div className="flex items-center justify-between p-4 border-b border-border">
+							<h3 className="text-lg font-semibold">Change Role</h3>
+							<button onClick={() => setRoleModal(null)} className="text-muted-foreground hover:text-foreground">
+								<X size={20} />
+							</button>
+						</div>
+						<div className="p-4 space-y-4">
+							<p className="text-sm text-muted-foreground">
+								Reassign role for <span className="text-foreground font-medium">{roleModal.userName}</span>
+							</p>
+							<select className="w-full bg-[#383838] text-foreground rounded-md border border-border px-3 py-2" value={selectedRoleId} onChange={e => setSelectedRoleId(e.target.value)}>
+								<option value="">Default Role</option>
+								{roles.map((role: any) => (
+									<option key={role._id} value={role._id}>
+										{role.name}
+									</option>
+								))}
+							</select>
+						</div>
+						<div className="flex justify-end gap-2 p-4 border-t border-border">
+							<Button variant="outline" onClick={() => setRoleModal(null)}>
+								Cancel
+							</Button>
+							<Button onClick={handleRoleSave} disabled={updateUser.isPending || selectedRoleId === roleModal.currentRoleId}>
+								{updateUser.isPending ? 'Saving...' : 'Save'}
+							</Button>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
