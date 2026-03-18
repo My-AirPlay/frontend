@@ -130,6 +130,31 @@ const Tracks: React.FC = () => {
 			cell: (info: any) => <span className="text-muted-foreground text-sm font-mono">{info.row.original.upcCode || '-'}</span>
 		},
 		{
+			id: 'catalogueMatch',
+			header: 'Catalogue Match',
+			cell: (info: any) => {
+				const status = info.row.original?.catalogueMatchStatus;
+				const title = info.row.original?.mediaRef?.title;
+				if (status === 'auto-matched' || status === 'manually-matched') {
+					return <span className="text-green-400 text-sm">{title || 'Matched'}</span>;
+				}
+				if (status === 'ignored') {
+					return <span className="text-gray-400 text-sm">Ignored</span>;
+				}
+				return <span className="text-yellow-400 text-sm">Unmatched</span>;
+			}
+		},
+		{
+			id: 'confidence',
+			header: 'Confidence',
+			cell: (info: any) => {
+				const confidence = info.row.original?.catalogueMatchConfidence || 0;
+				if (confidence === 0) return <span className="text-gray-400 text-sm">-</span>;
+				const colorClass = confidence >= 70 ? 'text-green-400' : 'text-red-400';
+				return <span className={`${colorClass} text-sm font-medium`}>{confidence}%</span>;
+			}
+		},
+		{
 			id: 'createdAt',
 			header: 'Created',
 			accessorKey: 'createdAt',
