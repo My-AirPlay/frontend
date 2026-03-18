@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { ArrowLeft, Trash2, Copy, Save, Plus, Loader2, Calendar, Search, User } from 'lucide-react';
+import { ArrowLeft, Trash2, Copy, Save, Plus, Loader2, Calendar, Search, User, Link2, Unlink, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { useDeleteTrack, useGetTrack, useUpdateTrack } from '@/app/admin/(main)/tracks/api/trackHooks';
 import { useGetAllArtists } from '@/app/admin/(main)/catalogue/api/getAllArtistsParams';
 import { NairaIcon } from '@/components/ui/naira-icon';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { linkTrackToMedia, unlinkTrackFromMedia, ignoreTrackCatalogueMatch } from '@/app/admin/(main)/sales/misc/api/catalogueMatch';
+import LinkMediaModal from '@/app/admin/(main)/sales/misc/components/LinkMediaModal';
 
 interface StreamAnalyticsData {
 	_id: string;
@@ -46,6 +50,10 @@ interface TrackData {
 	isrcCode?: string;
 	upcCode?: string;
 	catalogueId?: string;
+	artistId?: string;
+	mediaRef?: { _id: string; title: string } | null;
+	catalogueMatchStatus?: 'auto-matched' | 'manually-matched' | 'unmatched' | 'ignored';
+	catalogueMatchConfidence?: number;
 	sharedRevenue: SharedRevenueItem[];
 	streamAnalyticsRefs: StreamAnalyticsData[];
 	createdAt: string;
@@ -148,6 +156,57 @@ const TrackDetailPage = () => {
 	const [activeTab, setActiveTab] = useState('overview');
 	const [salesContracts, setSalesContracts] = useState<SharedRevenueItem[]>([]);
 	const [costsContracts, setCostsContracts] = useState<SharedRevenueItem[]>([]);
+	const queryClient = useQueryClient();
+	const [linkModalOpen, setLinkModalOpen] = useState(false);
+	const [catalogueActionLoading, setCatalogueActionLoading] = useState(false);
+
+	const derivedArtistId = track?.artistId || track?.sharedRevenue?.[0]?.artistId || null;
+
+	const handleLinkToMedia = async (mediaId: string) => {
+		if (!track) return;
+		setCatalogueActionLoading(true);
+		try {
+			await linkTrackToMedia(track._id, mediaId);
+			toast.success('Track linked to catalogue');
+			queryClient.invalidateQueries({ queryKey: ['track', track_id] });
+			queryClient.invalidateQueries({ queryKey: ['tracks'] });
+		} catch {
+			toast.error('Failed to link track');
+		} finally {
+			setCatalogueActionLoading(false);
+			setLinkModalOpen(false);
+		}
+	};
+
+	const handleUnlinkMedia = async () => {
+		if (!track) return;
+		setCatalogueActionLoading(true);
+		try {
+			await unlinkTrackFromMedia(track._id);
+			toast.success('Track unlinked from catalogue');
+			queryClient.invalidateQueries({ queryKey: ['track', track_id] });
+			queryClient.invalidateQueries({ queryKey: ['tracks'] });
+		} catch {
+			toast.error('Failed to unlink track');
+		} finally {
+			setCatalogueActionLoading(false);
+		}
+	};
+
+	const handleIgnoreMatch = async () => {
+		if (!track) return;
+		setCatalogueActionLoading(true);
+		try {
+			await ignoreTrackCatalogueMatch(track._id);
+			toast.success('Catalogue match ignored');
+			queryClient.invalidateQueries({ queryKey: ['track', track_id] });
+			queryClient.invalidateQueries({ queryKey: ['tracks'] });
+		} catch {
+			toast.error('Failed to ignore match');
+		} finally {
+			setCatalogueActionLoading(false);
+		}
+	};
 
 	const artistsList = useMemo(() => artistsData?.data || [], [artistsData]);
 
@@ -331,6 +390,72 @@ const TrackDetailPage = () => {
 							<Input value={new Date(track.createdAt).toLocaleDateString()} disabled className="bg-secondary border-border opacity-60" />
 						</div>
 					</div>
+
+					{/* Catalogue Link Section */}
+					<div className="border border-border rounded-lg p-4 space-y-3">
+						<h3 className="text-sm font-semibold uppercase text-muted-foreground">Catalogue Link</h3>
+
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+							<div className="space-y-1">
+								<span className="text-xs text-muted-foreground">Status</span>
+								<div>
+									{(() => {
+										const status = track.catalogueMatchStatus;
+										if (status === 'auto-matched' || status === 'manually-matched') {
+											return <span className="text-green-400 text-sm font-medium">{status === 'auto-matched' ? 'Auto Matched' : 'Manually Matched'}</span>;
+										}
+										if (status === 'ignored') {
+											return <span className="text-gray-400 text-sm font-medium">Ignored</span>;
+										}
+										return <span className="text-yellow-400 text-sm font-medium">Unmatched</span>;
+									})()}
+								</div>
+							</div>
+
+							{(track.catalogueMatchStatus === 'auto-matched' || track.catalogueMatchStatus === 'manually-matched') && (
+								<div className="space-y-1">
+									<span className="text-xs text-muted-foreground">Confidence</span>
+									<div>
+										{(() => {
+											const confidence = track.catalogueMatchConfidence || 0;
+											const colorClass = confidence >= 70 ? 'text-green-400' : 'text-red-400';
+											return <span className={`${colorClass} text-sm font-medium`}>{confidence}%</span>;
+										})()}
+									</div>
+								</div>
+							)}
+
+							{track.mediaRef && (
+								<div className="space-y-1">
+									<span className="text-xs text-muted-foreground">Linked Media</span>
+									<div className="text-sm font-medium">{track.mediaRef.title}</div>
+								</div>
+							)}
+						</div>
+
+						<div className="flex gap-2 pt-2">
+							{(!track.catalogueMatchStatus || track.catalogueMatchStatus === 'unmatched' || track.catalogueMatchStatus === 'auto-matched' || track.catalogueMatchStatus === 'ignored') && (
+								<Button variant="outline" size="sm" onClick={() => setLinkModalOpen(true)} disabled={catalogueActionLoading || !derivedArtistId} className="flex items-center gap-2 text-xs" title={!derivedArtistId ? 'No artist linked to this track' : undefined}>
+									<Link2 size={14} />
+									Link to Catalogue
+								</Button>
+							)}
+							{(track.catalogueMatchStatus === 'auto-matched' || track.catalogueMatchStatus === 'manually-matched') && (
+								<Button variant="outline" size="sm" onClick={handleUnlinkMedia} disabled={catalogueActionLoading} className="flex items-center gap-2 text-xs">
+									{catalogueActionLoading ? <Loader2 size={14} className="animate-spin" /> : <Unlink size={14} />}
+									Unlink
+								</Button>
+							)}
+							{(!track.catalogueMatchStatus || track.catalogueMatchStatus === 'unmatched') && (
+								<Button variant="outline" size="sm" onClick={handleIgnoreMatch} disabled={catalogueActionLoading} className="flex items-center gap-2 text-xs">
+									{catalogueActionLoading ? <Loader2 size={14} className="animate-spin" /> : <EyeOff size={14} />}
+									Ignore
+								</Button>
+							)}
+						</div>
+					</div>
+
+					{linkModalOpen && derivedArtistId && <LinkMediaModal artistId={derivedArtistId} trackTitle={track.trackTitle} onLink={handleLinkToMedia} onClose={() => setLinkModalOpen(false)} />}
 				</TabsContent>
 
 				<TabsContent value="rights" className="space-y-6 mt-6">
