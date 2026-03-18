@@ -252,6 +252,10 @@ export interface ReportItem {
 	isrcCode: string;
 	currency: string;
 	__v?: number; // MongoDB version key (Made optional)
+	mediaRef?: string | null;
+	catalogueMatchStatus?: 'auto-matched' | 'manually-matched' | 'unmatched' | 'ignored';
+	catalogueMatchConfidence?: number;
+	matchedMediaTitle?: string | null;
 }
 
 export interface SharedRevenue {
