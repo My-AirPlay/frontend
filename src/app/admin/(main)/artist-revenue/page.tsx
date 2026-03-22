@@ -37,6 +37,7 @@ const ArtistRevenue: React.FC = () => {
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
 	const [downloading, setDownloading] = useState(false);
+	const [minLimitOnly, setMinLimitOnly] = useState(true);
 	const { data: periods = [] } = useGetAvailablePeriods();
 
 	const handleDownload = async () => {
@@ -57,7 +58,9 @@ const ArtistRevenue: React.FC = () => {
 			let endpoint: string;
 			let filenameLabel: string;
 			if (exportType === 'summary') {
-				endpoint = `/admin/export-revenue-summary/${encodeURIComponent(selectedPeriod)}`;
+				const summaryParams = new URLSearchParams();
+				if (minLimitOnly) summaryParams.set('minLimit', 'true');
+				endpoint = `/admin/export-revenue-summary/${encodeURIComponent(selectedPeriod)}${summaryParams.toString() ? `?${summaryParams.toString()}` : ''}`;
 				filenameLabel = `revenue-summary-${selectedPeriod}`;
 			} else {
 				const params = new URLSearchParams();
@@ -71,6 +74,7 @@ const ArtistRevenue: React.FC = () => {
 				} else {
 					filenameLabel = 'withdrawal-slips-all';
 				}
+				if (minLimitOnly) params.set('minLimit', 'true');
 				endpoint = `/admin/export-withdrawal-slips${params.toString() ? `?${params.toString()}` : ''}`;
 			}
 			const response = await APIAxios.get(endpoint, { responseType: 'blob' });
@@ -395,6 +399,10 @@ const ArtistRevenue: React.FC = () => {
 									)}
 								</>
 							)}
+							<label className="flex items-center gap-2 cursor-pointer">
+								<input type="checkbox" checked={minLimitOnly} onChange={e => setMinLimitOnly(e.target.checked)} className="rounded border-border" />
+								<span className="text-sm">Only export above minimum limit (₦20,000)</span>
+							</label>
 						</div>
 						<div className="flex justify-end gap-2 p-4 border-t border-border">
 							<Button variant="outline" onClick={() => setShowExportModal(false)}>
