@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import React, { useState, useCallback } from 'react'; // Added useCallback
-import { Download, Filter, Loader2 } from 'lucide-react'; // Added Loader2
-import JSZip from 'jszip'; // Import JSZip
-import { saveAs } from 'file-saver'; // Import file-saver
+import { Download, Filter, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
@@ -14,7 +12,8 @@ import { useGetAllAlbums, useGetAllContractIds } from './api/getAdminGetAllAlbum
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ArrowDown, ArrowUp } from 'lucide-react';
-import { toast } from 'sonner'; // Import toast
+import { toast } from 'sonner';
+import APIAxios from '@/utils/axios';
 import moment from 'moment';
 
 // Helper function for delay - REMOVED (unused)
@@ -66,7 +65,6 @@ const Catalogue: React.FC = () => {
 		setSelectedRows(selectedData);
 	}, []); // Added dependency array
 
-	// Function to handle the bulk download logic using JSZip
 	const handleBulkDownload = async () => {
 		if (selectedRows.length === 0) {
 			toast.info('Please select items to download.');
@@ -74,81 +72,48 @@ const Catalogue: React.FC = () => {
 		}
 
 		setIsBulkDownloading(true);
-		setDownloadProgress(5);
+		setDownloadProgress(10);
 		toast.info('Preparing files for download…');
 
 		try {
-			const zip = new JSZip();
-			let filesAdded = 0;
-			let fetchErrors = 0;
-
-			// helper to fetch a URL and add to a JSZip folder, inferring filename from URL
-			const fetchAndAddToFolder = async (url: string, folder: JSZip) => {
-				try {
-					const res = await fetch(url);
-					if (!res.ok) throw new Error(`HTTP ${res.status}`);
-					const blob = await res.blob();
-					const pathname = new URL(url).pathname;
-					const rawName = pathname.substring(pathname.lastIndexOf('/') + 1);
-					const filename = rawName || 'file';
-					folder.file(filename, blob);
-					filesAdded++;
-				} catch (e) {
-					console.error(`Error fetching ${url}:`, e);
-					fetchErrors++;
-				}
-			};
-
-			// Determine which rows to process:
-			let rowsToProcess: typeof selectedRows = selectedRows;
-
+			// Collect media IDs from selected rows (handle albums with fileIds)
+			let mediaIds: string[] = [];
 			const hasFileIds = selectedRows.some(row => Array.isArray((row as any).fileIds));
 			if (hasFileIds) {
-				const allIds = (selectedRows as any[]).flatMap(r => r.fileIds as string[]);
-				rowsToProcess = allIds.map(id => tracks.data.find((t: any) => t._id === id)).filter((t): t is typeof t => Boolean(t));
+				mediaIds = (selectedRows as any[]).flatMap(r => (r.fileIds || []).map((f: any) => (typeof f === 'string' ? f : f._id)));
+			} else {
+				mediaIds = selectedRows.map((row: any) => row._id).filter(Boolean);
 			}
 
-			// now fetch media + cover for each row in rowsToProcess
-			const rowPromises = rowsToProcess.map(async (row, idx) => {
-				const folderName = `${row.artistName} - ${row.title} (${idx + 1})`;
-				const folder = zip.folder(folderName)!;
-
-				setDownloadProgress(prev => Math.min(prev + Math.floor(90 / rowsToProcess.length), 95));
-
-				if (typeof row.mediaUrl === 'string') {
-					await fetchAndAddToFolder(row.mediaUrl, folder);
-				}
-				if (typeof row.mediaCoverArtUrl === 'string') {
-					await fetchAndAddToFolder(row.mediaCoverArtUrl, folder);
-				}
-
-				folder.file('tracks.json', JSON.stringify(row, null, 2));
-				filesAdded++; // counting this file too, since it's added
-			});
-
-			await Promise.all(rowPromises);
-			setDownloadProgress(98);
-
-			if (filesAdded === 0) {
-				toast.error('Failed to fetch any files. Cannot create zip.');
+			if (mediaIds.length === 0) {
+				toast.error('No tracks found to download.');
 				return;
 			}
-			if (fetchErrors > 0) {
-				toast.warning(`Some files failed to fetch (${fetchErrors}). Continuing.`);
-			}
 
-			toast.info(`Zipping ${filesAdded} files…`);
-			const blob = await zip.generateAsync({
-				type: 'blob',
-				compression: 'DEFLATE',
-				compressionOptions: { level: 6 }
-			});
+			setDownloadProgress(30);
+			const response = await APIAxios.post(
+				'/admin/download_media_zip',
+				{
+					mediaIds,
+					filename: `airplay-download-${Date.now()}.zip`
+				},
+				{ responseType: 'blob' }
+			);
+
+			setDownloadProgress(90);
+			const url = URL.createObjectURL(response.data);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `airplay-download-${Date.now()}.zip`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
 			setDownloadProgress(100);
-			saveAs(blob, `airplay-download-${Date.now()}.zip`);
-			toast.success(`Download started with ${filesAdded} files.`);
+			toast.success(`Download started with ${mediaIds.length} tracks.`);
 		} catch (err) {
 			console.error('Bulk download error:', err);
-			toast.error('Unexpected error during bulk download.');
+			toast.error('Failed to download files.');
 		} finally {
 			setTimeout(() => setDownloadProgress(0), 1500);
 			setIsBulkDownloading(false);
