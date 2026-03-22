@@ -11,10 +11,9 @@ import { TRUE_OR_FALSE_OPTIONS } from '@/constants';
 import { useGetMedia } from '../../api/getOneMedia';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import moment from 'moment';
-import JSZip from 'jszip'; // Import JSZip
-import { saveAs } from 'file-saver'; // Import file-saver
-import { Loader2 } from 'lucide-react'; // Import Loader2
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import APIAxios from '@/utils/axios';
 import { useDeleteMedia } from '../../api/deleteMedia';
 
 // Helper function for delay - REMOVED
@@ -36,83 +35,37 @@ const TrackDetails: React.FC = () => {
 	// const { mutate, isPending } = useDownloadMedia(); // REMOVED
 	const { mutate: deleteMutate, isPending: deletePending } = useDeleteMedia();
 
-	// Determine the direct download URL (still useful for checking availability)
-	let directDownloadUrl: string | null = null;
-	if (contract) {
-		if (typeof contract.mediaUrl === 'string' && contract.mediaUrl) {
-			directDownloadUrl = contract.mediaUrl;
-		} else if (Array.isArray(contract.mediaUrls) && contract.mediaUrls.length > 0 && typeof contract.mediaUrls[0] === 'string') {
-			directDownloadUrl = contract.mediaUrls[0]; // Use the first URL if it's an array
-		} else if (Array.isArray(contract.mediaUrl) && contract.mediaUrl.length > 0 && typeof contract.mediaUrl[0] === 'string') {
-			// Handle less common case where mediaUrl itself is an array
-			directDownloadUrl = contract.mediaUrl[0];
-		}
-	}
-
-	// Extract filename from URL for the download attribute
-	const downloadFilename = directDownloadUrl ? directDownloadUrl.substring(directDownloadUrl.lastIndexOf('/') + 1).split('?')[0] || 'download' : 'download';
-
-	// Function to handle single track download using JSZip
 	const handleDownload = async () => {
-		if (!directDownloadUrl) {
-			toast.error('Download URL is not available for this track.');
-			return;
-		}
-		if (!contract?.title) {
-			toast.error('Track title is missing, cannot name download file.');
+		if (!contract?._id) {
+			toast.error('Track not available for download.');
 			return;
 		}
 
 		setIsDownloading(true);
 		toast.info(`Preparing download for "${contract.title}"...`);
 
-		const zip = new JSZip();
-		let fileAdded = false; // Track if the single file was added
-
 		try {
-			// Fetch the single file
-			const url = directDownloadUrl;
-			const response = await fetch(url);
+			const safeTitle = (contract.title || 'track').replace(/[^a-z0-9]/gi, '_');
+			const response = await APIAxios.post(
+				'/admin/download_media_zip',
+				{
+					mediaIds: [contract._id],
+					filename: `airplay-${safeTitle}.zip`
+				},
+				{ responseType: 'blob' }
+			);
 
-			if (!response.ok) {
-				// Handle potential XML error responses like NoSuchKey
-				if (response.headers.get('content-type')?.includes('application/xml')) {
-					const errorText = await response.text();
-					console.error(`XML Error fetching URL (${url}): Status ${response.status}`, errorText);
-					const keyMatch = errorText.match(/<Key>(.*?)<\/Key>/);
-					const messageMatch = errorText.match(/<Message>(.*?)<\/Message>/);
-					toast.error(`Error fetching ${keyMatch ? keyMatch[1] : downloadFilename}: ${messageMatch ? messageMatch[1] : `HTTP ${response.status}`}`);
-				} else {
-					console.error(`HTTP Error fetching URL (${url}): Status ${response.status}`);
-					toast.error(`Failed to fetch file (HTTP ${response.status})`);
-				}
-				throw new Error(`HTTP error ${response.status}`);
-			}
-
-			const blob = await response.blob();
-			// Use the determined filename
-			zip.file(downloadFilename, blob);
-			fileAdded = true; // Mark file as added
-
-			// IMPORTANT: Check if the file was actually added before zipping
-			if (!fileAdded) {
-				// This case should ideally be caught by fetch errors above, but added as a safeguard
-				toast.error('Failed to fetch the track file. Cannot create zip archive.');
-				setIsDownloading(false);
-				return;
-			}
-
-			// Generate and trigger ZIP download
-			toast.info(`Generating zip file...`);
-			const zipBlob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
-			saveAs(zipBlob, `airplay-${contract.title.replace(/[^a-z0-9]/gi, '_')}.zip`); // Use track title in filename
-			toast.success(`Successfully created zip file for "${contract.title}". Download started.`);
-		} catch (error) {
-			console.error('Error during single track download process:', error);
-			// Specific fetch errors are toasted inside the try block
-			if (!(error instanceof Error && error.message.startsWith('HTTP error'))) {
-				toast.error('An unexpected error occurred during the download.');
-			}
+			const url = URL.createObjectURL(response.data);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `airplay-${safeTitle}.zip`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			toast.success(`Download started for "${contract.title}".`);
+		} catch {
+			toast.error('Failed to download track.');
 		} finally {
 			setIsDownloading(false);
 		}
@@ -156,7 +109,7 @@ const TrackDetails: React.FC = () => {
 						<span>Download</span>
 					</Button> */}
 					{/* --- Updated Download Button --- */}
-					<Button className="admin-button-primary" disabled={contractLoading || !directDownloadUrl || isDownloading} onClick={handleDownload}>
+					<Button className="admin-button-primary" disabled={contractLoading || isDownloading} onClick={handleDownload}>
 						{isDownloading ? <Loader2 size={16} className="animate-spin mr-2" /> : <Download size={16} className="mr-2" />}
 						<span>{contractLoading ? 'Loading...' : isDownloading ? 'Downloading...' : 'Download'}</span>
 					</Button>
