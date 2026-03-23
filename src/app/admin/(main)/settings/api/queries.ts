@@ -1,6 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import APIAxios from '@/utils/axios';
 
+export const useGetSystemSettings = () =>
+	useQuery({
+		queryKey: ['system-settings'],
+		queryFn: async () => {
+			const { data } = await APIAxios.get('/admin/settings/system');
+			return data as { contractEmailEnabled: boolean };
+		}
+	});
+
 export const useGetAdminUsers = () =>
 	useQuery({
 		queryKey: ['admin-users'],

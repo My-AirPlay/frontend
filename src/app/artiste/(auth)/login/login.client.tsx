@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { useRouter } from 'nextjs-toploader/app';
+import { useSearchParams } from 'next/navigation';
 import { useFormik } from 'formik';
 import { InferType } from 'yup';
 import { redirect } from 'next/navigation';
@@ -19,6 +20,8 @@ import AuthActions from '../misc/components/auth-actions';
 
 const LoginPageClient = () => {
 	const router = useRouter();
+	const searchParams = useSearchParams();
+	const redirectTo = searchParams.get('redirect');
 	const { checkAuthStatus } = useAuthContext();
 	const { mutate, status } = useMutation({
 		mutationFn: loginArtistUser,
@@ -45,7 +48,7 @@ const LoginPageClient = () => {
 				return;
 			} else {
 				toast.success(`Welcome Back ${data.user.firstName || data.user.artistName}`);
-				router.replace('/artiste/dashboard');
+				router.replace(redirectTo || '/artiste/dashboard');
 			}
 		}
 	});
