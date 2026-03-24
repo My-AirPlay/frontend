@@ -3,6 +3,23 @@ import APIAxios from '@/utils/axios';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
+export const useUpdateSystemSettings = () => {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: async (payload: { contractEmailEnabled?: boolean }) => {
+			const { data } = await APIAxios.put('/admin/settings/system', payload);
+			return data;
+		},
+		onSuccess: () => {
+			toast.success('Settings updated');
+			qc.invalidateQueries({ queryKey: ['system-settings'] });
+		},
+		onError: (err: AxiosError<{ message?: string }>) => {
+			toast.error(err.response?.data?.message || 'Failed to update settings');
+		}
+	});
+};
+
 export const useCreateAdminUser = () => {
 	const qc = useQueryClient();
 	return useMutation({

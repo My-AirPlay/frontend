@@ -5,11 +5,12 @@ import { cn } from '@/lib/utils';
 import TeamTab from './TeamTab';
 import RolesTab from './RolesTab';
 import ActivityTab from './ActivityTab';
+import GeneralTab from './GeneralTab';
 
-const tabs = ['Team', 'Roles', 'Activity'] as const;
+const tabs = ['General', 'Team', 'Roles', 'Activity'] as const;
 
 export default function SettingsPage() {
-	const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>('Team');
+	const [activeTab, setActiveTab] = useState<(typeof tabs)[number]>('General');
 
 	return (
 		<div className="p-6">
@@ -22,6 +23,7 @@ export default function SettingsPage() {
 				))}
 			</div>
 
+			{activeTab === 'General' && <GeneralTab />}
 			{activeTab === 'Team' && <TeamTab />}
 			{activeTab === 'Roles' && <RolesTab />}
 			{activeTab === 'Activity' && <ActivityTab />}
