@@ -118,7 +118,7 @@ const VideoCard = ({ audio }: { audio: TArtistMedia }) => {
 						{
 							label: 'Delete',
 							icon: <Trash />,
-							onClick: () => console.log('Delete clicked')
+							onClick: () => {}
 						}
 					]}
 					contentProps={{ className: 'w-52' }}

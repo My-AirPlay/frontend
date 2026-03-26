@@ -172,8 +172,6 @@ export const useInitiatePayment = () => {
 				return;
 			}
 		},
-		onError(error) {
-			console.log(error);
-		}
+		onError(error) {}
 	});
 };

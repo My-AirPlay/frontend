@@ -44,7 +44,6 @@ const formatValue = (key: string, value: any): string => {
 		return `<span class="text-purple-400">${value}</span>`;
 	}
 
-	console.log(value.length);
 	if (Array.isArray(value)) {
 		if (value.length === 0) return '[]';
 		// Format each item in the array

@@ -20,7 +20,6 @@ const DeletionProgressModal: React.FC<DeletionProgressModalProps> = ({ isOpen, o
 		if (isOpen) {
 			// Reset step on open
 			setCurrentStep(0);
-			console.log('Starting deletion for reports:', reportIdsToDelete);
 
 			const interval = setInterval(() => {
 				setCurrentStep(prevStep => {

@@ -23,7 +23,6 @@ export default function Step0MediaUploadSteps() {
 
 	// Ensure currentStep is synced with route on component mount
 	useEffect(() => {
-		console.log('Current step in UploadSteps:', currentStep);
 		if (!currentStep || currentStep === 'selection') {
 			setCurrentStep('musicInfo');
 		}

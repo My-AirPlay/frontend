@@ -29,11 +29,7 @@ export const createArtist = async (payload: CreateArtistPayload) => {
 export const useCreateArtist = () => {
 	return useMutation({
 		mutationFn: createArtist,
-		onSuccess: data => {
-			console.log('Artist created successfully:', data);
-		},
-		onError: error => {
-			console.log('Error creating artist:', error);
-		}
+		onSuccess: () => {},
+		onError: () => {}
 	});
 };

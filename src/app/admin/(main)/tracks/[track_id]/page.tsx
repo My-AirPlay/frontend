@@ -253,7 +253,7 @@ const TrackDetailPage = () => {
 		updateMutation.mutate({ id: track_id, data: payload });
 	};
 
-	const handleCopy = () => console.log('Copy not implemented');
+	const handleCopy = () => {};
 
 	const addSalesContract = () =>
 		setSalesContracts([

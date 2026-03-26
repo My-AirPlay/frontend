@@ -44,7 +44,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelected, supportedFo
 
 	const handleFile = (file: File) => {
 		if (file.size > maxFileSize * 1024 * 1024) {
-			console.error(`File size exceeds limit of ${maxFileSize}MB`);
 			return;
 		}
 

@@ -54,7 +54,6 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 		return response.data;
 	} catch (error) {
 		// Handle errors (e.g., network error, CORS error, timeout)
-		console.error('Error uploading track:', error);
 		throw new Error('An error occurred while uploading the track. Please try again later.');
 	}
 };
@@ -132,8 +131,6 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
 		});
 	}
 
-	console.log(formData.getAll('media'));
-
 	const response = await APIAxios.post(`/media/create-album`, formData, {
 		headers: {
 			'Content-Type': 'multipart/form-data'
@@ -162,18 +159,14 @@ export const useUploadTrack = () => {
 				queryKey: ['getArtistAllMedia']
 			});
 		},
-		onError: error => {
-			console.error('Failed to upload track:', error);
-		}
+		onError: () => {}
 	});
 };
 
 export const useUploadAlbum = () => {
 	return useMutation({
 		mutationFn: uploadAlbum,
-		onError: error => {
-			console.error('Failed to upload album:', error);
-		}
+		onError: () => {}
 	});
 };
 

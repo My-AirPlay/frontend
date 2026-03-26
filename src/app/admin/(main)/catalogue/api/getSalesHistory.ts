@@ -37,7 +37,6 @@ export const deleteSalesHistory = async ({ reportIds }: DeleteReportsParams): Pr
 			reportIds
 		}
 	});
-	console.log(response);
 	return response.data;
 };
 

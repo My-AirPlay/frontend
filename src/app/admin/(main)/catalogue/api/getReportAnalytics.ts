@@ -53,7 +53,6 @@ export interface ReportAnalyticsResponse {
 export const getReportAnalytics = async (reportId: string): Promise<ReportAnalyticsResponse> => {
 	const encodedReportId = encodeURIComponent(reportId);
 	const response = await APIAxios.get<ReportAnalyticsResponse>(`/admin/report/${encodedReportId}/analytics`);
-	console.log(response.data);
 	return response.data;
 };
 

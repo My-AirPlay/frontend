@@ -14,7 +14,6 @@ export default function EnquiriesPage() {
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		// Handle form submission
-		console.log(message);
 		// Close modal or show success message
 	};
 

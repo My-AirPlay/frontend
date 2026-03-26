@@ -63,7 +63,6 @@ async function fetchStaticAppInfo(): Promise<TStaticData> {
 		return response.data;
 	} catch (error) {
 		toast.error('Failed to fetch static app info. Please try again later.');
-		console.error('Failed to fetch static app info:', error);
 		throw error;
 	}
 }

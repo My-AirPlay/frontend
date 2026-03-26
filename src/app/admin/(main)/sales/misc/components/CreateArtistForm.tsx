@@ -37,7 +37,6 @@ const CreateArtistForm: React.FC<CreateArtistFormProps> = ({ onSave, onCancel })
 				toast.success('Artist created successfully!', { duration: 3000 });
 			},
 			onError: (error: Error | AxiosError) => {
-				console.error('Failed to create artist:', error);
 				let errorMessage = 'Failed to create artist. Please try again.';
 
 				if (error instanceof AxiosError) {

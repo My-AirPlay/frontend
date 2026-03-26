@@ -27,7 +27,6 @@ const LoginPageClient = () => {
 		mutationFn: loginArtistUser,
 		onSuccess: async ({ data, error }) => {
 			await checkAuthStatus();
-			console.log(error);
 			if (error) {
 				if (error.code === '500') return;
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any

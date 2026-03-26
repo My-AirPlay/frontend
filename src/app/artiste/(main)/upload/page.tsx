@@ -87,11 +87,9 @@ export default function MediaTypeSelection() {
 			router.push('/artiste/upload/album');
 		} else if (selectedType === 'Track' || selectedType === 'Video') {
 			if (hasOngoingMediaUpload() && mediaType === selectedType) {
-				console.log('Ongoing media upload detected');
 				setShowContinueDialog(true);
 				return;
 			}
-			console.log('Clearing media store');
 			await clearMediaUploadStore();
 			setMediaType(selectedType as any);
 			setMediaUploadCurrentStep('musicInfo');
@@ -106,7 +104,6 @@ export default function MediaTypeSelection() {
 			setAlbumUploadCurrentStep('musicInfo');
 			router.push('/artiste/upload/album');
 		} else {
-			console.log('clearing media upload store');
 			clearMediaUploadStore();
 			setMediaType(selectedType as any);
 			setMediaUploadCurrentStep('musicInfo');

@@ -33,9 +33,7 @@ export const useGetOneArtist = (
 
 export const deleteOneArtist = async (artistId: string) => {
 	const response = await APIAxios.delete(`/admin/delete-artist/${artistId}`);
-	console.log(response);
 	if (response.status === 204) {
-		console.log('returning success');
 		return { success: true };
 	}
 	return response.data;

@@ -63,22 +63,14 @@ export const updateArtistContract = async (payload: UploadArtistContractPayload)
 export const useUploadArtistContract = () => {
 	return useMutation({
 		mutationFn: uploadArtistContract,
-		onSuccess: data => {
-			console.log('Artist contract uploaded successfully:', data);
-		},
-		onError: error => {
-			console.error('Error uploading artist contract:', error);
-		}
+		onSuccess: () => {},
+		onError: () => {}
 	});
 };
 export const useUpdateArtistContract = () => {
 	return useMutation({
 		mutationFn: updateArtistContract,
-		onSuccess: data => {
-			console.log('Artist contract updated successfully:', data);
-		},
-		onError: error => {
-			console.error('Error updating artist contract:', error);
-		}
+		onSuccess: () => {},
+		onError: () => {}
 	});
 };

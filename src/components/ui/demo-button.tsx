@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 export function DemoRequestButton() {
 	const handleFormSubmit = (event: any) => {
 		event.preventDefault();
-		console.log('Form submitted!');
 	};
 
 	return (

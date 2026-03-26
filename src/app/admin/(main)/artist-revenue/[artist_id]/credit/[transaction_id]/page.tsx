@@ -67,7 +67,6 @@ const WithdrawalUpdatePage: React.FC = () => {
 	const handleUpdate = () => {
 		const amount = parseFloat(finalAmount);
 		if (!artist_id || !transaction_id || isNaN(amount) || amount < 0) {
-			console.error('Invalid data for update');
 			return;
 		}
 
@@ -86,7 +85,6 @@ const WithdrawalUpdatePage: React.FC = () => {
 					router.push(`/admin/artist-revenue/${artist_id}/details`);
 				},
 				onError: (error: unknown) => {
-					console.error('Error updating artist wallet:', error);
 					let errorMessage = 'Error updating artist wallet.';
 
 					// Define a type for the expected error structure

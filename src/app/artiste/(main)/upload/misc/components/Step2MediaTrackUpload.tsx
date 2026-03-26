@@ -26,12 +26,8 @@ export default function Step2MediaTrackUpload() {
 			if (!isDBInitialized) {
 				await initializeDB();
 			}
-			console.log('mediaFileId');
-			console.log(mediaFileId);
-
 			if (mediaFileId) {
 				const file = await getMediaFile();
-				console.log(file);
 				if (file) {
 					setUploadedFile(file);
 					setUploadProgress(100);
@@ -58,8 +54,6 @@ export default function Step2MediaTrackUpload() {
 			toast.error('File size exceeds the 512MB limit. Please upload a smaller file.');
 			return;
 		}
-		console.log(file);
-
 		setUploadedFile(file);
 		const objectUrl = URL.createObjectURL(file);
 		setVideoUrl(objectUrl);

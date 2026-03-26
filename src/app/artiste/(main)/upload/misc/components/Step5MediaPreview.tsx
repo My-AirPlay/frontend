@@ -107,15 +107,13 @@ export default function Step5MediaPreview() {
 						description: `Your ${mediaType?.toLowerCase()} has been uploaded successfully.`
 					});
 				},
-				onError: error => {
-					console.error('Upload failed:', error);
+				onError: () => {
 					toast.error('Upload failed', {
 						description: 'There was an error uploading your content. Please try again.'
 					});
 				}
 			});
-		} catch (error) {
-			console.error('Upload failed:', error);
+		} catch {
 			toast.error('Upload failed', {
 				description: 'There was an error uploading your content. Please try again.'
 			});

@@ -26,8 +26,6 @@ export const useUpdateMedia = () => {
 				queryKey: ['getArtistVideos']
 			});
 		},
-		onError: error => {
-			console.error('Error updating media:', error);
-		}
+		onError: () => {}
 	});
 };
