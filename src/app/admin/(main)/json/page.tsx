@@ -23,7 +23,17 @@ const formatValue = (key: string, value: any): string => {
 		}
 		// Check for URLs
 		if (value.startsWith('http')) {
-			return `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline break-all">${value}</a>`;
+			const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?.*)?$/i.test(value) || key.toLowerCase().includes('coverart') || key.toLowerCase().includes('cover_art') || key.toLowerCase().includes('image') || key.toLowerCase().includes('picture') || key.toLowerCase().includes('photo') || key.toLowerCase().includes('artwork') || key.toLowerCase().includes('media');
+
+			let html = '';
+			if (isImage) {
+				html += `<img src="${value}" alt="${key}" class="max-w-xs max-h-48 rounded mb-2 border border-gray-600" />`;
+			}
+			html += `<div class="flex items-center gap-2 flex-wrap">`;
+			html += `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline break-all">${value}</a>`;
+			html += `<a href="${value}" download target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-2 py-1 bg-cyan-700 hover:bg-cyan-500 text-white text-xs rounded whitespace-nowrap flex-shrink-0">&#x2B07; Download</a>`;
+			html += `</div>`;
+			return html;
 		}
 		return `<span class="text-green-400">"${value}"</span>`;
 	}
