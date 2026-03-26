@@ -2,7 +2,7 @@
 
 import { Reducer, useCallback, useLayoutEffect } from 'react';
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import APIAxios, { setAxiosDefaultToken } from '@/utils/axios';
+import APIAxios, { setAxiosDefaultToken, deleteAxiosDefaultToken } from '@/utils/axios';
 import { usePathname, useRouter } from 'next/navigation';
 import { clearAdminTokens, clearArtistTokens, getArtistAccessToken, getAdminAccessToken } from '@/actions/auth/auth.action';
 import { AxiosError } from 'axios';
@@ -185,14 +185,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 			// Clear tokens and axios headers
 			await clearArtistTokens();
 			await clearAdminTokens();
-			setAxiosDefaultToken('');
+			deleteAxiosDefaultToken();
 
-			// Reroute after state has been cleared
+			// Hard navigation to fully clear client-side router cache and stale state
 			if (options.redirect) {
-				router.replace(isAdminRoute ? '/admin/login' : '/artiste/login');
+				window.location.href = isAdminRoute ? '/admin/login' : '/artiste/login';
 			}
 		},
-		[router, pathname]
+		[isAdminRoute]
 	);
 
 	const hasPageAccess = useCallback(
