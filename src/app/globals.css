@@ -6,6 +6,13 @@
 	.glassmorphism-card {
 		@apply bg-gray-500 bg-opacity-10 backdrop-blur-lg border border-gray-500/20 shadow-lg;
 	}
+	.no-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
 }
 
 /* ── Keyframes ──────────────────────────────────────────────── */
