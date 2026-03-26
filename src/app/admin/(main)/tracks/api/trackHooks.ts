@@ -43,7 +43,6 @@ export const useUpdateTrack = () => {
 			alert('Track saved successfully!');
 		},
 		onError: error => {
-			console.error('Update failed:', error);
 			alert('Failed to save track.');
 		}
 	});
@@ -66,7 +65,6 @@ export const useDeleteTrack = () => {
 			router.push('/admin/tracks');
 		},
 		onError: error => {
-			console.error('Deletion failed:', error);
 			alert('Failed to delete track.');
 		}
 	});

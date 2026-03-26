@@ -21,20 +21,6 @@ const formatValue = (key: string, value: any): string => {
 				return `<span class="text-yellow-400">${date.toLocaleString()}</span>`;
 			}
 		}
-		// Check for URLs
-		if (value.startsWith('http')) {
-			const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?.*)?$/i.test(value) || key.toLowerCase().includes('coverart') || key.toLowerCase().includes('cover_art') || key.toLowerCase().includes('image') || key.toLowerCase().includes('picture') || key.toLowerCase().includes('photo') || key.toLowerCase().includes('artwork') || key.toLowerCase().includes('media');
-
-			let html = '';
-			if (isImage) {
-				html += `<img src="${value}" alt="${key}" class="max-w-xs max-h-48 rounded mb-2 border border-gray-600" />`;
-			}
-			html += `<div class="flex items-center gap-2 flex-wrap">`;
-			html += `<a href="${value}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline break-all">${value}</a>`;
-			html += `<a href="${value}" download target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-2 py-1 bg-cyan-700 hover:bg-cyan-500 text-white text-xs rounded whitespace-nowrap flex-shrink-0">&#x2B07; Download</a>`;
-			html += `</div>`;
-			return html;
-		}
 		return `<span class="text-green-400">"${value}"</span>`;
 	}
 	if (typeof value === 'number') {
@@ -44,7 +30,6 @@ const formatValue = (key: string, value: any): string => {
 		return `<span class="text-purple-400">${value}</span>`;
 	}
 
-	console.log(value.length);
 	if (Array.isArray(value)) {
 		if (value.length === 0) return '[]';
 		// Format each item in the array
@@ -70,7 +55,7 @@ const JsonBeautifier: FC = () => {
 	const [error, setError] = useState<string | null>(null);
 
 	const handleFile = useCallback((file: File) => {
-		if (file.type !== 'application/json') {
+		if (!file.name.endsWith('.json')) {
 			setError('Invalid file type. Please upload a .json file.');
 			setFileName(null);
 			return;
@@ -196,7 +181,7 @@ const JsonBeautifier: FC = () => {
 									</button>
 								</div>
 							</div>
-							<div className="font-mono text-sm bg-gray-800 p-6 rounded-lg overflow-x-auto max-h-[60vh] custom-scrollbar border border-border">{error ? <div className="text-red-400">{error}</div> : <div dangerouslySetInnerHTML={{ __html: outputHtml || '' }} />}</div>
+							<div className="font-mono text-sm bg-gray-800 p-6 rounded-lg overflow-auto max-h-[70vh] border border-border">{error ? <div className="text-red-400">{error}</div> : <div dangerouslySetInnerHTML={{ __html: outputHtml || '' }} />}</div>
 						</div>
 					)}
 				</div>

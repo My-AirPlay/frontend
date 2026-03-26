@@ -18,8 +18,6 @@ export const useDeleteAlbum = () => {
 				queryKey: ['getArtistAlbums']
 			});
 		},
-		onError: error => {
-			console.error('Error deleting album:', error);
-		}
+		onError: () => {}
 	});
 };

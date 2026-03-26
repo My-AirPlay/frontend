@@ -23,8 +23,6 @@ export const useUpdateAlbum = () => {
 				queryKey: ['getArtistAlbums']
 			});
 		},
-		onError: error => {
-			console.error('Error updating media:', error);
-		}
+		onError: () => {}
 	});
 };

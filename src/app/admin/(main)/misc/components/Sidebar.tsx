@@ -18,7 +18,6 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 	const { data: supportData } = useGetSupportCount();
 	const { data: contractsData } = useGetContractsCount();
 	const supportTicketCount = supportData?.unreadCount;
-	console.log(contractsData);
 	const contractsCount = contractsData?.count;
 	const { admin, hasPageAccess } = useAuthContext();
 	const sidebarItems = useMemo(

@@ -26,7 +26,6 @@ const defaultExchangeRates: Record<Currency, number> = {
 export const CurrencyProvider: FC<{ children: ReactNode }> = ({ children }) => {
 	const [currency, setCurrency] = useState<Currency>('NGN');
 	const { data: ratesData } = useGetRates();
-	console.log(ratesData);
 	const [exchangeRates, setExchangeRates] = useState<Record<Currency, number> | null>(defaultExchangeRates);
 
 	useEffect(() => {
@@ -43,7 +42,6 @@ export const CurrencyProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 	const convertCurrency = (amount: number, fromCurrency: Currency = 'NGN'): number => {
 		if (!amount || !exchangeRates) return 0;
-		console.log(`converting from ${fromCurrency}`);
 		return amount / exchangeRates[currency];
 	};
 

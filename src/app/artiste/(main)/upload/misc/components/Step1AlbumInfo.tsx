@@ -61,7 +61,6 @@ export default function Step1MusicInfo() {
 
 	// Update form when store values change (e.g. on refresh)
 	useEffect(() => {
-		console.log('Album info in form:', albumInfo);
 		if (albumInfo) {
 			// Reset the form with values from the store
 			Object.keys(albumInfo).forEach(key => {
@@ -74,19 +73,16 @@ export default function Step1MusicInfo() {
 
 	const {
 		handleSubmit,
-		formState: { errors, isValid }
+		formState: { errors }
 	} = form;
 
 	const onSubmit = (data: AlbumInfoFormValues) => {
-		console.log('Form submitted with:', data);
 		updateAlbumInfo(data);
 		setCurrentStep('trackUpload');
 
 		setCurrentStep('trackUpload');
 		toast.success('Music info saved successfully');
 	};
-	console.log(errors, isValid);
-
 	if (isLoading) {
 		return <div className="text-center py-8">Loading form data...</div>;
 	}

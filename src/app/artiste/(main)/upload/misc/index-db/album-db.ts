@@ -64,7 +64,6 @@ export const initAlbumDB = async (): Promise<boolean> => {
 
 		return true;
 	} catch (error) {
-		console.error('Failed to initialize Album IndexedDB:', error);
 		return false;
 	}
 };
@@ -86,7 +85,6 @@ export const storeAlbumTrackFile = async (id: string | null, file: File): Promis
 		await db.put('mediaFiles', { id, file, arrayBuffer });
 		return true;
 	} catch (error) {
-		console.error('Error storing album track file:', error);
 		return false;
 	}
 };
@@ -100,7 +98,6 @@ export const getAlbumTrackFile = async (id: string | null): Promise<File | null>
 		const entry = await db.get('mediaFiles', id);
 		return entry?.file || null;
 	} catch (error) {
-		console.error('Error getting album track file:', error);
 		return null;
 	}
 };
@@ -114,7 +111,6 @@ export const deleteAlbumTrackFile = async (id: string | null): Promise<boolean> 
 		await db.delete('mediaFiles', id);
 		return true;
 	} catch (error) {
-		console.error('Error deleting album track file:', error);
 		return false;
 	}
 };
@@ -128,7 +124,6 @@ export const getAllAlbumTrackFiles = async (): Promise<Array<{ id: string; file:
 		const entries = await db.getAll('mediaFiles');
 		return entries.map(entry => ({ id: entry.id, file: entry.file }));
 	} catch (error) {
-		console.error('Error getting all album track files:', error);
 		return [];
 	}
 };
@@ -143,7 +138,6 @@ export const storeAlbumCoverArt = async (id: string, file: File): Promise<boolea
 		await db.put('coverArt', { id, file, arrayBuffer });
 		return true;
 	} catch (error) {
-		console.error('Error storing album cover art:', error);
 		return false;
 	}
 };
@@ -157,7 +151,6 @@ export const getAlbumCoverArt = async (id: string | null): Promise<File | null> 
 		const entry = await db.get('coverArt', id);
 		return entry?.file || null;
 	} catch (error) {
-		console.error('Error getting album cover art:', error);
 		return null;
 	}
 };
@@ -170,7 +163,6 @@ export const storeAlbumInfo = async (id: string, info: any): Promise<boolean> =>
 		await db.put('albumInfo', { id, ...info });
 		return true;
 	} catch (error) {
-		console.error('Error storing album info:', error);
 		return false;
 	}
 };
@@ -183,7 +175,6 @@ export const getAlbumInfo = async (id: string): Promise<any | null> => {
 
 		return await db.get('albumInfo', id);
 	} catch (error) {
-		console.error('Error getting album info:', error);
 		return null;
 	}
 };
@@ -197,7 +188,6 @@ export const storeTrackInfo = async (id: string, info: any): Promise<boolean> =>
 		await db.put('trackInfo', { id, ...info });
 		return true;
 	} catch (error) {
-		console.error('Error storing track info:', error);
 		return false;
 	}
 };
@@ -210,7 +200,6 @@ export const getTrackInfo = async (id: string): Promise<any | null> => {
 
 		return await db.get('trackInfo', id);
 	} catch (error) {
-		console.error('Error getting track info:', error);
 		return null;
 	}
 };
@@ -223,7 +212,6 @@ export const getAllTrackInfo = async (): Promise<any[]> => {
 
 		return await db.getAll('trackInfo');
 	} catch (error) {
-		console.error('Error getting all track info:', error);
 		return [];
 	}
 };
@@ -239,7 +227,6 @@ export const clearAlbumDatabase = async (): Promise<boolean> => {
 
 		return true;
 	} catch (error) {
-		console.error('Error clearing album database:', error);
 		return false;
 	}
 };

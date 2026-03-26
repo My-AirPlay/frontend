@@ -12,14 +12,12 @@ export default function AlbumUploadFlow() {
 	const router = useRouter();
 
 	useEffect(() => {
-		console.log('Media type in AlbumUploadFlow:', albumType);
 		if (!albumType || !(albumType === 'Album' || albumType === 'ExtendedPlaylist' || albumType === 'MixTape')) {
 			router.replace('/artiste/upload');
 		}
 	}, [albumType, router]);
 
 	useEffect(() => {
-		console.log('Current step in AlbumUploadFlow:', currentStep);
 		if (currentStep === 'selection') {
 			setCurrentStep('musicInfo');
 			router.replace('/artiste/upload/album', { scroll: false });

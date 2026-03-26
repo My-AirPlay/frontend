@@ -81,12 +81,10 @@ const MatchArtistForm: React.FC<MatchArtistFormProps> = ({ onMatch, onCreateNew,
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
-					console.log('API Response:', data);
 					toast.success(data.message || 'Artist matched successfully!');
 					onMatch(artist._id, artist.artistName, true, data.message); // Notify parent of success
 				},
 				onError: (error: Error | AxiosError<ApiResponse>) => {
-					console.error('Match failed (Request error):', error);
 					let errorMessage = 'An unexpected error occurred. Please try again.'; // Default generic message
 
 					if (error instanceof AxiosError) {

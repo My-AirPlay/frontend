@@ -19,7 +19,6 @@ export const exportArtistCsvByActivityPeriod = async (artistId: string, activity
 
 		toast.success('Report is downloading!');
 	} catch (error) {
-		console.error('Failed to export artist CSV:', error);
 		toast.error('Could not generate the report. Please try again.');
 	}
 };

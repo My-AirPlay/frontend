@@ -21,8 +21,6 @@ export const useDeleteMedia = () => {
 				queryKey: ['getArtistVideos']
 			});
 		},
-		onError: error => {
-			console.error('Error deleting media:', error);
-		}
+		onError: () => {}
 	});
 };

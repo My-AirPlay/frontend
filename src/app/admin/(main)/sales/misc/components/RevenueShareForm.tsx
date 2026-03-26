@@ -27,7 +27,6 @@ const RevenueShareForm: React.FC<MatchArtistFormProps> = ({ onSave, matchedArtis
 
 	// Initialize assignments and song titles
 	useEffect(() => {
-		console.log(matchedArtistName);
 		if (!matchedArtistName) return;
 
 		const songTitles = [...matchedArtistName.otherTitles, matchedArtistName.firstTitle];

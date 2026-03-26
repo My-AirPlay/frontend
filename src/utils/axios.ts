@@ -24,7 +24,6 @@ export const handleInactiveAccountRedirect = () => {
 APIAxios.interceptors.response.use(
 	response => response,
 	error => {
-		console.log(error, 'ERROR');
 		if (error?.status == 500) {
 			toast.error('We are having a problem on our end -- SERVER ERROR PLACEHOLDER', { duration: 10000, id: '900' });
 			return Promise.reject(error);
@@ -39,7 +38,6 @@ APIAxios.interceptors.response.use(
 			});
 			deleteAxiosDefaultToken();
 			if (typeof window !== undefined) {
-				console.log('window location');
 				window.location.href = '/';
 			}
 			return Promise.reject(error);

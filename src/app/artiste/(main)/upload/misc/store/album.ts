@@ -133,9 +133,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 							if (coverArt) {
 								set({ coverArtId: 'album-cover' });
 							}
-						} catch (error) {
-							console.error('Error loading data from IndexedDB:', error);
-						}
+						} catch (error) {}
 					}
 				},
 
@@ -158,7 +156,6 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 				},
 
 				setCurrentStep: step => {
-					console.log('Setting album current step to:', step);
 					set({ currentStep: step });
 				},
 
@@ -178,7 +175,6 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 						}
 						return null;
 					} catch (error) {
-						console.error('Error storing cover art in IndexedDB:', error);
 						return null;
 					}
 				},
@@ -242,9 +238,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 							albumTracks: updatedTracks,
 							mediaFileIds: updatedFileIds
 						});
-					} catch (error) {
-						console.error('Error adding track to IndexedDB:', error);
-					}
+					} catch (error) {}
 				},
 
 				updateTrack: async (index, track) => {

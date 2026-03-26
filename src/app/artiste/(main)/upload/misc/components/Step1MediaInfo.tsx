@@ -44,7 +44,7 @@ export default function Step1MusicInfo() {
 
 	const {
 		handleSubmit,
-		formState: { errors, isValid }
+		formState: { errors }
 	} = form;
 
 	const onSubmit = async (data: MediaInfoFormValues) => {
@@ -52,8 +52,6 @@ export default function Step1MusicInfo() {
 		setCurrentStep('trackUpload');
 		toast.success('Music info saved successfully');
 	};
-	console.log(errors, isValid);
-
 	if (isLoading) {
 		return <div className="text-center py-8">Loading form data...</div>;
 	}

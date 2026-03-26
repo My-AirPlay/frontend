@@ -194,7 +194,6 @@ const Sales: React.FC = () => {
 			setCurrentReportId(null);
 
 			const reportItems: ReportItem[] = reportStatusData.data || [];
-			console.log(reportItems[0]);
 			setCurrentReportTag(reportItems[0].reportId);
 			setAnalyzedApiData(reportItems);
 
@@ -251,10 +250,6 @@ const Sales: React.FC = () => {
 			const unmatched: ReportItem[] = transformedTrackReports.filter(tr => !tr.artistId || tr.sharedRevenue.length === 0);
 			const matched: ReportItem[] = transformedTrackReports.filter(tr => tr.artistId && tr.sharedRevenue.length > 0);
 
-			console.log('transformedTrackReports');
-			console.log(transformedTrackReports);
-			console.log(matched);
-			console.log(unmatched);
 			setUnmatchedTracks(unmatched);
 			setMatchedTracks(matched);
 
@@ -388,7 +383,6 @@ const Sales: React.FC = () => {
 				}
 			);
 		} catch (error: any) {
-			console.error('An error occurred during the S3 upload process:', error);
 			const errorMessage = error.response?.data?.message || 'The file upload failed. Please try again.';
 			toast.error(errorMessage);
 			setCurrentStep('csv-upload');
@@ -405,13 +399,10 @@ const Sales: React.FC = () => {
 			toast.error('Oops you have not selected a tag yet. Please refresh page to start the session again');
 		}
 		setLoadingComplete(true);
-		console.log('matchedTracks');
-		console.log(matchedTracks);
 		publishCsv(
 			{ tracks: matchedTracks, reportId: currentReportTag as string },
 			{
 				onSuccess: (data: ApiResponse) => {
-					console.log('API Response:', data);
 					toast.success(data.message || 'Published successfully!');
 					setLoadingComplete(false);
 					setCurrentReportTag(null);
@@ -419,7 +410,6 @@ const Sales: React.FC = () => {
 					setCurrentStep('send-emails');
 				},
 				onError: (error: Error | AxiosError<ApiResponse> | null) => {
-					console.error('Error publishing matched tracks:', error);
 					toast.error('An unexpected error occurred while publishing tracks.');
 					setLoadingComplete(false);
 				}
@@ -433,20 +423,17 @@ const Sales: React.FC = () => {
 			toast.info('No matched tracks to send emails.');
 			return;
 		}
-		console.log(rows);
 
 		const artistIdsToPublish = rows.map((artist: any) => artist.artistId);
 		sendEmails(
 			{ artistIds: artistIdsToPublish, activityPeriod: reportingPeriod as string },
 			{
 				onSuccess: (data: ApiResponse) => {
-					console.log('API Response:', data);
 					setCurrentReportTag(null);
 					setCurrentReportId(null);
 					toast.success(data.message || 'Emails sent successfully!');
 				},
 				onError: (error: Error | AxiosError<ApiResponse>) => {
-					console.error('Error sending emails:', error);
 					toast.error('An unexpected error occurred while sending emails.');
 				}
 			}
@@ -473,20 +460,16 @@ const Sales: React.FC = () => {
 	};
 
 	const handleMatchArtist = (systemArtistId: string, systemArtistName: string) => {
-		console.log('Matched with system artist name:', systemArtistName);
-		console.log('Matched with system artist ID:', systemArtistId);
 		setSystemArtistIdForMatch(systemArtistId);
 		setSystemArtistNameForMatch(systemArtistName);
 		setShowSuccessModal('matched');
 	};
 
 	const handleCreateNewArtist = () => {
-		console.log('clicked');
 		setCurrentStep('create-artist');
 	};
 
 	const handleSaveArtist = (artistData: any) => {
-		console.log('New artist data:', artistData);
 		setCreatedArtist(artistData);
 		setShowSuccessModal('created');
 	};
@@ -536,13 +519,7 @@ const Sales: React.FC = () => {
 
 			setUnmatchedTracks(currentUnmatched => currentUnmatched.filter(track => !idsToMove.includes(track._id)));
 			setMatchedTracks(currentMatched => [...currentMatched, ...newMatchedTracks]);
-			console.log('MATCHED TRacKs');
-
-			if (tracksToMove.length !== idsToMove.length) {
-				console.warn('Could not find all selected tracks to move.');
-			}
 		} else {
-			console.warn('Missing tracks to move or systemArtistIdForMatch in handleCloseSuccessModal.');
 		}
 
 		setShowSuccessModal(null);

@@ -49,13 +49,11 @@ const ReleaseDetails: React.FC = () => {
 				{ albumId: release_id },
 				{
 					onSuccess: () => {
-						console.log('Album deleted successfully');
 						toast.success('Album deleted successfully');
 						router.push('/admin/catalogue'); // Redirect after successful deletion
 					},
 					onError: (error: Error) => {
 						// Added Error type
-						console.error('Error deleting album:', error.message);
 						toast.error('Error deleting album: ' + error.message); // Show error message
 					}
 				}
@@ -80,7 +78,6 @@ const ReleaseDetails: React.FC = () => {
 				if (typeof row.mediaUrl === 'string' && row.mediaUrl.trim() !== '') {
 					urlsToCollect.push(row.mediaUrl);
 				} else {
-					console.warn('Selected track row missing or has invalid mediaUrl:', row);
 					toast.warning(`Skipping track "${row.title || 'Unknown'}" due to missing download URL.`);
 				}
 			});
@@ -93,7 +90,6 @@ const ReleaseDetails: React.FC = () => {
 				return;
 			}
 
-			console.log(`Attempting to fetch and zip ${finalUrls.length} files:`, finalUrls);
 			toast.info(`Fetching ${finalUrls.length} files to create a zip archive...`);
 
 			// 2. Fetch files and create ZIP
@@ -112,13 +108,11 @@ const ReleaseDetails: React.FC = () => {
 						// Handle potential XML error responses like NoSuchKey
 						if (response.headers.get('content-type')?.includes('application/xml')) {
 							const errorText = await response.text();
-							console.error(`XML Error fetching URL #${index + 1} (${url}): Status ${response.status}`, errorText);
 							const keyMatch = errorText.match(/<Key>(.*?)<\/Key>/);
 							const messageMatch = errorText.match(/<Message>(.*?)<\/Message>/);
 							const simpleFilename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `file_${index + 1}`;
 							toast.error(`Error fetching ${keyMatch ? keyMatch[1] : simpleFilename}: ${messageMatch ? messageMatch[1] : `HTTP ${response.status}`}`);
 						} else {
-							console.error(`HTTP Error fetching URL #${index + 1} (${url}): Status ${response.status}`);
 							toast.error(`Failed to fetch file #${index + 1} (HTTP ${response.status})`);
 						}
 						throw new Error(`HTTP error ${response.status}`);
@@ -128,7 +122,6 @@ const ReleaseDetails: React.FC = () => {
 					zip.file(filename, blob);
 					return { status: 'fulfilled', index };
 				} catch (error) {
-					console.error(`Error fetching or adding file #${index + 1} (${url}):`, error);
 					if (!(error instanceof Error && error.message.startsWith('HTTP error'))) {
 						toast.error(`Failed to process file #${index + 1}.`);
 					}
@@ -165,11 +158,9 @@ const ReleaseDetails: React.FC = () => {
 				saveAs(zipBlob, zipFilename);
 				toast.success(`Successfully created zip file with ${filesAdded} items. Download started.`);
 			} catch (zipError) {
-				console.error('Error generating zip file:', zipError);
 				toast.error('Failed to create the zip file.');
 			}
 		} catch (error) {
-			console.error('Error during bulk download process:', error);
 			toast.error('An unexpected error occurred during the download process.');
 		} finally {
 			setIsBulkDownloading(false); // Ensure loading state is reset

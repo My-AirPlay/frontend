@@ -129,7 +129,6 @@ export const exportAnalyticsCsv = async (artistId: string, reportId: string, act
 		const response = await APIAxios.get(`/artist/export-analytics/${reportId}/${activityPeriod}`, {
 			responseType: 'blob'
 		});
-		console.log(response);
 		const url = window.URL.createObjectURL(new Blob([response.data]));
 
 		const link = document.createElement('a');
@@ -143,8 +142,7 @@ export const exportAnalyticsCsv = async (artistId: string, reportId: string, act
 		window.URL.revokeObjectURL(url);
 
 		toast.success('Your report is downloading!');
-	} catch (error) {
-		console.error('Failed to export CSV:', error);
+	} catch {
 		toast.error('Could not generate the report. Please try again.');
 	}
 };
@@ -166,8 +164,7 @@ export const exportByActivityPeriodCsv = async (activityPeriod: string, reportId
 		window.URL.revokeObjectURL(url);
 
 		toast.success('Your report is downloading!');
-	} catch (error) {
-		console.error('Failed to export CSV:', error);
+	} catch {
 		toast.error('Could not generate the report. Please try again.');
 	}
 };

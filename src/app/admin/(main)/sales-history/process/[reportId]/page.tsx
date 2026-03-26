@@ -76,7 +76,6 @@ const ReprocessSalesPage: React.FC = () => {
 								}
 							]
 			}));
-			console.log(transformedArtistReports);
 
 			const unmatched = transformedArtistReports.filter(ar => !ar.artistId);
 			const matched = transformedArtistReports.filter(ar => ar.artistId);
@@ -134,10 +133,8 @@ const ReprocessSalesPage: React.FC = () => {
 			setMatchedArtists(currentMatched => [...currentMatched, ...newMatchedArtists]);
 
 			if (artistsToMove.length !== idsToMove.length) {
-				console.warn('Could not find all selected artists to move.');
 			}
 		} else {
-			console.warn('Missing artists to move or systemArtistIdForMatch in handleCloseSuccessModal.');
 		}
 
 		// Reset state for both single and multiple selection modes.
@@ -150,8 +147,6 @@ const ReprocessSalesPage: React.FC = () => {
 	};
 
 	const handleMatchArtist = (systemArtistId: string, systemArtistName: string) => {
-		console.log('Matched with system artist name:', systemArtistName);
-		console.log('Matched with system artist ID:', systemArtistId);
 		setSystemArtistIdForMatch(systemArtistId);
 		setSystemArtistNameForMatch(systemArtistName);
 		setShowSuccessModal('matched');
@@ -174,7 +169,6 @@ const ReprocessSalesPage: React.FC = () => {
 	}, []);
 
 	const handleSaveArtist = (artistData: any) => {
-		console.log('New artist data:', artistData);
 		setCreatedArtist(artistData);
 		// Here we would call an API to create the artist
 		setShowSuccessModal('created');
@@ -195,7 +189,6 @@ const ReprocessSalesPage: React.FC = () => {
 		setSelectedRows(selectedData);
 	}, []);
 	const handleCreateNewArtist = () => {
-		console.log('clicked');
 		setCurrentStep('create-artist');
 	};
 	const { mutate: publishCsv } = usePublishArtistReports();
@@ -212,12 +205,10 @@ const ReprocessSalesPage: React.FC = () => {
 			{ artistIds: artistIdsToPublish, activityPeriod: reportingPeriod as string },
 			{
 				onSuccess: (data: ApiResponse) => {
-					console.log('API Response:', data);
 					setCurrentReportTag(null);
 					toast.success(data.message || 'Emails sent successfully!');
 				},
 				onError: (error: Error | AxiosError<ApiResponse>) => {
-					console.error('Error sending emails:', error);
 					toast.error('An unexpected error occurred while sending emails.');
 				}
 			}
@@ -238,14 +229,12 @@ const ReprocessSalesPage: React.FC = () => {
 			{
 				onSuccess: (data: ApiResponse) => {
 					// Use ApiResponse type for data
-					console.log('API Response:', data);
 					toast.success(data.message || 'Published successfully!');
 					setLoadingComplete(false);
 					setCurrentReportTag(null);
 					setCurrentStep('send-emails');
 				},
 				onError: (error: Error | AxiosError<ApiResponse> | null) => {
-					console.error('Error publishing matched artists:', error);
 					toast.error('An unexpected error occurred while publishing artists.');
 					setLoadingComplete(false);
 				}

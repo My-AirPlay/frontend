@@ -112,7 +112,6 @@ const Catalogue: React.FC = () => {
 			setDownloadProgress(100);
 			toast.success(`Download started with ${mediaIds.length} tracks.`);
 		} catch (err) {
-			console.error('Bulk download error:', err);
 			toast.error('Failed to download files.');
 		} finally {
 			setTimeout(() => setDownloadProgress(0), 1500);

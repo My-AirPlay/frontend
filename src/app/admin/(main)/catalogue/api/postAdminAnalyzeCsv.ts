@@ -27,13 +27,8 @@ export const useAdminAnalyzeCsv = () => {
 		// Update the type hint for the mutation function's arguments
 		mutationFn: ({ s3FileUrl, fileMetadata, exchangeRates, tag, reportingPeriod }: { s3FileUrl: string; fileMetadata: { originalname: string; mimetype: string; size: number }; exchangeRates: CurrencyPair[]; tag: string; reportingPeriod: string }) => analyzeCsv(s3FileUrl, fileMetadata, exchangeRates, tag, reportingPeriod),
 
-		onSuccess: response => {
-			console.log('Job started successfully:', response.data);
-			// The response.data will contain { reportId, message }
-		},
-		onError: error => {
-			console.error('Error starting analysis job:', error);
-		}
+		onSuccess: () => {},
+		onError: () => {}
 	});
 };
 

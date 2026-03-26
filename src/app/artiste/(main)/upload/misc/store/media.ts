@@ -102,7 +102,6 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 				},
 
 				setCurrentStep: step => {
-					console.log('Setting media current step to:', step);
 					set({ currentStep: step });
 				},
 
@@ -129,7 +128,6 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 						}
 						return null;
 					} catch (error) {
-						console.error('Error storing media file in IndexedDB:', error);
 						return null;
 					}
 				},
@@ -161,7 +159,6 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 						}
 						return null;
 					} catch (error) {
-						console.error('Error storing cover art in IndexedDB:', error);
 						return null;
 					}
 				},

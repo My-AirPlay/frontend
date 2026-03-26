@@ -43,7 +43,6 @@ const SectionContract = () => {
 			toast.success('Contract signed successfully!');
 			dispatch({ type: 'ARTISTE_LOGIN_SUCCESS', payload: updatedArtist });
 		} catch (error) {
-			console.log(error);
 			handleClientError(error);
 		}
 	};

@@ -223,7 +223,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 				const { data } = await APIAxios.get<IAdminUser>('/admin/profile');
 				dispatch({ type: 'ADMIN_LOGIN_SUCCESS', payload: data });
 			} catch (error) {
-				console.error('Admin auth check failed:', error);
 				if (error instanceof AxiosError && error.response?.status === 401) {
 					await handleLogout();
 				} else {
@@ -250,7 +249,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 				const { data } = await APIAxios.get<IArtistUser>('/artist/profile');
 				dispatch({ type: 'ARTISTE_LOGIN_SUCCESS', payload: data });
 			} catch (error) {
-				console.error('Authentication check failed:', error);
 				if (error instanceof AxiosError && error.response?.status === 401) {
 					await handleLogout();
 				} else {
@@ -312,7 +310,6 @@ export async function getArtistProfile() {
 		return data;
 	} catch (error) {
 		if (error instanceof AxiosError) {
-			console.log(error.response?.data, accessToken);
 			if (error.response?.status === 401) {
 				return null;
 			}
