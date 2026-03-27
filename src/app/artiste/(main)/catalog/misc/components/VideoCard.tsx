@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight } from 'lucide-react';
+import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight, ImagePlus } from 'lucide-react';
 import { format } from 'date-fns';
 import { Video } from 'iconsax-react';
 import { useForm } from 'react-hook-form';
@@ -43,6 +43,25 @@ const VideoCard = ({ audio }: { audio: TArtistMedia }) => {
 	const { state: isEditSheetOpen, setTrue: openEditSheet, setState: setIsEditSheetState } = useBooleanStateControl();
 
 	const [imageError, setImageError] = React.useState(false);
+	const [coverArtFile, setCoverArtFile] = useState<File | null>(null);
+	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
+	const coverArtInputRef = useRef<HTMLInputElement>(null);
+
+	const handleCoverArtChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+		const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+		if (!validTypes.includes(file.type)) {
+			toast.error('Invalid file type. Please upload a .png, .jpeg, or .jpg file.');
+			return;
+		}
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error('Cover art is too large. Max size is 5MB.');
+			return;
+		}
+		setCoverArtFile(file);
+		setCoverArtPreview(URL.createObjectURL(file));
+	}, []);
 
 	const defaultValues: MediaUpdateFormValues = {
 		title: audio.title,
@@ -76,15 +95,20 @@ const VideoCard = ({ audio }: { audio: TArtistMedia }) => {
 			...audio,
 			...data
 		};
-		updateMedia(updatedAudio, {
-			onSuccess() {
-				toast.success('Audio track updated successfully');
-				setIsEditSheetState(false);
-			},
-			onError() {
-				toast.error('Failed to update audio track');
+		updateMedia(
+			{ data: updatedAudio, coverArt: coverArtFile ?? undefined },
+			{
+				onSuccess() {
+					toast.success('Video track updated successfully');
+					setCoverArtFile(null);
+					setCoverArtPreview(null);
+					setIsEditSheetState(false);
+				},
+				onError() {
+					toast.error('Failed to update video track');
+				}
 			}
-		});
+		);
 	};
 	const [isPlaying, setIsPlaying] = useState(false);
 
@@ -227,6 +251,20 @@ const VideoCard = ({ audio }: { audio: TArtistMedia }) => {
 					<div className="py-6">
 						<Form {...form}>
 							<form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+								<div className="flex flex-col items-center gap-3 mb-2">
+									<p className="text-sm font-medium">Cover Art</p>
+									<div className="relative w-32 h-32 rounded-lg overflow-hidden border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer group" onClick={() => coverArtInputRef.current?.click()}>
+										<Image src={coverArtPreview || audio.mediaCoverArtUrl || audio.mediaUrl || '/images/placeholder.png'} alt="Cover art" className="object-cover" fill />
+										<div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+											<ImagePlus size={24} className="text-white" />
+										</div>
+									</div>
+									<input ref={coverArtInputRef} type="file" accept=".png,.jpg,.jpeg" className="hidden" onChange={handleCoverArtChange} />
+									<button type="button" className="text-xs text-primary hover:underline" onClick={() => coverArtInputRef.current?.click()}>
+										{coverArtFile ? coverArtFile.name : 'Click to change cover art'}
+									</button>
+								</div>
+
 								<div className="grid grid-cols-1 gap-6">
 									<FormField
 										control={form.control}
