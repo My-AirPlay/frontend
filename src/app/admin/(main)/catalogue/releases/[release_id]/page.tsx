@@ -121,7 +121,7 @@ const ReleaseDetails: React.FC = () => {
 					const filename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `download_${index + 1}`;
 					zip.file(filename, blob);
 					return { status: 'fulfilled', index };
-				} catch {
+				} catch (error: any) {
 					if (!(error instanceof Error && error.message.startsWith('HTTP error'))) {
 						toast.error(`Failed to process file #${index + 1}.`);
 					}
