@@ -87,7 +87,7 @@ export default function ReportIssuePage() {
 				form.reset();
 				setIsSubmitting(false);
 			},
-			onError: error => {
+			onError: () => {
 				toast.error('An error occurred while submitting your complaint.');
 				setIsSubmitting(false);
 				form.reset();

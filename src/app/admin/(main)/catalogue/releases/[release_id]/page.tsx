@@ -121,7 +121,7 @@ const ReleaseDetails: React.FC = () => {
 					const filename = url.substring(url.lastIndexOf('/') + 1).split('?')[0] || `download_${index + 1}`;
 					zip.file(filename, blob);
 					return { status: 'fulfilled', index };
-				} catch (error) {
+				} catch {
 					if (!(error instanceof Error && error.message.startsWith('HTTP error'))) {
 						toast.error(`Failed to process file #${index + 1}.`);
 					}
@@ -157,10 +157,10 @@ const ReleaseDetails: React.FC = () => {
 				const zipFilename = album?.title ? `airplay-${album.title.replace(/[^a-z0-9]/gi, '_')}-download.zip` : `airplay-release-${release_id}-download.zip`;
 				saveAs(zipBlob, zipFilename);
 				toast.success(`Successfully created zip file with ${filesAdded} items. Download started.`);
-			} catch (zipError) {
+			} catch {
 				toast.error('Failed to create the zip file.');
 			}
-		} catch (error) {
+		} catch {
 			toast.error('An unexpected error occurred during the download process.');
 		} finally {
 			setIsBulkDownloading(false); // Ensure loading state is reset

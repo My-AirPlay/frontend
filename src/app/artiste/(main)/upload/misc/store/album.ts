@@ -133,7 +133,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 							if (coverArt) {
 								set({ coverArtId: 'album-cover' });
 							}
-						} catch (error) {}
+						} catch {}
 					}
 				},
 
@@ -174,7 +174,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 							return 'album-cover';
 						}
 						return null;
-					} catch (error) {
+					} catch {
 						return null;
 					}
 				},
@@ -238,7 +238,7 @@ export const useAlbumUploadStore = create<AlbumUploadState>()(
 							albumTracks: updatedTracks,
 							mediaFileIds: updatedFileIds
 						});
-					} catch (error) {}
+					} catch {}
 				},
 
 				updateTrack: async (index, track) => {

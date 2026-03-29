@@ -18,7 +18,7 @@ export const exportArtistCsvByActivityPeriod = async (artistId: string, activity
 		window.URL.revokeObjectURL(url);
 
 		toast.success('Report is downloading!');
-	} catch (error) {
+	} catch {
 		toast.error('Could not generate the report. Please try again.');
 	}
 };

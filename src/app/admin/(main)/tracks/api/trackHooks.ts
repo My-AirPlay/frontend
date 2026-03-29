@@ -42,7 +42,7 @@ export const useUpdateTrack = () => {
 			queryClient.invalidateQueries({ queryKey: ['track', updatedTrack._id] });
 			alert('Track saved successfully!');
 		},
-		onError: error => {
+		onError: () => {
 			alert('Failed to save track.');
 		}
 	});
@@ -64,7 +64,7 @@ export const useDeleteTrack = () => {
 			alert('Track deleted successfully!');
 			router.push('/admin/tracks');
 		},
-		onError: error => {
+		onError: () => {
 			alert('Failed to delete track.');
 		}
 	});

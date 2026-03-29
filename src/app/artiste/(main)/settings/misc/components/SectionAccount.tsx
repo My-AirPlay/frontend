@@ -33,7 +33,7 @@ export default function AccountSection() {
 		formState: { errors }
 	} = form;
 
-	const onSubmit = (_data: AccountDeletionFormValues) => {
+	const onSubmit = () => {
 		setShowDeleteConfirmation(true);
 	};
 	const { mutate } = useDeleteAccount();

@@ -375,7 +375,7 @@ const Sales: React.FC = () => {
 						setCurrentReportId(reportId);
 						setProcessingSteps(prev => ({ ...prev, sortingInformation: true }));
 					},
-					onError: (error: any) => {
+					onError: (_error: any) => {
 						const errorMessage = error.response?.data?.message || 'Failed to start the processing job.';
 						toast.error(errorMessage);
 						setCurrentStep('csv-upload');
@@ -409,7 +409,7 @@ const Sales: React.FC = () => {
 					setCurrentReportId(null);
 					setCurrentStep('send-emails');
 				},
-				onError: (error: Error | AxiosError<ApiResponse> | null) => {
+				onError: () => {
 					toast.error('An unexpected error occurred while publishing tracks.');
 					setLoadingComplete(false);
 				}
@@ -433,7 +433,7 @@ const Sales: React.FC = () => {
 					setCurrentReportId(null);
 					toast.success(data.message || 'Emails sent successfully!');
 				},
-				onError: (error: Error | AxiosError<ApiResponse>) => {
+				onError: () => {
 					toast.error('An unexpected error occurred while sending emails.');
 				}
 			}
