@@ -53,7 +53,7 @@ export const initMediaDB = async (): Promise<boolean> => {
 		});
 
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -75,7 +75,7 @@ export const storeMediaFile = async (id: string, file: File, mediaType: 'Track' 
 		const arrayBuffer = await file.arrayBuffer();
 		await db.put('mediaFile', { id, file, arrayBuffer, mediaType });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -89,7 +89,7 @@ export const getMediaFile = async (id: string | null): Promise<File | null> => {
 
 		const entry = await db.get('mediaFile', id);
 		return entry?.file || null;
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };
@@ -103,7 +103,7 @@ export const deleteMediaFile = async (id: string | null): Promise<boolean> => {
 
 		await db.delete('mediaFile', id);
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -118,7 +118,7 @@ export const storeMediaCoverArt = async (id: string | null, file: File): Promise
 		const arrayBuffer = await file.arrayBuffer();
 		await db.put('coverArt', { id, file, arrayBuffer });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -132,7 +132,7 @@ export const getMediaCoverArt = async (id: string | null): Promise<File | null> 
 
 		const entry = await db.get('coverArt', id);
 		return entry?.file || null;
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };
@@ -145,7 +145,7 @@ export const storeMediaInfo = async (id: string, info: any): Promise<boolean> =>
 
 		await db.put('mediaInfo', { id, ...info });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -157,7 +157,7 @@ export const getMediaInfo = async (id: string): Promise<any | null> => {
 		if (!db) return null;
 
 		return await db.get('mediaInfo', id);
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };
@@ -176,7 +176,7 @@ export const clearMediaDatabase = async (): Promise<boolean> => {
 		await tx.done;
 
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };

@@ -63,7 +63,7 @@ export const initAlbumDB = async (): Promise<boolean> => {
 		});
 
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -84,7 +84,7 @@ export const storeAlbumTrackFile = async (id: string | null, file: File): Promis
 		const arrayBuffer = await file.arrayBuffer();
 		await db.put('mediaFiles', { id, file, arrayBuffer });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -97,7 +97,7 @@ export const getAlbumTrackFile = async (id: string | null): Promise<File | null>
 
 		const entry = await db.get('mediaFiles', id);
 		return entry?.file || null;
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };
@@ -110,7 +110,7 @@ export const deleteAlbumTrackFile = async (id: string | null): Promise<boolean> 
 
 		await db.delete('mediaFiles', id);
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -123,7 +123,7 @@ export const getAllAlbumTrackFiles = async (): Promise<Array<{ id: string; file:
 
 		const entries = await db.getAll('mediaFiles');
 		return entries.map(entry => ({ id: entry.id, file: entry.file }));
-	} catch (error) {
+	} catch {
 		return [];
 	}
 };
@@ -137,7 +137,7 @@ export const storeAlbumCoverArt = async (id: string, file: File): Promise<boolea
 		const arrayBuffer = await file.arrayBuffer();
 		await db.put('coverArt', { id, file, arrayBuffer });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -150,7 +150,7 @@ export const getAlbumCoverArt = async (id: string | null): Promise<File | null> 
 
 		const entry = await db.get('coverArt', id);
 		return entry?.file || null;
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };
@@ -162,7 +162,7 @@ export const storeAlbumInfo = async (id: string, info: any): Promise<boolean> =>
 
 		await db.put('albumInfo', { id, ...info });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -174,7 +174,7 @@ export const getAlbumInfo = async (id: string): Promise<any | null> => {
 		if (!db) return null;
 
 		return await db.get('albumInfo', id);
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };
@@ -187,7 +187,7 @@ export const storeTrackInfo = async (id: string, info: any): Promise<boolean> =>
 
 		await db.put('trackInfo', { id, ...info });
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };
@@ -199,7 +199,7 @@ export const getTrackInfo = async (id: string): Promise<any | null> => {
 		if (!db) return null;
 
 		return await db.get('trackInfo', id);
-	} catch (error) {
+	} catch {
 		return null;
 	}
 };
@@ -211,7 +211,7 @@ export const getAllTrackInfo = async (): Promise<any[]> => {
 		if (!db) return [];
 
 		return await db.getAll('trackInfo');
-	} catch (error) {
+	} catch {
 		return [];
 	}
 };
@@ -226,7 +226,7 @@ export const clearAlbumDatabase = async (): Promise<boolean> => {
 		await Promise.all([tx.objectStore('mediaFiles').clear(), tx.objectStore('coverArt').clear(), tx.objectStore('albumInfo').clear(), tx.objectStore('trackInfo').clear(), tx.done]);
 
 		return true;
-	} catch (error) {
+	} catch {
 		return false;
 	}
 };

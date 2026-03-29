@@ -5,7 +5,7 @@ function useSessionStorageState<T>(key: string, defaultValue: T): [T, React.Disp
 		try {
 			const storedValue = window.sessionStorage.getItem(key);
 			return storedValue ? JSON.parse(storedValue) : defaultValue;
-		} catch (error) {
+		} catch {
 			return defaultValue;
 		}
 	});
@@ -13,7 +13,7 @@ function useSessionStorageState<T>(key: string, defaultValue: T): [T, React.Disp
 	useEffect(() => {
 		try {
 			window.sessionStorage.setItem(key, JSON.stringify(state));
-		} catch (error) {}
+		} catch {}
 	}, [key, state]);
 
 	return [state, setState];

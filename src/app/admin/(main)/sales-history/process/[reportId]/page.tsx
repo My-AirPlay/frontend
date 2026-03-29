@@ -16,7 +16,7 @@ import MatchArtistForm from '@/app/admin/(main)/sales/misc/components/MatchArtis
 import CreateArtistForm from '@/app/admin/(main)/sales/misc/components/CreateArtistForm';
 import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueShareForm';
 import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/SendEmailsToArtistsTable';
-import { AxiosError } from 'axios';
+
 import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
 import { AnimatePresence } from 'framer-motion';
 import { PublishingOverlay } from '@/app/admin/(main)/artist-revenue/misc/components/LoadingOverlay';
@@ -208,7 +208,7 @@ const ReprocessSalesPage: React.FC = () => {
 					setCurrentReportTag(null);
 					toast.success(data.message || 'Emails sent successfully!');
 				},
-				onError: (error: Error | AxiosError<ApiResponse>) => {
+				onError: () => {
 					toast.error('An unexpected error occurred while sending emails.');
 				}
 			}
@@ -234,7 +234,7 @@ const ReprocessSalesPage: React.FC = () => {
 					setCurrentReportTag(null);
 					setCurrentStep('send-emails');
 				},
-				onError: (error: Error | AxiosError<ApiResponse> | null) => {
+				onError: () => {
 					toast.error('An unexpected error occurred while publishing artists.');
 					setLoadingComplete(false);
 				}

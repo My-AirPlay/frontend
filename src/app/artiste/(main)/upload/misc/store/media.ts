@@ -127,7 +127,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 							return 'media-file';
 						}
 						return null;
-					} catch (error) {
+					} catch {
 						return null;
 					}
 				},
@@ -158,7 +158,7 @@ export const useMediaUploadStore = create<MediaUploadState>()(
 							return 'media-cover';
 						}
 						return null;
-					} catch (error) {
+					} catch {
 						return null;
 					}
 				},

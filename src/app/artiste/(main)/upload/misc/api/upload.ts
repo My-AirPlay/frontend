@@ -52,7 +52,7 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 			timeout: 600000 // 10 minutes for large file uploads
 		});
 		return response.data;
-	} catch (error) {
+	} catch {
 		// Handle errors (e.g., network error, CORS error, timeout)
 		throw new Error('An error occurred while uploading the track. Please try again later.');
 	}

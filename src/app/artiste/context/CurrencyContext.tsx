@@ -40,7 +40,7 @@ export const CurrencyProvider: FC<{ children: ReactNode }> = ({ children }) => {
 		}
 	}, [ratesData]);
 
-	const convertCurrency = (amount: number, fromCurrency: Currency = 'NGN'): number => {
+	const convertCurrency = (amount: number): number => {
 		if (!amount || !exchangeRates) return 0;
 		return amount / exchangeRates[currency];
 	};

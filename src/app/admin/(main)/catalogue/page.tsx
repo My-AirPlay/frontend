@@ -111,7 +111,7 @@ const Catalogue: React.FC = () => {
 			URL.revokeObjectURL(url);
 			setDownloadProgress(100);
 			toast.success(`Download started with ${mediaIds.length} tracks.`);
-		} catch (err) {
+		} catch {
 			toast.error('Failed to download files.');
 		} finally {
 			setTimeout(() => setDownloadProgress(0), 1500);
