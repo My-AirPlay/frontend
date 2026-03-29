@@ -13,7 +13,7 @@ import CreateArtistForm from './misc/components/CreateArtistForm';
 import SuccessModal from './misc/components/SuccessModal';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 import { toast } from 'sonner';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import useOnclickOutside from 'react-cool-onclickoutside';
 import { getUploadUrl, useAdminAnalyzeCsv, useGetReportStatus } from '../catalogue/api/postAdminAnalyzeCsv';
@@ -375,7 +375,7 @@ const Sales: React.FC = () => {
 						setCurrentReportId(reportId);
 						setProcessingSteps(prev => ({ ...prev, sortingInformation: true }));
 					},
-					onError: (_error: any) => {
+					onError: (error: any) => {
 						const errorMessage = error.response?.data?.message || 'Failed to start the processing job.';
 						toast.error(errorMessage);
 						setCurrentStep('csv-upload');
