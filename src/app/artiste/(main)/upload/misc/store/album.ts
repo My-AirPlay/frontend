@@ -10,6 +10,8 @@ export interface AlbumInfo {
 	id?: string;
 	title: string;
 	artistName: string;
+	primaryArtist2: string;
+	featuredArtists: string;
 	mainGenre: string;
 	secondaryGenres?: string[];
 	releaseDate: string;
@@ -29,6 +31,8 @@ export interface AlbumTrackInfo {
 	id?: string;
 	title: string;
 	artistName: string;
+	primaryArtist2: string;
+	featuredArtists: string;
 	mainGenre: string;
 	secondaryGenres?: string[];
 	releaseDate: string;
@@ -77,6 +81,8 @@ const defaultAlbumInfo: AlbumInfo = {
 	id: 'album-info',
 	title: '',
 	artistName: '',
+	primaryArtist2: '',
+	featuredArtists: '',
 	mainGenre: '',
 	releaseDate: '',
 	description: '',

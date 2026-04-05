@@ -99,6 +99,8 @@ export default function Step5AlbumPreview() {
 				description: albumInfo.description,
 				title: albumInfo.title,
 				artistName: albumInfo.artistName,
+				primaryArtist2: albumInfo.primaryArtist2 || '',
+				featuredArtists: albumInfo.featuredArtists || '',
 				mainGenre: albumInfo.mainGenre,
 				releaseDate: albumInfo.releaseDate,
 				recordLabel: albumInfo.recordLabel || '',
@@ -151,8 +153,17 @@ export default function Step5AlbumPreview() {
 								</div>
 								<div>
 									<p className="text-sm text-gray-400">Artist</p>
-									<p className="font-medium">{albumInfo.artistName}</p>
+									<p className="font-medium">
+										{albumInfo.artistName}
+										{albumInfo.primaryArtist2 ? ` x ${albumInfo.primaryArtist2}` : ''}
+									</p>
 								</div>
+								{albumInfo.featuredArtists && (
+									<div>
+										<p className="text-sm text-gray-400">Featured Artists</p>
+										<p className="font-medium">{albumInfo.featuredArtists}</p>
+									</div>
+								)}
 								<div>
 									<p className="text-sm text-gray-400">Genre</p>
 									<p className="font-medium">{albumInfo.mainGenre}</p>

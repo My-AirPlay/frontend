@@ -7,6 +7,8 @@ export const albumTypeSchema = z.enum(['Album', 'ExtendedPlaylist', 'MixTape']);
 export const mediaInfoSchema = z.object({
 	title: z.string().min(1, { message: 'Title is required' }),
 	artistName: z.string().min(1, { message: 'Artist name is required' }),
+	primaryArtist2: z.string().optional(),
+	featuredArtists: z.string().optional(),
 	mainGenre: z.string().min(1, { message: 'Genre is required' }),
 	releaseDate: z.string().min(1, { message: 'Release date is required' }),
 	originalReleaseDate: z.string().optional(),
@@ -27,6 +29,8 @@ export const mediaInfoSchema = z.object({
 export const albumInfoSchema = z.object({
 	title: z.string().min(1, { message: 'Title is required' }),
 	artistName: z.string().min(1, { message: 'Artist name is required' }),
+	primaryArtist2: z.string().optional(),
+	featuredArtists: z.string().optional(),
 	mainGenre: z.string().min(1, { message: 'Genre is required' }),
 	secondaryGenres: z.array(z.string()).optional(),
 	releaseDate: z.string().min(1, { message: 'Release date is required' }),
@@ -44,6 +48,8 @@ export const albumInfoSchema = z.object({
 export const trackInfoSchema = z.object({
 	title: z.string().min(1, { message: 'Title is required' }),
 	artistName: z.string().min(1, { message: 'Artist name is required' }),
+	primaryArtist2: z.string().optional(),
+	featuredArtists: z.string().optional(),
 	mainGenre: z.string().min(1, { message: 'Genre is required' }),
 	secondaryGenres: z.array(z.string()).optional(),
 	releaseDate: z.string().min(1, { message: 'Release date is required' }),

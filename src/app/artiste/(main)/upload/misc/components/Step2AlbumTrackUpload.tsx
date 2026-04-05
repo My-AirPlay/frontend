@@ -36,6 +36,8 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 	const [copyrightError, setCopyrightError] = useState('');
 	const [sameAsAlbum, setSameAsAlbum] = useState<Record<string, boolean>>({
 		artistName: true,
+		primaryArtist2: true,
+		featuredArtists: true,
 		mainGenre: true,
 		releaseDate: true,
 		recordLabel: true,
@@ -49,6 +51,8 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 		defaultValues: track || {
 			title: '',
 			artistName: '',
+			primaryArtist2: '',
+			featuredArtists: '',
 			mainGenre: '',
 			secondaryGenres: [],
 			releaseDate: '',
@@ -76,6 +80,8 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 			// Set sameAsAlbum checkboxes
 			setSameAsAlbum({
 				artistName: track.artistName === albumInfo.artistName,
+				primaryArtist2: track.primaryArtist2 === albumInfo.primaryArtist2,
+				featuredArtists: track.featuredArtists === albumInfo.featuredArtists,
 				mainGenre: track.mainGenre === albumInfo.mainGenre,
 				releaseDate: track.releaseDate === albumInfo.releaseDate,
 				recordLabel: track.recordLabel === albumInfo.recordLabel,
@@ -147,6 +153,66 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 												<div className="flex-grow">
 													<FormControl>
 														<Input {...field} disabled={sameAsAlbum.artistName} />
+													</FormControl>
+													<FormMessage />
+												</div>
+											</div>
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
+
+						<div className="space-y-2">
+							<div className="flex items-center justify-between">
+								<FormField
+									control={form.control}
+									name="primaryArtist2"
+									render={({ field }) => (
+										<FormItem className="w-full">
+											<div className="flex items-center justify-between">
+												<FormLabel>Primary Artist 2</FormLabel>
+												<div className="flex items-center gap-2 ml-4">
+													<Checkbox id="samePrimaryArtist2" checked={sameAsAlbum.primaryArtist2} onCheckedChange={() => toggleSameAsAlbum('primaryArtist2')} />
+													<Label htmlFor="samePrimaryArtist2" className="text-[0.7rem] md:text-sm text-white/40">
+														Same as album
+													</Label>
+												</div>
+											</div>
+											<div className="flex items-center justify-between">
+												<div className="flex-grow">
+													<FormControl>
+														<Input placeholder="e.g. Jaysings" {...field} disabled={sameAsAlbum.primaryArtist2} />
+													</FormControl>
+													<FormMessage />
+												</div>
+											</div>
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
+
+						<div className="space-y-2">
+							<div className="flex items-center justify-between">
+								<FormField
+									control={form.control}
+									name="featuredArtists"
+									render={({ field }) => (
+										<FormItem className="w-full">
+											<div className="flex items-center justify-between">
+												<FormLabel>Featured Artists</FormLabel>
+												<div className="flex items-center gap-2 ml-4">
+													<Checkbox id="sameFeaturedArtists" checked={sameAsAlbum.featuredArtists} onCheckedChange={() => toggleSameAsAlbum('featuredArtists')} />
+													<Label htmlFor="sameFeaturedArtists" className="text-[0.7rem] md:text-sm text-white/40">
+														Same as album
+													</Label>
+												</div>
+											</div>
+											<div className="flex items-center justify-between">
+												<div className="flex-grow">
+													<FormControl>
+														<Input placeholder="e.g. Wizkid, Davido" {...field} disabled={sameAsAlbum.featuredArtists} />
 													</FormControl>
 													<FormMessage />
 												</div>
@@ -548,6 +614,8 @@ export default function TrackUpload() {
 				const newTrack: AlbumTrackInfo = {
 					title: file.name.replace(/\.(mp3|mp4|wav)$/i, ''),
 					artistName: albumInfo.artistName,
+					primaryArtist2: albumInfo.primaryArtist2 || '',
+					featuredArtists: albumInfo.featuredArtists || '',
 					mainGenre: albumInfo.mainGenre,
 					releaseDate: albumInfo.releaseDate,
 					description: '',

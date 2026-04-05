@@ -52,9 +52,12 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 			timeout: 600000 // 10 minutes for large file uploads
 		});
 		return response.data;
-	} catch {
-		// Handle errors (e.g., network error, CORS error, timeout)
-		throw new Error('An error occurred while uploading the track. Please try again later.');
+	} catch (error: any) {
+		const serverMessage = error?.response?.data?.message;
+		if (error?.code === 'ECONNABORTED' || error?.message?.includes('timeout')) {
+			throw new Error('Upload timed out. Please check your internet connection and try again.');
+		}
+		throw new Error(serverMessage || 'An error occurred while uploading the track. Please try again later.');
 	}
 };
 
@@ -81,6 +84,8 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
 	formData.append('description', payload.description);
 	formData.append('title', payload.title);
 	formData.append('artistName', payload.artistName);
+	if (payload.primaryArtist2) formData.append('primaryArtist2', payload.primaryArtist2);
+	if (payload.featuredArtists) formData.append('featuredArtists', payload.featuredArtists);
 	formData.append('mainGenre', payload.mainGenre);
 	formData.append('releaseDate', payload.releaseDate);
 	formData.append('recordLabel', payload.recordLabel || '');
@@ -173,6 +178,8 @@ export const useUploadAlbum = () => {
 export function createMediaPayloadFromStore(info: MediaUploadInfo, mediaFile: File, coverArtFile: File, enabledPlatforms: string[]): UploadTrackPayload {
 	return {
 		artistName: info.artistName,
+		primaryArtist2: info.primaryArtist2 || '',
+		featuredArtists: info.featuredArtists || '',
 		copyright: info.copyright,
 		explicitContent: info.explicitContent,
 		fileType: mediaFile.type.includes('audio') ? 'audio' : 'video',

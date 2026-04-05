@@ -188,12 +188,14 @@ const Sales: React.FC = () => {
 	const { data: reportStatusData, error: reportStatusError } = useGetReportStatus(currentReportId!, !!currentReportId);
 
 	useEffect(() => {
+		console.log(reportStatusData);
 		if (reportStatusData?.status === 'completed' && reportStatusData?.data) {
 			toast.success('Report processing is complete!');
 
 			setCurrentReportId(null);
 
 			const reportItems: ReportItem[] = reportStatusData.data || [];
+			console.log(reportItems);
 			setCurrentReportTag(reportItems[0].reportId);
 			setAnalyzedApiData(reportItems);
 
