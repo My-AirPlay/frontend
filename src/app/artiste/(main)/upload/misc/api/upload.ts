@@ -52,9 +52,10 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 			timeout: 600000 // 10 minutes for large file uploads
 		});
 		return response.data;
-	} catch (error: any) {
-		const serverMessage = error?.response?.data?.message;
-		if (error?.code === 'ECONNABORTED' || error?.message?.includes('timeout')) {
+	} catch (error: unknown) {
+		const axiosError = error as { response?: { data?: { message?: string } }; code?: string; message?: string };
+		const serverMessage = axiosError?.response?.data?.message;
+		if (axiosError?.code === 'ECONNABORTED' || axiosError?.message?.includes('timeout')) {
 			throw new Error('Upload timed out. Please check your internet connection and try again.');
 		}
 		throw new Error(serverMessage || 'An error occurred while uploading the track. Please try again later.');
