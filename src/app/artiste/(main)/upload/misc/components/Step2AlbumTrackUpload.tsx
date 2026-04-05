@@ -182,7 +182,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 											<div className="flex items-center justify-between">
 												<div className="flex-grow">
 													<FormControl>
-														<Input placeholder="e.g. Jaysings" {...field} disabled={sameAsAlbum.primaryArtist2} />
+														<Input placeholder="e.g. Jaysings x jay" {...field} disabled={sameAsAlbum.primaryArtist2} />
 													</FormControl>
 													<FormMessage />
 												</div>
@@ -212,7 +212,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 											<div className="flex items-center justify-between">
 												<div className="flex-grow">
 													<FormControl>
-														<Input placeholder="e.g. Wizkid, Davido" {...field} disabled={sameAsAlbum.featuredArtists} />
+														<Input placeholder="e.g. Jaysings ft jay" {...field} disabled={sameAsAlbum.featuredArtists} />
 													</FormControl>
 													<FormMessage />
 												</div>

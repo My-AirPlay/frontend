@@ -71,11 +71,20 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div className="bg-muted p-4 rounded-lg">
-							<div className="flex justify-between items-center mb-2">
+							<div className="flex justify-between items-center mb-1">
 								<span className="font-medium">Annual Subscription Fee:</span>
-								<span className="text-xl font-bold">₦40,000</span>
+								<span className="font-bold">₦40,000</span>
 							</div>
-							<p className="text-sm text-muted-foreground">This is a yearly subscription that covers all distribution services.</p>
+							<div className="flex justify-between items-center mb-1">
+								<span className="text-sm text-muted-foreground">Processing Fee:</span>
+								<span className="text-sm text-muted-foreground">₦711</span>
+							</div>
+							<hr className="my-2 border-border" />
+							<div className="flex justify-between items-center">
+								<span className="font-medium">Total:</span>
+								<span className="text-xl font-bold">₦40,711</span>
+							</div>
+							<p className="text-sm text-muted-foreground mt-2">This is a yearly subscription that covers all distribution services.</p>
 						</div>
 
 						<div className="space-y-2">
