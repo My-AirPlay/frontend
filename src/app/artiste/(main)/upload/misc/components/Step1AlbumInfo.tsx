@@ -20,6 +20,8 @@ import { z } from 'zod';
 const mediaUpdateSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
 	artistName: z.string().min(1, 'Artist name is required'),
+	primaryArtist2: z.string().optional(),
+	featuredArtists: z.string().optional(),
 	releaseDate: z.string().min(1, 'Release date is required'),
 	mainGenre: z.string().min(1, 'Genre is required'),
 	description: z.string().min(1, 'Description is required'),
@@ -40,7 +42,9 @@ export default function Step1MusicInfo() {
 
 	const defaultValues: MediaUpdateFormValues = {
 		title: albumInfo.title || '',
-		artistName: albumInfo.artistName || (artist?.artistName ?? ''),
+		artistName: artist?.artistName ?? albumInfo.artistName ?? '',
+		primaryArtist2: albumInfo.primaryArtist2 || '',
+		featuredArtists: albumInfo.featuredArtists || '',
 		mainGenre: albumInfo.mainGenre || '',
 		secondaryGenres: albumInfo.secondaryGenres || [],
 		releaseDate: albumInfo.releaseDate || new Date().toISOString().split('T')[0],
@@ -116,7 +120,33 @@ export default function Step1MusicInfo() {
 										Artist Name <span className="text-primary">*</span>
 									</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter artist name" hasError={!!errors.artistName} errormessage={errors.artistName?.message} {...field} />
+										<Input placeholder="Enter artist name" hasError={!!errors.artistName} errormessage={errors.artistName?.message} {...field} disabled className="opacity-70 cursor-not-allowed" />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="primaryArtist2"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel info="For collaborations e.g. Portable x Jaysings">Primary Artist 2</FormLabel>
+									<FormControl>
+										<Input placeholder="e.g. Jaysings" {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="featuredArtists"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel info="Comma-separated list of featured artists">Featured Artists</FormLabel>
+									<FormControl>
+										<Input placeholder="e.g. Wizkid, Davido" {...field} />
 									</FormControl>
 								</FormItem>
 							)}

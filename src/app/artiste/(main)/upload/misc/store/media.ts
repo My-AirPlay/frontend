@@ -8,6 +8,8 @@ export type TMediaUploadStep = 'selection' | 'musicInfo' | 'trackUpload' | 'cove
 export interface MediaUploadInfo {
 	title: string;
 	artistName: string;
+	primaryArtist2: string;
+	featuredArtists: string;
 	mainGenre: string;
 	releaseDate: string;
 	originalReleaseDate: string;
@@ -49,6 +51,8 @@ export interface MediaUploadState {
 const defaultMediaInfo: MediaUploadInfo = {
 	title: '',
 	artistName: '',
+	primaryArtist2: '',
+	featuredArtists: '',
 	mainGenre: '',
 	releaseDate: new Date().toISOString(),
 	originalReleaseDate: new Date().toISOString(),

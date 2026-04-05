@@ -133,7 +133,11 @@ export default function Step5MediaPreview() {
 							{coverArtPreview && <Image src={coverArtPreview || '/placeholder.svg'} alt="Cover Art Preview" width={100} height={100} className="rounded-lg" />}
 							<div>
 								<h6 className="font-bold text-xl text-primary">{mediaInfo.title}</h6>
-								<p>by {mediaInfo.artistName}</p>
+								<p>
+									by {mediaInfo.artistName}
+									{mediaInfo.primaryArtist2 ? ` x ${mediaInfo.primaryArtist2}` : ''}
+									{mediaInfo.featuredArtists ? ` ft. ${mediaInfo.featuredArtists}` : ''}
+								</p>
 							</div>
 						</section>
 
@@ -144,8 +148,17 @@ export default function Step5MediaPreview() {
 							</div>
 							<div>
 								<p className="text-sm text-gray-400">Artist Name</p>
-								<p className="font-medium">{mediaInfo.artistName}</p>
+								<p className="font-medium">
+									{mediaInfo.artistName}
+									{mediaInfo.primaryArtist2 ? ` x ${mediaInfo.primaryArtist2}` : ''}
+								</p>
 							</div>
+							{mediaInfo.featuredArtists && (
+								<div>
+									<p className="text-sm text-gray-400">Featured Artists</p>
+									<p className="font-medium">{mediaInfo.featuredArtists}</p>
+								</div>
+							)}
 							<div>
 								<p className="text-sm text-gray-400">Genre</p>
 								<p className="font-medium">{mediaInfo.mainGenre}</p>

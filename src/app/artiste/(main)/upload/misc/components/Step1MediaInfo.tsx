@@ -23,7 +23,9 @@ export default function Step1MusicInfo() {
 	const [copyrightError, setCopyrightError] = useState('');
 	const defaultValues = {
 		title: mediaInfo.title,
-		artistName: mediaInfo.artistName || (artist?.artistName ?? ''),
+		artistName: artist?.artistName ?? mediaInfo.artistName ?? '',
+		primaryArtist2: mediaInfo.primaryArtist2 || '',
+		featuredArtists: mediaInfo.featuredArtists || '',
 		mainGenre: mediaInfo.mainGenre,
 		releaseDate: mediaInfo.releaseDate || new Date().toISOString().split('T')[0],
 		description: mediaInfo.description || '',
@@ -85,7 +87,33 @@ export default function Step1MusicInfo() {
 										Artist Name <span className="text-primary">*</span>
 									</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter artist name" hasError={!!errors.artistName} errormessage={errors.artistName?.message} {...field} />
+										<Input placeholder="Enter artist name" hasError={!!errors.artistName} errormessage={errors.artistName?.message} {...field} disabled className="opacity-70 cursor-not-allowed" />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="primaryArtist2"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel info="For collaborations e.g. Portable x Jaysings">Primary Artist 2</FormLabel>
+									<FormControl>
+										<Input placeholder="e.g. Jaysings" {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="featuredArtists"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel info="Comma-separated list of featured artists">Featured Artists</FormLabel>
+									<FormControl>
+										<Input placeholder="e.g. Wizkid, Davido" {...field} />
 									</FormControl>
 								</FormItem>
 							)}
