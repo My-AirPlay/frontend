@@ -26,6 +26,12 @@ const TracksList: React.FC<TracksListProps> = ({ albumId, onRowSelectionChange }
 
 	const trackColumns = [
 		{
+			id: 'trackNumber',
+			header: '#',
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			cell: (info: any) => <span className="text-muted-foreground font-mono text-sm">{info.row.index + 1}</span>
+		},
+		{
 			id: 'title',
 			header: 'Title',
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any

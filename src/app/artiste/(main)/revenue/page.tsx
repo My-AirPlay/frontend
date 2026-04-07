@@ -7,9 +7,10 @@ import { WithdrawalSlipData } from '@/lib/types';
 import { DataTable, Badge, Button } from '@/components/ui';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { formatCurrency } from '@/utils/currency';
-import { ArrowDownLeft, ArrowUpRight, Download, Wallet } from 'lucide-react';
-import { useGetAllWithdrawalSlips } from '@/app/artiste/(main)/dashboard/misc/api';
+import { ArrowDownLeft, ArrowUpRight, Download, Wallet, Calendar } from 'lucide-react';
+import { useGetAllWithdrawalSlips, useGetDashboardData } from '@/app/artiste/(main)/dashboard/misc/api';
 import { useRouter } from 'next/navigation';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 // A new, simplified type for the artist's transaction view
 type Transaction = {
@@ -20,10 +21,18 @@ type Transaction = {
 	amount: number;
 };
 
+interface MonthlyBreakdownRow {
+	period: string;
+	streams: number;
+	revenue: number;
+}
+
 const ArtistRevenuePage: React.FC = () => {
 	const { artist } = useAuthContext();
 	const artistId = artist!._id;
 	const router = useRouter();
+	const { convertCurrency, currency } = useCurrency();
+	const { data: dashboardData } = useGetDashboardData();
 	const { data: withdrawalsData, isLoading } = useGetAllWithdrawalSlips({
 		page: 1,
 		limit: 2000,
@@ -64,6 +73,44 @@ const ArtistRevenuePage: React.FC = () => {
 
 		return [...formattedCredits, ...formattedDebits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 	}, [creditTransactions, debitTransactions]);
+
+	// Monthly breakdown from analytics periodSummary
+	const monthlyBreakdown = useMemo<MonthlyBreakdownRow[]>(() => {
+		if (!dashboardData?.periodSummary) return [];
+		return Object.entries(dashboardData.periodSummary)
+			.map(([period, data]) => ({
+				period,
+				streams: data.totalStreams,
+				revenue: data.totalRevenue
+			}))
+			.sort((a, b) => b.period.localeCompare(a.period));
+	}, [dashboardData]);
+
+	const monthlyColumns = useMemo<ColumnDef<MonthlyBreakdownRow>[]>(
+		() => [
+			{
+				accessorKey: 'period',
+				header: 'Reporting Period',
+				cell: ({ row }) => (
+					<div className="flex items-center gap-2">
+						<Calendar size={14} className="text-muted-foreground" />
+						<span className="font-medium">{row.original.period}</span>
+					</div>
+				)
+			},
+			{
+				accessorKey: 'streams',
+				header: 'Streams',
+				cell: ({ row }) => row.original.streams.toLocaleString()
+			},
+			{
+				accessorKey: 'revenue',
+				header: 'Revenue',
+				cell: ({ row }) => <span className="text-primary font-medium">{formatCurrency(convertCurrency(row.original.revenue), currency)}</span>
+			}
+		],
+		[convertCurrency, currency]
+	);
 
 	// 5. Define columns for the transaction table
 	const columns = useMemo<ColumnDef<Transaction>[]>(
@@ -146,6 +193,14 @@ const ArtistRevenuePage: React.FC = () => {
 					<p className="text-3xl font-bold text-destructive">{formatCurrency(totalDebits, 'NGN')}</p>
 				</div>
 			</section>
+
+			{/* Monthly Revenue Breakdown */}
+			{monthlyBreakdown.length > 0 && (
+				<section>
+					<h2 className="text-xl font-semibold mb-4">Revenue by Month</h2>
+					<DataTable data={monthlyBreakdown} columns={monthlyColumns} />
+				</section>
+			)}
 
 			{/* Transaction History Section */}
 			<section>

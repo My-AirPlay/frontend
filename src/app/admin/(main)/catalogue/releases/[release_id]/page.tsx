@@ -197,6 +197,44 @@ const ReleaseDetails: React.FC = () => {
 				</div>
 			</div>
 
+			{/* Album Metadata Summary */}
+			{!albumLoading && album && (
+				<div className="bg-secondary rounded-lg p-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+					<div>
+						<p className="text-muted-foreground">Genre</p>
+						<p className="font-medium">{album.mainGenre || 'N/A'}</p>
+					</div>
+					<div>
+						<p className="text-muted-foreground">Tracks</p>
+						<p className="font-medium">{album.fileIds?.length || 0}</p>
+					</div>
+					<div>
+						<p className="text-muted-foreground">Record Label</p>
+						<p className="font-medium">{album.recordLabel || 'N/A'}</p>
+					</div>
+					<div>
+						<p className="text-muted-foreground">Copyright</p>
+						<p className="font-medium">{album.copyright || 'N/A'}</p>
+					</div>
+					<div>
+						<p className="text-muted-foreground">Publisher</p>
+						<p className="font-medium">{album.publisher || 'N/A'}</p>
+					</div>
+					<div>
+						<p className="text-muted-foreground">Release Date</p>
+						<p className="font-medium">{album.releaseDate ? new Date(album.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}</p>
+					</div>
+					<div>
+						<p className="text-muted-foreground">UPC</p>
+						<p className="font-medium">{album.universalProductCode || 'N/A'}</p>
+					</div>
+					<div>
+						<p className="text-muted-foreground">Explicit</p>
+						<p className="font-medium">{album.explicitContent || 'N/A'}</p>
+					</div>
+				</div>
+			)}
+
 			{/* Tracks List */}
 			<TracksList albumId={release_id || '1'} onRowSelectionChange={handleSelectionChange} />
 		</div>
