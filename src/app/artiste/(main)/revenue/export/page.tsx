@@ -23,8 +23,8 @@ const ExportPage: React.FC = () => {
 		const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 		const unique = [...new Set(reports.map(r => r.activityPeriod))];
 		unique.sort((a, b) => {
-			const [aMonth, aYear] = a.split(' ');
-			const [bMonth, bYear] = b.split(' ');
+			const [aMonth, aYear] = a.split('-');
+			const [bMonth, bYear] = b.split('-');
 			const yearDiff = parseInt(bYear) - parseInt(aYear);
 			if (yearDiff !== 0) return yearDiff;
 			return months.indexOf(bMonth) - months.indexOf(aMonth);

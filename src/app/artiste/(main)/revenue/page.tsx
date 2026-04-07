@@ -85,8 +85,8 @@ const ArtistRevenuePage: React.FC = () => {
 				revenue: data.totalRevenue
 			}))
 			.sort((a, b) => {
-				const [aMonth, aYear] = a.period.split(' ');
-				const [bMonth, bYear] = b.period.split(' ');
+				const [aMonth, aYear] = a.period.split('-');
+				const [bMonth, bYear] = b.period.split('-');
 				const yearDiff = parseInt(bYear) - parseInt(aYear);
 				if (yearDiff !== 0) return yearDiff;
 				return months.indexOf(bMonth) - months.indexOf(aMonth);
