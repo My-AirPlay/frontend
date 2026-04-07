@@ -77,7 +77,9 @@ const ArtistRevenuePage: React.FC = () => {
 	// Monthly breakdown from analytics periodSummary
 	const monthlyBreakdown = useMemo<MonthlyBreakdownRow[]>(() => {
 		if (!dashboardData?.periodSummary) return [];
+
 		const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
 		return Object.entries(dashboardData.periodSummary)
 			.map(([period, data]) => ({
 				period,
@@ -85,10 +87,15 @@ const ArtistRevenuePage: React.FC = () => {
 				revenue: data.totalRevenue
 			}))
 			.sort((a, b) => {
-				const [aMonth, aYear] = a.period.split(' ');
-				const [bMonth, bYear] = b.period.split(' ');
-				const yearDiff = parseInt(bYear) - parseInt(aYear);
+				// Split and trim to handle potential formatting inconsistencies
+				const [aMonth, aYear] = a.period.split('-').map(s => s.trim());
+				const [bMonth, bYear] = b.period.split('-').map(s => s.trim());
+
+				// 1. Sort by Year Descending (e.g., 25 comes before 24)
+				const yearDiff = Number(bYear) - Number(aYear);
 				if (yearDiff !== 0) return yearDiff;
+
+				// 2. Sort by Month Descending (e.g., December comes before January)
 				return months.indexOf(bMonth) - months.indexOf(aMonth);
 			});
 	}, [dashboardData]);
