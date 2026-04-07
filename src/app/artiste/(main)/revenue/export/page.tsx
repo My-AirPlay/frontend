@@ -19,16 +19,27 @@ const ExportPage: React.FC = () => {
 	const { data: reports, isLoading } = useGetReportPeriodPairs(artistId!);
 
 	const periods = useMemo<PeriodRow[]>(() => {
-		if (!reports) return [];
+		if (!reports?.length) return [];
+
 		const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-		const unique = [...new Set(reports.map(r => r.activityPeriod))];
+
+		// 1. Extract unique periods and filter out any null/undefined values
+		const unique = [...new Set(reports.map(r => r.activityPeriod).filter(Boolean))];
+
 		unique.sort((a, b) => {
-			const [aMonth, aYear] = a.split('-');
-			const [bMonth, bYear] = b.split('-');
-			const yearDiff = parseInt(bYear) - parseInt(aYear);
+			// .trim() handles cases like "January - 25" or "January-25 "
+			const [aMonth, aYear] = a.split('-').map(s => s.trim());
+			const [bMonth, bYear] = b.split('-').map(s => s.trim());
+
+			// 2. Sort by Year (Descending)
+			// Using Number() is safer than parseInt() for short year strings
+			const yearDiff = Number(bYear) - Number(aYear);
 			if (yearDiff !== 0) return yearDiff;
+
+			// 3. Sort by Month (Descending)
 			return months.indexOf(bMonth) - months.indexOf(aMonth);
 		});
+
 		return unique.map(p => ({ activityPeriod: p }));
 	}, [reports]);
 
