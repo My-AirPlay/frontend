@@ -77,13 +77,20 @@ const ArtistRevenuePage: React.FC = () => {
 	// Monthly breakdown from analytics periodSummary
 	const monthlyBreakdown = useMemo<MonthlyBreakdownRow[]>(() => {
 		if (!dashboardData?.periodSummary) return [];
+		const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 		return Object.entries(dashboardData.periodSummary)
 			.map(([period, data]) => ({
 				period,
 				streams: data.totalStreams,
 				revenue: data.totalRevenue
 			}))
-			.sort((a, b) => b.period.localeCompare(a.period));
+			.sort((a, b) => {
+				const [aMonth, aYear] = a.period.split(' ');
+				const [bMonth, bYear] = b.period.split(' ');
+				const yearDiff = parseInt(bYear) - parseInt(aYear);
+				if (yearDiff !== 0) return yearDiff;
+				return months.indexOf(bMonth) - months.indexOf(aMonth);
+			});
 	}, [dashboardData]);
 
 	const monthlyColumns = useMemo<ColumnDef<MonthlyBreakdownRow>[]>(

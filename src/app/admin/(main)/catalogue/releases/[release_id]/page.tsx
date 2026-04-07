@@ -10,10 +10,8 @@ import { useDeleteAlbum } from '../../api/deleteAlbum';
 import JSZip from 'jszip'; // Import JSZip
 import { saveAs } from 'file-saver'; // Import file-saver
 import { toast } from 'sonner';
-import { Trash2, Download, Loader2 } from 'lucide-react';
-
-// Helper function for delay - REMOVED
-// const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import { Trash2, Download, Loader2, FolderDown } from 'lucide-react';
+import APIAxios from '@/utils/axios';
 
 const ReleaseDetails: React.FC = () => {
 	const { release_id } = useParams<{ release_id: string }>();
@@ -30,9 +28,7 @@ const ReleaseDetails: React.FC = () => {
 	// State for selection and download
 	const [selectedRows, setSelectedRows] = useState<any[]>([]); // Store selected row data
 	const [isBulkDownloading, setIsBulkDownloading] = useState(false); // Loading state for bulk download
-
-	// Hook for triggering download URL generation - REMOVED
-	// const { mutate: downloadMutate, isPending: isGeneratingDownloadUrls } = useDownloadMedia();
+	const [isAlbumDownloading, setIsAlbumDownloading] = useState(false);
 
 	// Delete mutation
 	const { mutate: deleteMutate, isPending: isDeleting } = useDeleteAlbum();
@@ -58,6 +54,32 @@ const ReleaseDetails: React.FC = () => {
 					}
 				}
 			);
+		}
+	};
+
+	// Download entire album as ZIP (with metadata JSON + all tracks numbered)
+	const handleAlbumDownload = async () => {
+		setIsAlbumDownloading(true);
+		toast.info('Preparing album download...');
+		try {
+			const response = await APIAxios.get(`/admin/download_album_zip/${release_id}`, {
+				responseType: 'blob',
+				timeout: 600000
+			});
+			const url = URL.createObjectURL(response.data);
+			const a = document.createElement('a');
+			a.href = url;
+			const safeTitle = album?.title ? album.title.replace(/[^a-z0-9]/gi, '_') : release_id;
+			a.download = `airplay-${safeTitle}.zip`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			toast.success('Album download started.');
+		} catch {
+			toast.error('Failed to download album. Please try again.');
+		} finally {
+			setIsAlbumDownloading(false);
 		}
 	};
 
@@ -183,10 +205,16 @@ const ReleaseDetails: React.FC = () => {
 
 				{/* Right Side: Action Buttons */}
 				<div className="flex items-center space-x-2 flex-shrink-0">
-					{/* Download Button - Updated */}
-					<Button className="admin-button-primary" onClick={handleBulkDownload} disabled={selectedRows.length === 0 || isBulkDownloading || albumLoading} size="sm">
+					{/* Download Album Button */}
+					<Button className="admin-button-primary" onClick={handleAlbumDownload} disabled={isAlbumDownloading || albumLoading || !album} size="sm">
+						{isAlbumDownloading ? <Loader2 size={16} className="animate-spin mr-2" /> : <FolderDown size={16} className="mr-2" />}
+						{isAlbumDownloading ? 'Preparing...' : 'Download Album'}
+					</Button>
+
+					{/* Download Selected Button */}
+					<Button variant="outline" className="bg-secondary text-foreground border-border" onClick={handleBulkDownload} disabled={selectedRows.length === 0 || isBulkDownloading || albumLoading} size="sm">
 						{isBulkDownloading ? <Loader2 size={16} className="animate-spin mr-2" /> : <Download size={16} className="mr-2" />}
-						{isBulkDownloading ? 'Zipping...' : `Download`}
+						{isBulkDownloading ? 'Zipping...' : `Download Selected`}
 					</Button>
 
 					{/* Delete Button */}
