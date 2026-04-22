@@ -335,7 +335,7 @@ const ArtistRevenue: React.FC = () => {
 										Artist Summary
 									</Button>
 									<Button variant={exportType === 'slips' ? 'default' : 'outline'} size="sm" onClick={() => setExportType('slips')} className="flex-1">
-										Withdrawal Slips
+										Balance
 									</Button>
 								</div>
 							</div>
