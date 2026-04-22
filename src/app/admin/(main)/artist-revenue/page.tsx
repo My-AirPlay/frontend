@@ -32,7 +32,7 @@ const ArtistRevenue: React.FC = () => {
 	const [inputValue, setInputValue] = useState<string>(searchTerm);
 	const [showExportModal, setShowExportModal] = useState(false);
 	const [exportType, setExportType] = useState<'summary' | 'slips'>('summary');
-	const [slipsFilter, setSlipsFilter] = useState<'all' | 'period' | 'dateRange'>('all');
+	const [slipsFilter, setSlipsFilter] = useState<'all' | 'dateRange'>('all');
 	const [selectedPeriod, setSelectedPeriod] = useState('');
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
@@ -42,10 +42,6 @@ const ArtistRevenue: React.FC = () => {
 
 	const handleDownload = async () => {
 		if (exportType === 'summary' && !selectedPeriod) {
-			toast.error('Please select a period');
-			return;
-		}
-		if (exportType === 'slips' && slipsFilter === 'period' && !selectedPeriod) {
 			toast.error('Please select a period');
 			return;
 		}
@@ -64,10 +60,7 @@ const ArtistRevenue: React.FC = () => {
 				filenameLabel = `revenue-summary-${selectedPeriod}`;
 			} else {
 				const params = new URLSearchParams();
-				if (slipsFilter === 'period') {
-					params.set('activityPeriod', selectedPeriod);
-					filenameLabel = `withdrawal-slips-${selectedPeriod}`;
-				} else if (slipsFilter === 'dateRange') {
+				if (slipsFilter === 'dateRange') {
 					params.set('startDate', startDate);
 					params.set('endDate', endDate);
 					filenameLabel = `withdrawal-slips-${startDate}-to-${endDate}`;
@@ -98,7 +91,6 @@ const ArtistRevenue: React.FC = () => {
 	const canDownload = () => {
 		if (exportType === 'summary') return !!selectedPeriod;
 		if (slipsFilter === 'all') return true;
-		if (slipsFilter === 'period') return !!selectedPeriod;
 		if (slipsFilter === 'dateRange') return !!startDate && !!endDate;
 		return false;
 	};
@@ -362,28 +354,11 @@ const ArtistRevenue: React.FC = () => {
 											<Button variant={slipsFilter === 'all' ? 'default' : 'outline'} size="sm" onClick={() => setSlipsFilter('all')} className="flex-1">
 												All
 											</Button>
-											<Button variant={slipsFilter === 'period' ? 'default' : 'outline'} size="sm" onClick={() => setSlipsFilter('period')} className="flex-1">
-												Period
-											</Button>
 											<Button variant={slipsFilter === 'dateRange' ? 'default' : 'outline'} size="sm" onClick={() => setSlipsFilter('dateRange')} className="flex-1">
 												Date Range
 											</Button>
 										</div>
 									</div>
-
-									{slipsFilter === 'period' && (
-										<div className="space-y-2">
-											<label className="text-sm font-medium">Activity Period</label>
-											<select className="w-full bg-[#383838] text-foreground rounded-md border border-border px-3 py-2" value={selectedPeriod} onChange={e => setSelectedPeriod(e.target.value)}>
-												<option value="">Select a period...</option>
-												{periods.map((period: string) => (
-													<option key={period} value={period}>
-														{period}
-													</option>
-												))}
-											</select>
-										</div>
-									)}
 
 									{slipsFilter === 'dateRange' && (
 										<div className="grid grid-cols-2 gap-3">
