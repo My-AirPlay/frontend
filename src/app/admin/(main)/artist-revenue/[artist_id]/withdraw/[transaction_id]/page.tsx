@@ -19,7 +19,7 @@ import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 const WithdrawalUpdatePage: React.FC = () => {
 	const router = useRouter();
-	const { convertCurrency, currency: contextCurrency } = useCurrency();
+	const { currency: contextCurrency } = useCurrency();
 	const params = useParams<{ artist_id: string; transaction_id: string }>();
 	const { artist_id, transaction_id } = params;
 
@@ -136,7 +136,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 					{/* Artist Account Balance - calculated from credits minus pending debits */}
 					<div>
 						<p className="text-sm text-primary-foreground/80">Artist Account Balance</p>
-						<h2 className="text-xl font-mono font-semibold">{formatCurrency(convertCurrency(balance), contextCurrency)}</h2>
+						<h2 className="text-xl font-mono font-semibold">{formatCurrency(balance, contextCurrency)}</h2>
 					</div>
 				</div>
 			</div>

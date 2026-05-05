@@ -18,14 +18,16 @@ const ALL_PAGES = [
 	{ key: 'artist_revenue', label: 'Artist Revenue' },
 	{ key: 'support', label: 'Support' },
 	{ key: 'json', label: 'JSON Converter' },
-	{ key: 'password_management', label: 'Password Management' }
+	{ key: 'password_management', label: 'Password Management' },
+	{ key: 'fuga_delivery', label: 'FUGA Management' }
 ];
 
 const ALL_NOTIFICATIONS = [
 	{ key: 'support', label: 'Support Tickets' },
 	{ key: 'uploads', label: 'Media Uploads' },
 	{ key: 'new_users', label: 'New Artist Signups' },
-	{ key: 'contracts', label: 'Contracts' }
+	{ key: 'contracts', label: 'Contracts' },
+	{ key: 'fuga_delivery', label: 'FUGA Deliveries' }
 ];
 
 export default function RolesTab() {

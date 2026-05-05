@@ -113,11 +113,11 @@ interface MonthlyChartProps {
 }
 
 const MonthlyChart: React.FC<MonthlyChartProps> = ({ title, data, dataKey, strokeColor }) => {
-	const { convertCurrency, currency: contextCurrency } = useCurrency();
+	const { currency: contextCurrency } = useCurrency();
 	const formatValue = (value: number | string | undefined): string => {
 		if (typeof value !== 'number') return '';
 		if (dataKey === 'revenue') {
-			return formatCurrency(convertCurrency(value), contextCurrency) ?? '';
+			return formatCurrency(value, contextCurrency) ?? '';
 		}
 		return value.toLocaleString();
 	};
@@ -156,7 +156,7 @@ const ArtistAnalytics: React.FC = () => {
 	const { data: artistAnalytics, isLoading: artistAnalyticsLoading } = useGetArtistAnalytics({
 		artistId: artist_id
 	});
-	const { convertCurrency, currency: contextCurrency } = useCurrency();
+	const { currency: contextCurrency } = useCurrency();
 
 	const chartData = useMemo(() => {
 		if (!artistAnalytics?.periodSummary) return [];
@@ -270,7 +270,7 @@ const ArtistAnalytics: React.FC = () => {
 						</div>
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Net Revenue</p>
-					<p className="text-lg font-semibold text-emerald-500">{formatCurrency(convertCurrency(totalRevenue), contextCurrency)}</p>
+					<p className="text-lg font-semibold text-emerald-500">{formatCurrency(totalRevenue, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">After deal split</p>
 				</div>
 
@@ -281,7 +281,7 @@ const ArtistAnalytics: React.FC = () => {
 						</div>
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Gross Revenue</p>
-					<p className="text-lg font-semibold text-blue-500">{formatCurrency(convertCurrency(grossRevenue), contextCurrency)}</p>
+					<p className="text-lg font-semibold text-blue-500">{formatCurrency(grossRevenue, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">Before deal split</p>
 				</div>
 
@@ -292,7 +292,7 @@ const ArtistAnalytics: React.FC = () => {
 						</div>
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Avg. Stream Value</p>
-					<p className="text-lg font-semibold text-orange-500">{formatCurrency(convertCurrency(averageStreamValue), contextCurrency)}</p>
+					<p className="text-lg font-semibold text-orange-500">{formatCurrency(averageStreamValue, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">Revenue per stream</p>
 				</div>
 			</div>
@@ -323,7 +323,7 @@ const ArtistAnalytics: React.FC = () => {
 											{track.trackTitle}
 										</td>
 										<td className="p-3 text-right tabular-nums">{track.totalStreams.toLocaleString()}</td>
-										<td className="p-3 text-right text-emerald-500 tabular-nums">{formatCurrency(convertCurrency(track.totalRevenue), contextCurrency)}</td>
+										<td className="p-3 text-right text-emerald-500 tabular-nums">{formatCurrency(track.totalRevenue, contextCurrency)}</td>
 										<td className="p-3 text-right text-muted-foreground tabular-nums">{totalStreams > 0 ? ((track.totalStreams / totalStreams) * 100).toFixed(1) : 0}%</td>
 									</tr>
 								))}
@@ -354,7 +354,7 @@ const ArtistAnalytics: React.FC = () => {
 												<p className="text-xs text-muted-foreground">{dsp.totalStreams.toLocaleString()} streams</p>
 											</div>
 										</div>
-										<p className="text-sm text-emerald-500 font-medium tabular-nums">{formatCurrency(convertCurrency(dsp.totalRevenue), contextCurrency)}</p>
+										<p className="text-sm text-emerald-500 font-medium tabular-nums">{formatCurrency(dsp.totalRevenue, contextCurrency)}</p>
 									</div>
 								))}
 							</div>
@@ -379,7 +379,7 @@ const ArtistAnalytics: React.FC = () => {
 												<p className="text-xs text-muted-foreground">{country.totalStreams.toLocaleString()} streams</p>
 											</div>
 										</div>
-										<p className="text-sm text-emerald-500 font-medium tabular-nums">{formatCurrency(convertCurrency(country.totalRevenue), contextCurrency)}</p>
+										<p className="text-sm text-emerald-500 font-medium tabular-nums">{formatCurrency(country.totalRevenue, contextCurrency)}</p>
 									</div>
 								))}
 							</div>

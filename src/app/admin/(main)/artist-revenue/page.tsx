@@ -179,6 +179,7 @@ const ArtistRevenue: React.FC = () => {
 		firstName: string;
 		lastName: string;
 		totalRoyaltyUSD: string;
+		walletBalance: string;
 	}>[] = [
 		{
 			id: 'artistName',

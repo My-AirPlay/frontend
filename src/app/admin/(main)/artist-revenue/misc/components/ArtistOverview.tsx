@@ -35,7 +35,7 @@ const ArtistOverview: React.FC = ({}) => {
 	const { data: artistAnalytics, isLoading: artistAnalyticsLoading } = useGetArtistAnalytics({
 		artistId: artist_id
 	});
-	const { convertCurrency, currency: contextCurrency } = useCurrency();
+	const { currency: contextCurrency } = useCurrency();
 
 	// Export CSV state
 	const [exportDialogOpen, setExportDialogOpen] = useState(false);
@@ -143,7 +143,7 @@ const ArtistOverview: React.FC = ({}) => {
 									<span className="font-medium">Streams:</span> <span className="text-admin-muted">{data.totalStreams.toLocaleString()}</span>
 								</p>
 								<p className="text-sm">
-									<span className="font-medium">Revenue:</span> <span className="text-admin-accent">{formatCurrency(convertCurrency(data.totalRevenue), contextCurrency)}</span>
+									<span className="font-medium">Revenue:</span> <span className="text-admin-accent">{formatCurrency(data.totalRevenue, contextCurrency)}</span>
 								</p>
 							</div>
 							{/* Period Breakdown */}
@@ -157,10 +157,10 @@ const ArtistOverview: React.FC = ({}) => {
 												<span className="text-admin-muted/90">Streams:</span> {periodData.streams.toLocaleString()}
 											</p>
 											<p>
-												<span className="text-admin-muted/90">Gross Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(convertCurrency(periodData.revenue), contextCurrency)}</span>
+												<span className="text-admin-muted/90">Gross Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.revenue, contextCurrency)}</span>
 											</p>
 											<p>
-												<span className="text-admin-muted/90">Net Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(convertCurrency(periodData.netRevenue), contextCurrency)}</span>
+												<span className="text-admin-muted/90">Net Revenue:</span> <span className={periodData.revenue >= 0 ? 'text-green-400' : 'text-red-400'}>{formatCurrency(periodData.netRevenue, contextCurrency)}</span>
 											</p>
 										</div>
 									))

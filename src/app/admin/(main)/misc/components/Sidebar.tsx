@@ -31,7 +31,8 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 				items: [
 					{ href: '/admin/contracts', icon: Edit2, label: 'Contracts', pageKey: 'contracts', ...(contractsCount && contractsCount > 0 && { badge: contractsCount }) },
 					{ href: '/admin/tracks', icon: Musicnote, label: 'Tracks/Releases', pageKey: 'tracks' },
-					{ href: '/admin/catalogue', icon: Document, label: 'Catalogue', pageKey: 'catalogue' }
+					{ href: '/admin/catalogue', icon: Document, label: 'Catalogue', pageKey: 'catalogue' },
+					{ href: '/admin/fuga', icon: HuobiToken, label: 'FUGA Management', pageKey: 'fuga_delivery' }
 				]
 			},
 			{

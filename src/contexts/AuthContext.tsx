@@ -25,6 +25,7 @@ export interface IArtistUser {
 	bio: string;
 	socialLinks: SocialLinks;
 	totalRoyaltyUSD: number;
+	walletBalance: number;
 	totalStreams: number;
 	paidRoyalty: number;
 	distributionStatus?: 'active' | 'paused';

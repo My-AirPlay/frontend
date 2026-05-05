@@ -13,8 +13,8 @@ import { Button } from '@/components/ui'; // Assuming Button is in this path
 // This is a great pattern! No changes needed here.
 // It isolates the currency conversion logic.
 const TrackRevenue = ({ amount }: { amount: number }) => {
-	const { convertCurrency, currency: contextCurrency } = useCurrency();
-	const formattedRevenue = formatCurrency(convertCurrency(amount || 0), contextCurrency);
+	const { currency: contextCurrency } = useCurrency();
+	const formattedRevenue = formatCurrency(amount || 0, contextCurrency);
 
 	return <span className="w-28 text-right">{formattedRevenue}</span>;
 };

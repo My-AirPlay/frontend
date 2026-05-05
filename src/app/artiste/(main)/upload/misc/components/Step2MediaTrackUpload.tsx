@@ -43,9 +43,9 @@ export default function Step2MediaTrackUpload() {
 		if (!file) return;
 
 		// Validate file type
-		const validTypes = isAudio ? ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'] : ['video/mp4'];
+		const validTypes = isAudio ? ['audio/wav', 'audio/ogg', 'audio/flac'] : ['video/mp4'];
 		if (!validTypes.includes(file.type)) {
-			toast.error('Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.');
+			toast.error('Invalid file type. Please upload WAV, OGG, FLAC or MP4 files only.');
 			return;
 		}
 
@@ -93,10 +93,10 @@ export default function Step2MediaTrackUpload() {
 		const file = e.dataTransfer.files?.[0];
 		if (!file) return;
 
-		const validTypes = isAudio ? ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'] : ['video/mp4'];
+		const validTypes = isAudio ? ['audio/wav', 'audio/ogg', 'audio/flac'] : ['video/mp4'];
 
 		if (!validTypes.includes(file.type)) {
-			toast.error('Invalid file type. Please upload MP3, WAV, OGG or MP4 files only.');
+			toast.error('Invalid file type. Please upload WAV, OGG, FLAC or MP4 files only.');
 			return;
 		}
 		if (file.size > 512 * 1024 * 1024) {
@@ -136,14 +136,14 @@ export default function Step2MediaTrackUpload() {
 					<p className="text-white/30 mb-6 text-xs max-w-[30ch] text-center text-balance">Drag and drop your audio file here, or click the button below</p>
 				</label>
 				<div className="flex flex-col items-start justify-center">
-					<input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange} accept={isAudio ? '.mp3,.wav,.ogg,.flac' : '.mp4'} id="track-upload-input" />
+					<input type="file" className="hidden" ref={fileInputRef} onChange={handleFileChange} accept={isAudio ? '.wav,.ogg,.flac' : '.mp4'} id="track-upload-input" />
 
 					<div className="mb-6 text-left">
 						<h3 className="text-base font-semibold mb-4">Track upload requirements</h3>
 						<ul className="list-disc pl-6 space-y-2 text-[0.9rem] text-white/70 text-left">
 							<li>
 								File format:
-								{isAudio ? 'MP3, WAV, OGG, FLAC' : 'MP4'}
+								{isAudio ? ' WAV, OGG, FLAC' : 'MP4'}
 							</li>
 							{isAudio && <li>Audio quality: 44.1kHz or greater, 16-bit stereo or 24-bit stereo</li>}
 							{!isAudio && <li>Video mode: Best quality</li>}
