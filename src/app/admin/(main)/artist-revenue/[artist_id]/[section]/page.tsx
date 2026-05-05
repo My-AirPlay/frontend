@@ -10,10 +10,9 @@ import { useGetOneArtist } from '../../../catalogue/api/getOneArtist';
 import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawalSlips';
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { WithdrawalSlipData } from '@/lib/types';
-import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, Receipt, ArrowLeftRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, Receipt, ArrowLeftRight, Banknote } from 'lucide-react';
 import { formatCurrency } from '@/utils/currency';
 import { Currency, useCurrency } from '@/app/artiste/context/CurrencyContext';
-import { NairaIcon } from '@/components/ui/naira-icon';
 import { Button } from '@/components/ui/button';
 
 const normalizeCurrency = (currency?: string | null): Currency => {
@@ -35,9 +34,22 @@ const normalizeCurrency = (currency?: string | null): Currency => {
 	}
 };
 
+const getBaseRate = (currency: string): number => {
+	switch (currency?.toUpperCase()) {
+		case 'USD':
+			return 1610;
+		case 'EUR':
+			return 1365;
+		case 'GBP':
+			return 2300;
+		default:
+			return 1;
+	}
+};
+
 const ArtistRevenueDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
-	const { convertCurrency, currency: contextCurrency, setCurrency } = useCurrency();
+	const { currency: contextCurrency, setCurrency } = useCurrency();
 
 	const { data: artist } = useGetOneArtist({ artistId: artist_id });
 
@@ -45,11 +57,13 @@ const ArtistRevenueDetails: React.FC = () => {
 	const artistCurrency = normalizeCurrency(artist?.bankDetails?.currency);
 	const hasOtherCurrency = artistCurrency !== 'NGN';
 
-	// Reset to NGN when entering this page and on unmount
+	// Set to artist's currency when entering this page
 	useEffect(() => {
-		setCurrency('NGN');
+		if (artistCurrency && artistCurrency !== 'NGN') {
+			setCurrency(artistCurrency);
+		}
 		return () => setCurrency('NGN');
-	}, [setCurrency]);
+	}, [artistCurrency, setCurrency]);
 
 	const toggleCurrency = () => {
 		setCurrency(contextCurrency === 'NGN' ? artistCurrency : 'NGN');
@@ -73,25 +87,28 @@ const ArtistRevenueDetails: React.FC = () => {
 	const allCreditTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status !== 'Pending' && slip.status !== 'Cancelled');
 	const allCancelledTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Cancelled');
 
-	// Calculate totals
+	// Helper to scale amount based on current viewing context
+	const calculateScaledAmount = (totalRevenue: number, slipExchangeRate?: number) => {
+		if (contextCurrency === 'NGN') return totalRevenue;
+		const rate = slipExchangeRate && slipExchangeRate !== 1 ? slipExchangeRate : getBaseRate(contextCurrency);
+		return totalRevenue / rate;
+	};
+
+	// Calculate totals in the selected context currency
 	const totalPendingRoyalty = allPendingDebits.reduce((sum, slip) => {
-		const royalty = Number(slip.totalRevenue) || 0;
-		return sum + royalty;
+		return sum + calculateScaledAmount(Number(slip.totalRevenue) || 0, slip.exchangeRate);
 	}, 0);
 
 	const totalDebitRoyalty = allDebitTransactions.reduce((sum, slip) => {
-		const royalty = Number(slip.totalRevenue) || 0;
-		return sum + royalty;
+		return sum + calculateScaledAmount(Number(slip.totalRevenue) || 0, slip.exchangeRate);
 	}, 0);
 
 	const totalCreditRoyalty = allCreditTransactions.reduce((sum, slip) => {
-		const royalty = Number(slip.totalRevenue) || 0;
-		return sum + royalty;
+		return sum + calculateScaledAmount(Number(slip.totalRevenue) || 0, slip.exchangeRate);
 	}, 0);
 
 	const totalCancelledAmount = allCancelledTransactions.reduce((sum, slip) => {
-		const royalty = Number(slip.totalRevenue) || 0;
-		return sum + royalty;
+		return sum + calculateScaledAmount(Number(slip.totalRevenue) || 0, slip.exchangeRate);
 	}, 0);
 
 	const balance = totalCreditRoyalty - totalPendingRoyalty;
@@ -148,7 +165,7 @@ const ArtistRevenueDetails: React.FC = () => {
 						)}
 						<div className="text-right">
 							<p className="text-xs text-white/60 uppercase tracking-wider">Available Balance</p>
-							<h3 className="text-3xl font-bold text-primary">{formatCurrency(convertCurrency(balance), contextCurrency)}</h3>
+							<h3 className="text-3xl font-bold text-primary">{formatCurrency(balance, contextCurrency)}</h3>
 						</div>
 					</div>
 				</div>
@@ -160,12 +177,12 @@ const ArtistRevenueDetails: React.FC = () => {
 				<div className="rounded-lg p-4 bg-card border border-border">
 					<div className="flex items-center justify-between mb-2">
 						<div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center">
-							<NairaIcon className="w-5 h-5 text-emerald-500" />
+							<Banknote className="w-5 h-5 text-emerald-500" />
 						</div>
 						<TrendingUp className="w-4 h-4 text-emerald-500" />
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Net Revenue</p>
-					<p className="text-lg font-semibold text-emerald-500">{formatCurrency(convertCurrency(totalCreditRoyalty), contextCurrency)}</p>
+					<p className="text-lg font-semibold text-emerald-500">{formatCurrency(totalCreditRoyalty, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">Total revenue made</p>
 				</div>
 
@@ -178,7 +195,7 @@ const ArtistRevenueDetails: React.FC = () => {
 						<span className={`text-xs font-medium px-2 py-0.5 rounded ${balance >= 0 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>{balance >= 0 ? 'Positive' : 'Negative'}</span>
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Available Balance</p>
-					<p className={`text-lg font-semibold ${balance >= 0 ? 'text-primary' : 'text-red-500'}`}>{formatCurrency(convertCurrency(balance), contextCurrency)}</p>
+					<p className={`text-lg font-semibold ${balance >= 0 ? 'text-primary' : 'text-red-500'}`}>{formatCurrency(balance, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">Credits - Pending Debits</p>
 				</div>
 			</div>
@@ -194,7 +211,7 @@ const ArtistRevenueDetails: React.FC = () => {
 						<TrendingUp className="w-4 h-4 text-green-500" />
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Total Credits</p>
-					<p className="text-lg font-semibold text-green-500">{formatCurrency(convertCurrency(totalCreditRoyalty), contextCurrency)}</p>
+					<p className="text-lg font-semibold text-green-500">{formatCurrency(totalCreditRoyalty, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">{allCreditTransactions.length} transactions</p>
 				</div>
 
@@ -207,7 +224,7 @@ const ArtistRevenueDetails: React.FC = () => {
 						<Wallet className="w-4 h-4 text-orange-500" />
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Total Debits</p>
-					<p className="text-lg font-semibold text-orange-500">{formatCurrency(convertCurrency(totalDebitRoyalty), contextCurrency)}</p>
+					<p className="text-lg font-semibold text-orange-500">{formatCurrency(totalDebitRoyalty, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">
 						{allDebitTransactions.length} withdrawals ({allPendingDebits.length} pending)
 					</p>
@@ -222,7 +239,7 @@ const ArtistRevenueDetails: React.FC = () => {
 						<TrendingDown className="w-4 h-4 text-red-500" />
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Cancelled</p>
-					<p className="text-lg font-semibold text-red-500">{formatCurrency(convertCurrency(totalCancelledAmount), contextCurrency)}</p>
+					<p className="text-lg font-semibold text-red-500">{formatCurrency(totalCancelledAmount, contextCurrency)}</p>
 					<p className="text-xs text-muted-foreground mt-1">{allCancelledTransactions.length} cancelled</p>
 				</div>
 

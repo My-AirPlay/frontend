@@ -20,6 +20,7 @@ interface WithdrawalSlipData {
 	dealType: string;
 	rate: number;
 	proposedAmount: number;
+	exchangeRate?: number;
 	totalRevenue: number;
 	activityPeriod: string;
 	createdAt: string; // ISO Date string
@@ -297,7 +298,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			id: 'totalRevenue', // Show requested amount for pending withdrawals
 			header: 'Amount',
 			accessorKey: 'totalRevenue',
-			cell: (info: any) => <span className="text-red-500">{formatCurrency(convertCurrency(info.getValue()), contextCurrency)}</span>
+			cell: (info: any) => <span className="text-red-500">{formatCurrency(info.getValue() / (info.row.original.exchangeRate || 1), contextCurrency)}</span>
 		},
 		{
 			id: 'actions',
@@ -345,7 +346,7 @@ const ArtistTransactions: React.FC = ({}) => {
 			id: 'totalRevenue',
 			header: 'Amount',
 			accessorKey: 'totalRevenue',
-			cell: (info: any) => <span className="text-muted-foreground line-through">{formatCurrency(convertCurrency(info.getValue()), contextCurrency)}</span>
+			cell: (info: any) => <span className="text-muted-foreground line-through">{formatCurrency(info.getValue(), contextCurrency)}</span>
 		}
 	];
 
@@ -540,7 +541,7 @@ const ArtistTransactions: React.FC = ({}) => {
 								</div>
 								<div className="flex justify-between text-sm">
 									<span className="text-muted-foreground">Amount:</span>
-									<span className="font-semibold text-red-500">{formatCurrency(convertCurrency(transactionToCancel.amount), contextCurrency)}</span>
+									<span className="font-semibold text-red-500">{formatCurrency(transactionToCancel.amount, contextCurrency)}</span>
 								</div>
 							</div>
 						)}

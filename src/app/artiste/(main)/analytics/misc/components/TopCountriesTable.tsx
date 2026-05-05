@@ -21,7 +21,7 @@ interface TopCountriesTableProps {
 
 export const TopCountriesTable: React.FC<TopCountriesTableProps> = ({ countryData }) => {
 	// Call the hook at the top level of the component
-	const { currency, convertCurrency } = useCurrency();
+	const { currency } = useCurrency();
 	const locale = getLocaleForCurrency(currency);
 
 	return (
@@ -36,15 +36,13 @@ export const TopCountriesTable: React.FC<TopCountriesTableProps> = ({ countryDat
 			</TableHeader>
 			<TableBody>
 				{countryData.map(country => {
-					const convertedTotalRevenue = convertCurrency(country.totalRevenue);
-
-					const avgPerStream = country.totalStreams > 0 ? convertedTotalRevenue / country.totalStreams : 0;
+					const avgPerStream = country.totalStreams > 0 ? country.totalRevenue / country.totalStreams : 0;
 
 					return (
 						<TableRow key={country.name}>
 							<TableCell className="font-medium">{country.name}</TableCell>
 							<TableCell className="text-right">{country.totalStreams.toLocaleString()}</TableCell>
-							<TableCell className="text-right">{formatCurrency(convertCurrency(country.totalRevenue), currency)}</TableCell>
+							<TableCell className="text-right">{formatCurrency(country.totalRevenue, currency)}</TableCell>
 
 							<TableCell className="text-right">
 								{new Intl.NumberFormat(locale, {

@@ -10,7 +10,7 @@ interface TopDSPsTableProps {
 
 export const TopDSPsTable: React.FC<TopDSPsTableProps> = ({ dspData }) => {
 	// Call the hook at the top level of the component
-	const { currency, convertCurrency } = useCurrency();
+	const { currency } = useCurrency();
 	const locale = getLocaleForCurrency(currency);
 	return (
 		<Table>
@@ -24,15 +24,13 @@ export const TopDSPsTable: React.FC<TopDSPsTableProps> = ({ dspData }) => {
 			</TableHeader>
 			<TableBody>
 				{dspData.map(dsp => {
-					const convertedTotalRevenue = convertCurrency(dsp.totalRevenue);
-
-					const avgPerStream = dsp.totalStreams > 0 ? convertedTotalRevenue / dsp.totalStreams : 0;
+					const avgPerStream = dsp.totalStreams > 0 ? dsp.totalRevenue / dsp.totalStreams : 0;
 
 					return (
 						<TableRow key={dsp.name}>
 							<TableCell className="font-medium">{dsp.name}</TableCell>
 							<TableCell className="text-right">{dsp.totalStreams.toLocaleString()}</TableCell>
-							<TableCell className="text-right">{formatCurrency(convertCurrency(dsp.totalRevenue), currency)}</TableCell>
+							<TableCell className="text-right">{formatCurrency(dsp.totalRevenue, currency)}</TableCell>
 
 							<TableCell className="text-right">
 								{new Intl.NumberFormat(locale, {

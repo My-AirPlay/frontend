@@ -1,6 +1,7 @@
 import APIAxios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { SupportedCurrency } from '@/utils/currency';
 
 const getData = async () => {
 	const response = await APIAxios.get('/artist/artist_analytics');
@@ -85,6 +86,7 @@ export interface APIResponse {
 	// Summary metrics
 	totalStreams: number;
 	totalRevenue: number;
+	currency: SupportedCurrency;
 	grossRevenue: number;
 	averageStreamValue: number;
 

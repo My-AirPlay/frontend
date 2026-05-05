@@ -16,10 +16,10 @@ export interface MonthlyCountryChartProps {
 
 const COLORS = ['#4ade80', '#60a5fa', '#fbbf24', '#fb7185', '#a78bfa', '#34d399', '#f472b6', '#f87171', '#38bdf8', '#c084fc', '#e879f9', '#facc15', '#22d3ee', '#2dd4bf', '#eab308'];
 export const CustomBarChart: React.FC<MonthlyCountryChartProps> = ({ title, data, dataKey, strokeColor }) => {
-	const { convertCurrency, currency: contextCurrency } = useCurrency();
+	const { currency: contextCurrency } = useCurrency();
 	const formatValue = (value: number | string | undefined): string => {
 		if (typeof value !== 'number') return '';
-		return dataKey === 'revenue' ? (formatCurrency(convertCurrency(value), contextCurrency) ?? '') : value.toLocaleString();
+		return dataKey === 'revenue' ? (formatCurrency(value, contextCurrency) ?? '') : value.toLocaleString();
 	};
 
 	const countries = data.length > 0 ? Object.keys(data[0]).filter(key => key !== 'monthLabel') : [];

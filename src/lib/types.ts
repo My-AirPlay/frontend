@@ -130,7 +130,9 @@ export interface WithdrawalSlipData {
 	rate?: number; // Optional, relevant for Percentage deals
 	proposedAmount: number; // Amount initially proposed/calculated
 	requestedAmount: number; // Amount requested by the artist
+	exchangeRate?: number;
 	finalAmountSent?: number; // Actual amount sent after processing/fees
+	action?: 'Credit' | 'Debit';
 	notes?: string; // Admin notes or reasons
 	activityPeriods: []; // e.g., "September 2023"
 	createdAt: string; // ISO Date String

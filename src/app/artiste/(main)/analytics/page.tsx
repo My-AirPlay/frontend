@@ -11,7 +11,7 @@ import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 const MusicDashboard = () => {
 	const { data, isLoading, error } = useGetDashboardData();
-	const { convertCurrency, currency } = useCurrency();
+	const { currency } = useCurrency();
 	if (isLoading) {
 		return (
 			<div className="flex justify-center items-center h-screen">
@@ -45,7 +45,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
-			value: convertCurrency(entry.value),
+			value: entry.value,
 			period: entry.period
 		}));
 
@@ -63,7 +63,7 @@ const MusicDashboard = () => {
 		})
 		.map(entry => ({
 			...entry,
-			value: convertCurrency(entry.value),
+			value: entry.value,
 			period: entry.period
 		}));
 	// Prepare DSP data for pie chart
@@ -106,7 +106,7 @@ const MusicDashboard = () => {
 						<CardTitle className="text-sm lg:text-xl font-semibold">Total Revenue</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(convertCurrency(data?.totalRevenue || 0), currency)}</div>
+						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(data?.totalRevenue || 0, data?.currency || currency)}</div>
 						<p className="text-xs text-muted-foreground">Across all platforms</p>
 					</CardContent>
 				</Card>
