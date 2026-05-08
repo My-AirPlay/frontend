@@ -75,8 +75,8 @@ export const useUpdateArtistContract = () => {
 	});
 };
 
-export const overridePayment = async ({ artistId, endDate }: { artistId: string; endDate: string }) => {
-	const response = await APIAxios.post(`/admin/artist/${artistId}/override-payment`, { endDate });
+export const overridePayment = async ({ artistId, endDate, startDate }: { artistId: string; endDate: string; startDate?: string }) => {
+	const response = await APIAxios.post(`/admin/artist/${artistId}/override-payment`, { endDate, startDate });
 	return response.data;
 };
 

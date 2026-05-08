@@ -123,7 +123,7 @@ const ArtistRevenuePage: React.FC = () => {
 				date: slip.createdAt,
 				description: slip.notes || 'Withdrawal',
 				type: 'Debit' as const,
-				status: 'processed',
+				status: 'Processed',
 				amount: (Number(slip.totalRevenue) || 0) / rate
 			};
 		});
