@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { SingleDatePicker } from '@/components/ui';
 import { Artist } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUpdateArtistContract, useUploadArtistContract } from '../../../catalogue/api/postAdminUploadArtistContract';
+import { useUpdateArtistContract, useUploadArtistContract, useOverridePayment } from '../../../catalogue/api/postAdminUploadArtistContract';
 import { Button } from '@/components/ui/button';
-import { Save, Download } from 'lucide-react';
+import { Save, Download, ShieldCheck } from 'lucide-react';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { toast } from 'sonner';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
@@ -95,6 +96,24 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 
 	const { mutate: mutateCreateContract, isPending } = useUploadArtistContract();
 	const { mutate: mutateUpdateContract, isPending: updateContractPending } = useUpdateArtistContract();
+	const { mutate: mutateOverridePayment, isPending: isOverriding } = useOverridePayment();
+
+	const handleOverridePayment = () => {
+		if (window.confirm(`Are you sure you want to override payment for ${artist.artistName || artist.firstName}? This will mark them as paid and set the contract end date to ${endDate.toLocaleDateString()}.`)) {
+			mutateOverridePayment(
+				{ artistId: artist._id, endDate: endDate.toISOString() },
+				{
+					onSuccess: () => {
+						artistRefetch();
+						toast.success('Payment overridden successfully');
+					},
+					onError: error => {
+						toast.error((error as any)?.response?.data?.message || 'Failed to override payment');
+					}
+				}
+			);
+		}
+	};
 
 	const handleSubmit = () => {
 		const payload: UploadArtistContractPayload = {
@@ -209,7 +228,13 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 				</div>
 			</div>
 
-			<div className="flex justify-end items-center mt-8">
+			<div className="flex justify-end items-center mt-8 gap-4">
+				{!artist.bankDetails?.paidRegistrationFee && (
+					<Button variant="outline" className="text-amber-500 border-amber-500 hover:bg-amber-50" onClick={handleOverridePayment} disabled={isOverriding}>
+						<ShieldCheck size={16} className="mr-2" />
+						{isOverriding ? 'Overriding...' : 'Override Payment'}
+					</Button>
+				)}
 				<Button className="max-md:size-10 max-md:p-0" disabled={isPending || updateContractPending} onClick={() => handleSubmit()}>
 					{isPending || updateContractPending ? (
 						<div className="flex items-center justify-center w-full h-full">

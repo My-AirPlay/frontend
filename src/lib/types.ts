@@ -51,6 +51,7 @@ interface VerificationDetails {
 }
 
 interface BankDetails {
+	paidRegistrationFee: boolean;
 	bankName: string;
 	accountName: string;
 	accountNumber: number;
