@@ -104,7 +104,11 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 
 	const handleOverridePayment = () => {
 		mutateOverridePayment(
-			{ artistId: artist._id, endDate: overrideEndDate.toISOString() },
+			{
+				artistId: artist._id,
+				endDate: overrideEndDate.toISOString(),
+				startDate: startDate.toISOString()
+			},
 			{
 				onSuccess: () => {
 					artistRefetch();
