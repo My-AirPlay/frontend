@@ -11,6 +11,7 @@ import { LoadingBox } from '@/components/ui/LoadingBox';
 import { toast } from 'sonner';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import APIAxios from '@/utils/axios';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui';
 
 // Helper function to safely create a Date object
 // Defaults to today's date if the provided string is invalid or missing.
@@ -45,6 +46,7 @@ interface FileWithPreview {
 const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }) => {
 	const [primaryFile, setPrimaryFile] = useState<FileWithPreview>({ file: null, previewUrl: null });
 	const [isDownloading, setIsDownloading] = useState(false);
+	const [isOverrideModalOpen, setIsOverrideModalOpen] = useState(false);
 
 	const handleDownloadSigned = async () => {
 		setIsDownloading(true);
@@ -82,8 +84,10 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 		const newEndDate = new Date(startDate);
 		newEndDate.setFullYear(newEndDate.getFullYear() + 1);
 		setEndDate(newEndDate);
+		setOverrideEndDate(newEndDate);
 	}, [startDate]); // The dependency array makes this effect reactive to startDate changes.
 
+	const [overrideEndDate, setOverrideEndDate] = useState<Date>(endDate);
 	const [status] = useState<string>(artist?.contractDetails?.status || 'ACTIVE');
 
 	const handlePrimaryFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,20 +103,19 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 	const { mutate: mutateOverridePayment, isPending: isOverriding } = useOverridePayment();
 
 	const handleOverridePayment = () => {
-		if (window.confirm(`Are you sure you want to override payment for ${artist.artistName || artist.firstName}? This will mark them as paid and set the contract end date to ${endDate.toLocaleDateString()}.`)) {
-			mutateOverridePayment(
-				{ artistId: artist._id, endDate: endDate.toISOString() },
-				{
-					onSuccess: () => {
-						artistRefetch();
-						toast.success('Payment overridden successfully');
-					},
-					onError: error => {
-						toast.error((error as any)?.response?.data?.message || 'Failed to override payment');
-					}
+		mutateOverridePayment(
+			{ artistId: artist._id, endDate: overrideEndDate.toISOString() },
+			{
+				onSuccess: () => {
+					artistRefetch();
+					setIsOverrideModalOpen(false);
+					toast.success('Payment overridden successfully');
+				},
+				onError: error => {
+					toast.error((error as any)?.response?.data?.message || 'Failed to override payment');
 				}
-			);
-		}
+			}
+		);
 	};
 
 	const handleSubmit = () => {
@@ -230,7 +233,7 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 
 			<div className="flex justify-end items-center mt-8 gap-4">
 				{!artist.bankDetails?.paidRegistrationFee && (
-					<Button variant="outline" className="text-amber-500 border-amber-500 hover:bg-amber-50" onClick={handleOverridePayment} disabled={isOverriding}>
+					<Button variant="outline" className="text-amber-500 border-amber-500 hover:bg-amber-50" onClick={() => setIsOverrideModalOpen(true)} disabled={isOverriding}>
 						<ShieldCheck size={16} className="mr-2" />
 						{isOverriding ? 'Overriding...' : 'Override Payment'}
 					</Button>
@@ -248,6 +251,28 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 					)}
 				</Button>
 			</div>
+
+			<Dialog open={isOverrideModalOpen} onOpenChange={setIsOverrideModalOpen}>
+				<DialogContent className="sm:max-w-[425px]">
+					<DialogHeader>
+						<DialogTitle>Override Payment Status</DialogTitle>
+						<DialogDescription>
+							This will mark <strong>{artist.artistName || artist.firstName}</strong> as paid and manually set their contract end date.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="py-4">
+						<SingleDatePicker label="Contract End Date" value={overrideEndDate} onChange={setOverrideEndDate} />
+					</div>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setIsOverrideModalOpen(false)}>
+							Cancel
+						</Button>
+						<Button className="bg-amber-600 hover:bg-amber-700 text-white" onClick={handleOverridePayment} disabled={isOverriding}>
+							{isOverriding ? 'Processing...' : 'Confirm Override'}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };
