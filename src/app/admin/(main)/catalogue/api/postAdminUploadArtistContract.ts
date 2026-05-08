@@ -74,3 +74,14 @@ export const useUpdateArtistContract = () => {
 		onError: () => {}
 	});
 };
+
+export const overridePayment = async ({ artistId, endDate }: { artistId: string; endDate: string }) => {
+	const response = await APIAxios.post(`/admin/artist/${artistId}/override-payment`, { endDate });
+	return response.data;
+};
+
+export const useOverridePayment = () => {
+	return useMutation({
+		mutationFn: overridePayment
+	});
+};
