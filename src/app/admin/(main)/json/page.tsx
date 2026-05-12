@@ -16,14 +16,18 @@ const formatValue = (key: string, value: any): string => {
 		// Check if the key is a media URL to add helper icons
 		if (key === 'mediaUrl' || key === 'mediaCoverArtUrl') {
 			return `
-                <div class="inline-flex items-center gap-2">
-                    <span class="text-green-400">"${value}"</span>
-                    <a href="${value}" target="_blank" rel="noopener noreferrer" title="Open in new tab" class="text-cyan-400 hover:text-white transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="4"/></svg>
+                <div class="inline-flex items-center gap-2 group flex-wrap">
+                    <a href="${value}" target="_blank" rel="noopener noreferrer" class="text-green-400 hover:text-green-300 underline decoration-green-400/30 transition-all break-all">
+                        "${value}"
                     </a>
-                    <a href="${value}" target="_blank" download title="Download" class="text-cyan-400 hover:text-white transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    </a>
+                    <div class="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity ml-1">
+                        <a href="${value}" target="_blank" rel="noopener noreferrer" title="Open in new tab" class="p-1.5 rounded bg-gray-700/50 text-cyan-400 hover:bg-cyan-500 hover:text-gray-900 transition-all shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="4"/></svg>
+                        </a>
+                        <a href="${value}" target="_blank" download title="Download" class="p-1.5 rounded bg-gray-700/50 text-cyan-400 hover:bg-cyan-500 hover:text-gray-900 transition-all shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </a>
+                    </div>
                 </div>
             `;
 		}
@@ -161,7 +165,7 @@ const JsonBeautifier: FC = () => {
 
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 md:p-12 lg:p-24 bg-background text-gray-200">
-			<div className="w-full max-w-4xl bg-background rounded-2xl shadow-2xl overflow-hidden border border-border">
+			<div className="w-full max-w-[95%] bg-background rounded-2xl shadow-2xl overflow-hidden border border-border">
 				<header className="p-6 border-b border-border">
 					<h1 className="text-2xl font-bold text-white">Release Data Viewer</h1>
 					<p className="text-gray-400 mt-1">Upload a JSON file to view its contents in a readable format.</p>
