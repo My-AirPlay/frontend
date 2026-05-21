@@ -1,13 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import APIAxios from '@/utils/axios';
+import axios from 'axios';
 import { UploadAlbumPayload, UploadTrackPayload } from '../types';
 import { MediaUploadInfo } from '../store/media';
+
+// Helper to upload a file directly to S3 via presigned URL
+const uploadToS3 = async (file: File) => {
+	// 1. Get presigned URL
+	const { data } = await APIAxios.get(`/media/generate-upload-url`, {
+		params: {
+			filename: file.name,
+			contentType: file.type || 'application/octet-stream'
+		}
+	});
+
+	// 2. Upload file to S3
+	await axios.put(data.signedUrl, file, {
+		headers: {
+			'Content-Type': file.type || 'application/octet-stream'
+		},
+		timeout: 600000 // 10 mins
+	});
+
+	// 3. Return final URL
+	return data.finalUrl;
+};
 
 export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 	const MAX_MEDIA_SIZE = 512 * 1024 * 1024; // 512MB
 	const MAX_COVER_SIZE = 5 * 1024 * 1024; // 5MB
 
-	// Check if the files are within the size limit
 	if (payload.media && payload.media.size > MAX_MEDIA_SIZE) {
 		throw new Error('Media file is too large. Please upload a file smaller than 512MB.');
 	}
@@ -16,49 +39,39 @@ export const uploadSingleTrack = async (payload: UploadTrackPayload) => {
 		throw new Error('Cover art is too large. Please upload a file smaller than 5MB.');
 	}
 
-	// Prepare FormData
-	const formData = new FormData();
-
-	// Append other fields from the payload
-	Object.entries(payload).forEach(([key, value]) => {
-		if (key !== 'media' && key !== 'coverArt' && key !== 'streamingPlatforms') {
-			formData.append(key, value || '');
-		}
-	});
-
-	// Handle streamingPlatforms field (array or single value)
-	if (Array.isArray(payload.streamingPlatforms)) {
-		payload.streamingPlatforms.forEach((platform, i) => {
-			formData.append(`streamingPlatforms[${i}]`, platform);
-		});
-	} else {
-		formData.append('streamingPlatforms', payload.streamingPlatforms as unknown as string);
-	}
-
-	// Append the media and cover art files
-	if (payload.coverArt) {
-		formData.append('coverArt', payload.coverArt);
-	}
-	if (payload.media) {
-		formData.append('media', payload.media);
-	}
-
-	// Send the request
 	try {
-		const response = await APIAxios.post(`/media/create-media`, formData, {
-			headers: {
-				'Content-Type': 'multipart/form-data'
-			},
-			timeout: 600000 // 10 minutes for large file uploads
-		});
-		return response.data;
-	} catch (error: unknown) {
-		const axiosError = error as { response?: { data?: { message?: string } }; code?: string; message?: string };
-		const serverMessage = axiosError?.response?.data?.message;
-		if (axiosError?.code === 'ECONNABORTED' || axiosError?.message?.includes('timeout')) {
-			throw new Error('Upload timed out. Please check your internet connection and try again.');
+		// 1. Upload files to S3 directly
+		let mediaUrl = '';
+		let mediaCoverArtUrl = '';
+
+		if (payload.media) {
+			mediaUrl = await uploadToS3(payload.media);
 		}
-		throw new Error(serverMessage || 'An error occurred while uploading the track. Please try again later.');
+		if (payload.coverArt) {
+			mediaCoverArtUrl = await uploadToS3(payload.coverArt);
+		}
+
+		// 2. Construct JSON payload
+		const jsonPayload: any = {
+			...payload,
+			mediaUrl,
+			mediaCoverArtUrl
+		};
+		// Remove file objects before sending JSON
+		delete jsonPayload.media;
+		delete jsonPayload.coverArt;
+
+		// Handle streamingPlatforms
+		if (!Array.isArray(jsonPayload.streamingPlatforms)) {
+			jsonPayload.streamingPlatforms = [jsonPayload.streamingPlatforms as unknown as string];
+		}
+
+		// 3. Send metadata to backend
+		const response = await APIAxios.post(`/media/create-media`, jsonPayload);
+		return response.data;
+	} catch (error: any) {
+		const serverMessage = error?.response?.data?.message || error.message;
+		throw new Error(serverMessage || 'An error occurred while uploading the track.');
 	}
 };
 
@@ -78,73 +91,43 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
 		}
 	}
 
-	const formData = new FormData();
+	try {
+		// 1. Upload Album Cover
+		const mediaDirCoverArtUrl = payload.albumCover ? await uploadToS3(payload.albumCover) : '';
 
-	formData.append('albumCover', payload.albumCover);
+		// 2. Upload Track Files Concurrently
+		const uploadedMediaUrls = await Promise.all((payload.mediaFiles || []).map(file => uploadToS3(file)));
 
-	formData.append('description', payload.description);
-	formData.append('title', payload.title);
-	formData.append('artistName', payload.artistName);
-	if (payload.primaryArtist2) formData.append('primaryArtist2', payload.primaryArtist2);
-	if (payload.featuredArtists) formData.append('featuredArtists', payload.featuredArtists);
-	formData.append('mainGenre', payload.mainGenre);
-	formData.append('releaseDate', payload.releaseDate);
-	formData.append('recordLabel', payload.recordLabel || '');
-	formData.append('publisher', payload.publisher);
-	formData.append('explicitContent', payload.explicitContent);
-	formData.append('universalProductCode', payload.universalProductCode);
-	formData.append('releaseVersion', payload.releaseVersion);
-	formData.append('copyright', payload.copyright);
+		// 3. Map URLs back to the media track metadata
+		const media = (payload.media || []).map((track, i) => ({
+			...track,
+			mediaUrl: uploadedMediaUrls[i],
+			mediaCoverArtUrl: mediaDirCoverArtUrl
+		}));
 
-	if (payload.secondaryGenres?.length) {
-		payload.secondaryGenres.forEach((genre, i) => {
-			formData.append(`secondaryGenres[${i}]`, genre);
-		});
+		// 4. Construct JSON payload
+		const jsonPayload: any = {
+			...payload,
+			mediaDirCoverArtUrl,
+			media
+		};
+
+		// Remove file objects
+		delete jsonPayload.albumCover;
+		delete jsonPayload.mediaFiles;
+
+		// Handle streamingPlatforms
+		if (!Array.isArray(jsonPayload.streamingPlatforms)) {
+			jsonPayload.streamingPlatforms = [jsonPayload.streamingPlatforms as unknown as string];
+		}
+
+		// 5. Send metadata to backend
+		const response = await APIAxios.post(`/media/create-album`, jsonPayload);
+		return response.data;
+	} catch (error: any) {
+		const serverMessage = error?.response?.data?.message || error.message;
+		throw new Error(serverMessage || 'An error occurred while uploading the album.');
 	}
-
-	if (payload.instruments?.length) {
-		payload.instruments.forEach((instrument, i) => {
-			formData.append(`instruments[${i}]`, instrument);
-		});
-	}
-
-	if (payload.streamingPlatforms?.length) {
-		payload.streamingPlatforms.forEach((platform, i) => {
-			formData.append(`streamingPlatforms[${i}]`, platform);
-		});
-	}
-
-	// Add media files
-	if (payload.mediaFiles?.length) {
-		payload.mediaFiles.forEach(file => {
-			formData.append('mediaFiles', file);
-		});
-	}
-
-	// Add track info for each track
-	if (payload.media?.length) {
-		payload.media.forEach((track, i) => {
-			Object.entries(track).forEach(([key, value]) => {
-				if (key == 'fileId') return;
-				if (!Array.isArray(value)) {
-					formData.append(`media[${i}][${key}]`, value || '');
-				} else if (key === 'secondaryGenres' || key === 'instruments' || key === 'streamingPlatforms') {
-					value.forEach((item, j) => {
-						formData.append(`media[${i}][${key}][${j}]`, item);
-					});
-				}
-			});
-		});
-	}
-
-	const response = await APIAxios.post(`/media/create-album`, formData, {
-		headers: {
-			'Content-Type': 'multipart/form-data'
-		},
-		timeout: 600000 // 10 minutes for large file uploads
-	});
-
-	return response.data;
 };
 
 export const useUploadTrack = () => {

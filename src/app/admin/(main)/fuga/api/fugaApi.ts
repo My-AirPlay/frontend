@@ -22,7 +22,7 @@ export const getFugaDeliveries = async (options: { page?: number; limit?: number
 		limit: String(options.limit || 10)
 	});
 	if (options.status) params.append('status', options.status);
-	const response = await APIAxios.get(`/admin/fuga/deliveries?${params.toString()}`);
+	const response = await APIAxios.get('/admin/fuga/deliveries?' + params.toString());
 	return response.data;
 };
 
@@ -34,18 +34,31 @@ export const useGetFugaDeliveries = (options: { page?: number; limit?: number; s
 };
 
 export const getFugaDeliveryDetail = async (id: string) => {
-	const response = await APIAxios.get(`/admin/fuga/deliveries/${id}`);
+	const response = await APIAxios.get('/admin/fuga/deliveries/' + id);
 	return response.data;
 };
 
 export const triggerFugaDelivery = async (id: string) => {
-	const response = await APIAxios.post(`/admin/fuga/deliver/${id}`);
+	const response = await APIAxios.post('/admin/fuga/deliver/' + id);
 	return response.data;
 };
 
 export const cancelFugaDelivery = async (id: string) => {
-	const response = await APIAxios.post(`/admin/fuga/cancel/${id}`);
+	const response = await APIAxios.post('/admin/fuga/cancel/' + id);
 	return response.data;
+};
+
+export const downloadFugaCsv = async (id: string, upc: string) => {
+	const response = await APIAxios.get('/admin/fuga/deliveries/' + id + '/csv', {
+		responseType: 'blob'
+	});
+	const url = window.URL.createObjectURL(new Blob([response.data]));
+	const link = document.createElement('a');
+	link.href = url;
+	link.setAttribute('download', (upc || id) + '.csv');
+	document.body.appendChild(link);
+	link.click();
+	link.remove();
 };
 
 // --- Codes API ---
