@@ -181,9 +181,11 @@ const VideoCard = ({ audio }: { audio: TArtistMedia }) => {
 										<h2 className="text-xl font-bold mt-2">{audio.title}</h2>
 									</div>
 
-									<Button size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full" onClick={() => setIsPlaying(p => !p)}>
-										<Play />
-									</Button>
+									{!audio.isStorageCleaned && (
+										<Button size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full" onClick={() => setIsPlaying(p => !p)}>
+											<Play />
+										</Button>
+									)}
 								</div>
 							</div>
 
