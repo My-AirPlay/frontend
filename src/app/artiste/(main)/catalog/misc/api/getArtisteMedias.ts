@@ -48,6 +48,7 @@ export interface TArtistMedia {
 	extensionType: string;
 	createdAt: string;
 	updatedAt: string;
+	isStorageCleaned?: boolean;
 	__v: number;
 }
 

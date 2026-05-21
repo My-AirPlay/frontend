@@ -247,9 +247,11 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 										<h2 className="text-xl font-bold mt-2">{audio.title}</h2>
 									</div>
 
-									<Button onClick={handlePlayPause} size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full flex items-center justify-center">
-										{isPlaying ? <Pause /> : <Play className="ml-1" />}
-									</Button>
+									{!audio.isStorageCleaned && (
+										<Button onClick={handlePlayPause} size="icon" className="bg-white text-black hover:bg-gray-200 rounded-full flex items-center justify-center">
+											{isPlaying ? <Pause /> : <Play className="ml-1" />}
+										</Button>
+									)}
 									<audio ref={audioRef} src={audio.mediaUrl} />
 								</div>
 							</div>
