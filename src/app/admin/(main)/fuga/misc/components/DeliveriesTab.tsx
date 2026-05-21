@@ -3,9 +3,9 @@
 
 import React, { useState } from 'react';
 import { DataTable, Button, Badge } from '@/components/ui';
-import { RefreshCcw, XCircle } from 'lucide-react';
+import { RefreshCcw, XCircle, Download } from 'lucide-react';
 import { toast } from 'sonner';
-import { useGetFugaDeliveries, useFugaMutations, FugaDelivery } from '@/app/admin/(main)/fuga/api/fugaApi';
+import { useGetFugaDeliveries, useFugaMutations, FugaDelivery, downloadFugaCsv } from '@/app/admin/(main)/fuga/api/fugaApi';
 import moment from 'moment';
 
 const DeliveriesTab = () => {
@@ -55,7 +55,7 @@ const DeliveriesTab = () => {
 				const status = info.getValue() as string;
 				const variants: Record<string, any> = {
 					gated: { variant: 'secondary', label: 'Gated' },
-					queued: { variant: 'outline', label: 'Queed' },
+					queued: { variant: 'outline', label: 'Queued' },
 					delivering: { variant: 'outline', label: 'Delivering', className: 'animate-pulse' },
 					delivered: { variant: 'success', label: 'Delivered' },
 					failed: { variant: 'destructive', label: 'Failed' },
@@ -94,6 +94,7 @@ const DeliveriesTab = () => {
 				const item = info.row.original as FugaDelivery;
 				const canCancel = item.status === 'gated';
 				const canRetry = ['failed', 'delivered', 'cancelled', 'ineligible'].includes(item.status);
+				const canDownload = item.status === 'delivered';
 
 				return (
 					<div className="flex items-center gap-2">
@@ -107,6 +108,12 @@ const DeliveriesTab = () => {
 							<Button variant="ghost" size="sm" onClick={() => handleRetry(item.id)} disabled={deliverMutation.isPending}>
 								<RefreshCcw size={16} className="mr-1" />
 								{item.status === 'delivered' ? 'Push' : 'Retry'}
+							</Button>
+						)}
+						{canDownload && (
+							<Button variant="ghost" size="sm" onClick={() => downloadFugaCsv(item.id, item.upc || '')}>
+								<Download size={16} className="mr-1" />
+								CSV
 							</Button>
 						)}
 					</div>
