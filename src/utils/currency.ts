@@ -42,3 +42,73 @@ export function formatCurrency(amount: number, currency?: SupportedCurrency): st
 		minimumFractionDigits: 2
 	}).format(amount);
 }
+
+/**
+ * The symbol used to prefix raw amount inputs for a given currency.
+ */
+export function getCurrencySymbol(currency?: SupportedCurrency): string {
+	switch (currency) {
+		case 'USD':
+			return '$';
+		case 'EUR':
+			return '€';
+		case 'GBP':
+			return '£';
+		case 'NGN':
+		default:
+			return '₦';
+	}
+}
+
+/**
+ * Normalize a free-form currency string (e.g. from artist bank details) to a
+ * SupportedCurrency. Mirrors the backend AdminService.normalizeCurrency.
+ */
+export function normalizeCurrency(currency?: string | null): SupportedCurrency {
+	switch (currency?.toLowerCase()) {
+		case 'naira':
+		case 'ngn':
+			return 'NGN';
+		case 'dollar':
+		case 'usd':
+			return 'USD';
+		case 'euro':
+		case 'eur':
+			return 'EUR';
+		case 'pounds':
+		case 'gbp':
+			return 'GBP';
+		default:
+			return 'NGN';
+	}
+}
+
+/**
+ * NGN-per-unit base rate for a currency. Mirrors the backend
+ * AdminService.getBaseRate so amounts scale consistently with what is stored.
+ */
+export function getBaseRate(currency?: string | null): number {
+	switch (currency?.toLowerCase()) {
+		case 'dollar':
+		case 'usd':
+			return 1610;
+		case 'euro':
+		case 'eur':
+			return 1365;
+		case 'pounds':
+		case 'gbp':
+			return 2300;
+		default:
+			return 1;
+	}
+}
+
+/**
+ * Convert an NGN-stored amount into the artist's payout currency, preferring the
+ * exchange rate captured on the slip and falling back to the base rate.
+ */
+export function scaleNgnToCurrency(ngnAmount: number, currency: SupportedCurrency, slipExchangeRate?: number): number {
+	if (currency === 'NGN') return ngnAmount;
+	const rate = slipExchangeRate && slipExchangeRate !== 1 ? slipExchangeRate : getBaseRate(currency);
+	return ngnAmount / rate;
+}
