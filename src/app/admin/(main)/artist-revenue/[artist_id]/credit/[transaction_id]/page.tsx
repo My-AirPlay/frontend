@@ -9,17 +9,14 @@ import { useGetOneArtist } from '../../../../catalogue/api/getOneArtist';
 import { useGetAllWithdrawalSlips } from '../../../../catalogue/api/getAllWithdrawalSlips';
 import { useCredits } from '../../../../catalogue/api/putUpdateWithdrawalSlip';
 import { WithdrawalSlipData } from '@/lib/types';
-import { formatCurrency } from '@/utils/currency';
+import { formatCurrency, getCurrencySymbol, normalizeCurrency, scaleNgnToCurrency } from '@/utils/currency';
 import { PreviousPageButton } from '@/components/ui';
 import { toast } from 'sonner';
-import { useCurrency } from '@/app/artiste/context/CurrencyContext';
-// Removed formatCurrency import as slip details are removed
 // Removed formatDate import as slip details are removed
 // Removed unused PreviousPageButton import
 
 const WithdrawalUpdatePage: React.FC = () => {
 	const router = useRouter();
-	const { currency: contextCurrency } = useCurrency();
 	const params = useParams<{ artist_id: string; transaction_id: string }>();
 	const { artist_id, transaction_id } = params;
 
@@ -38,19 +35,22 @@ const WithdrawalUpdatePage: React.FC = () => {
 		artistId: artist_id
 	});
 
-	// Calculate balance the same way as parent page
+	// Artist's payout currency (the amount entered below is interpreted in this
+	// currency by the backend, so the balance must be shown in it too).
+	const artistCurrency = normalizeCurrency(artistData?.bankDetails?.currency);
+
+	// Calculate balance the same way as parent page, scaling the NGN-stored
+	// amounts into the artist's currency.
 	const allWithdrawalSlipsRaw: WithdrawalSlipData[] = withdrawalsData?.data || [];
 	const allDebitTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending');
 	const allCreditTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status !== 'Pending' && slip.status !== 'Cancelled');
 
 	const totalPendingRoyalty = allDebitTransactions.reduce((sum, slip) => {
-		const royalty = Number(slip.totalRevenue) || 0;
-		return sum + royalty;
+		return sum + scaleNgnToCurrency(Number(slip.totalRevenue) || 0, artistCurrency, slip.exchangeRate);
 	}, 0);
 
 	const totalCreditRoyalty = allCreditTransactions.reduce((sum, slip) => {
-		const royalty = Number(slip.totalRevenue) || 0;
-		return sum + royalty;
+		return sum + scaleNgnToCurrency(Number(slip.totalRevenue) || 0, artistCurrency, slip.exchangeRate);
 	}, 0);
 
 	const balance = totalCreditRoyalty - totalPendingRoyalty;
@@ -137,7 +137,7 @@ const WithdrawalUpdatePage: React.FC = () => {
 					{/* Artist Account Balance - calculated from credits minus pending debits */}
 					<div>
 						<p className="text-sm text-primary-foreground/80">Artist Account Balance</p>
-						<h2 className="text-xl font-mono font-semibold">{formatCurrency(balance, contextCurrency)}</h2>
+						<h2 className="text-xl font-mono font-semibold">{formatCurrency(balance, artistCurrency)}</h2>
 					</div>
 				</div>
 			</div>
@@ -150,9 +150,8 @@ const WithdrawalUpdatePage: React.FC = () => {
 					<h4 className=" font-medium">How much do you want to add to this artist account?</h4>
 					{/* Amount Input - Simplified */}
 					<div className="relative">
-						{/* Removed currency/wallet icons as currency is unknown without slip data */}
-						{/* Added $ sign with z-index */}
-						<span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 pointer-events-none z-10">₦</span>
+						{/* Currency prefix reflects the artist's payout currency */}
+						<span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 pointer-events-none z-10">{getCurrencySymbol(artistCurrency)}</span>
 						<Input
 							type="number"
 							placeholder="Enter amount"

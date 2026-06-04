@@ -11,41 +11,9 @@ import { useGetAllWithdrawalSlips } from '../../../catalogue/api/getAllWithdrawa
 import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics';
 import { WithdrawalSlipData } from '@/lib/types';
 import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, Receipt, ArrowLeftRight, Banknote } from 'lucide-react';
-import { formatCurrency } from '@/utils/currency';
-import { Currency, useCurrency } from '@/app/artiste/context/CurrencyContext';
+import { formatCurrency, normalizeCurrency, scaleNgnToCurrency } from '@/utils/currency';
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
-
-const normalizeCurrency = (currency?: string | null): Currency => {
-	switch (currency?.toLowerCase()) {
-		case 'naira':
-		case 'ngn':
-			return 'NGN';
-		case 'dollar':
-		case 'usd':
-			return 'USD';
-		case 'euro':
-		case 'eur':
-			return 'EUR';
-		case 'pounds':
-		case 'gbp':
-			return 'GBP';
-		default:
-			return 'NGN';
-	}
-};
-
-const getBaseRate = (currency: string): number => {
-	switch (currency?.toUpperCase()) {
-		case 'USD':
-			return 1610;
-		case 'EUR':
-			return 1365;
-		case 'GBP':
-			return 2300;
-		default:
-			return 1;
-	}
-};
 
 const ArtistRevenueDetails: React.FC = () => {
 	const { section, artist_id } = useParams<{ artist_id: string; section: string }>();
@@ -88,11 +56,7 @@ const ArtistRevenueDetails: React.FC = () => {
 	const allCancelledTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Cancelled');
 
 	// Helper to scale amount based on current viewing context
-	const calculateScaledAmount = (totalRevenue: number, slipExchangeRate?: number) => {
-		if (contextCurrency === 'NGN') return totalRevenue;
-		const rate = slipExchangeRate && slipExchangeRate !== 1 ? slipExchangeRate : getBaseRate(contextCurrency);
-		return totalRevenue / rate;
-	};
+	const calculateScaledAmount = (totalRevenue: number, slipExchangeRate?: number) => scaleNgnToCurrency(totalRevenue, contextCurrency, slipExchangeRate);
 
 	// Calculate totals in the selected context currency
 	const totalPendingRoyalty = allPendingDebits.reduce((sum, slip) => {
