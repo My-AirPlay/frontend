@@ -14,7 +14,28 @@ import { useMediaUploadStore } from '../store';
 
 export default function Step2MediaTrackUpload() {
 	const { setMediaFile, setCurrentStep, mediaFileId, getMediaFile, initializeDB, isDBInitialized, mediaType } = useMediaUploadStore();
-	const isAudio = mediaType === 'Track';
+	// Track and PlayBack are audio; only Video is video. Be explicit rather than
+	// treating "not Track" as video, so null/unexpected states don't misclassify.
+	const isAudio = mediaType === 'Track' || mediaType === 'PlayBack';
+
+	// Validate by file extension, since browsers/OSes report inconsistent (or empty)
+	// MIME types for the same audio file — a WAV may arrive as audio/x-wav, audio/wave,
+	// audio/vnd.wave, or even "", which made valid files get rejected. We also reject any
+	// file whose reported MIME is in the wrong category so a renamed file can't slip through
+	// (e.g. a .wav renamed to .mp4 for a video upload, or vice-versa).
+	const isValidFileType = (file: File) => {
+		const validExtensions = isAudio ? ['.wav', '.ogg', '.flac'] : ['.mp4'];
+		const name = file.name.toLowerCase();
+		const extensionOk = validExtensions.some(ext => name.endsWith(ext));
+		if (!extensionOk) return false;
+
+		const expectedCategory = isAudio ? 'audio/' : 'video/';
+		if (file.type && !file.type.startsWith(expectedCategory)) return false;
+
+		return true;
+	};
+
+	const invalidFileTypeMessage = isAudio ? 'Invalid file type. Please upload WAV, OGG or FLAC files only.' : 'Invalid file type. Please upload MP4 files only.';
 	const [videoUrl, setVideoUrl] = useState<string | null>(null);
 	const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 	const [uploadProgress, setUploadProgress] = useState(0);
@@ -43,9 +64,8 @@ export default function Step2MediaTrackUpload() {
 		if (!file) return;
 
 		// Validate file type
-		const validTypes = isAudio ? ['audio/wav', 'audio/ogg', 'audio/flac'] : ['video/mp4'];
-		if (!validTypes.includes(file.type)) {
-			toast.error('Invalid file type. Please upload WAV, OGG, FLAC or MP4 files only.');
+		if (!isValidFileType(file)) {
+			toast.error(invalidFileTypeMessage);
 			return;
 		}
 
@@ -93,10 +113,8 @@ export default function Step2MediaTrackUpload() {
 		const file = e.dataTransfer.files?.[0];
 		if (!file) return;
 
-		const validTypes = isAudio ? ['audio/wav', 'audio/ogg', 'audio/flac'] : ['video/mp4'];
-
-		if (!validTypes.includes(file.type)) {
-			toast.error('Invalid file type. Please upload WAV, OGG, FLAC or MP4 files only.');
+		if (!isValidFileType(file)) {
+			toast.error(invalidFileTypeMessage);
 			return;
 		}
 		if (file.size > 512 * 1024 * 1024) {
