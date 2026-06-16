@@ -105,6 +105,7 @@ export default function Step5AlbumPreview() {
 				releaseDate: albumInfo.releaseDate,
 				recordLabel: albumInfo.recordLabel || '',
 				publisher: albumInfo.publisher,
+				writer: albumInfo.writer,
 				explicitContent: albumInfo.explicitContent || 'false',
 				universalProductCode: albumInfo.universalProductCode,
 				releaseVersion: albumInfo.releaseVersion,

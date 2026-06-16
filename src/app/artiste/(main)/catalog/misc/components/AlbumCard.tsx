@@ -1,7 +1,8 @@
 import React from 'react';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight, Music } from 'lucide-react';
+import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight, Music, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
 import { Musicnote } from 'iconsax-react';
 import { useForm } from 'react-hook-form';
@@ -29,6 +30,7 @@ const mediaUpdateSchema = z.object({
 	description: z.string().min(1, 'Description is required'),
 	recordLabel: z.string().optional(),
 	publisher: z.string().min(1, 'Publisher is required'),
+	writer: z.string().min(1, 'Writer (full legal name) is required'),
 	copyright: z.string().min(1, 'Copyright is required'),
 	explicitContent: z.string().optional(),
 	universalProductCode: z.string().min(1, 'UPC is required'),
@@ -52,6 +54,7 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 		description: album.description || '',
 		recordLabel: album.recordLabel || '',
 		publisher: album.publisher || '',
+		writer: (album as any).writer || '',
 		copyright: album.copyright || '',
 		explicitContent: album.explicitContent || 'No',
 		universalProductCode: album.universalProductCode || '',
@@ -363,6 +366,31 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 												</FormLabel>
 												<FormControl>
 													<Input placeholder="Enter publisher" hasError={!!errors.publisher} errormessage={errors.publisher?.message} {...field} />
+												</FormControl>
+											</FormItem>
+										)}
+									/>
+
+									<FormField
+										control={form.control}
+										name="writer"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel className="flex items-center gap-1">
+													Writer <span className="text-primary">*</span>
+													<TooltipProvider>
+														<Tooltip>
+															<TooltipTrigger asChild>
+																<span className="inline-flex cursor-help text-muted-foreground" tabIndex={0}>
+																	<Info size={14} />
+																</span>
+															</TooltipTrigger>
+															<TooltipContent>Enter the writer&apos;s full legal name</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
+												</FormLabel>
+												<FormControl>
+													<Input placeholder="Writer's full legal name" hasError={!!(errors as any).writer} errormessage={(errors as any).writer?.message} {...field} />
 												</FormControl>
 											</FormItem>
 										)}
