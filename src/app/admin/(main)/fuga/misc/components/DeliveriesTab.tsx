@@ -2,8 +2,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DataTable, Button, Badge } from '@/components/ui';
-import { RefreshCcw, XCircle, Download } from 'lucide-react';
+import { DataTable, Button, Badge, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Textarea } from '@/components/ui';
+import { RefreshCcw, XCircle, Download, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useGetFugaDeliveries, useFugaMutations, FugaDelivery, downloadFugaCsv } from '@/app/admin/(main)/fuga/api/fugaApi';
 import moment from 'moment';
@@ -11,7 +11,22 @@ import moment from 'moment';
 const DeliveriesTab = () => {
 	const [page] = useState(1);
 	const { data, isLoading } = useGetFugaDeliveries({ page, limit: 10 });
-	const { deliverMutation, cancelMutation } = useFugaMutations();
+	const { deliverMutation, cancelMutation, markErrorMutation } = useFugaMutations();
+
+	const [errorTarget, setErrorTarget] = useState<FugaDelivery | null>(null);
+	const [errorReason, setErrorReason] = useState('');
+
+	const handleMarkError = async () => {
+		if (!errorTarget) return;
+		try {
+			await markErrorMutation.mutateAsync({ id: errorTarget.id, reason: errorReason.trim() });
+			toast.success('Delivery marked as error');
+			setErrorTarget(null);
+			setErrorReason('');
+		} catch (error: any) {
+			toast.error(error?.response?.data?.message || 'Failed to mark delivery as error');
+		}
+	};
 
 	const handleRetry = async (id: string) => {
 		try {
@@ -95,9 +110,24 @@ const DeliveriesTab = () => {
 				const canCancel = item.status === 'gated';
 				const canRetry = ['failed', 'delivered', 'cancelled', 'ineligible'].includes(item.status);
 				const canDownload = item.status === 'delivered';
+				const canMarkError = item.status === 'delivered';
 
 				return (
 					<div className="flex items-center gap-2">
+						{canMarkError && (
+							<Button
+								variant="ghost"
+								size="sm"
+								className="text-destructive hover:text-destructive hover:bg-destructive/10"
+								onClick={() => {
+									setErrorTarget(item);
+									setErrorReason('');
+								}}
+							>
+								<AlertTriangle size={16} className="mr-1" />
+								Mark Error
+							</Button>
+						)}
 						{canCancel && (
 							<Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => handleCancel(item.id)} disabled={cancelMutation.isPending}>
 								<XCircle size={16} className="mr-1" />
@@ -125,6 +155,43 @@ const DeliveriesTab = () => {
 	return (
 		<div className="space-y-4">
 			<DataTable data={data?.data || []} columns={columns} isLoading={isLoading} pagination={true} pageCount={data?.totalPages} />
+
+			<Dialog
+				open={!!errorTarget}
+				onOpenChange={open => {
+					if (!open) {
+						setErrorTarget(null);
+						setErrorReason('');
+					}
+				}}
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Mark delivery as error</DialogTitle>
+						<DialogDescription>
+							Use this when FUGA accepted the upload but later rejected it during ingestion (e.g. artwork or metadata). The delivery will be set to <strong>failed</strong> with this reason and can be retried after it&apos;s fixed.
+						</DialogDescription>
+					</DialogHeader>
+					<div className="space-y-3">
+						<Textarea autoResize minRows={3} placeholder="Reason (e.g. FUGA rejected artwork: must be 1400x1400 or 3000x3000)" value={errorReason} onChange={e => setErrorReason(e.target.value)} />
+						<div className="flex justify-end gap-2">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => {
+									setErrorTarget(null);
+									setErrorReason('');
+								}}
+							>
+								Cancel
+							</Button>
+							<Button variant="destructive" size="sm" onClick={handleMarkError} disabled={markErrorMutation.isPending}>
+								{markErrorMutation.isPending ? 'Saving...' : 'Mark as Error'}
+							</Button>
+						</div>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };

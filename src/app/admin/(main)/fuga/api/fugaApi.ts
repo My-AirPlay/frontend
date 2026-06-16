@@ -48,6 +48,11 @@ export const cancelFugaDelivery = async (id: string) => {
 	return response.data;
 };
 
+export const markFugaDeliveryError = async ({ id, reason }: { id: string; reason: string }) => {
+	const response = await APIAxios.post('/admin/fuga/mark-error/' + id, { reason });
+	return response.data;
+};
+
 export const downloadFugaCsv = async (id: string, upc: string) => {
 	const response = await APIAxios.get('/admin/fuga/deliveries/' + id + '/csv', {
 		responseType: 'blob'
@@ -103,6 +108,13 @@ export const useFugaMutations = () => {
 		}
 	});
 
+	const markErrorMutation = useMutation({
+		mutationFn: markFugaDeliveryError,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['fugaDeliveries'] });
+		}
+	});
+
 	const uploadCodesMutation = useMutation({
 		mutationFn: uploadFugaCodes,
 		onSuccess: () => {
@@ -113,6 +125,7 @@ export const useFugaMutations = () => {
 	return {
 		deliverMutation,
 		cancelMutation,
+		markErrorMutation,
 		uploadCodesMutation
 	};
 };

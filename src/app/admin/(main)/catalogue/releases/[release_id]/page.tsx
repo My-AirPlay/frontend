@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'; // Added useState, useCallback
 import { useParams, useRouter } from 'next/navigation';
 import TracksList from '../../misc/components/TracksList';
+import ReleaseReviewPanel from '../../misc/components/ReleaseReviewPanel';
 import { PreviousPageButton, Button } from '@/components/ui';
 import { useGetAlbumDetail } from '../../api/getAlbumDetail';
 import { useDeleteAlbum } from '../../api/deleteAlbum';
@@ -224,6 +225,9 @@ const ReleaseDetails: React.FC = () => {
 					</Button>
 				</div>
 			</div>
+
+			{/* Release Review / Rejection */}
+			{!albumLoading && album && <ReleaseReviewPanel releaseId={release_id} reviewStatus={(album as any).reviewStatus} rejectionReasons={(album as any).rejectionReasons} />}
 
 			{/* Album Metadata Summary */}
 			{!albumLoading && album && (

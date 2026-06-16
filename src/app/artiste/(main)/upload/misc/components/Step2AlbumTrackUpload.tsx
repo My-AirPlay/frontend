@@ -10,7 +10,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/ui/button';
-import { Trash2, Music, Edit, AlertTriangle } from 'lucide-react';
+import { Trash2, Music, Edit, AlertTriangle, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter } from '@/components/ui/sheet';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,6 +43,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 		releaseDate: true,
 		recordLabel: true,
 		publisher: true,
+		writer: true,
 		copyright: true,
 		streamingPlatforms: false
 	});
@@ -59,6 +61,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 			description: '',
 			recordLabel: '',
 			publisher: '',
+			writer: '',
 			instruments: [],
 			lyrics: '',
 			explicitContent: 'No',
@@ -86,6 +89,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 				releaseDate: track.releaseDate === albumInfo.releaseDate,
 				recordLabel: track.recordLabel === albumInfo.recordLabel,
 				publisher: track.publisher === albumInfo.publisher,
+				writer: track.writer === albumInfo.writer,
 				copyright: track.copyright === albumInfo.copyright,
 				streamingPlatforms: JSON.stringify(track.streamingPlatforms) === JSON.stringify(albumInfo.streamingPlatforms)
 			});
@@ -382,6 +386,48 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 							</div>
 						</div>
 
+						<div className="space-y-2">
+							<div className="flex items-center justify-between">
+								<FormField
+									control={form.control}
+									name="writer"
+									render={({ field }) => (
+										<FormItem className="w-full">
+											<div className="flex items-center justify-between">
+												<FormLabel className="flex items-center gap-1">
+													Writer
+													<TooltipProvider>
+														<Tooltip>
+															<TooltipTrigger asChild>
+																<span className="inline-flex cursor-help text-white/40" tabIndex={0}>
+																	<Info size={14} />
+																</span>
+															</TooltipTrigger>
+															<TooltipContent>Enter the writer&apos;s full legal name</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
+												</FormLabel>
+												<div className="flex items-center gap-2 ml-4">
+													<Checkbox id="sameWriter" checked={sameAsAlbum.writer} onCheckedChange={() => toggleSameAsAlbum('writer')} />
+													<Label htmlFor="sameWriter" className="text-[0.7rem] md:text-sm text-white/40">
+														Same as album
+													</Label>
+												</div>
+											</div>
+											<div className="flex items-center justify-between">
+												<div className="flex-grow">
+													<FormControl>
+														<Input placeholder="Writer's full legal name" {...field} disabled={sameAsAlbum.writer} />
+													</FormControl>
+													<FormMessage />
+												</div>
+											</div>
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
+
 						<FormField
 							control={form.control}
 							name="explicitContent"
@@ -621,6 +667,7 @@ export default function TrackUpload() {
 					description: '',
 					recordLabel: albumInfo.recordLabel,
 					publisher: albumInfo.publisher,
+					writer: albumInfo.writer,
 					lyrics: '',
 					explicitContent: 'No',
 					universalProductCode: albumInfo.universalProductCode,

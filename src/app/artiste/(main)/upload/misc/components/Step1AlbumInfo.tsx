@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
@@ -27,6 +28,7 @@ const mediaUpdateSchema = z.object({
 	description: z.string().min(1, 'Description is required'),
 	recordLabel: z.string().min(1, 'Description is required'),
 	publisher: z.string().min(1, 'Publisher is required'),
+	writer: z.string().min(1, 'Writer (full legal name) is required'),
 	copyright: z.string().min(1, 'Copyright is required'),
 	explicitContent: z.string().optional(),
 	universalProductCode: z.string().min(1, 'UPC is required'),
@@ -51,6 +53,7 @@ export default function Step1MusicInfo() {
 		description: albumInfo.description || '',
 		recordLabel: albumInfo.recordLabel || '',
 		publisher: albumInfo.publisher || '',
+		writer: albumInfo.writer || '',
 		copyright: albumInfo.copyright || '',
 		explicitContent: albumInfo.explicitContent || 'No',
 		universalProductCode: albumInfo.universalProductCode || '',
@@ -235,6 +238,31 @@ export default function Step1MusicInfo() {
 									</FormLabel>
 									<FormControl>
 										<Input placeholder="Enter publisher" hasError={!!errors.publisher} errormessage={errors.publisher?.message} {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="writer"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="flex items-center gap-1">
+										Writer <span className="text-primary">*</span>
+										<TooltipProvider>
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<span className="inline-flex cursor-help text-muted-foreground" tabIndex={0}>
+														<Info size={14} />
+													</span>
+												</TooltipTrigger>
+												<TooltipContent>Enter the writer&apos;s full legal name</TooltipContent>
+											</Tooltip>
+										</TooltipProvider>
+									</FormLabel>
+									<FormControl>
+										<Input placeholder="Writer's full legal name" hasError={!!errors.writer} errormessage={errors.writer?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}

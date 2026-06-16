@@ -1,9 +1,10 @@
 import { useForm } from 'react-hook-form';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
@@ -31,6 +32,7 @@ export default function Step1MusicInfo() {
 		description: mediaInfo.description || '',
 		recordLabel: mediaInfo.recordLabel || '',
 		publisher: mediaInfo.publisher || '',
+		writer: mediaInfo.writer || '',
 		copyright: mediaInfo.copyright || '',
 		explicitContent: mediaInfo.explicitContent || 'No',
 		lyrics: mediaInfo.lyrics || '',
@@ -186,6 +188,31 @@ export default function Step1MusicInfo() {
 									<FormLabel>Publisher</FormLabel>
 									<FormControl>
 										<Input placeholder="Enter publisher" hasError={!!errors.publisher} errormessage={errors.publisher?.message} {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="writer"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel className="flex items-center gap-1">
+										Writer
+										<TooltipProvider>
+											<Tooltip>
+												<TooltipTrigger asChild>
+													<span className="inline-flex cursor-help text-muted-foreground" tabIndex={0}>
+														<Info size={14} />
+													</span>
+												</TooltipTrigger>
+												<TooltipContent>Enter the writer&apos;s full legal name</TooltipContent>
+											</Tooltip>
+										</TooltipProvider>
+									</FormLabel>
+									<FormControl>
+										<Input placeholder="Writer's full legal name" hasError={!!errors.writer} errormessage={errors.writer?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}

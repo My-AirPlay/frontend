@@ -16,6 +16,7 @@ export interface MediaUploadInfo {
 	description: string;
 	recordLabel: string;
 	publisher: string;
+	writer: string;
 	copyright: string;
 	explicitContent: string;
 	lyrics: string;
@@ -59,6 +60,7 @@ const defaultMediaInfo: MediaUploadInfo = {
 	description: '',
 	recordLabel: '',
 	publisher: '',
+	writer: '',
 	copyright: '',
 	explicitContent: '',
 	lyrics: '',
