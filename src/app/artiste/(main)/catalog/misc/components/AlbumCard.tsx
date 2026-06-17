@@ -54,7 +54,7 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 		description: album.description || '',
 		recordLabel: album.recordLabel || '',
 		publisher: album.publisher || '',
-		writer: (album as any).writer || '',
+		writer: album.writer || '',
 		copyright: album.copyright || '',
 		explicitContent: album.explicitContent || 'No',
 		universalProductCode: album.universalProductCode || '',
@@ -151,7 +151,7 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 			</div>
 			<footer className="px-3">
 				<h6>{album.title}</h6>
-				{(album as any).reviewStatus === 'rejected' && (
+				{album.reviewStatus === 'rejected' && (
 					<button type="button" onClick={openEditSheet} className="mt-1 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-medium text-red-500 hover:bg-red-500/25">
 						Rejected — edit to resubmit
 					</button>
@@ -181,11 +181,11 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 								</div>
 							</div>
 
-							{(album as any).reviewStatus === 'rejected' && Array.isArray((album as any).rejectionReasons) && (album as any).rejectionReasons.length > 0 && (
+							{album.reviewStatus === 'rejected' && Array.isArray(album.rejectionReasons) && album.rejectionReasons.length > 0 && (
 								<div className="mx-4 mb-4 rounded-lg border border-red-500/40 bg-red-500/10 p-3">
 									<p className="text-sm font-semibold text-red-400 mb-1">This release was rejected. Please fix and resubmit:</p>
 									<ul className="list-disc list-inside text-sm text-red-300 space-y-0.5">
-										{(album as any).rejectionReasons.map((r: string, i: number) => (
+										{album.rejectionReasons.map((r: string, i: number) => (
 											<li key={i}>{r}</li>
 										))}
 									</ul>
@@ -390,7 +390,7 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 													</TooltipProvider>
 												</FormLabel>
 												<FormControl>
-													<Input placeholder="Writer's full legal name" hasError={!!(errors as any).writer} errormessage={(errors as any).writer?.message} {...field} />
+													<Input placeholder="Writer's full legal name" hasError={!!errors.writer} errormessage={errors.writer?.message} {...field} />
 												</FormControl>
 											</FormItem>
 										)}

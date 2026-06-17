@@ -26,6 +26,9 @@ export interface TArtisteAlbum {
 	artistName: string;
 	recordLabel: string;
 	publisher: string;
+	writer?: string;
+	reviewStatus?: 'pending' | 'approved' | 'rejected';
+	rejectionReasons?: string[];
 	instruments: string[];
 	explicitContent: string;
 	universalProductCode: string;
