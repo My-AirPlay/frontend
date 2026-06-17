@@ -1,9 +1,10 @@
 'use client';
 
-import { Bell, CreditCard, FileSignature } from 'lucide-react';
+import { Bell, CreditCard, FileSignature, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useGetAllMedia, useGetAlbums } from '@/app/artiste/(main)/catalog/misc/api';
 
 interface Notification {
 	label: string;
@@ -13,6 +14,10 @@ interface Notification {
 
 const NotificationBell = () => {
 	const { artist } = useAuthContext();
+
+	// Surface rejected releases so the artist knows to fix & resubmit.
+	const { data: mediaData } = useGetAllMedia({ page: 1, limit: 100 });
+	const { data: albumsData } = useGetAlbums({ page: 1, limit: 100 });
 
 	const notifications: Notification[] = [];
 
@@ -31,6 +36,17 @@ const NotificationBell = () => {
 			icon: <FileSignature className="h-4 w-4 text-muted-foreground shrink-0" />
 		});
 	}
+
+	const rejectedReleases = [...(mediaData?.data || []), ...(albumsData?.data || [])].filter(item => item?.reviewStatus === 'rejected');
+
+	rejectedReleases.forEach(release => {
+		const firstReason = release.rejectionReasons?.[0];
+		notifications.push({
+			label: `"${release.title || 'A release'}" was rejected${firstReason ? ` — ${firstReason}` : ''}. Fix & resubmit.`,
+			href: '/artiste/catalog',
+			icon: <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />
+		});
+	});
 
 	const count = notifications.length;
 
