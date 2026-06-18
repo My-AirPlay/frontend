@@ -3,6 +3,7 @@
 import type React from 'react';
 import { useRef, useState, useEffect } from 'react';
 import { useAlbumUploadStore } from '../store';
+import { validateArtworkFile } from '@/lib/artwork';
 import { toast } from 'sonner';
 import { MoveLeft, MoveRight } from 'lucide-react';
 import { Button } from '@/components/ui';
@@ -53,6 +54,12 @@ const Step3AlbumCoverUpload = () => {
 		// Validate file size (5MB max)
 		if (file.size > 5 * 1024 * 1024) {
 			toast.error('File size exceeds the 5MB limit. Please upload a smaller file.');
+			return;
+		}
+
+		const dimensionError = await validateArtworkFile(file);
+		if (dimensionError) {
+			toast.error(dimensionError);
 			return;
 		}
 
@@ -113,6 +120,12 @@ const Step3AlbumCoverUpload = () => {
 			return;
 		}
 
+		const dimensionError = await validateArtworkFile(file);
+		if (dimensionError) {
+			toast.error(dimensionError);
+			return;
+		}
+
 		setUploadedFile(file);
 
 		// Create a preview URL
@@ -161,7 +174,7 @@ const Step3AlbumCoverUpload = () => {
 						<h3 className="text-base font-semibold mb-4">Track upload requirements</h3>
 						<ul className="list-disc pl-6 space-y-2 text-[0.9rem] text-white/70 text-left">
 							<li>File format: JPG, PNG, JPEG</li>
-							<li>Size: at least 3000×3000 pixels</li>
+							<li>Dimensions: exactly 1400×1400 or 3000×3000 pixels (square)</li>
 							<li>File size: Image file size cannot be greater than 5 MB</li>
 							<li>Color mode: Best quality RGB (including black and white images)</li>
 							<li>Resolution: 72 dpi</li>

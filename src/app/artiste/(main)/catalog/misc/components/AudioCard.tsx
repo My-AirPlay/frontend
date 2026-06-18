@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 import { Play, Pause, Ellipsis, Eye, Trash, Edit2, ArrowRight, ImagePlus, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { validateArtworkFile } from '@/lib/artwork';
 import { format } from 'date-fns';
 import { Musicnote, TickCircle } from 'iconsax-react';
 import { useForm } from 'react-hook-form';
@@ -52,7 +53,7 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 	const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
 	const coverArtInputRef = useRef<HTMLInputElement>(null);
 
-	const handleCoverArtChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleCoverArtChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
 		const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
@@ -62,6 +63,11 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 		}
 		if (file.size > 5 * 1024 * 1024) {
 			toast.error('Cover art is too large. Max size is 5MB.');
+			return;
+		}
+		const dimensionError = await validateArtworkFile(file);
+		if (dimensionError) {
+			toast.error(dimensionError);
 			return;
 		}
 		setCoverArtFile(file);
