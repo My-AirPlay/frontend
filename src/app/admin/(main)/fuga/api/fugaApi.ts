@@ -48,8 +48,13 @@ export const cancelFugaDelivery = async (id: string) => {
 	return response.data;
 };
 
-export const markFugaDeliveryError = async ({ id, reason }: { id: string; reason: string }) => {
-	const response = await APIAxios.post('/admin/fuga/mark-error/' + id, { reason });
+export interface FugaFieldError {
+	field: string;
+	reason?: string;
+}
+
+export const markFugaDeliveryError = async ({ id, reason, fieldErrors }: { id: string; reason?: string; fieldErrors?: FugaFieldError[] }) => {
+	const response = await APIAxios.post('/admin/fuga/mark-error/' + id, { reason, fieldErrors });
 	return response.data;
 };
 
