@@ -2,11 +2,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { DataTable, Button, Badge, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Textarea } from '@/components/ui';
+import { DataTable, Button, Badge, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Textarea, Input } from '@/components/ui';
+import { Checkbox } from '@/components/ui/checkbox';
 import { RefreshCcw, XCircle, Download, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useGetFugaDeliveries, useFugaMutations, FugaDelivery, downloadFugaCsv } from '@/app/admin/(main)/fuga/api/fugaApi';
 import moment from 'moment';
+
+// Fields an admin can flag as the cause of a FUGA ingestion rejection. Each
+// selected field becomes a line in the artist-facing rejection reasons.
+const FLAGGABLE_FIELDS = ['Cover Art', 'Audio File', 'Title', 'Artist Name', 'Genre', 'Release Date', 'UPC', 'ISRC', 'Explicit Content', 'Songwriter / Publisher', 'Other Metadata'];
 
 const DeliveriesTab = () => {
 	const [page] = useState(1);
@@ -15,14 +20,36 @@ const DeliveriesTab = () => {
 
 	const [errorTarget, setErrorTarget] = useState<FugaDelivery | null>(null);
 	const [errorReason, setErrorReason] = useState('');
+	// Delivery whose full "Last Error" is being viewed in the details modal.
+	const [errorDetailTarget, setErrorDetailTarget] = useState<FugaDelivery | null>(null);
+	// Selected field -> its (optional) per-field reason. Presence of a key means
+	// the field is checked.
+	const [fieldReasons, setFieldReasons] = useState<Record<string, string>>({});
+
+	const resetErrorDialog = () => {
+		setErrorTarget(null);
+		setErrorReason('');
+		setFieldReasons({});
+	};
+
+	const toggleField = (field: string, checked: boolean) => {
+		setFieldReasons(prev => {
+			const next = { ...prev };
+			if (checked) next[field] = next[field] || '';
+			else delete next[field];
+			return next;
+		});
+	};
+
+	const hasErrorInput = Object.keys(fieldReasons).length > 0 || errorReason.trim().length > 0;
 
 	const handleMarkError = async () => {
 		if (!errorTarget) return;
 		try {
-			await markErrorMutation.mutateAsync({ id: errorTarget.id, reason: errorReason.trim() });
+			const fieldErrors = Object.entries(fieldReasons).map(([field, reason]) => ({ field, reason: reason.trim() || undefined }));
+			await markErrorMutation.mutateAsync({ id: errorTarget.id, reason: errorReason.trim() || undefined, fieldErrors });
 			toast.success('Delivery marked as error');
-			setErrorTarget(null);
-			setErrorReason('');
+			resetErrorDialog();
 		} catch (error: any) {
 			toast.error(error?.response?.data?.message || 'Failed to mark delivery as error');
 		}
@@ -95,11 +122,15 @@ const DeliveriesTab = () => {
 		{
 			id: 'error',
 			header: 'Last Error',
-			cell: (info: any) => (
-				<div className="max-w-[200px] truncate text-xs text-destructive" title={info.getValue()}>
-					{info.getValue()}
-				</div>
-			),
+			cell: (info: any) => {
+				const value = info.getValue() as string | undefined;
+				if (!value) return <span className="text-xs text-muted-foreground">—</span>;
+				return (
+					<button type="button" className="max-w-[200px] truncate text-left text-xs text-destructive underline-offset-2 hover:underline" title="Click to view full error" onClick={() => setErrorDetailTarget(info.row.original as FugaDelivery)}>
+						{value}
+					</button>
+				);
+			},
 			accessorKey: 'lastError'
 		},
 		{
@@ -120,8 +151,8 @@ const DeliveriesTab = () => {
 								size="sm"
 								className="text-destructive hover:text-destructive hover:bg-destructive/10"
 								onClick={() => {
+									resetErrorDialog();
 									setErrorTarget(item);
-									setErrorReason('');
 								}}
 							>
 								<AlertTriangle size={16} className="mr-1" />
@@ -159,34 +190,90 @@ const DeliveriesTab = () => {
 			<Dialog
 				open={!!errorTarget}
 				onOpenChange={open => {
-					if (!open) {
-						setErrorTarget(null);
-						setErrorReason('');
-					}
+					if (!open) resetErrorDialog();
 				}}
 			>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>Mark delivery as error</DialogTitle>
 						<DialogDescription>
-							Use this when FUGA accepted the upload but later rejected it during ingestion (e.g. artwork or metadata). The delivery will be set to <strong>failed</strong> with this reason and can be retried after it&apos;s fixed.
+							Use this when FUGA accepted the upload but later rejected it during ingestion. Select which field(s) are wrong and add a reason for each — the artist sees these as rejection reasons, fixes them, and re-uploads. The delivery is set to <strong>failed</strong> and can be retried after it&apos;s fixed.
 						</DialogDescription>
 					</DialogHeader>
 					<div className="space-y-3">
-						<Textarea autoResize minRows={3} placeholder="Reason (e.g. FUGA rejected artwork: must be 1400x1400 or 3000x3000)" value={errorReason} onChange={e => setErrorReason(e.target.value)} />
+						<div className="space-y-2">
+							<p className="text-sm font-medium text-foreground">Which field(s) errored?</p>
+							<div className="max-h-64 space-y-2 overflow-y-auto pr-1">
+								{FLAGGABLE_FIELDS.map(field => {
+									const selected = field in fieldReasons;
+									return (
+										<div key={field} className="space-y-1">
+											<label className="flex items-center gap-2 text-sm text-foreground">
+												<Checkbox checked={selected} onCheckedChange={checked => toggleField(field, checked === true)} />
+												{field}
+											</label>
+											{selected && <Input className="ml-6 w-[calc(100%-1.5rem)]" placeholder={`What's wrong with ${field.toLowerCase()}? (e.g. must be 1400x1400)`} value={fieldReasons[field]} onChange={e => setFieldReasons(prev => ({ ...prev, [field]: e.target.value }))} />}
+										</div>
+									);
+								})}
+							</div>
+						</div>
+						<div className="space-y-1">
+							<p className="text-sm font-medium text-foreground">Additional note (optional)</p>
+							<Textarea autoResize minRows={2} placeholder="Anything else the artist should know" value={errorReason} onChange={e => setErrorReason(e.target.value)} />
+						</div>
 						<div className="flex justify-end gap-2">
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() => {
-									setErrorTarget(null);
-									setErrorReason('');
-								}}
-							>
+							<Button variant="outline" size="sm" onClick={resetErrorDialog}>
 								Cancel
 							</Button>
-							<Button variant="destructive" size="sm" onClick={handleMarkError} disabled={markErrorMutation.isPending}>
+							<Button variant="destructive" size="sm" onClick={handleMarkError} disabled={markErrorMutation.isPending || !hasErrorInput}>
 								{markErrorMutation.isPending ? 'Saving...' : 'Mark as Error'}
+							</Button>
+						</div>
+					</div>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog open={!!errorDetailTarget} onOpenChange={open => !open && setErrorDetailTarget(null)}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Delivery error details</DialogTitle>
+						<DialogDescription>
+							{errorDetailTarget?.title}
+							{errorDetailTarget?.artistName ? ` — ${errorDetailTarget.artistName}` : ''}
+						</DialogDescription>
+					</DialogHeader>
+					<div className="space-y-3 text-sm">
+						<div className="flex flex-wrap gap-x-6 gap-y-1 text-muted-foreground">
+							{errorDetailTarget?.upc && (
+								<span>
+									UPC: <span className="font-mono text-foreground">{errorDetailTarget.upc}</span>
+								</span>
+							)}
+							<span>
+								Status: <span className="text-foreground">{errorDetailTarget?.status}</span>
+							</span>
+							{typeof errorDetailTarget?.attempts === 'number' && (
+								<span>
+									Attempts: <span className="text-foreground">{errorDetailTarget.attempts}</span>
+								</span>
+							)}
+						</div>
+						<div className="space-y-1">
+							<p className="font-medium text-foreground">Reasons</p>
+							<ul className="list-disc space-y-1 rounded-md bg-muted/50 p-3 pl-7 text-destructive">
+								{(errorDetailTarget?.lastError || '')
+									.split(';')
+									.map(r => r.trim())
+									.filter(Boolean)
+									.map((reason, i) => (
+										<li key={i}>{reason}</li>
+									))}
+							</ul>
+						</div>
+						<div className="flex justify-end">
+							<Button variant="outline" size="sm" onClick={() => setErrorDetailTarget(null)}>
+								Close
 							</Button>
 						</div>
 					</div>
