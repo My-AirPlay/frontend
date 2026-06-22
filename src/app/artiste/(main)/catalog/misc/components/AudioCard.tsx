@@ -1,4 +1,5 @@
 import React, { useRef, useState, useCallback } from 'react';
+import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { Play, Pause, Ellipsis, Eye, Trash, Edit2, ArrowRight, ImagePlus, Info } from 'lucide-react';
@@ -117,8 +118,9 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 					setCoverArtPreview(null);
 					setIsEditSheetState(false);
 				},
-				onError() {
-					toast.error('Failed to update audio track');
+				onError(error: Error | AxiosError<{ message?: string }>) {
+					const message = error instanceof AxiosError ? error.response?.data?.message : undefined;
+					toast.error(message || 'Failed to update audio track');
 				}
 			}
 		);
