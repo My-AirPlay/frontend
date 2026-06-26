@@ -106,6 +106,7 @@ export default function Step5AlbumPreview() {
 				recordLabel: albumInfo.recordLabel || '',
 				publisher: albumInfo.publisher,
 				writer: albumInfo.writer,
+				producer: albumInfo.producer,
 				explicitContent: albumInfo.explicitContent || 'false',
 				universalProductCode: albumInfo.universalProductCode,
 				releaseVersion: albumInfo.releaseVersion,
@@ -202,6 +203,10 @@ export default function Step5AlbumPreview() {
 								<div>
 									<p className="text-sm text-gray-400">Publisher</p>
 									<p className="font-medium">{albumInfo.publisher}</p>
+								</div>
+								<div>
+									<p className="text-sm text-gray-400">Producer</p>
+									<p className="font-medium">{albumInfo.producer}</p>
 								</div>
 								{albumInfo.recordLabel && (
 									<div>

@@ -4,7 +4,7 @@ import { useGetDashboardData } from './misc/api';
 import { formatCurrency } from '@/utils/currency';
 import { RevenueHistoryChart, StreamsHistoryChart } from './misc/components';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { AlertTriangle, BarChart2, ChevronsRight, Globe, Music } from 'lucide-react';
+import { AlertTriangle, BarChart2, ChevronsRight, Gift, Globe, Music } from 'lucide-react';
 import { LinkButton } from '@/components/ui';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useCurrency, Currency } from '@/app/artiste/context/CurrencyContext';
@@ -89,10 +89,22 @@ const MusicDashboard = () => {
 
 	return (
 		<div className="container mx-auto px-4 py-6">
-			{artist?.bankDetails?.paidRegistrationFee === false && (
+			{artist?.bankDetails?.paidRegistrationFee === false && artist?.usedFreeUpload !== true && (
+				<div className="mb-6 flex items-center gap-3 rounded-lg border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 dark:border-emerald-700 p-4">
+					<Gift className="h-5 w-5 text-emerald-600 shrink-0" />
+					<p className="text-sm text-emerald-800 dark:text-emerald-200 flex-1 font-medium">
+						You have <span className="font-bold">1 free track upload</span> — distribute a single to stores for free. Pay the registration fee to upload more.
+					</p>
+					<LinkButton href="/artiste/upload" size="thin" className="text-xs rounded-full shrink-0">
+						Upload Free
+					</LinkButton>
+				</div>
+			)}
+
+			{artist?.bankDetails?.paidRegistrationFee === false && artist?.usedFreeUpload === true && (
 				<div className="mb-6 flex items-center gap-3 rounded-lg border border-rose-300 bg-rose-50 dark:bg-rose-950/30 dark:border-rose-700 p-4">
 					<AlertTriangle className="h-5 w-5 text-rose-600 shrink-0" />
-					<p className="text-sm text-rose-800 dark:text-rose-200 flex-1 font-medium">Complete your registration by paying the registration fee</p>
+					<p className="text-sm text-rose-800 dark:text-rose-200 flex-1 font-medium">You&apos;ve used your free track upload. Pay the registration fee to upload more.</p>
 					<LinkButton href="/artiste/onboarding?step=registration_fee" size="thin" className="text-xs rounded-full shrink-0">
 						Pay Now
 					</LinkButton>

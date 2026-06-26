@@ -29,6 +29,7 @@ const mediaUpdateSchema = z.object({
 	recordLabel: z.string().min(1, 'Description is required'),
 	publisher: z.string().min(1, 'Publisher is required'),
 	writer: z.string().min(1, 'Writer (full legal name) is required'),
+	producer: z.string().min(1, 'Producer is required'),
 	copyright: z.string().min(1, 'Copyright is required'),
 	explicitContent: z.string().optional(),
 	universalProductCode: z.string().min(1, 'UPC is required'),
@@ -54,6 +55,7 @@ export default function Step1MusicInfo() {
 		recordLabel: albumInfo.recordLabel || '',
 		publisher: albumInfo.publisher || '',
 		writer: albumInfo.writer || '',
+		producer: albumInfo.producer || '',
 		copyright: albumInfo.copyright || '',
 		explicitContent: albumInfo.explicitContent || 'No',
 		universalProductCode: albumInfo.universalProductCode || '',
@@ -263,6 +265,21 @@ export default function Step1MusicInfo() {
 									</FormLabel>
 									<FormControl>
 										<Input placeholder="Writer's full legal name" hasError={!!errors.writer} errormessage={errors.writer?.message} {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="producer"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										Producer <span className="text-primary">*</span>
+									</FormLabel>
+									<FormControl>
+										<Input placeholder="Enter producer" hasError={!!errors.producer} errormessage={errors.producer?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}

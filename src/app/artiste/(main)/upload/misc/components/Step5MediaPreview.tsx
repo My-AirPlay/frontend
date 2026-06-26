@@ -193,6 +193,10 @@ export default function Step5MediaPreview() {
 										<p className="text-sm text-gray-400">Publisher</p>
 										<p className="font-medium">{mediaInfo.publisher}</p>
 									</div>
+									<div>
+										<p className="text-sm text-gray-400">Producer</p>
+										<p className="font-medium">{mediaInfo.producer}</p>
+									</div>
 									{mediaInfo.recordLabel && (
 										<div>
 											<p className="text-sm text-gray-400">Record Label</p>

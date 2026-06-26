@@ -264,6 +264,20 @@ const ReleaseDetails: React.FC = () => {
 						<p className="text-muted-foreground">Explicit</p>
 						<p className="font-medium">{album.explicitContent || 'N/A'}</p>
 					</div>
+					<div className="col-span-2 md:col-span-4">
+						<p className="text-muted-foreground">Delivery Platforms</p>
+						{album.streamingPlatforms?.length ? (
+							<div className="flex flex-wrap gap-2 mt-1">
+								{album.streamingPlatforms.map((platform: string, i: number) => (
+									<span key={i} className="rounded-full border border-border px-3 py-1 capitalize">
+										{platform}
+									</span>
+								))}
+							</div>
+						) : (
+							<p className="font-medium">N/A</p>
+						)}
+					</div>
 				</div>
 			)}
 
