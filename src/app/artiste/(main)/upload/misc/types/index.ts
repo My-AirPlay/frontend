@@ -10,6 +10,7 @@ export interface UploadTrackPayload {
 	originalReleaseDate: string;
 	publisher: string;
 	writer: string;
+	producer: string;
 	recordLabel: string;
 	releaseVersion: string;
 	streamingPlatforms: string[];
@@ -34,6 +35,7 @@ export interface AlbumTrackInfo {
 	recordLabel: string;
 	publisher: string;
 	writer: string;
+	producer: string;
 	instruments?: string[];
 	lyrics?: string;
 	explicitContent: string;
@@ -57,6 +59,7 @@ export interface UploadAlbumPayload {
 	recordLabel: string;
 	publisher: string;
 	writer: string;
+	producer: string;
 	instruments?: string[];
 	explicitContent: string;
 	universalProductCode: string;

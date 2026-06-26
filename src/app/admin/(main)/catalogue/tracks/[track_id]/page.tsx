@@ -167,6 +167,21 @@ const TrackDetails: React.FC = () => {
 									</div>
 								</div>
 
+								<div className="space-y-4">
+									<label className="text-sm text-foreground font-medium block">Delivery Platforms</label>
+									<div className="flex flex-wrap gap-2">
+										{contract?.streamingPlatforms?.length > 0 ? (
+											contract?.streamingPlatforms?.map((platform: string, i: number) => (
+												<span key={i} className="text-sm capitalize rounded-full border border-border px-3 py-1">
+													{platform}
+												</span>
+											))
+										) : (
+											<p className="text-sm text-white/70">No delivery platforms selected.</p>
+										)}
+									</div>
+								</div>
+
 								<Textarea label="Description/Notes" value={contract?.description} className="min-h-[120px]" />
 							</div>
 						</div>

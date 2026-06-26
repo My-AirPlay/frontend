@@ -20,6 +20,7 @@ export interface AlbumInfo {
 	recordLabel: string;
 	publisher: string;
 	writer: string;
+	producer: string;
 	instruments?: string[];
 	explicitContent: string;
 	universalProductCode: string;
@@ -41,6 +42,7 @@ export interface AlbumTrackInfo {
 	recordLabel: string;
 	publisher: string;
 	writer: string;
+	producer: string;
 	instruments?: string[];
 	lyrics: string;
 	explicitContent: string;
@@ -91,6 +93,7 @@ const defaultAlbumInfo: AlbumInfo = {
 	recordLabel: '',
 	publisher: '',
 	writer: '',
+	producer: '',
 	copyright: '',
 	explicitContent: '',
 	universalProductCode: '',

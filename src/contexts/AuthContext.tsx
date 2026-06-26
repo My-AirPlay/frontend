@@ -29,6 +29,7 @@ export interface IArtistUser {
 	totalStreams: number;
 	paidRoyalty: number;
 	distributionStatus?: 'active' | 'paused';
+	usedFreeUpload?: boolean;
 }
 
 export interface IAdminUser {

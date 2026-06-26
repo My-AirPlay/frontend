@@ -44,6 +44,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 		recordLabel: true,
 		publisher: true,
 		writer: true,
+		producer: true,
 		copyright: true,
 		streamingPlatforms: false
 	});
@@ -62,6 +63,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 			recordLabel: '',
 			publisher: '',
 			writer: '',
+			producer: '',
 			instruments: [],
 			lyrics: '',
 			explicitContent: 'No',
@@ -90,6 +92,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 				recordLabel: track.recordLabel === albumInfo.recordLabel,
 				publisher: track.publisher === albumInfo.publisher,
 				writer: track.writer === albumInfo.writer,
+				producer: track.producer === albumInfo.producer,
 				copyright: track.copyright === albumInfo.copyright,
 				streamingPlatforms: JSON.stringify(track.streamingPlatforms) === JSON.stringify(albumInfo.streamingPlatforms)
 			});
@@ -428,6 +431,36 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 							</div>
 						</div>
 
+						<div className="space-y-2">
+							<div className="flex items-center justify-between">
+								<FormField
+									control={form.control}
+									name="producer"
+									render={({ field }) => (
+										<FormItem className="w-full">
+											<div className="flex items-center justify-between">
+												<FormLabel>Producer</FormLabel>
+												<div className="flex items-center gap-2 ml-4">
+													<Checkbox id="sameProducer" checked={sameAsAlbum.producer} onCheckedChange={() => toggleSameAsAlbum('producer')} />
+													<Label htmlFor="sameProducer" className="text-[0.7rem] md:text-sm text-white/40">
+														Same as album
+													</Label>
+												</div>
+											</div>
+											<div className="flex items-center justify-between">
+												<div className="flex-grow">
+													<FormControl>
+														<Input {...field} disabled={sameAsAlbum.producer} />
+													</FormControl>
+													<FormMessage />
+												</div>
+											</div>
+										</FormItem>
+									)}
+								/>
+							</div>
+						</div>
+
 						<FormField
 							control={form.control}
 							name="explicitContent"
@@ -668,6 +701,7 @@ export default function TrackUpload() {
 					recordLabel: albumInfo.recordLabel,
 					publisher: albumInfo.publisher,
 					writer: albumInfo.writer,
+					producer: albumInfo.producer,
 					lyrics: '',
 					explicitContent: 'No',
 					universalProductCode: albumInfo.universalProductCode,

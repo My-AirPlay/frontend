@@ -16,8 +16,12 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 	const text = artist?.bankDetails?.paidRegistrationFee ? 'Continue' : 'Make Payment';
 	const [buttonText, setButtonText] = useState(text);
 
+	const hasPaid = !!artist?.bankDetails?.paidRegistrationFee;
+	// Unpaid artists who haven't spent their free single upload yet.
+	const canFreeUpload = !!artist && !hasPaid && !artist.usedFreeUpload;
+
 	const handleSkip = () => {
-		router.push('/artiste/dashboard');
+		router.push(canFreeUpload ? '/artiste/upload' : '/artiste/dashboard');
 	};
 	const handleGeneratePaymentLink = () => {
 		if (buttonText === 'Continue') {
@@ -70,6 +74,13 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 						<CardDescription>You&apos;re almost there! Complete your subscription to start distributing your music.</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
+						{canFreeUpload && (
+							<div className="rounded-lg border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 dark:border-emerald-700 p-4">
+								<p className="text-sm text-emerald-800 dark:text-emerald-200 font-medium">
+									🎁 Not ready to pay? Upload <span className="font-bold">1 track free</span> and we&apos;ll distribute it to stores — no payment required. Subscribe later to upload more.
+								</p>
+							</div>
+						)}
 						<div className="bg-muted p-4 rounded-lg">
 							<div className="flex justify-between items-center mb-1">
 								<span className="font-medium">Annual Subscription Fee:</span>
@@ -117,7 +128,7 @@ const RegistrationPaymentPage = ({ email }: { email: string }) => {
 							{buttonText}
 						</Button>
 						<Button variant="secondary" onClick={handleSkip} className="w-full">
-							Skip
+							{canFreeUpload ? 'Upload 1 track free' : 'Skip'}
 						</Button>
 					</CardFooter>
 				</Card>

@@ -33,6 +33,7 @@ export default function Step1MusicInfo() {
 		recordLabel: mediaInfo.recordLabel || '',
 		publisher: mediaInfo.publisher || '',
 		writer: mediaInfo.writer || '',
+		producer: mediaInfo.producer || '',
 		copyright: mediaInfo.copyright || '',
 		explicitContent: mediaInfo.explicitContent || 'No',
 		lyrics: mediaInfo.lyrics || '',
@@ -213,6 +214,21 @@ export default function Step1MusicInfo() {
 									</FormLabel>
 									<FormControl>
 										<Input placeholder="Writer's full legal name" hasError={!!errors.writer} errormessage={errors.writer?.message} {...field} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="producer"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										Producer <span className="text-primary">*</span>
+									</FormLabel>
+									<FormControl>
+										<Input placeholder="Enter producer" hasError={!!errors.producer} errormessage={errors.producer?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}

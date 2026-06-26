@@ -172,6 +172,7 @@ export function createMediaPayloadFromStore(info: MediaUploadInfo, mediaFile: Fi
 		originalReleaseDate: info.originalReleaseDate || info.releaseDate,
 		publisher: info.publisher,
 		writer: info.writer,
+		producer: info.producer,
 		recordLabel: info.recordLabel || '',
 		releaseVersion: info.releaseVersion,
 		streamingPlatforms: enabledPlatforms,
