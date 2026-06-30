@@ -235,7 +235,7 @@ export default function Step1MusicInfo() {
 							name="publisher"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>
+									<FormLabel info="Enter the publisher's full legal name (the registered legal entity or person), not an abbreviation or stage name.">
 										Publisher <span className="text-primary">*</span>
 									</FormLabel>
 									<FormControl>
