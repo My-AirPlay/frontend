@@ -24,8 +24,9 @@ export const handleInactiveAccountRedirect = () => {
 APIAxios.interceptors.response.use(
 	response => response,
 	error => {
-		if (error?.status == 500) {
-			toast.error('We are having a problem on our end -- SERVER ERROR PLACEHOLDER', { duration: 10000, id: '900' });
+		const status = error?.response?.status ?? error?.status;
+		if (status >= 500) {
+			toast.error('Something went wrong on our end. Please try again.', { duration: 10000, id: '900' });
 			return Promise.reject(error);
 		}
 		/*if (error?.message === 'Network Error' || error?.code == 'ERR_NETWORK') {
