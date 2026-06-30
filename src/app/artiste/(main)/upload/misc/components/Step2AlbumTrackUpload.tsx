@@ -367,7 +367,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 									render={({ field }) => (
 										<FormItem className="w-full">
 											<div className="flex items-center justify-between">
-												<FormLabel>Publisher</FormLabel>
+												<FormLabel info="Enter the publisher's full legal name (the registered legal entity or person), not an abbreviation or stage name.">Publisher</FormLabel>
 												<div className="flex items-center gap-2 ml-4">
 													<Checkbox id="samePublisher" checked={sameAsAlbum.publisher} onCheckedChange={() => toggleSameAsAlbum('publisher')} />
 													<Label htmlFor="samePublisher" className="text-[0.7rem] md:text-sm text-white/40">
