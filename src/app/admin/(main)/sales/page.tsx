@@ -19,15 +19,16 @@ import useOnclickOutside from 'react-cool-onclickoutside';
 import { getUploadUrl, useAdminAnalyzeCsv, useGetReportStatus } from '../catalogue/api/postAdminAnalyzeCsv';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
 import { currencySymbols, ReportItem, SharedRevenue } from '@/lib/types';
-import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
+import { usePublishArtistReports, useReleaseReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
 import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/SendEmailsToArtistsTable';
+import { useRouter } from 'next/navigation';
 import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueShareForm';
 import ReportingModal from '@/app/admin/(main)/sales/misc/components/ReportingModal';
 import { PublishingOverlay } from '@/app/admin/(main)/artist-revenue/misc/components/LoadingOverlay';
 import useSessionStorageState from '@/hooks/useSessionStorageState';
 import { RestartButton } from '@/components/ui/restart-button';
 
-type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'add-revenue-share' | 'send-emails';
+type SalesStep = 'exchange-rate' | 'csv-upload' | 'processing' | 'artist-records' | 'match-artist' | 'create-artist' | 'add-revenue-share' | 'release';
 
 interface DropdownOption {
 	id: string;
@@ -171,7 +172,6 @@ const Sales: React.FC = () => {
 	const [matchedTracks, setMatchedTracks] = useSessionStorageState<ReportItem[]>('matchedTracks', []);
 	const [unmatchedTracks, setUnmatchedTracks] = useSessionStorageState<ReportItem[]>('unmatchedTracks', []);
 
-	const [selectedRows, setSelectedRows] = useSessionStorageState<ReportItem[]>('selectedRows', []);
 	const [selectedMatchRows, setSelectedMatchRows] = useSessionStorageState<ReportItem[]>('selectedMatchRows', []);
 	const [selectedUnmatchedTrack, setSelectedUnmatchedTrack] = useSessionStorageState<string | null>('selectedUnmatchedTrack', null);
 	const [selectedRow, setSelectedRow] = useSessionStorageState<string | null>('selectedRow', null);
@@ -312,7 +312,7 @@ const Sales: React.FC = () => {
 			setSelectedUnmatchedTrack(null);
 		} else if (currentStep === 'create-artist') {
 			setCurrentStep('match-artist');
-		} else if (currentStep === 'send-emails') {
+		} else if (currentStep === 'release') {
 			setCurrentStep('artist-records');
 		} else if (currentStep === 'add-revenue-share') {
 			setCurrentStep('artist-records');
@@ -320,9 +320,15 @@ const Sales: React.FC = () => {
 		}
 	};
 
+	const router = useRouter();
 	const { mutate: analyzeCsv } = useAdminAnalyzeCsv();
 	const { mutate: publishCsv } = usePublishArtistReports();
-	const { mutate: sendEmails } = useSendEmailReports();
+	const { mutate: releaseToArtists } = useReleaseReports();
+	const [releasing, setReleasing] = useState(false);
+	// Notification is part of the release step; the admin selects which artists to email.
+	const [emailRecipients, setEmailRecipients] = useState<ReportItem[]>([]);
+	// The report tag is cleared after publish, so hold on to it for the release step.
+	const [publishedReportId, setPublishedReportId] = useState<string | null>(null);
 
 	const handleFileSelected = async (file: File) => {
 		if (!file) return;
@@ -405,11 +411,14 @@ const Sales: React.FC = () => {
 			{ tracks: matchedTracks, reportId: currentReportTag as string },
 			{
 				onSuccess: (data: ApiResponse) => {
-					toast.success(data.message || 'Published successfully!');
+					// Publish only stages the report now; releasing to artists is a
+					// separate, explicit step that credits wallets and reveals it.
+					toast.success(data.message || 'Report staged successfully!');
 					setLoadingComplete(false);
+					setPublishedReportId(currentReportTag);
 					setCurrentReportTag(null);
 					setCurrentReportId(null);
-					setCurrentStep('send-emails');
+					setCurrentStep('release');
 				},
 				onError: () => {
 					toast.error('An unexpected error occurred while publishing tracks.');
@@ -419,24 +428,30 @@ const Sales: React.FC = () => {
 		);
 	};
 
-	// Changed: Extract artist IDs from sharedRevenue for email sending
-	const handleSendEmails = async (rows: any) => {
-		if (selectedRows.length === 0) {
-			toast.info('No matched tracks to send emails.');
+	const handleReleaseToArtists = async () => {
+		if (!publishedReportId) {
+			toast.error('Missing report reference. Please refresh and try again.');
 			return;
 		}
-
-		const artistIdsToPublish = rows.map((artist: any) => artist.artistId);
-		sendEmails(
-			{ artistIds: artistIdsToPublish, activityPeriod: reportingPeriod as string },
+		const notifyArtistIds = emailRecipients.map(r => (r as unknown as { artistId?: string }).artistId).filter(Boolean) as string[];
+		setReleasing(true);
+		releaseToArtists(
+			{ reportId: publishedReportId, sendEmails: notifyArtistIds.length > 0, notifyArtistIds },
 			{
-				onSuccess: (data: ApiResponse) => {
-					setCurrentReportTag(null);
-					setCurrentReportId(null);
-					toast.success(data.message || 'Emails sent successfully!');
+				onSuccess: data => {
+					setReleasing(false);
+					toast.success(`Released to ${data.artistsCredited} artist(s)${notifyArtistIds.length > 0 ? `, ${data.emailsSent} notified` : ''}.`);
+					router.push('/admin/sales-history');
 				},
-				onError: () => {
-					toast.error('An unexpected error occurred while sending emails.');
+				onError: (err: any) => {
+					setReleasing(false);
+					if (err?.response?.status === 409) {
+						// Already released — treat as done rather than re-crediting.
+						toast.info('This report has already been released to artists.');
+						router.push('/admin/sales-history');
+						return;
+					}
+					toast.error(err?.response?.data?.message || 'An unexpected error occurred while releasing to artists.');
 				}
 			}
 		);
@@ -475,10 +490,6 @@ const Sales: React.FC = () => {
 		setCreatedArtist(artistData);
 		setShowSuccessModal('created');
 	};
-
-	const handleSelectionChange = useCallback((selectedData: ReportItem[]) => {
-		setSelectedRows(selectedData);
-	}, []);
 
 	const handleSelectionMatchChange = useCallback((selectedData: ReportItem[]) => {
 		setSelectedMatchRows(selectedData);
@@ -686,10 +697,17 @@ const Sales: React.FC = () => {
 						<MatchedArtistsTable artists={matchedTracks} onArtistRevenueClick={handleRevenueShare} />
 					</div>
 				)}
-				{currentStep === 'send-emails' && (
-					<div>
-						<div className="mt-8 mb-4">
-							<SendEmailsToArtistsTable artists={matchedTracks} onRowSelectionChange={handleSelectionChange} onSendEmails={handleSendEmails} />
+				{currentStep === 'release' && (
+					<div className="space-y-6">
+						<div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+							<h2 className="text-lg font-semibold">Release report to artists</h2>
+							<p className="mt-1 text-sm">This credits every matched artist&apos;s wallet and makes the report visible on their dashboard. It moves money, can only be run once per report, and cannot be undone. Select which artists should be notified by email &mdash; leave all unselected to release without sending any emails.</p>
+						</div>
+						<SendEmailsToArtistsTable artists={matchedTracks} hideSendButton onRowSelectionChange={setEmailRecipients} title="Select artists to notify by email" />
+						<div className="flex items-center justify-end gap-4">
+							<Button className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2" onClick={handleReleaseToArtists} isLoading={releasing}>
+								Release to Artists
+							</Button>
 						</div>
 					</div>
 				)}

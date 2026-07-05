@@ -17,7 +17,7 @@ import CreateArtistForm from '@/app/admin/(main)/sales/misc/components/CreateArt
 import RevenueShareForm from '@/app/admin/(main)/sales/misc/components/RevenueShareForm';
 import SendEmailsToArtistsTable from '@/app/admin/(main)/sales/misc/components/SendEmailsToArtistsTable';
 
-import { usePublishArtistReports, useSendEmailReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
+import { usePublishArtistReports, useReleaseReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
 import { AnimatePresence } from 'framer-motion';
 import { PublishingOverlay } from '@/app/admin/(main)/artist-revenue/misc/components/LoadingOverlay';
 import SuccessModal from '@/app/admin/(main)/sales/misc/components/SuccessModal';
@@ -41,7 +41,6 @@ const ReprocessSalesPage: React.FC = () => {
 	const [currentStep, setCurrentStep] = useState('artist-records');
 	const [matchedArtists, setMatchedArtists] = useState<ReportItem[]>([]);
 	const [unmatchedArtists, setUnmatchedArtists] = useState<ReportItem[]>([]);
-	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
 	const [selectedMatchRows, setSelectedMatchRows] = useState<ReportItem[]>([]);
 	const [selectedUnmatchedArtist, setSelectedUnmatchedArtist] = useState<string | null>(null);
 	const [systemArtistIdForMatch, setSystemArtistIdForMatch] = useState<string | null>(null);
@@ -51,7 +50,6 @@ const ReprocessSalesPage: React.FC = () => {
 	const [showSuccessModal, setShowSuccessModal] = useState<'created' | 'matched' | null>(null);
 	const [loadingComplete, setLoadingComplete] = useState(false);
 	const [createdArtist, setCreatedArtist] = useState<createdArtistProp>({ artistName: '', fullName: '' });
-	const [reportingPeriod, setReportingPeriod] = useState<string | null>(null);
 	// setCurrentReportTag(reportId);
 
 	// Fetch the initial data using the reportId from the URL
@@ -82,7 +80,6 @@ const ReprocessSalesPage: React.FC = () => {
 			setCurrentReportTag(reportId);
 			setUnmatchedArtists(unmatched);
 			setMatchedArtists(matched);
-			setReportingPeriod(matched[0].activityPeriod);
 			toast.success('Report data loaded successfully.');
 		}
 		if (error) {
@@ -185,31 +182,39 @@ const ReprocessSalesPage: React.FC = () => {
 		setCurrentStep('match-artist');
 	};
 
-	const handleSelectionChange = useCallback((selectedData: ReportItem[]) => {
-		setSelectedRows(selectedData);
-	}, []);
 	const handleCreateNewArtist = () => {
 		setCurrentStep('create-artist');
 	};
 	const { mutate: publishCsv } = usePublishArtistReports();
-	const { mutate: sendEmails } = useSendEmailReports();
+	const { mutate: releaseToArtists } = useReleaseReports();
+	const [releasing, setReleasing] = useState(false);
+	// Notification is part of the release step; the admin selects which artists to email.
+	const [emailRecipients, setEmailRecipients] = useState<ReportItem[]>([]);
 
-	const handleSendEmails = async (rows: any) => {
-		if (selectedRows.length === 0) {
-			toast.info('No matched artists to send emails.');
+	const handleReleaseToArtists = async () => {
+		if (!reportId) {
+			toast.error('Missing report reference. Please refresh and try again.');
 			return;
 		}
-
-		const artistIdsToPublish = rows.map((artist: any) => artist.artistId);
-		sendEmails(
-			{ artistIds: artistIdsToPublish, activityPeriod: reportingPeriod as string },
+		const notifyArtistIds = emailRecipients.map(r => (r as unknown as { artistId?: string }).artistId).filter(Boolean) as string[];
+		setReleasing(true);
+		releaseToArtists(
+			{ reportId, sendEmails: notifyArtistIds.length > 0, notifyArtistIds },
 			{
-				onSuccess: (data: ApiResponse) => {
-					setCurrentReportTag(null);
-					toast.success(data.message || 'Emails sent successfully!');
+				onSuccess: data => {
+					setReleasing(false);
+					toast.success(`Released to ${data.artistsCredited} artist(s)${notifyArtistIds.length > 0 ? `, ${data.emailsSent} notified` : ''}.`);
+					router.push('/admin/sales-history');
 				},
-				onError: () => {
-					toast.error('An unexpected error occurred while sending emails.');
+				onError: (err: any) => {
+					setReleasing(false);
+					if (err?.response?.status === 409) {
+						// Already released — treat as done rather than re-crediting.
+						toast.info('This report has already been released to artists.');
+						router.push('/admin/sales-history');
+						return;
+					}
+					toast.error(err?.response?.data?.message || 'An unexpected error occurred while releasing to artists.');
 				}
 			}
 		);
@@ -228,11 +233,11 @@ const ReprocessSalesPage: React.FC = () => {
 			{ tracks: matchedArtists, reportId: currentReportTag as string },
 			{
 				onSuccess: (data: ApiResponse) => {
-					// Use ApiResponse type for data
-					toast.success(data.message || 'Published successfully!');
+					// Publish only stages the report now; releasing to artists is a
+					// separate, explicit step that credits wallets and reveals it.
+					toast.success(data.message || 'Report staged successfully!');
 					setLoadingComplete(false);
-					setCurrentReportTag(null);
-					setCurrentStep('send-emails');
+					setCurrentStep('release');
 				},
 				onError: () => {
 					toast.error('An unexpected error occurred while publishing artists.');
@@ -275,11 +280,13 @@ const ReprocessSalesPage: React.FC = () => {
 
 			{currentStep === 'add-revenue-share' && <RevenueShareForm matchedArtistName={matchedArtists.find(a => a._id === selectedUnmatchedArtist)} matchedReports={matchedArtists} onSave={handleOnSave} />}
 
-			{currentStep === 'send-emails' && (
-				<div>
-					<div className="mt-8 mb-4">
-						<SendEmailsToArtistsTable artists={matchedArtists} onRowSelectionChange={handleSelectionChange} onSendEmails={handleSendEmails} />
+			{currentStep === 'release' && (
+				<div className="space-y-6">
+					<div className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+						<h2 className="text-lg font-semibold">Release report to artists</h2>
+						<p className="mt-1 text-sm">This credits every matched artist&apos;s wallet and makes the report visible on their dashboard. It moves money, can only be run once per report, and cannot be undone. Select which artists should be notified by email &mdash; leave all unselected to release without sending any emails.</p>
 					</div>
+					<SendEmailsToArtistsTable artists={matchedArtists} hideSendButton onRowSelectionChange={setEmailRecipients} title="Select artists to notify by email" />
 				</div>
 			)}
 
@@ -290,6 +297,11 @@ const ReprocessSalesPage: React.FC = () => {
 				{currentStep === 'artist-records' && (
 					<Button onClick={publishArtists} isLoading={loadingComplete} disabled={unmatchedArtists.length > 0}>
 						Publish Matched Artists
+					</Button>
+				)}
+				{currentStep === 'release' && (
+					<Button onClick={handleReleaseToArtists} isLoading={releasing}>
+						Release to Artists
 					</Button>
 				)}
 			</div>

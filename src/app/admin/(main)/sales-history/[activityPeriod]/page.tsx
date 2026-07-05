@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import { useGetReportsByPeriod, ReportByPeriod } from '@/app/admin/(main)/catalogue/api/getReportsByPeriod';
+import { useReleaseReports } from '@/app/admin/(main)/catalogue/api/matchArtistReports';
 import { useDeleteSalesHistory } from '@/app/admin/(main)/catalogue/api/getSalesHistory';
 import { PreviousPageButton, DataTable } from '@/components/ui';
 import { Badge } from '@/components/ui';
@@ -13,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import DeletionProgressModal from '@/components/ui/delete-records-modal';
 import { formatCurrency } from '@/utils/currency';
-import { Calendar, BarChart3, FileText, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2, Trash2 } from 'lucide-react';
+import { Calendar, BarChart3, FileText, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2, Trash2, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { NairaIcon } from '@/components/ui/naira-icon';
 
@@ -31,6 +32,8 @@ const ActivityPeriodContent: React.FC = () => {
 
 	const { data: periodData, isLoading, isError, refetch } = useGetReportsByPeriod({ activityPeriod });
 	const { mutate: deleteRecords } = useDeleteSalesHistory();
+	const { mutate: releaseReport } = useReleaseReports();
+	const [releasingId, setReleasingId] = useState<string | null>(null);
 
 	const reports = useMemo(() => periodData?.data || [], [periodData]);
 	const summary = periodData?.summary || { totalNetRevenue: 0, totalGrossRevenue: 0, totalTracks: 0, totalArtists: 0 };
@@ -96,6 +99,33 @@ const ActivityPeriodContent: React.FC = () => {
 		refetch();
 	};
 
+	const handleReleaseReport = (reportId: string) => {
+		if (!reportId) return;
+		const confirmed = window.confirm('Release this report to artists? This credits their wallets and makes it visible on their dashboards. It moves money and cannot be undone.');
+		if (!confirmed) return;
+		setReleasingId(reportId);
+		releaseReport(
+			{ reportId, sendEmails: true },
+			{
+				onSuccess: data => {
+					setReleasingId(null);
+					toast.success(`Released to ${data.artistsCredited} artist(s), ${data.emailsSent} notified.`);
+					refetch();
+				},
+				onError: (err: unknown) => {
+					setReleasingId(null);
+					const axiosErr = err as { response?: { status?: number; data?: { message?: string } } };
+					if (axiosErr?.response?.status === 409) {
+						toast.info('This report has already been released to artists.');
+						refetch();
+						return;
+					}
+					toast.error(axiosErr?.response?.data?.message || 'Failed to release report to artists.');
+				}
+			}
+		);
+	};
+
 	const columns = useMemo<ColumnDef<ReportByPeriod>[]>(
 		() => [
 			{
@@ -158,25 +188,45 @@ const ActivityPeriodContent: React.FC = () => {
 				cell: ({ row }) => {
 					const reportId = row.original.reportId || row.original._id;
 					const isNavigating = isPending && navigatingTo === reportId;
+					const isReleasing = releasingId === reportId;
 					return (
-						<Button variant="ghost" size="sm" onClick={() => handleViewReport(reportId)} disabled={isNavigating}>
-							{isNavigating ? (
-								<>
-									<Loader2 className="w-4 h-4 mr-1 animate-spin" />
-									Loading
-								</>
+						<div className="flex items-center justify-end gap-1">
+							{row.original.released ? (
+								<Badge variant="success">Released</Badge>
 							) : (
-								<>
-									<Eye className="w-4 h-4 mr-1" />
-									View
-								</>
+								<Button variant="outline" size="sm" onClick={() => handleReleaseReport(reportId)} disabled={isReleasing || releasingId !== null}>
+									{isReleasing ? (
+										<>
+											<Loader2 className="w-4 h-4 mr-1 animate-spin" />
+											Releasing
+										</>
+									) : (
+										<>
+											<Send className="w-4 h-4 mr-1" />
+											Release
+										</>
+									)}
+								</Button>
 							)}
-						</Button>
+							<Button variant="ghost" size="sm" onClick={() => handleViewReport(reportId)} disabled={isNavigating}>
+								{isNavigating ? (
+									<>
+										<Loader2 className="w-4 h-4 mr-1 animate-spin" />
+										Loading
+									</>
+								) : (
+									<>
+										<Eye className="w-4 h-4 mr-1" />
+										View
+									</>
+								)}
+							</Button>
+						</div>
 					);
 				}
 			}
 		],
-		[isPending, navigatingTo]
+		[isPending, navigatingTo, releasingId]
 	);
 
 	if (isLoading) {
@@ -281,9 +331,9 @@ const ActivityPeriodContent: React.FC = () => {
 										<CartesianGrid strokeDasharray="3 3" stroke="#383838" />
 										<XAxis dataKey="name" tick={{ fontSize: 10, fill: '#888' }} angle={-45} textAnchor="end" height={80} />
 										<YAxis tick={{ fontSize: 10, fill: '#888' }} />
-										<Tooltip contentStyle={{ backgroundColor: '#1f1f1f', border: '1px solid #383838', borderRadius: '8px' }} formatter={(value: number, name: string) => [value.toLocaleString(), name === 'tracks' ? 'Tracks' : 'Artists']} labelFormatter={(label, payload) => payload[0]?.payload?.fullName || label} />
-										<Bar dataKey="tracks" fill="#3b82f6" name="Tracks" radius={[4, 4, 0, 0]} />
-										<Bar dataKey="artists" fill="#ec4899" name="Artists" radius={[4, 4, 0, 0]} />
+										<Tooltip contentStyle={{ backgroundColor: '#1f1f1f', border: '1px solid #383838', borderRadius: '8px' }} formatter={(value: number, name: string): [string, string] => [value.toLocaleString(), name === 'tracks' ? 'Tracks' : 'Artists']} labelFormatter={(label, payload) => payload[0]?.payload?.fullName || label} />
+										<Bar dataKey="tracks" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+										<Bar dataKey="artists" fill="#ec4899" radius={[4, 4, 0, 0]} />
 									</BarChart>
 								</ResponsiveContainer>
 							</div>

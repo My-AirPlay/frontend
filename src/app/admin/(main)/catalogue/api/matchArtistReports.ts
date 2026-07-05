@@ -61,6 +61,33 @@ export const usePublishArtistReports = (): UseMutationResult<ApiResponse, Error 
 	});
 };
 
+export interface ReleaseReportsParams {
+	reportId: string;
+	sendEmails?: boolean;
+	// Optional subset of artist ids to email. Empty/omitted => notify all credited artists.
+	notifyArtistIds?: string[];
+}
+
+export interface ReleaseReportsResponse {
+	released: number;
+	artistsCredited: number;
+	emailsSent: number;
+}
+
+// Releases a staged report to its artists: credits wallets and makes the report
+// visible on artist dashboards. Distinct from publish (which only stages) and
+// from send-emails (which only notifies).
+export const releaseReports = async (params: ReleaseReportsParams): Promise<ReleaseReportsResponse> => {
+	const response = await APIAxios.post('/admin/release_reports', params, {});
+	return response.data;
+};
+
+export const useReleaseReports = (): UseMutationResult<ReleaseReportsResponse, Error, ReleaseReportsParams, unknown> => {
+	return useMutation({
+		mutationFn: releaseReports
+	});
+};
+
 export interface SendEmailReportsParams {
 	artistIds: string[];
 	activityPeriod: string;

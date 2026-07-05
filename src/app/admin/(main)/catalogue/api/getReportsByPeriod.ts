@@ -14,6 +14,7 @@ export interface ReportByPeriod {
 	status: 'Complete' | 'Incomplete' | 'Pending';
 	activityPeriod: string;
 	activityPeriods?: string[];
+	released: boolean;
 }
 
 export interface ReportsByPeriodResponse {
@@ -93,7 +94,8 @@ export const getReportsByPeriod = async (params: ReportsByPeriodParams): Promise
 			createdAt: (report.createdAt || report.created_at || '') as string,
 			status: (report.status || 'Complete') as 'Complete' | 'Incomplete' | 'Pending',
 			activityPeriod: (singlePeriod || (Array.isArray(reportPeriods) && reportPeriods[0]) || params.activityPeriod) as string,
-			activityPeriods: (Array.isArray(reportPeriods) ? reportPeriods : singlePeriod ? [singlePeriod] : []) as string[]
+			activityPeriods: (Array.isArray(reportPeriods) ? reportPeriods : singlePeriod ? [singlePeriod] : []) as string[],
+			released: Boolean(report.released)
 		};
 	});
 

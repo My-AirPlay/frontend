@@ -8,9 +8,13 @@ interface SendEmailsToArtistTableProps {
 	artists: ReportItem[];
 	onRowSelectionChange?: (selectedData: ReportItem[]) => void;
 	onSendEmails?: (selectedData: ReportItem[]) => void;
+	// When true, hides the built-in "Send Emails" button so a parent can own the CTA
+	// (e.g. the release step, where a single "Release" button drives the action).
+	hideSendButton?: boolean;
+	title?: string;
 }
 
-const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artists, onRowSelectionChange, onSendEmails }) => {
+const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artists, onRowSelectionChange, onSendEmails, hideSendButton = false, title = 'Send Report Emails to Artists' }) => {
 	const [selectedRows, setSelectedRows] = useState<ReportItem[]>([]);
 
 	const uniqueArtists = useMemo(() => {
@@ -76,12 +80,14 @@ const SendEmailsToArtistTable: React.FC<SendEmailsToArtistTableProps> = ({ artis
 
 	return (
 		<div className="w-full">
-			<div className="flex justify-end mb-4">
-				<Button onClick={handleSendEmails} disabled={selectedRows.length === 0}>
-					<Download size={16} className="mr-2" /> Send Emails ({selectedRows.length})
-				</Button>
-			</div>
-			<h3 className="text-lg font-medium mb-2">Send Report Emails to Artists</h3>
+			{!hideSendButton && (
+				<div className="flex justify-end mb-4">
+					<Button onClick={handleSendEmails} disabled={selectedRows.length === 0}>
+						<Download size={16} className="mr-2" /> Send Emails ({selectedRows.length})
+					</Button>
+				</div>
+			)}
+			<h3 className="text-lg font-medium mb-2">{title}</h3>
 			<DataTable data={uniqueArtists} columns={columns} pagination defaultRowsPerPage={50} showCheckbox onRowSelectionChange={handleSelectionChange} />
 		</div>
 	);
