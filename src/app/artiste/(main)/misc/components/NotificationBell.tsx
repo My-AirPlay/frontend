@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, CreditCard, FileSignature, AlertTriangle } from 'lucide-react';
+import { Bell, FileSignature, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -20,14 +20,6 @@ const NotificationBell = () => {
 	const { data: albumsData } = useGetAlbums({ page: 1, limit: 100 });
 
 	const notifications: Notification[] = [];
-
-	if (artist?.bankDetails?.paidRegistrationFee === false) {
-		notifications.push({
-			label: 'Pay registration fee',
-			href: '/artiste/onboarding?step=registration_fee',
-			icon: <CreditCard className="h-4 w-4 text-muted-foreground shrink-0" />
-		});
-	}
 
 	if (artist?.contractDetails?.status === 'PENDING_SIGNATURE') {
 		notifications.push({

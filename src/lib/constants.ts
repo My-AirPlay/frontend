@@ -137,8 +137,7 @@ export enum OnboardingSteps {
 	BASIC_DETAIL,
 	BANK,
 	SOCIAL_LINK,
-	PREVIEW,
-	PAY_REGISTRATION_FEE
+	PREVIEW
 }
 
 export const metricsDate = ['daily', 'monthly', 'yearly'];
@@ -287,7 +286,10 @@ export const onboardingStages = {
 	[userProfileStage.bankInfo]: OnboardingSteps.BANK,
 	[userProfileStage.onboarding]: OnboardingSteps.BASIC_DETAIL,
 	[userProfileStage.socialLinks]: OnboardingSteps.SOCIAL_LINK,
-	[userProfileStage.payment]: OnboardingSteps.PAY_REGISTRATION_FEE
+	// Registration fee removed: the old payment stage now resolves to the
+	// Preview step (whose CTA completes onboarding) so any artist still carrying
+	// this stage isn't bounced back to the start.
+	[userProfileStage.payment]: OnboardingSteps.PREVIEW
 };
 export const onboardingStagesKey = Object.keys(onboardingStages);
 

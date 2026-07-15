@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { OnboardingSteps } from '@/lib/constants';
 import React from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 interface PreviewOnboardingProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
 }
 const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
 	const { artist } = useAuthContext();
+	const router = useRouter();
 	const data = [
 		[
 			{
@@ -71,7 +73,7 @@ const PreviewOnboarding = ({ setCurrentStep }: PreviewOnboardingProps) => {
 					<Button size={'lg'} className="max-w-[275px] bg-transparent border-2 border-white h-[75px] " onClick={() => setCurrentStep(OnboardingSteps.BASIC_DETAIL)}>
 						Edit
 					</Button>
-					<Button size={'lg'} className="max-w-[275px] h-[75px] " onClick={() => setCurrentStep(OnboardingSteps.PAY_REGISTRATION_FEE)}>
+					<Button size={'lg'} className="max-w-[275px] h-[75px] " onClick={() => router.push('/artiste/dashboard')}>
 						Continue
 					</Button>
 				</div>
