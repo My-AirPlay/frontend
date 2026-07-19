@@ -8,32 +8,27 @@ import PreviewOnboarding from './_components/preview-onboarding/preview-onboardi
 import React, { useState } from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 // import { getArtistProfile } from '@/contexts/AuthContextArtist';
-import { redirect, useSearchParams } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { Spinner } from '@/components/icons';
-import RegistrationPaymentPage from './_components/payment-registration-fee';
 
 const OnboardingClientPage = () => {
 	const { artist, isLoading } = useAuthContext();
-	const searchParams = useSearchParams();
-	const forceStep = searchParams.get('step') ? OnboardingSteps.PAY_REGISTRATION_FEE : onboardingStages[artist!.stage];
-	const [currentStep, setCurrentStep] = useState(forceStep || OnboardingSteps.BASIC_DETAIL);
+	const currentStepFromStage = onboardingStages[artist!.stage];
+	const [currentStep, setCurrentStep] = useState(currentStepFromStage || OnboardingSteps.BASIC_DETAIL);
 	const screens = {
 		[OnboardingSteps.BASIC_DETAIL]: <OnboardingBasciDetail email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
 		[OnboardingSteps.BANK]: <OnboardingBankDetail setCurrentStep={setCurrentStep} email={artist?.email || ''} />,
 		[OnboardingSteps.SOCIAL_LINK]: <OnboardingSocialMedia email={artist?.email || ''} setCurrentStep={setCurrentStep} />,
-		[OnboardingSteps.PREVIEW]: <PreviewOnboarding setCurrentStep={setCurrentStep} />,
-		[OnboardingSteps.PAY_REGISTRATION_FEE]: <RegistrationPaymentPage email={artist?.email || ''} />
+		[OnboardingSteps.PREVIEW]: <PreviewOnboarding setCurrentStep={setCurrentStep} />
 	};
 
 	React.useEffect(() => {
 		if (!isLoading && !artist) {
 			redirect('/artiste/login');
-		} else if (!!artist && artist?.stage == 'complete' && !forceStep) {
+		} else if (!!artist && artist?.stage == 'complete') {
 			redirect('/artiste/dashboard');
-		} else if (!!artist && (artist.stage === 'Add social links' || artist.stage === 'complete') && !artist.bankDetails.paidRegistrationFee) {
-			setCurrentStep(OnboardingSteps.PAY_REGISTRATION_FEE);
 		}
-	}, [isLoading, artist, forceStep]);
+	}, [isLoading, artist]);
 
 	if (isLoading) {
 		return (
