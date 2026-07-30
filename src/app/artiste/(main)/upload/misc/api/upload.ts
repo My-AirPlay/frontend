@@ -6,7 +6,7 @@ import { UploadAlbumPayload, UploadTrackPayload } from '../types';
 import { MediaUploadInfo } from '../store/media';
 
 // Helper to upload a file directly to S3 via presigned URL
-const uploadToS3 = async (file: File) => {
+export const uploadToS3 = async (file: File) => {
 	// 1. Get presigned URL
 	const { data } = await APIAxios.get(`/media/generate-upload-url`, {
 		params: {

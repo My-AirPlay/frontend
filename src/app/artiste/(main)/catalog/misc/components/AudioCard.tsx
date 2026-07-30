@@ -75,6 +75,30 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 		setCoverArtPreview(URL.createObjectURL(file));
 	}, []);
 
+	// Replacing the track's audio — the fix for a release rejected over its
+	// format. Blocked once the release is with stores, since swapping the file
+	// then needs a redelivery the artist can't trigger.
+	const audioFileInputRef = useRef<HTMLInputElement>(null);
+	const [audioFile, setAudioFile] = useState<File | null>(null);
+	const deliveryStatus = (audio as { fugaDelivery?: { status?: string } }).fugaDelivery?.status;
+	const canReplaceAudio = deliveryStatus !== 'delivered' && deliveryStatus !== 'delivering';
+
+	const handleAudioFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		const name = file.name.toLowerCase();
+		if (!['.wav', '.flac'].some(ext => name.endsWith(ext))) {
+			toast.error("Audio must be WAV or FLAC — MP3 can't be delivered to stores.");
+			return;
+		}
+		if (file.size > 512 * 1024 * 1024) {
+			toast.error('File size exceeds the 512MB limit. Please upload a smaller file.');
+			return;
+		}
+		setAudioFile(file);
+	}, []);
+
 	const defaultValues: MediaUpdateFormValues = {
 		title: audio.title,
 		artistName: audio.artistName || '',
@@ -110,12 +134,13 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 			...data
 		};
 		updateMedia(
-			{ data: updatedAudio, coverArt: coverArtFile ?? undefined },
+			{ data: updatedAudio, coverArt: coverArtFile ?? undefined, audioFile: audioFile ?? undefined },
 			{
 				onSuccess() {
-					toast.success('Audio track updated successfully');
+					toast.success(audioFile ? 'Track replaced and sent back for review' : 'Audio track updated successfully');
 					setCoverArtFile(null);
 					setCoverArtPreview(null);
+					setAudioFile(null);
 					setIsEditSheetState(false);
 				},
 				onError(error: Error | AxiosError<{ message?: string }>) {
@@ -370,6 +395,25 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 										{coverArtFile ? coverArtFile.name : 'Click to change cover art'}
 									</button>
 								</div>
+
+								{canReplaceAudio && (
+									<div className="flex flex-col gap-2 p-4 rounded-lg border border-border">
+										<p className="text-sm font-medium">Audio file</p>
+										<p className="text-xs text-white/50 break-all">{audioFile ? audioFile.name : (audio.mediaUrl || '').split('/').pop()}</p>
+										<input ref={audioFileInputRef} type="file" accept=".wav,.flac" className="hidden" onChange={handleAudioFileChange} />
+										<div className="flex items-center gap-3">
+											<Button type="button" variant="outline" size="sm" className="rounded-full" onClick={() => audioFileInputRef.current?.click()}>
+												Replace audio file
+											</Button>
+											{audioFile && (
+												<button type="button" className="text-xs text-white/50 hover:underline" onClick={() => setAudioFile(null)}>
+													Undo
+												</button>
+											)}
+										</div>
+										<p className="text-xs text-white/40">WAV or FLAC only — MP3 can&apos;t be delivered to stores. Replacing the file sends the release back for review.</p>
+									</div>
+								)}
 
 								<div className="grid grid-cols-1 gap-6">
 									<FormField
