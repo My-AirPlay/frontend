@@ -1,6 +1,6 @@
 // src/api/matchArtistReports.ts
 import APIAxios from '@/utils/axios';
-import { useMutation, UseMutationResult } from '@tanstack/react-query';
+import { useMutation, UseMutationResult, useQuery } from '@tanstack/react-query';
 import { ReportItem } from '@/lib/types';
 
 // Define the request payload interface
@@ -85,6 +85,62 @@ export const releaseReports = async (params: ReleaseReportsParams): Promise<Rele
 export const useReleaseReports = (): UseMutationResult<ReleaseReportsResponse, Error, ReleaseReportsParams, unknown> => {
 	return useMutation({
 		mutationFn: releaseReports
+	});
+};
+
+export interface ReportEmailRecipient {
+	artistId: string;
+	artistName: string | null;
+	email: string | null;
+	status: string | null;
+	// False when the artist can't be mailed at all (inactive, or no address).
+	emailable: boolean;
+	reason: string | null;
+}
+
+export interface ReportEmailRecipientsResponse {
+	reportId: string;
+	activityPeriod: string | null;
+	released: boolean;
+	recipients: ReportEmailRecipient[];
+}
+
+// Everyone holding a share on the report, for the notify-artists picker.
+export const getReportEmailRecipients = async (reportId: string): Promise<ReportEmailRecipientsResponse> => {
+	const response = await APIAxios.get(`/admin/report/${encodeURIComponent(reportId)}/email-recipients`);
+	return response.data;
+};
+
+export const useGetReportEmailRecipients = (reportId: string | null) => {
+	return useQuery({
+		queryKey: ['reportEmailRecipients', reportId],
+		queryFn: () => getReportEmailRecipients(reportId as string),
+		enabled: !!reportId
+	});
+};
+
+export interface SendReportEmailsParams {
+	reportId: string;
+	// Omit to mail every artist on the report.
+	artistIds?: string[];
+}
+
+export interface SendReportEmailsResponse {
+	requested: number;
+	sent: number;
+	skipped: { artistId: string; artistName: string | null; reason: string }[];
+}
+
+// Emails an already-released report to a chosen set of artists. Separate from
+// releasing, which moves the money.
+export const sendReportEmails = async (params: SendReportEmailsParams): Promise<SendReportEmailsResponse> => {
+	const response = await APIAxios.post('/admin/send_report_emails', params, {});
+	return response.data;
+};
+
+export const useSendReportEmails = (): UseMutationResult<SendReportEmailsResponse, Error, SendReportEmailsParams, unknown> => {
+	return useMutation({
+		mutationFn: sendReportEmails
 	});
 };
 
