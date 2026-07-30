@@ -673,6 +673,18 @@ export default function TrackUpload() {
 		}
 	}, [mediaFileIds.length, albumTracks.length]);
 
+	// Validate by extension, not just MIME category: `file.type.includes('audio')`
+	// accepted MP3s regardless of the picker's accept list, and stores require
+	// lossless audio, so those albums were uploaded only to be marked
+	// undeliverable later. MIME is still checked to catch a renamed file.
+	const isValidTrackFile = (file: File) => {
+		const validExtensions = ['.wav', '.flac', '.mp4'];
+		const name = file.name.toLowerCase();
+		if (!validExtensions.some(ext => name.endsWith(ext))) return false;
+
+		return !file.type || file.type.startsWith('audio/') || file.type.startsWith('video/');
+	};
+
 	const handleFilesSelected = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
 		if (!files || files.length === 0) return;
@@ -686,12 +698,12 @@ export default function TrackUpload() {
 				invalidFiles.push(`${file.name} (exceeds 512 MB)`);
 				continue;
 			}
-			if (file.type.includes('audio') || file.type.includes('video')) {
+			if (isValidTrackFile(file)) {
 				validFiles.push(file);
 
 				// Create a default track entry for this file
 				const newTrack: AlbumTrackInfo = {
-					title: file.name.replace(/\.(mp3|mp4|wav)$/i, ''),
+					title: file.name.replace(/\.(mp3|mp4|wav|flac)$/i, ''),
 					artistName: albumInfo.artistName,
 					primaryArtist2: albumInfo.primaryArtist2 || '',
 					featuredArtists: albumInfo.featuredArtists || '',
@@ -734,7 +746,7 @@ export default function TrackUpload() {
 
 		if (invalidFiles.length > 0) {
 			toast.error('Invalid files detected', {
-				description: `The following files are not valid: ${invalidFiles.join(', ')}`
+				description: `Tracks must be WAV or FLAC (or MP4 for video) — MP3 can't be distributed. Not accepted: ${invalidFiles.join(', ')}`
 			});
 		}
 
@@ -875,12 +887,12 @@ export default function TrackUpload() {
 					<Music width={100} height={100} className="" style={{ opacity: 0.3, filter: 'grayscale(1)' }} />
 				</div>
 				<div className="flex flex-col items-start justify-center">
-					<input type="file" className="hidden" ref={inputRef} onChange={handleFilesSelected} accept=".mp3,.mp4,.wav" multiple />
+					<input type="file" className="hidden" ref={inputRef} onChange={handleFilesSelected} accept=".wav,.flac,.mp4" multiple />
 
 					<div className="mb-6 text-left">
 						<h3 className="text-base font-semibold mb-4">Album upload requirements</h3>
 						<ul className="text-[0.9rem] text-white/70 space-y-1.5 text-left">
-							<li>• File format: MP3, MP4</li>
+							<li>• File format: WAV, FLAC (audio) or MP4 (video)</li>
 							<li>File size: Files size cannot be greater than 512 MB</li>
 							<li>• Video mode: Best quality</li>
 							<li>• Your track must not contain any logos, website address, release dates or advertisements of any kind.</li>
