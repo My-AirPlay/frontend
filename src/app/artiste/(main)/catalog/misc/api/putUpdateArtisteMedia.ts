@@ -1,11 +1,20 @@
 import APIAxios from '@/utils/axios';
 import { TArtistMedia } from './getArtisteMedias';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { uploadToS3 } from '../../../upload/misc/api/upload';
 
-export const updateSingleTrack = async (payload: { data: Partial<TArtistMedia>; coverArt?: File }) => {
+export const updateSingleTrack = async (payload: { data: Partial<TArtistMedia>; coverArt?: File; audioFile?: File }) => {
 	if (!payload.data._id) return;
 
 	const formData = new FormData();
+
+	// Replacing the audio itself: upload to S3 first, then send the new URL as
+	// `mediaUrl`. The API re-validates the format and re-checks whether the
+	// release (and its album) can now be delivered.
+	if (payload.audioFile) {
+		const mediaUrl = await uploadToS3(payload.audioFile);
+		payload.data = { ...payload.data, mediaUrl };
+	}
 
 	// Server-managed fields must never be posted back. In particular
 	// `fugaDelivery` is an embedded object that would be stringified to
