@@ -13,8 +13,9 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import DeletionProgressModal from '@/components/ui/delete-records-modal';
+import NotifyArtistsModal from '../misc/components/NotifyArtistsModal';
 import { formatCurrency } from '@/utils/currency';
-import { Calendar, BarChart3, FileText, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2, Trash2, Send } from 'lucide-react';
+import { Calendar, BarChart3, FileText, TrendingUp, Music, Users, Eye, AlertTriangle, Loader2, Trash2, Send, Mail } from 'lucide-react';
 import { toast } from 'sonner';
 import { NairaIcon } from '@/components/ui/naira-icon';
 
@@ -34,6 +35,7 @@ const ActivityPeriodContent: React.FC = () => {
 	const { mutate: deleteRecords } = useDeleteSalesHistory();
 	const { mutate: releaseReport } = useReleaseReports();
 	const [releasingId, setReleasingId] = useState<string | null>(null);
+	const [notifyReportId, setNotifyReportId] = useState<string | null>(null);
 
 	const reports = useMemo(() => periodData?.data || [], [periodData]);
 	const summary = periodData?.summary || { totalNetRevenue: 0, totalGrossRevenue: 0, totalTracks: 0, totalArtists: 0 };
@@ -104,12 +106,14 @@ const ActivityPeriodContent: React.FC = () => {
 		const confirmed = window.confirm('Release this report to artists? This credits their wallets and makes it visible on their dashboards. It moves money and cannot be undone.');
 		if (!confirmed) return;
 		setReleasingId(reportId);
+		// Releasing no longer emails anyone: notifying is the separate "Send
+		// email" action, where the admin picks who hears about it.
 		releaseReport(
-			{ reportId, sendEmails: true },
+			{ reportId, sendEmails: false },
 			{
 				onSuccess: data => {
 					setReleasingId(null);
-					toast.success(`Released to ${data.artistsCredited} artist(s), ${data.emailsSent} notified.`);
+					toast.success(`Released to ${data.artistsCredited} artist(s). Use "Send email" to notify them.`);
 					refetch();
 				},
 				onError: (err: unknown) => {
@@ -192,7 +196,13 @@ const ActivityPeriodContent: React.FC = () => {
 					return (
 						<div className="flex items-center justify-end gap-1">
 							{row.original.released ? (
-								<Badge variant="success">Released</Badge>
+								<>
+									<Badge variant="success">Released</Badge>
+									<Button variant="ghost" size="sm" onClick={() => setNotifyReportId(reportId)}>
+										<Mail className="w-4 h-4 mr-1" />
+										Send email
+									</Button>
+								</>
 							) : (
 								<Button variant="outline" size="sm" onClick={() => handleReleaseReport(reportId)} disabled={isReleasing || releasingId !== null}>
 									{isReleasing ? (
@@ -428,6 +438,7 @@ const ActivityPeriodContent: React.FC = () => {
 
 			{/* Modal for deletion progress */}
 			<DeletionProgressModal isOpen={isDeletionModalOpen} onClose={handleCloseDeletionModal} reportIdsToDelete={selectedReportIds} />
+			<NotifyArtistsModal reportId={notifyReportId} isOpen={!!notifyReportId} onClose={() => setNotifyReportId(null)} />
 		</div>
 	);
 };
