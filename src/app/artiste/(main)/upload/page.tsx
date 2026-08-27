@@ -15,6 +15,7 @@ interface MediaOption {
 	value: string;
 	label: string;
 	icon: string;
+	disabled?: boolean;
 }
 
 const mediaOptions: MediaOption[] = [
@@ -41,7 +42,8 @@ const mediaOptions: MediaOption[] = [
 	{
 		value: 'MixTape',
 		label: 'Mix Tape',
-		icon: '/images/upload/mixtape.png'
+		icon: '/images/upload/mixtape.png',
+		disabled: true
 	}
 ];
 
@@ -59,12 +61,14 @@ export default function MediaTypeSelection() {
 		}
 	}, [mediaType]);
 
-	const handleSelect = (value: string) => {
-		setSelectedType(value);
+	const handleSelect = (option: MediaOption) => {
+		if (option.disabled) return;
+		setSelectedType(option.value);
 	};
 
 	const handleContinue = async () => {
 		if (!selectedType) return;
+		if (mediaOptions.find(option => option.value === selectedType)?.disabled) return;
 
 		// setMediaType(selectedType as any);
 		if (selectedType === 'Album' || selectedType === 'ExtendedPlaylist' || selectedType === 'MixTape') {
@@ -127,12 +131,13 @@ export default function MediaTypeSelection() {
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 					{mediaOptions.map(option => (
-						<div key={option.value} className={cn('border border-gray-600 rounded-xl max-md:py-2 p-4 cursor-pointer transition-all', selectedType === option.value ? 'border-primary bg-black/50' : 'hover:border-gray-400')} onClick={() => handleSelect(option.value)}>
+						<div key={option.value} aria-disabled={option.disabled} className={cn('border border-gray-600 rounded-xl max-md:py-2 p-4 transition-all', option.disabled ? 'cursor-not-allowed opacity-40 grayscale' : 'cursor-pointer', selectedType === option.value ? 'border-primary bg-black/50' : !option.disabled && 'hover:border-gray-400')} onClick={() => handleSelect(option)}>
 							<div className="flex md:flex-col items-center max-md:gap-4">
 								<div className="relative size-12 md:size-24 rounded-full overflow-hidden md:mb-4">
 									<Image fill src={option.icon} alt={option.label} objectFit="cover" className="" />
 								</div>
 								<p className="text-white font-medium text-left">{option.label}</p>
+								{option.disabled && <p className="text-gray-400 text-xs mt-1 text-left md:text-center">Coming soon</p>}
 							</div>
 						</div>
 					))}
