@@ -12,6 +12,7 @@ import { useGetArtistAnalytics } from '../../../catalogue/api/getArtistAnalytics
 import { WithdrawalSlipData } from '@/lib/types';
 import { TrendingUp, TrendingDown, Wallet, CreditCard, ArrowDownRight, ArrowUpRight, Music, Globe, Receipt, ArrowLeftRight, Banknote } from 'lucide-react';
 import { formatCurrency, normalizeCurrency, scaleNgnToCurrency } from '@/utils/currency';
+import { isCredit, isDebit } from '@/utils/ledger';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 import { Button } from '@/components/ui/button';
 
@@ -49,20 +50,18 @@ const ArtistRevenueDetails: React.FC = () => {
 
 	const allWithdrawalSlipsRaw: WithdrawalSlipData[] = withdrawalsData?.data || [];
 
-	// Filter transactions by status
-	const allPendingDebits = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending');
-	const allDebitTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Pending' || slip.status === 'Approved' || slip.status === 'Paid');
-	const allCreditTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status !== 'Pending' && slip.status !== 'Cancelled');
+	// Split the ledger by direction, not by status: a settled withdrawal and a
+	// royalty credit share the same `Processed` status, so filtering on status
+	// alone counted every completed payout as revenue.
+	const allCreditTransactions = allWithdrawalSlipsRaw.filter(isCredit);
+	const allDebitTransactions = allWithdrawalSlipsRaw.filter(isDebit);
+	const allPendingDebits = allDebitTransactions.filter(slip => slip.status === 'Pending');
 	const allCancelledTransactions = allWithdrawalSlipsRaw.filter(slip => slip.status === 'Cancelled');
 
 	// Helper to scale amount based on current viewing context
 	const calculateScaledAmount = (totalRevenue: number, slipExchangeRate?: number) => scaleNgnToCurrency(totalRevenue, contextCurrency, slipExchangeRate);
 
 	// Calculate totals in the selected context currency
-	const totalPendingRoyalty = allPendingDebits.reduce((sum, slip) => {
-		return sum + calculateScaledAmount(Number(slip.totalRevenue) || 0, slip.exchangeRate);
-	}, 0);
-
 	const totalDebitRoyalty = allDebitTransactions.reduce((sum, slip) => {
 		return sum + calculateScaledAmount(Number(slip.totalRevenue) || 0, slip.exchangeRate);
 	}, 0);
@@ -75,7 +74,8 @@ const ArtistRevenueDetails: React.FC = () => {
 		return sum + calculateScaledAmount(Number(slip.totalRevenue) || 0, slip.exchangeRate);
 	}, 0);
 
-	const balance = totalCreditRoyalty - totalPendingRoyalty;
+	// Every non-cancelled debit has already left the account, pending included.
+	const balance = totalCreditRoyalty - totalDebitRoyalty;
 
 	// Calculate analytics stats
 	const totalStreams = artistAnalytics?.totalStreams || 0;
@@ -160,7 +160,7 @@ const ArtistRevenueDetails: React.FC = () => {
 					</div>
 					<p className="text-xs text-muted-foreground mb-1">Available Balance</p>
 					<p className={`text-lg font-semibold ${balance >= 0 ? 'text-primary' : 'text-red-500'}`}>{formatCurrency(balance, contextCurrency)}</p>
-					<p className="text-xs text-muted-foreground mt-1">Credits - Pending Debits</p>
+					<p className="text-xs text-muted-foreground mt-1">Credits − Debits</p>
 				</div>
 			</div>
 

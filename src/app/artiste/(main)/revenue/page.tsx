@@ -7,30 +7,12 @@ import { useAuthContext } from '@/contexts/AuthContext'; // Assumes you have an 
 import { WithdrawalSlipData } from '@/lib/types';
 import { DataTable, Badge, Button } from '@/components/ui';
 import { LoadingBox } from '@/components/ui/LoadingBox';
-import { formatCurrency } from '@/utils/currency';
+import { formatCurrency, normalizeCurrency, scaleNgnToCurrency, SupportedCurrency } from '@/utils/currency';
+import { isCredit, isDebit } from '@/utils/ledger';
 import { ArrowDownLeft, ArrowUpRight, Download, Wallet, Calendar } from 'lucide-react';
 import { useGetAllWithdrawalSlips, useGetDashboardData } from '@/app/artiste/(main)/dashboard/misc/api';
 import { useRouter } from 'next/navigation';
-import { useCurrency, Currency } from '@/app/artiste/context/CurrencyContext';
-
-const normalizeCurrency = (currency?: string | null): Currency => {
-	switch (currency?.toLowerCase()) {
-		case 'naira':
-		case 'ngn':
-			return 'NGN';
-		case 'dollar':
-		case 'usd':
-			return 'USD';
-		case 'euro':
-		case 'eur':
-			return 'EUR';
-		case 'pounds':
-		case 'gbp':
-			return 'GBP';
-		default:
-			return 'NGN';
-	}
-};
+import { useCurrency } from '@/app/artiste/context/CurrencyContext';
 
 // A new, simplified type for the artist's transaction view
 type Transaction = {
@@ -47,18 +29,8 @@ interface MonthlyBreakdownRow {
 	revenue: number;
 }
 
-const getBaseRate = (currency: string): number => {
-	switch (currency?.toUpperCase()) {
-		case 'USD':
-			return 1610;
-		case 'EUR':
-			return 1365;
-		case 'GBP':
-			return 2300;
-		default:
-			return 1;
-	}
-};
+/** Slip amounts are stored in NGN; render them in the artist's payout currency. */
+const scaleSlip = (slip: WithdrawalSlipData, currency: SupportedCurrency) => scaleNgnToCurrency(Number(slip.totalRevenue) || 0, currency, slip.exchangeRate);
 
 const ArtistRevenuePage: React.FC = () => {
 	const { artist } = useAuthContext();
@@ -78,8 +50,6 @@ const ArtistRevenuePage: React.FC = () => {
 		}
 	}, [displayCurrency, currency, setCurrency]);
 
-	const baseRate = getBaseRate(displayCurrency);
-
 	const { data: withdrawalsData, isLoading } = useGetAllWithdrawalSlips({
 		page: 1,
 		limit: 2000,
@@ -87,17 +57,17 @@ const ArtistRevenuePage: React.FC = () => {
 	});
 	const allTransactionsRaw: WithdrawalSlipData[] = withdrawalsData?.data || [];
 
-	const creditTransactions = allTransactionsRaw.filter(slip => slip.status !== 'Pending');
-	const debitTransactions = allTransactionsRaw.filter(slip => slip.status === 'Pending');
+	// Direction comes from `action`, not `status`: filtering on status counted
+	// completed withdrawals as revenue and cancelled slips as credits, which is
+	// why this page disagreed with both the admin view and the artist's wallet.
+	const creditTransactions = allTransactionsRaw.filter(isCredit);
+	const debitTransactions = allTransactionsRaw.filter(isDebit);
 
-	const totalCredits = creditTransactions.reduce((sum, slip) => {
-		const rate = slip.exchangeRate && slip.exchangeRate !== 1 ? slip.exchangeRate : baseRate;
-		return sum + (Number(slip.totalRevenue) || 0) / rate;
-	}, 0);
-	const totalDebits = debitTransactions.reduce((sum, slip) => {
-		const rate = slip.exchangeRate && slip.exchangeRate !== 1 ? slip.exchangeRate : baseRate;
-		return sum + (Number(slip.totalRevenue) || 0) / rate;
-	}, 0);
+	// Slip amounts are stored in NGN; scale them the same way the admin view
+	// does so the two never drift apart again.
+	const currencyForSlips = displayCurrency as SupportedCurrency;
+	const totalCredits = creditTransactions.reduce((sum, slip) => sum + scaleSlip(slip, currencyForSlips), 0);
+	const totalDebits = debitTransactions.reduce((sum, slip) => sum + scaleSlip(slip, currencyForSlips), 0);
 	const balance = totalCredits - totalDebits;
 
 	// 4. Combine and sort all transactions for display in the table
@@ -107,29 +77,27 @@ const ArtistRevenuePage: React.FC = () => {
 			if (slip.activityPeriods.length == 0) {
 				description = slip.notes || 'Account credit by Admin';
 			}
-			const rate = slip.exchangeRate && slip.exchangeRate !== 1 ? slip.exchangeRate : baseRate;
 			return {
 				date: slip.createdAt,
 				description: description,
 				type: 'Credit' as const,
 				status: slip.status,
-				amount: (Number(slip.totalRevenue) || 0) / rate
+				amount: scaleSlip(slip, currencyForSlips)
 			};
 		});
 
 		const formattedDebits: Transaction[] = debitTransactions.map(slip => {
-			const rate = slip.exchangeRate && slip.exchangeRate !== 1 ? slip.exchangeRate : baseRate;
 			return {
 				date: slip.createdAt,
 				description: slip.notes || 'Withdrawal',
 				type: 'Debit' as const,
-				status: 'Processed',
-				amount: (Number(slip.totalRevenue) || 0) / rate
+				status: slip.status,
+				amount: scaleSlip(slip, currencyForSlips)
 			};
 		});
 
 		return [...formattedCredits, ...formattedDebits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-	}, [creditTransactions, debitTransactions, baseRate]);
+	}, [creditTransactions, debitTransactions, currencyForSlips]);
 
 	// Monthly breakdown calculated directly from the transaction history (Slips)
 	// This ensures that if there are multiple payments (CSV or manual) for one month, they are summed.
@@ -140,9 +108,8 @@ const ArtistRevenuePage: React.FC = () => {
 		allTransactionsRaw.forEach(slip => {
 			if (slip.status === 'Cancelled') return;
 
-			const rate = slip.exchangeRate && slip.exchangeRate !== 1 ? slip.exchangeRate : baseRate;
-			const amount = (Number(slip.totalRevenue) || 0) / rate;
-			const isCredit = slip.status !== 'Pending';
+			const amount = scaleSlip(slip, currencyForSlips);
+			const credited = isCredit(slip);
 
 			// Use the activity periods from the slip
 			const periods = slip.activityPeriods && slip.activityPeriods.length > 0 ? slip.activityPeriods : ['Adjustment']; // Fallback for manual slips with no period
@@ -151,7 +118,7 @@ const ArtistRevenuePage: React.FC = () => {
 				if (!totals[period]) {
 					totals[period] = { period, streams: 0, revenue: 0 };
 				}
-				totals[period].revenue += isCredit ? amount : -amount;
+				totals[period].revenue += credited ? amount : -amount;
 			});
 		});
 
@@ -175,7 +142,7 @@ const ArtistRevenuePage: React.FC = () => {
 				if (yearDiff !== 0) return yearDiff;
 				return months.indexOf(bMonth) - months.indexOf(aMonth);
 			});
-	}, [dashboardData, allTransactionsRaw, baseRate]);
+	}, [dashboardData, allTransactionsRaw, currencyForSlips]);
 
 	const monthlyColumns = useMemo<ColumnDef<MonthlyBreakdownRow>[]>(
 		() => [
