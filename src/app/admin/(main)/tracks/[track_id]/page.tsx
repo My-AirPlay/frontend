@@ -156,6 +156,12 @@ const TrackDetailPage = () => {
 	const [activeTab, setActiveTab] = useState('overview');
 	const [salesContracts, setSalesContracts] = useState<SharedRevenueItem[]>([]);
 	const [costsContracts, setCostsContracts] = useState<SharedRevenueItem[]>([]);
+
+	// The server rejects anything that does not total 100%, because the royalty
+	// distribution credits each collaborator their own slice and nothing
+	// reconciles a remainder. An empty list is how an unmatched track arrives.
+	const salesTotalPercentage = salesContracts.reduce((sum, c) => sum + (Number(c.percentage) || 0), 0);
+	const splitsAreValid = salesContracts.length === 0 || Math.abs(salesTotalPercentage - 100) <= 0.01;
 	const queryClient = useQueryClient();
 	const [linkModalOpen, setLinkModalOpen] = useState(false);
 	const [catalogueActionLoading, setCatalogueActionLoading] = useState(false);
@@ -242,6 +248,10 @@ const TrackDetailPage = () => {
 
 	const handleSave = () => {
 		if (!track) return;
+		if (!splitsAreValid) {
+			toast.error(`Revenue splits must total 100%, but they total ${salesTotalPercentage}%.`);
+			return;
+		}
 		const payload = {
 			artist: track.artist,
 			trackTitle: track.trackTitle,
@@ -342,7 +352,7 @@ const TrackDetailPage = () => {
 						<Copy size={16} />
 						Copy
 					</Button>
-					<Button onClick={handleSave} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700" disabled={updateMutation.isPending}>
+					<Button onClick={handleSave} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700" disabled={updateMutation.isPending || !splitsAreValid} title={splitsAreValid ? undefined : `Revenue splits total ${salesTotalPercentage}%, not 100%`}>
 						{updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
 						Save
 					</Button>
@@ -486,6 +496,13 @@ const TrackDetailPage = () => {
 									<Plus size={16} className="mr-2" />
 									Add Contract
 								</Button>
+								{salesContracts.length > 0 && (
+									<div className="flex items-center justify-between border-t border-border pt-3">
+										<span className="text-sm text-muted-foreground">Total</span>
+										<span className={`text-lg font-bold ${splitsAreValid ? 'text-green-500' : 'text-red-500'}`}>{salesTotalPercentage}%</span>
+									</div>
+								)}
+								{!splitsAreValid && <p className="text-xs text-red-500">Revenue splits must total exactly 100% before this track can be saved.</p>}
 							</div>
 						</div>
 						<div className="space-y-4">
