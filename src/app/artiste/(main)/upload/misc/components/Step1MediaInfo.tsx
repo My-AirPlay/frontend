@@ -186,7 +186,9 @@ export default function Step1MusicInfo() {
 							name="publisher"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel info="Enter the publisher's full legal name (the registered legal entity or person), not an abbreviation or stage name.">Publisher</FormLabel>
+									<FormLabel info="Enter the publisher's full legal name (the registered legal entity or person), not an abbreviation or stage name.">
+										Publisher <span className="text-primary">*</span>
+									</FormLabel>
 									<FormControl>
 										<Input placeholder="Enter publisher" hasError={!!errors.publisher} errormessage={errors.publisher?.message} {...field} />
 									</FormControl>
@@ -200,7 +202,7 @@ export default function Step1MusicInfo() {
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel className="flex items-center gap-1">
-										Writer
+										Writer <span className="text-primary">*</span>
 										<TooltipProvider>
 											<Tooltip>
 												<TooltipTrigger asChild>
