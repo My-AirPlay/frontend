@@ -98,7 +98,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 				writer: matchesAlbum(track.writer, albumInfo.writer),
 				producer: matchesAlbum(track.producer, albumInfo.producer),
 				copyright: matchesAlbum(track.copyright, albumInfo.copyright),
-				streamingPlatforms: JSON.stringify(track.streamingPlatforms) === JSON.stringify(albumInfo.streamingPlatforms)
+				streamingPlatforms: !!albumInfo.streamingPlatforms?.length && JSON.stringify(track.streamingPlatforms) === JSON.stringify(albumInfo.streamingPlatforms)
 			});
 		}
 	}, [track, form, albumInfo]);
@@ -282,7 +282,7 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 											</div>
 											<div className="">
 												<FormControl>
-													<SelectMultipleCombo name="streamingPlatforms" containerClass="max-w-full" onChange={field.onChange} options={streamingPlatformOptions} values={field.value} labelKey="label" valueKey="value" placeholder="Select multiple streaming platforms" isLoadingOptions={isLoadingOptions} disabled={sameAsAlbum.streamingPlatforms} />
+													<SelectMultipleCombo withSelectAll name="streamingPlatforms" containerClass="max-w-full" onChange={field.onChange} options={streamingPlatformOptions} values={field.value ?? []} labelKey="label" valueKey="value" placeholder="Select multiple streaming platforms" isLoadingOptions={isLoadingOptions} disabled={sameAsAlbum.streamingPlatforms} />
 												</FormControl>
 												<FormMessage />
 											</div>

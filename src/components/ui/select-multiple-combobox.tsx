@@ -36,6 +36,8 @@ interface SelectProps<T> {
 	placeHolderClass?: string;
 	customDisplay?: React.ReactNode;
 	customFooterActions?: React.ReactNode;
+	/** Opt-in "Select all / Clear all" row. Off by default so existing usages are unchanged. */
+	withSelectAll?: boolean;
 	contentStyle?: React.CSSProperties;
 	checkType?: 'stroke' | 'fill';
 	disabled?: boolean;
@@ -43,7 +45,7 @@ interface SelectProps<T> {
 	size?: VariantProps<typeof inputVariants>['inputSize'];
 }
 
-const SelectMultipleCombo = <T extends object>({ values, onChange, options, hasError, errormessage, label, name, placeholder, className, containerClass, itemClass, placeHolderClass, isLoadingOptions, valueKey, labelKey, triggerColor, showSelectedValues = true, variant, customDisplay, customFooterActions, contentStyle, checkType = 'stroke', disabled, size }: SelectProps<T> & VariantProps<typeof inputVariants>) => {
+const SelectMultipleCombo = <T extends object>({ values, onChange, options, hasError, errormessage, label, name, placeholder, className, containerClass, itemClass, placeHolderClass, isLoadingOptions, valueKey, labelKey, triggerColor, showSelectedValues = true, variant, customDisplay, customFooterActions, withSelectAll = false, contentStyle, checkType = 'stroke', disabled, size }: SelectProps<T> & VariantProps<typeof inputVariants>) => {
 	const [open, setOpen] = React.useState(false);
 	const [optionsToDisplay, setOptionsToDisplay] = React.useState<T[] | undefined>(options);
 	const [searchText, setSearchText] = React.useState<string>('');
@@ -77,6 +79,19 @@ const SelectMultipleCombo = <T extends object>({ values, onChange, options, hasE
 		}
 	};
 
+	// Select-all acts on everything the search box is currently showing, so
+	// filtering down and selecting all of that works the way it looks like it should.
+	const selectableValues = (optionsToDisplay ?? []).map(option => String(option[valueKey]));
+	const allSelected = selectableValues.length > 0 && selectableValues.every(value => values.includes(value));
+
+	const handleSelectAll = () => {
+		if (allSelected) {
+			onChange(values.filter(value => !selectableValues.includes(value)));
+		} else {
+			onChange([...new Set([...values, ...selectableValues])]);
+		}
+	};
+
 	const triggerRef = React.useRef<HTMLButtonElement | null>(null);
 	const [width, setWidth] = React.useState<string>('50%');
 	React.useEffect(() => {
@@ -107,6 +122,16 @@ const SelectMultipleCombo = <T extends object>({ values, onChange, options, hasE
 							<SearchIcon className="absolute top-1/2 left-2 -translate-y-1/2 text-[#032282] h-4 w-4" />
 							<input className="focus:!ring-0 !border-none !ring-0 bg-transparent pl-6 p-3 !outline-none text-sm placeholder:text-[#86898ec7] border-b border-[#E6E6E6] w-full rounded-none" placeholder={placeholder || 'Search'} type="text" onChange={e => setSearchText(e.target.value)} />
 						</div>
+						{withSelectAll && !isLoadingOptions && selectableValues.length > 0 && (
+							<div className="flex items-center justify-between border-b border-[#E6E6E6] px-3 py-2">
+								<span className="text-xs text-[#86898e]">
+									{values.length} of {options?.length ?? 0} selected
+								</span>
+								<button type="button" className="text-xs font-medium text-primary hover:underline" onClick={handleSelectAll}>
+									{allSelected ? 'Clear all' : 'Select all'}
+								</button>
+							</div>
+						)}
 						<CommandGroup className="flex flex-col gap-3 px-3 max-w-full" id="combobox-options">
 							{isLoadingOptions && (
 								<CommandItem className="flex items-center justify-center gap-2 text-main-solid py-2 font-medium" value={'loading'} disabled>

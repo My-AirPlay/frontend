@@ -98,9 +98,15 @@ export const uploadAlbum = async (payload: UploadAlbumPayload) => {
 		// 2. Upload Track Files Concurrently
 		const uploadedMediaUrls = await Promise.all((payload.mediaFiles || []).map(file => uploadToS3(file)));
 
-		// 3. Map URLs back to the media track metadata
+		// 3. Map URLs back to the media track metadata. Streaming platforms are
+		// picked once for the album in step 4, after step 2 has already created
+		// the tracks, so a track carrying none inherits the album's selection.
+		// A track must not reach the server with an empty list: `streamingPlatforms`
+		// is a required array on the Media schema, and the whole album fails.
+		const albumPlatforms = Array.isArray(payload.streamingPlatforms) ? payload.streamingPlatforms : [];
 		const media = (payload.media || []).map((track, i) => ({
 			...track,
+			streamingPlatforms: track.streamingPlatforms?.length ? track.streamingPlatforms : albumPlatforms,
 			mediaUrl: uploadedMediaUrls[i],
 			mediaCoverArtUrl: mediaDirCoverArtUrl
 		}));

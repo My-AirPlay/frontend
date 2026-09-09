@@ -73,7 +73,11 @@ export const trackInfoSchema = z.object({
 	releaseVersion: z.string().optional(),
 	copyright: z.string().min(1, { message: 'Copyright information is required' }),
 	fileType: z.string(),
-	streamingPlatforms: z.array(z.string()).min(1, { message: 'At least one platform must be selected' })
+	// Platforms are one album-wide decision, made in step 4 — after the tracks
+	// are added in step 2. Requiring them per track here blocked the flow
+	// before the picker had ever been shown. uploadAlbum gives any track
+	// without its own selection the album's.
+	streamingPlatforms: z.array(z.string()).optional()
 });
 
 export const fileUploadSchema = z.object({
