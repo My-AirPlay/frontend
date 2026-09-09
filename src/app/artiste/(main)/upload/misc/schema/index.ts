@@ -37,7 +37,10 @@ export const albumInfoSchema = z.object({
 	secondaryGenres: z.array(z.string()).optional(),
 	releaseDate: z.string().min(1, { message: 'Release date is required' }),
 	description: z.string().optional(),
-	recordLabel: z.string().optional(),
+	// Required by the API (@IsNotEmpty on CreateAlbumDto, `required: true` on
+	// MediaDirectory) and starred in the form, but optional here: a blank label
+	// passed step 1 and failed on the server at the end of the whole upload.
+	recordLabel: z.string().min(1, { message: 'Record Label is required' }),
 	publisher: z.string().min(1, { message: 'Publisher is required' }),
 	// Album-level credits are defaults that pre-fill each track via the
 	// "same as album" checkboxes in step 2. A record can have a different
