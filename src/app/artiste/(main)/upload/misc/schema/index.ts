@@ -36,15 +36,19 @@ export const albumInfoSchema = z.object({
 	mainGenre: z.string().min(1, { message: 'Genre is required' }),
 	secondaryGenres: z.array(z.string()).optional(),
 	releaseDate: z.string().min(1, { message: 'Release date is required' }),
-	description: z.string().min(1, { message: 'Description is required' }),
+	description: z.string().optional(),
 	recordLabel: z.string().optional(),
 	publisher: z.string().min(1, { message: 'Publisher is required' }),
-	writer: z.string().min(1, { message: 'Writer (full legal name) is required' }),
-	producer: z.string().min(1, { message: 'Producer is required' }),
+	// Album-level credits are defaults that pre-fill each track via the
+	// "same as album" checkboxes in step 2. A record can have a different
+	// writer and producer on every track, so the required version of these
+	// lives on the track, not here.
+	writer: z.string().optional(),
+	producer: z.string().optional(),
 	instruments: z.array(z.string()).optional(),
 	explicitContent: z.string().optional(),
 	universalProductCode: z.string().optional(),
-	releaseVersion: z.string().min(1, { message: 'Release version is required' }),
+	releaseVersion: z.string().optional(),
 	copyright: z.string().min(1, { message: 'Copyright information is required' })
 	// streamingPlatforms: z.array(z.string()).min(1, { message: "At least one platform must be selected" })
 });
@@ -66,7 +70,7 @@ export const trackInfoSchema = z.object({
 	lyrics: z.string().optional(),
 	explicitContent: z.string().optional(),
 	universalProductCode: z.string().optional(),
-	releaseVersion: z.string().min(1, { message: 'Release version is required' }),
+	releaseVersion: z.string().optional(),
 	copyright: z.string().min(1, { message: 'Copyright information is required' }),
 	fileType: z.string(),
 	streamingPlatforms: z.array(z.string()).min(1, { message: 'At least one platform must be selected' })

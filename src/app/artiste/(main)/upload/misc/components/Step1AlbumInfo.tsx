@@ -25,15 +25,15 @@ const mediaUpdateSchema = z.object({
 	featuredArtists: z.string().optional(),
 	releaseDate: z.string().min(1, 'Release date is required'),
 	mainGenre: z.string().min(1, 'Genre is required'),
-	description: z.string().min(1, 'Description is required'),
-	recordLabel: z.string().min(1, 'Description is required'),
+	description: z.string().optional(),
+	recordLabel: z.string().min(1, 'Record label is required'),
 	publisher: z.string().min(1, 'Publisher is required'),
-	writer: z.string().min(1, 'Writer (full legal name) is required'),
-	producer: z.string().min(1, 'Producer is required'),
+	writer: z.string().optional(),
+	producer: z.string().optional(),
 	copyright: z.string().min(1, 'Copyright is required'),
 	explicitContent: z.string().optional(),
 	universalProductCode: z.string().min(1, 'UPC is required'),
-	releaseVersion: z.string().min(1, 'Release version is required'),
+	releaseVersion: z.string().optional(),
 	secondaryGenres: z.array(z.string()).optional()
 });
 
@@ -204,9 +204,7 @@ export default function Step1MusicInfo() {
 							name="description"
 							render={({ field }) => (
 								<FormItem className="col-span-full">
-									<FormLabel>
-										Description <span className="text-primary">*</span>
-									</FormLabel>
+									<FormLabel>Description</FormLabel>
 									<FormControl>
 										<Textarea placeholder="Enter track description" className={errors.description ? 'border-red-500' : ''} {...field} />
 									</FormControl>
@@ -251,7 +249,7 @@ export default function Step1MusicInfo() {
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel className="flex items-center gap-1">
-										Writer <span className="text-primary">*</span>
+										Writer
 										<TooltipProvider>
 											<Tooltip>
 												<TooltipTrigger asChild>
@@ -266,6 +264,7 @@ export default function Step1MusicInfo() {
 									<FormControl>
 										<Input placeholder="Writer's full legal name" hasError={!!errors.writer} errormessage={errors.writer?.message} {...field} />
 									</FormControl>
+									<p className="text-sm text-muted-foreground">Pre-fills every track. You can set a different writer per track in the next step.</p>
 								</FormItem>
 							)}
 						/>
@@ -275,12 +274,11 @@ export default function Step1MusicInfo() {
 							name="producer"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>
-										Producer <span className="text-primary">*</span>
-									</FormLabel>
+									<FormLabel>Producer</FormLabel>
 									<FormControl>
 										<Input placeholder="Enter producer" hasError={!!errors.producer} errormessage={errors.producer?.message} {...field} />
 									</FormControl>
+									<p className="text-sm text-muted-foreground">Pre-fills every track. You can set a different producer per track in the next step.</p>
 								</FormItem>
 							)}
 						/>
@@ -328,9 +326,7 @@ export default function Step1MusicInfo() {
 							name="releaseVersion"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>
-										Release Version <span className="text-primary">*</span>
-									</FormLabel>
+									<FormLabel>Release Version</FormLabel>
 									<FormControl>
 										<Input placeholder="Enter release version" hasError={!!errors.releaseVersion} errormessage={errors.releaseVersion?.message} {...field} />
 									</FormControl>
