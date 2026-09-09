@@ -38,13 +38,13 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 	const [sameAsAlbum, setSameAsAlbum] = useState<Record<string, boolean>>({
 		artistName: true,
 		primaryArtist2: true,
-		featuredArtists: true,
+		featuredArtists: false,
 		mainGenre: true,
 		releaseDate: true,
 		recordLabel: true,
 		publisher: true,
-		writer: true,
-		producer: true,
+		writer: false,
+		producer: false,
 		copyright: true,
 		streamingPlatforms: false
 	});
@@ -82,18 +82,22 @@ function TrackEditSheet({ isOpen, onClose, track, albumInfo, onSave, genreOption
 				form.setValue(key as any, track[key as keyof AlbumTrackInfo] as any);
 			});
 
-			// Set sameAsAlbum checkboxes
+			// Set sameAsAlbum checkboxes. Ticking one disables the track's input,
+			// so an empty album value must never tick: two blanks compare equal,
+			// which would leave a required credit disabled and unfillable.
+			const matchesAlbum = (trackValue?: string, albumValue?: string) => !!albumValue && trackValue === albumValue;
+
 			setSameAsAlbum({
-				artistName: track.artistName === albumInfo.artistName,
-				primaryArtist2: track.primaryArtist2 === albumInfo.primaryArtist2,
-				featuredArtists: track.featuredArtists === albumInfo.featuredArtists,
-				mainGenre: track.mainGenre === albumInfo.mainGenre,
-				releaseDate: track.releaseDate === albumInfo.releaseDate,
-				recordLabel: track.recordLabel === albumInfo.recordLabel,
-				publisher: track.publisher === albumInfo.publisher,
-				writer: track.writer === albumInfo.writer,
-				producer: track.producer === albumInfo.producer,
-				copyright: track.copyright === albumInfo.copyright,
+				artistName: matchesAlbum(track.artistName, albumInfo.artistName),
+				primaryArtist2: matchesAlbum(track.primaryArtist2, albumInfo.primaryArtist2),
+				featuredArtists: matchesAlbum(track.featuredArtists, albumInfo.featuredArtists),
+				mainGenre: matchesAlbum(track.mainGenre, albumInfo.mainGenre),
+				releaseDate: matchesAlbum(track.releaseDate, albumInfo.releaseDate),
+				recordLabel: matchesAlbum(track.recordLabel, albumInfo.recordLabel),
+				publisher: matchesAlbum(track.publisher, albumInfo.publisher),
+				writer: matchesAlbum(track.writer, albumInfo.writer),
+				producer: matchesAlbum(track.producer, albumInfo.producer),
+				copyright: matchesAlbum(track.copyright, albumInfo.copyright),
 				streamingPlatforms: JSON.stringify(track.streamingPlatforms) === JSON.stringify(albumInfo.streamingPlatforms)
 			});
 		}
