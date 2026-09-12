@@ -55,6 +55,7 @@ interface SocialLinks {
 	soundCloud: string | null;
 	website: string | null;
 	youtube: string | null;
+	dspProfileUrl: string | null;
 }
 
 interface ContractDetails {

@@ -33,7 +33,8 @@ export const onboardingSocialLinkSchema = Yup.object({
 	facebook: Yup.string().optional(),
 	soundCloud: Yup.string().optional(),
 	tiktok: Yup.string().optional(),
-	website: Yup.string().optional().url('Invalid url')
+	website: Yup.string().optional().url('Invalid url'),
+	dspProfileUrl: Yup.string().optional().url('Invalid url')
 });
 
 export const musicInfoSchema = Yup.object({

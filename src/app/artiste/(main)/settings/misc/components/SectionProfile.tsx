@@ -28,7 +28,8 @@ export default function SectionProfile() {
 		tiktok: artist?.socialLinks?.tiktok || '',
 		twitter: artist?.socialLinks?.twitter || '',
 		facebook: artist?.socialLinks?.facebook || '',
-		website: artist?.socialLinks?.website || ''
+		website: artist?.socialLinks?.website || '',
+		dspProfileUrl: artist?.socialLinks?.dspProfileUrl || ''
 	};
 
 	const form = useForm<ProfileFormValues>({
@@ -261,6 +262,19 @@ export default function SectionProfile() {
 											<FormLabel>Website</FormLabel>
 											<FormControl>
 												<Input {...field} placeholder="Your website URL" disabled={!isEditing} hasError={!!errors.website} errormessage={errors.website?.message} />
+											</FormControl>
+										</FormItem>
+									)}
+								/>
+
+								<FormField
+									control={form.control}
+									name="dspProfileUrl"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>DSP Profile URL</FormLabel>
+											<FormControl>
+												<Input {...field} placeholder="Link to your streaming profile" disabled={!isEditing} hasError={!!errors.dspProfileUrl} errormessage={errors.dspProfileUrl?.message} />
 											</FormControl>
 										</FormItem>
 									)}

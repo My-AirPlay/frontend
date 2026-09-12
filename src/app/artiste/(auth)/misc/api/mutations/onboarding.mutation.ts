@@ -129,6 +129,7 @@ interface SocialLinks {
 	linkedIn: null;
 	youtube: null;
 	soundCloud: null;
+	dspProfileUrl: string;
 }
 
 interface BankDetails {

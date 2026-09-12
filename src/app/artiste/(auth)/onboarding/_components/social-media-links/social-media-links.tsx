@@ -54,7 +54,8 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 			facebook: artist?.socialLinks?.facebook ?? '',
 			soundcloud: artist?.socialLinks?.soundCloud ?? '',
 			tiktok: artist?.socialLinks?.tiktok ?? '',
-			website: artist?.socialLinks?.website ?? ''
+			website: artist?.socialLinks?.website ?? '',
+			dspProfileUrl: artist?.socialLinks?.dspProfileUrl ?? ''
 		},
 		onSubmit: value => {
 			mutateAsync({
@@ -99,6 +100,13 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 				label: 'Website',
 				props: {
 					placeholder: 'Social Link'
+				}
+			},
+			{
+				id: 'dspProfileUrl',
+				label: 'DSP Profile URL',
+				props: {
+					placeholder: 'Link to your streaming profile'
 				}
 			}
 		];
