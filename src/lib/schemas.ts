@@ -34,7 +34,14 @@ export const onboardingSocialLinkSchema = Yup.object({
 	soundCloud: Yup.string().optional(),
 	tiktok: Yup.string().optional(),
 	website: Yup.string().optional().url('Invalid url'),
-	dspProfileUrl: Yup.string().optional().url('Invalid url')
+	dspProfiles: Yup.array()
+		.of(
+			Yup.object({
+				dsp: Yup.string().required('Choose a platform'),
+				url: Yup.string().required('Add the profile link').url('Invalid url')
+			})
+		)
+		.optional()
 });
 
 export const musicInfoSchema = Yup.object({

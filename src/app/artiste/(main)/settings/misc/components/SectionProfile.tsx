@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, Card, CardContent, Textarea, Input, Button } from '@/components/ui';
 
 import { type ProfileFormValues, profileSchema } from '../schemas';
+import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
+import DspProfilesField from '@/components/ui/dsp-profiles-field';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { SmallSpinner, Spinner } from '@/components/icons';
 import { useUpdateProfile } from '../api';
@@ -15,6 +17,7 @@ import { useUpdateProfile } from '../api';
 export default function SectionProfile() {
 	const [isEditing, setIsEditing] = useState(false);
 	const { artist, isLoading, checkAuthStatus } = useAuthContext();
+	const { formattedData, isLoading: isLoadingOptions } = useStaticAppInfo();
 
 	const defaultValues: ProfileFormValues = {
 		firstName: artist?.firstName || '',
@@ -29,7 +32,7 @@ export default function SectionProfile() {
 		twitter: artist?.socialLinks?.twitter || '',
 		facebook: artist?.socialLinks?.facebook || '',
 		website: artist?.socialLinks?.website || '',
-		dspProfileUrl: artist?.socialLinks?.dspProfileUrl || ''
+		dspProfiles: artist?.dspProfiles || []
 	};
 
 	const form = useForm<ProfileFormValues>({
@@ -269,12 +272,12 @@ export default function SectionProfile() {
 
 								<FormField
 									control={form.control}
-									name="dspProfileUrl"
+									name="dspProfiles"
 									render={({ field }) => (
-										<FormItem>
-											<FormLabel>DSP Profile URL</FormLabel>
+										<FormItem className="sm:col-span-2">
+											<FormLabel>Streaming profiles</FormLabel>
 											<FormControl>
-												<Input {...field} placeholder="Link to your streaming profile" disabled={!isEditing} hasError={!!errors.dspProfileUrl} errormessage={errors.dspProfileUrl?.message} />
+												<DspProfilesField value={field.value || []} onChange={field.onChange} options={formattedData?.StreamingPlatform || []} isLoadingOptions={isLoadingOptions} disabled={!isEditing} />
 											</FormControl>
 										</FormItem>
 									)}
