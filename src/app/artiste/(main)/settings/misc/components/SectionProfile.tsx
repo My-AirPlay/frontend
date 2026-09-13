@@ -23,8 +23,8 @@ export default function SectionProfile() {
 		phoneNumber: artist?.phoneNumber || '',
 		email: artist?.email || '',
 		bio: artist?.bio || '',
-		Instagram: artist?.socialLinks?.instagram || '',
-		soundcloud: artist?.socialLinks?.soundCloud || '',
+		instagram: artist?.socialLinks?.instagram || '',
+		soundCloud: artist?.socialLinks?.soundCloud || '',
 		tiktok: artist?.socialLinks?.tiktok || '',
 		twitter: artist?.socialLinks?.twitter || '',
 		facebook: artist?.socialLinks?.facebook || '',
@@ -190,12 +190,12 @@ export default function SectionProfile() {
 							<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 								<FormField
 									control={form.control}
-									name="Instagram"
+									name="instagram"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Instagram</FormLabel>
 											<FormControl>
-												<Input {...field} placeholder="Instagram username" disabled={!isEditing} hasError={!!errors.Instagram} errormessage={errors.Instagram?.message} />
+												<Input {...field} placeholder="Instagram username" disabled={!isEditing} hasError={!!errors.instagram} errormessage={errors.instagram?.message} />
 											</FormControl>
 										</FormItem>
 									)}
@@ -203,12 +203,12 @@ export default function SectionProfile() {
 
 								<FormField
 									control={form.control}
-									name="soundcloud"
+									name="soundCloud"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Soundcloud</FormLabel>
 											<FormControl>
-												<Input {...field} placeholder="Soundcloud profile URL" disabled={!isEditing} hasError={!!errors.soundcloud} errormessage={errors.soundcloud?.message} />
+												<Input {...field} placeholder="Soundcloud profile URL" disabled={!isEditing} hasError={!!errors.soundCloud} errormessage={errors.soundCloud?.message} />
 											</FormControl>
 										</FormItem>
 									)}
