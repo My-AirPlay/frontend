@@ -52,7 +52,7 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 			instagram: artist?.socialLinks?.instagram ?? '',
 			twitter: artist?.socialLinks?.twitter ?? '',
 			facebook: artist?.socialLinks?.facebook ?? '',
-			soundcloud: artist?.socialLinks?.soundCloud ?? '',
+			soundCloud: artist?.socialLinks?.soundCloud ?? '',
 			tiktok: artist?.socialLinks?.tiktok ?? '',
 			website: artist?.socialLinks?.website ?? ''
 		},
