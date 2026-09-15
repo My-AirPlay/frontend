@@ -11,6 +11,8 @@ import { postSocialLinks } from '@/app/artiste/(auth)/misc/api/mutations/onboard
 import { toast } from 'sonner';
 import { handleClientError } from '@/lib/utils';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
+import DspProfilesField from '@/components/ui/dsp-profiles-field';
 
 interface OnboardingSocialMedialProps {
 	setCurrentStep: (a: OnboardingSteps) => void;
@@ -18,6 +20,7 @@ interface OnboardingSocialMedialProps {
 }
 const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedialProps) => {
 	const { checkAuthStatus, artist } = useAuthContext();
+	const { formattedData, isLoading: isLoadingOptions } = useStaticAppInfo();
 
 	const { mutateAsync, status } = useMutation({
 		mutationFn: postSocialLinks,
@@ -54,7 +57,8 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 			facebook: artist?.socialLinks?.facebook ?? '',
 			soundCloud: artist?.socialLinks?.soundCloud ?? '',
 			tiktok: artist?.socialLinks?.tiktok ?? '',
-			website: artist?.socialLinks?.website ?? ''
+			website: artist?.socialLinks?.website ?? '',
+			dspProfiles: artist?.dspProfiles ?? []
 		},
 		onSubmit: value => {
 			mutateAsync({
@@ -106,6 +110,12 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 	return (
 		<div>
 			<FormStep formFields={fields} formik={formik} title="CONNECT SOCIAL MEDIA" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
+				<div className="flex flex-col gap-2 w-full mb-8">
+					<h3 className="text-sm font-medium">Streaming profiles</h3>
+					<p className="text-sm text-muted-foreground">If you are already on a streaming platform, add the link to your profile there so your releases go to it instead of a new one.</p>
+					<DspProfilesField value={formik.values.dspProfiles} onChange={next => formik.setFieldValue('dspProfiles', next)} options={formattedData?.StreamingPlatform || []} isLoadingOptions={isLoadingOptions} />
+				</div>
+
 				<div className="flex justify-between md:items-center gap-12 w-full md:flex-row flex-col">
 					<Button size={'lg'} type="submit" className="max-w-[275px] h-[75px] " disabled={!formik.isValid || status === 'pending'}>
 						Submit

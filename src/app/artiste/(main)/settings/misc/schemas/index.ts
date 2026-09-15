@@ -13,7 +13,15 @@ export const profileSchema = z.object({
 	tiktok: z.string().optional(),
 	twitter: z.string().optional(),
 	facebook: z.string().optional(),
-	website: z.string().url().optional().or(z.literal(''))
+	website: z.string().url().optional().or(z.literal('')),
+	dspProfiles: z
+		.array(
+			z.object({
+				dsp: z.string().min(1, 'Choose a platform'),
+				url: z.string().url('Enter a valid link')
+			})
+		)
+		.optional()
 });
 
 export type ProfileFormValues = z.infer<typeof profileSchema>;

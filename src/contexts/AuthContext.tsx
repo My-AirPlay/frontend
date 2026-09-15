@@ -24,6 +24,7 @@ export interface IArtistUser {
 	profilePicture: string;
 	bio: string;
 	socialLinks: SocialLinks;
+	dspProfiles?: DspProfile[];
 	totalRoyaltyUSD: number;
 	walletBalance: number;
 	totalStreams: number;
@@ -55,6 +56,11 @@ interface SocialLinks {
 	soundCloud: string | null;
 	website: string | null;
 	youtube: string | null;
+}
+
+export interface DspProfile {
+	dsp: string;
+	url: string;
 }
 
 interface ContractDetails {
