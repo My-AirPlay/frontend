@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import APIAxios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
+import { TReleaseStatusFields, TReleaseTakedown } from '../utils/releaseStatus';
 
 type FetchOptions = {
 	limit?: number;
@@ -39,6 +40,11 @@ export interface TArtistMedia {
 	writer?: string;
 	reviewStatus?: 'pending' | 'approved' | 'rejected';
 	rejectionReasons?: string[];
+	takedown?: TReleaseTakedown;
+	fugaDelivery?: { status?: string; firstDeliveredAt?: string };
+	// Set when the track belongs to an album, which it is reviewed, delivered
+	// and taken down with.
+	parentAlbum?: (TReleaseStatusFields & { _id: string; title?: string }) | null;
 	instruments: string[];
 	lyrics: string;
 	explicitContent: string;

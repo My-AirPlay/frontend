@@ -96,6 +96,7 @@ const DeliveriesTab = () => {
 			cell: (info: any) => {
 				const status = info.getValue() as string;
 				const variants: Record<string, any> = {
+					awaiting_approval: { variant: 'outline', label: 'Awaiting approval' },
 					gated: { variant: 'secondary', label: 'Gated' },
 					queued: { variant: 'outline', label: 'Queued' },
 					delivering: { variant: 'outline', label: 'Delivering', className: 'animate-pulse' },

@@ -1,6 +1,7 @@
 import APIAxios from '@/utils/axios';
 import { useQuery } from '@tanstack/react-query';
 import { TArtistMedia } from './getArtisteMedias';
+import { TReleaseTakedown } from '../utils/releaseStatus';
 
 type FetchOptions = {
 	limit?: number;
@@ -29,6 +30,8 @@ export interface TArtisteAlbum {
 	writer?: string;
 	reviewStatus?: 'pending' | 'approved' | 'rejected';
 	rejectionReasons?: string[];
+	takedown?: TReleaseTakedown;
+	fugaDelivery?: { status?: string; firstDeliveredAt?: string };
 	instruments: string[];
 	explicitContent: string;
 	universalProductCode: string;

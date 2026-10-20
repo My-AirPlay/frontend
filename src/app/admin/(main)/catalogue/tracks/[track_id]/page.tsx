@@ -15,6 +15,8 @@ import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import APIAxios from '@/utils/axios';
 import { useDeleteMedia } from '../../api/deleteMedia';
+import ReleaseReviewPanel from '../../misc/components/ReleaseReviewPanel';
+import Link from 'next/link';
 
 // Helper function for delay - REMOVED
 // const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -116,6 +118,21 @@ const TrackDetails: React.FC = () => {
 					{/* --- End Updated Download Button --- */}
 				</div>
 			</div>
+
+			{/* A single is reviewed here; an album track is reviewed with its album. */}
+			{!contractLoading &&
+				contract &&
+				(contract.parentAlbum ? (
+					<div className="bg-secondary rounded-lg p-4 text-sm">
+						This track is reviewed with its album,{' '}
+						<Link href={`/admin/catalogue/releases/${contract.parentAlbum._id}`} className="text-primary hover:underline">
+							{contract.parentAlbum.title || 'view album'}
+						</Link>
+						.
+					</div>
+				) : (
+					<ReleaseReviewPanel releaseId={track_id} reviewStatus={contract.reviewStatus} rejectionReasons={contract.rejectionReasons} />
+				))}
 
 			<Tabs defaultValue="overview">
 				<TabsList className="bg-transparent border-b border-border w-full justify-start mb-4">

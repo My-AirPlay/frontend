@@ -10,7 +10,7 @@ export const updateSingleTrack = async (payload: Partial<TArtisteAlbum>) => {
 	// Server-managed / non-updatable fields. `fugaDelivery` is an embedded
 	// object and `fileIds` is an array of track objects — neither should be
 	// posted back (they'd stringify to "[object Object]" and break the update).
-	const SKIP = ['_id', 'id', '__v', 'createdAt', 'updatedAt', 'artistId', 'fugaDelivery', 'reviewStatus', 'rejectionReasons', 'reviewedAt', 'reviewedBy', 'isStorageCleaned', 'fileIds'];
+	const SKIP = ['_id', 'id', '__v', 'createdAt', 'updatedAt', 'artistId', 'fugaDelivery', 'reviewStatus', 'rejectionReasons', 'reviewedAt', 'reviewedBy', 'isStorageCleaned', 'fileIds', 'takedown', 'parentAlbum'];
 
 	Object.entries(payload).forEach(([key, value]) => {
 		if (SKIP.includes(key) || value === undefined || value === null) return;
