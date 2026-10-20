@@ -15,6 +15,7 @@ import { ArrowDown, ArrowUp } from 'lucide-react';
 import { toast } from 'sonner';
 import APIAxios from '@/utils/axios';
 import moment from 'moment';
+import TakedownsList from './misc/components/TakedownsList';
 
 // Helper function for delay - REMOVED (unused)
 // const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -22,7 +23,7 @@ import moment from 'moment';
 // Define interfaces for row data (adjust based on actual API response)
 type SortableColumn = { id: string; label: string };
 
-type TabKey = 'releases' | 'tracks' | 'videos';
+type TabKey = 'releases' | 'tracks' | 'videos' | 'takedowns';
 const Catalogue: React.FC = () => {
 	const router = useRouter();
 	const pathname = usePathname();
@@ -30,7 +31,7 @@ const Catalogue: React.FC = () => {
 	const rawTab = useSearchParams().get('tab');
 	const [downloadProgress, setDownloadProgress] = useState<number>(0);
 
-	const initialTab: TabKey = rawTab === 'releases' || rawTab === 'tracks' || rawTab === 'videos' ? rawTab : 'tracks';
+	const initialTab: TabKey = rawTab === 'releases' || rawTab === 'tracks' || rawTab === 'videos' || rawTab === 'takedowns' ? rawTab : 'tracks';
 
 	const [tab, setTab] = useState<TabKey>(initialTab);
 
@@ -172,7 +173,8 @@ const Catalogue: React.FC = () => {
 	const sortableColumns: Record<TabKey, SortableColumn[]> = {
 		releases: releaseSortableColumns,
 		tracks: trackSortableColumns,
-		videos: videosSortableColumns
+		videos: videosSortableColumns,
+		takedowns: []
 	};
 
 	const currentSortableColumns = sortableColumns[tab];
@@ -399,6 +401,9 @@ const Catalogue: React.FC = () => {
 					<TabsTrigger value="videos" className="data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4">
 						Videos
 					</TabsTrigger>
+					<TabsTrigger value="takedowns" className="data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4">
+						Takedowns
+					</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="releases" className="mt-0">
@@ -428,6 +433,10 @@ const Catalogue: React.FC = () => {
 					) : (
 						<DataTable data={tracks?.data} columns={trackColumns} pagination={true} showCheckbox={true} defaultRowsPerPage={Number(limit)} pageCount={tracks?.totalPages} onRowSelectionChange={handleSelectionChange} />
 					)}
+				</TabsContent>
+
+				<TabsContent value="takedowns" className="mt-0">
+					<TakedownsList />
 				</TabsContent>
 			</Tabs>
 		</div>

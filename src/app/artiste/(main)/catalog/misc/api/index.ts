@@ -9,3 +9,4 @@ export { useAddSongToAlbum } from './postAddSongToAlbum';
 export { useGetAlbums } from './getArtisteAlbums';
 export { useUpdateAlbum } from './putUpdateArtisteAlbum';
 export { useDeleteAlbum } from './deleteArtisteAlbum';
+export { useRequestTakedown } from './postRequestTakedown';

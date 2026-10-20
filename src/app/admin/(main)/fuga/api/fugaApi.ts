@@ -9,7 +9,7 @@ export interface FugaDelivery {
 	upc?: string;
 	title: string;
 	artistName: string;
-	status: 'gated' | 'queued' | 'delivering' | 'delivered' | 'failed' | 'ineligible' | 'cancelled';
+	status: 'awaiting_approval' | 'gated' | 'queued' | 'delivering' | 'delivered' | 'failed' | 'ineligible' | 'cancelled';
 	attempts: number;
 	lastError?: string;
 	enqueuedAt: string;

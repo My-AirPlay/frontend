@@ -19,7 +19,7 @@ export const updateSingleTrack = async (payload: { data: Partial<TArtistMedia>; 
 	// Server-managed fields must never be posted back. In particular
 	// `fugaDelivery` is an embedded object that would be stringified to
 	// "[object Object]" and break the update with a Mongoose CastError.
-	const SKIP = ['_id', 'id', '__v', 'createdAt', 'updatedAt', 'artistId', 'fugaDelivery', 'reviewStatus', 'rejectionReasons', 'reviewedAt', 'reviewedBy', 'isStorageCleaned', 'fileIds'];
+	const SKIP = ['_id', 'id', '__v', 'createdAt', 'updatedAt', 'artistId', 'fugaDelivery', 'reviewStatus', 'rejectionReasons', 'reviewedAt', 'reviewedBy', 'isStorageCleaned', 'fileIds', 'takedown', 'parentAlbum'];
 
 	Object.entries(payload.data).forEach(([key, value]) => {
 		if (SKIP.includes(key) || value === undefined || value === null) return;

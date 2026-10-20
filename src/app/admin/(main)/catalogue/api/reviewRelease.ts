@@ -22,6 +22,7 @@ export const useReviewRelease = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['albumDetail'] });
 			queryClient.invalidateQueries({ queryKey: ['getAllAlbums'] });
+			queryClient.invalidateQueries({ queryKey: ['media'] });
 		}
 	});
 };

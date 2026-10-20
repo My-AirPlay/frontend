@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback } from 'react';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { Play, Pause, Ellipsis, Eye, Trash, Edit2, ArrowRight, ImagePlus, Info } from 'lucide-react';
+import { Play, Pause, Ellipsis, Eye, Trash, Edit2, ArrowRight, ImagePlus, Info, Ban } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { validateArtworkFile } from '@/lib/artwork';
 import { format } from 'date-fns';
@@ -23,6 +23,9 @@ import { SmallSpinner } from '@/components/icons';
 import { useAddSongToAlbum, useDeleteMedia, useUpdateMedia } from '../api';
 import { TArtistMedia } from '../api/getArtisteMedias';
 import { TArtisteAlbum } from '../api/getArtisteAlbums';
+import { canRequestTakedown } from '../utils/releaseStatus';
+import ReleaseStatusBadge from './ReleaseStatusBadge';
+import RequestTakedownDialog from './RequestTakedownDialog';
 
 const mediaUpdateSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
@@ -48,6 +51,12 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 	const { state: isEditSheetOpen, setTrue: openEditSheet, setState: setIsEditSheetState } = useBooleanStateControl();
 
 	const { state: isConfirmAddToAlbumDialogOpen, setTrue: openConfirmAddToAlbumDialog, setState: setIsConfirmAddToAlbumDialogState, setFalse: closeConfirmAddToAlbumDialog } = useBooleanStateControl();
+
+	const { state: isTakedownDialogOpen, setTrue: openTakedownDialog, setState: setIsTakedownDialogState } = useBooleanStateControl();
+
+	// An album track is reviewed, delivered and taken down with its album, so
+	// its status is the album's.
+	const statusSource = audio.parentAlbum ?? audio;
 
 	const [imageError, setImageError] = React.useState(false);
 	const [coverArtFile, setCoverArtFile] = useState<File | null>(null);
@@ -239,6 +248,15 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 								icon: <Edit2 />,
 								onClick: openEditSheet
 							},
+							...(!audio.parentAlbum && canRequestTakedown(audio)
+								? [
+										{
+											label: 'Request takedown',
+											icon: <Ban />,
+											onClick: openTakedownDialog
+										}
+									]
+								: []),
 							{
 								label: 'Delete',
 								icon: <Trash />,
@@ -264,11 +282,7 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 			</div>
 			<footer className="px-3">
 				<h6>{audio.title}</h6>
-				{audio.reviewStatus === 'rejected' && (
-					<button type="button" onClick={openEditSheet} className="mt-1 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-medium text-red-500 hover:bg-red-500/25">
-						Rejected — edit to resubmit
-					</button>
-				)}
+				<ReleaseStatusBadge release={statusSource} onFixRejected={audio.parentAlbum ? undefined : openEditSheet} rejectedLabel="Album rejected" />
 			</footer>
 
 			<Dialog open={isViewDetailsDialogOpen} onOpenChange={setIsViewDetailsDialogState}>
@@ -315,6 +329,13 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 									>
 										Edit &amp; Resubmit
 									</Button>
+								</div>
+							)}
+
+							{audio.takedown?.status === 'declined' && audio.takedown.adminNote && (
+								<div className="mx-4 mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
+									<p className="text-sm font-semibold text-amber-400 mb-1">Your takedown request was declined:</p>
+									<p className="text-sm text-amber-200">{audio.takedown.adminNote}</p>
 								</div>
 							)}
 
@@ -642,6 +663,7 @@ const AudioCard = ({ audio, album, selected }: { audio: TArtistMedia; album?: TA
 				</SheetContent>
 			</Sheet>
 
+			<RequestTakedownDialog releaseId={audio._id} title={audio.title} open={isTakedownDialogOpen} onOpenChange={setIsTakedownDialogState} />
 			<CustomAlertDialog variant={'default'} open={isConfirmAddToAlbumDialogOpen} onOpenChange={setIsConfirmAddToAlbumDialogState} title={'Confirm Add To album'} description={'Are you sure you want to add this song to album' + ' ' + album?.title + '?'} actionLabel={'Add to Album'} cancelLabel="Cancel" onAction={handleConfirmAddToAblum} onCancel={closeConfirmAddToAlbumDialog} showCancel={true} showAction={true} isPerformingAction={isAddingToAlbum} />
 			<CustomAlertDialog
 				variant={'warning'}

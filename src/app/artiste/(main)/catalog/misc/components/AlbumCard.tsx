@@ -1,7 +1,7 @@
 import React from 'react';
 import { toast } from 'sonner';
 import Image from 'next/image';
-import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight, Music, Info } from 'lucide-react';
+import { Play, Ellipsis, Eye, Trash, Edit2, ArrowRight, Music, Info, Ban } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { format } from 'date-fns';
 import { Musicnote } from 'iconsax-react';
@@ -21,6 +21,9 @@ import { SmallSpinner } from '@/components/icons';
 import { TArtisteAlbum } from '../api/getArtisteAlbums';
 import { useDeleteAlbum, useUpdateAlbum } from '../api';
 import AddSongToAlbumFromAlbumMenu from './AddSongToAlbumFromAlbumMenu';
+import { canRequestTakedown } from '../utils/releaseStatus';
+import ReleaseStatusBadge from './ReleaseStatusBadge';
+import RequestTakedownDialog from './RequestTakedownDialog';
 
 const mediaUpdateSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
@@ -43,6 +46,8 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 	const { state: isViewDetailsDialogOpen, setTrue: openViewDetailsDialog, setState: setIsViewDetailsDialogState } = useBooleanStateControl();
 
 	const { state: isEditSheetOpen, setTrue: openEditSheet, setState: setIsEditSheetState } = useBooleanStateControl();
+
+	const { state: isTakedownDialogOpen, setTrue: openTakedownDialog, setState: setIsTakedownDialogState } = useBooleanStateControl();
 
 	const [imageError, setImageError] = React.useState(false);
 
@@ -136,6 +141,15 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 							icon: <Edit2 />,
 							onClick: openEditSheet
 						},
+						...(canRequestTakedown(album)
+							? [
+									{
+										label: 'Request takedown',
+										icon: <Ban />,
+										onClick: openTakedownDialog
+									}
+								]
+							: []),
 						{
 							label: 'Delete',
 							icon: <Trash />,
@@ -151,11 +165,7 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 			</div>
 			<footer className="px-3">
 				<h6>{album.title}</h6>
-				{album.reviewStatus === 'rejected' && (
-					<button type="button" onClick={openEditSheet} className="mt-1 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] font-medium text-red-500 hover:bg-red-500/25">
-						Rejected — edit to resubmit
-					</button>
-				)}
+				<ReleaseStatusBadge release={album} onFixRejected={openEditSheet} />
 			</footer>
 
 			<Dialog open={isViewDetailsDialogOpen} onOpenChange={setIsViewDetailsDialogState}>
@@ -199,6 +209,13 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 									>
 										Edit &amp; Resubmit
 									</Button>
+								</div>
+							)}
+
+							{album.takedown?.status === 'declined' && album.takedown.adminNote && (
+								<div className="mx-4 mb-4 rounded-lg border border-amber-500/40 bg-amber-500/10 p-3">
+									<p className="text-sm font-semibold text-amber-400 mb-1">Your takedown request was declined:</p>
+									<p className="text-sm text-amber-200">{album.takedown.adminNote}</p>
 								</div>
 							)}
 
@@ -478,6 +495,7 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 			</Sheet>
 
 			<CustomAlertDialog variant={'warning'} open={isConfirmDeleteModalOpen} onOpenChange={setConfirmDeleteModalState} title={'Confirm Delete'} description={'Are you sure you want to delete this album track? This action cannot be undone.'} actionLabel={'Go ahead, delete'} cancelLabel="Cancel" onAction={handleDelete} onCancel={closeConfirmDeleteModal} showCancel={true} showAction={true} isPerformingAction={isDeletingAlbum} />
+			<RequestTakedownDialog releaseId={album._id} title={album.title} open={isTakedownDialogOpen} onOpenChange={setIsTakedownDialogState} />
 			<AddSongToAlbumFromAlbumMenu album={album} isAddSongToAlbumDialogOpen={isAddSongToAlbumDialogOpen} setIsAddSongToAlbumDialogState={setIsAddSongToAlbumDialogState} />
 		</article>
 	);
