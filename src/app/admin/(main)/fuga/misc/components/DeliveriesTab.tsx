@@ -8,14 +8,19 @@ import { RefreshCcw, XCircle, Download, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useGetFugaDeliveries, useFugaMutations, FugaDelivery, downloadFugaCsv } from '@/app/admin/(main)/fuga/api/fugaApi';
 import moment from 'moment';
+import { useSearchParams } from 'next/navigation';
 
 // Fields an admin can flag as the cause of a FUGA ingestion rejection. Each
 // selected field becomes a line in the artist-facing rejection reasons.
 const FLAGGABLE_FIELDS = ['Cover Art', 'Audio File', 'Title', 'Artist Name', 'Genre', 'Release Date', 'UPC', 'ISRC', 'Explicit Content', 'Songwriter / Publisher', 'Other Metadata'];
 
 const DeliveriesTab = () => {
-	const [page] = useState(1);
-	const { data, isLoading } = useGetFugaDeliveries({ page, limit: 10 });
+	// DataTable keeps page/limit in the URL, so read them from there.
+	const searchParams = useSearchParams();
+	const page = Number(searchParams.get('page')) || 1;
+	const limit = Number(searchParams.get('limit')) || 10;
+	const { data, isLoading } = useGetFugaDeliveries({ page, limit });
+	const pageCount = Math.ceil((data?.total || 0) / limit);
 	const { deliverMutation, cancelMutation, markErrorMutation } = useFugaMutations();
 
 	const [errorTarget, setErrorTarget] = useState<FugaDelivery | null>(null);
@@ -186,7 +191,7 @@ const DeliveriesTab = () => {
 
 	return (
 		<div className="space-y-4">
-			<DataTable data={data?.data || []} columns={columns} isLoading={isLoading} pagination={true} pageCount={data?.totalPages} />
+			<DataTable data={data?.data || []} columns={columns} isLoading={isLoading} pagination={true} defaultRowsPerPage={limit} pageCount={pageCount} />
 
 			<Dialog
 				open={!!errorTarget}
