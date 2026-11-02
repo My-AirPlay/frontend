@@ -45,7 +45,10 @@ const ArtistOverview: React.FC = ({}) => {
 	// Extract unique activity periods from analytics periodSummary
 	const activityPeriods = useMemo(() => {
 		if (!artistAnalytics?.periodSummary) return [];
-		return Object.keys(artistAnalytics.periodSummary).sort();
+		// Skip blank periods: Radix Select throws on an item with an empty value.
+		return Object.keys(artistAnalytics.periodSummary)
+			.filter(p => p.trim())
+			.sort();
 	}, [artistAnalytics]);
 
 	const handleExportCsv = async () => {
