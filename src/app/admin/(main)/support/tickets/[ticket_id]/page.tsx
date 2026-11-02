@@ -1,9 +1,10 @@
 'use client';
+import { Textarea } from '@/components/ui/textarea';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, MessageSquare, Send, X } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { Button, Input } from '@/components/ui';
+import { Button } from '@/components/ui';
 import Link from 'next/link';
 import { useUpdateComplaintStatus } from '../../api/patchComplaintStatus';
 import { useGetAllComplaintById, useGetSingleComplaint, useReportIssue, useClaimComplaint, useUnclaimComplaint } from '../../api/getSingleComplaint';
@@ -88,7 +89,8 @@ const TicketDetails: React.FC = () => {
 		setNewMessage('');
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	// Enter sends; Shift+Enter adds a new line.
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
 			sendMessage();
@@ -207,8 +209,9 @@ const TicketDetails: React.FC = () => {
 						</div>
 
 						{/* Message Input */}
-						<div className="flex items-center gap-4 px-4 py-2 bg-background rounded-lg">
-							{isResolved ? <p className="flex-grow text-sm text-muted-foreground py-2 px-2">This ticket is resolved. Re-open to reply.</p> : <Input value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={handleKeyDown} className="flex-grow text-sm" placeholder="Type your message..." disabled={isResolved} />}
+						<div className="flex items-end gap-4 px-4 py-2 bg-background rounded-lg">
+							{/* The field's wrapper takes the row's width (className only reaches the inner textarea). */}
+							{isResolved ? <p className="flex-grow text-sm text-muted-foreground py-2 px-2">This ticket is resolved. Re-open to reply.</p> : <Textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={handleKeyDown} containerClassName="flex-1 min-w-0" className="w-full text-sm resize-none" rows={1} minRows={1} maxRows={6} placeholder="Type your message... (Shift+Enter for a new line)" disabled={isResolved} />}
 							<Button size="icon" onClick={sendMessage} disabled={isPending || isCreatingComplaint || isResolved}>
 								<Send size={16} />
 							</Button>

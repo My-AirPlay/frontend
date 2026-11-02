@@ -1,9 +1,10 @@
 'use client';
+import { Textarea } from '@/components/ui/textarea';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useRef, useState } from 'react';
 import { MessageCircle, Send, X } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
-import { Button, Input } from '@/components/ui';
+import { Button } from '@/components/ui';
 import moment from 'moment';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -84,7 +85,8 @@ const TicketDetails: React.FC = () => {
 		setNewMessage('');
 	};
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	// Enter sends; Shift+Enter adds a new line.
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
 			sendMessage();
@@ -186,8 +188,9 @@ const TicketDetails: React.FC = () => {
 						{isResolved && <div className="text-center text-green-400 text-sm font-medium py-2 mb-2">This ticket has been resolved</div>}
 
 						{/* Message Input */}
-						<div className={`flex items-center gap-4 px-4 py-2 bg-background rounded-lg ${isResolved ? 'opacity-50 pointer-events-none' : ''}`}>
-							<Input value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={handleKeyDown} className="flex-grow p-2 rounded-md text-sm" placeholder={isResolved ? 'This ticket has been resolved' : 'Type your message...'} disabled={isResolved} />
+						<div className={`flex items-end gap-4 px-4 py-2 bg-background rounded-lg ${isResolved ? 'opacity-50 pointer-events-none' : ''}`}>
+							{/* The field's wrapper takes the row's width (className only reaches the inner textarea). */}
+							<Textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={handleKeyDown} containerClassName="flex-1 min-w-0" className="w-full p-2 rounded-md text-sm resize-none" rows={1} minRows={1} maxRows={6} placeholder={isResolved ? 'This ticket has been resolved' : 'Type your message... (Shift+Enter for a new line)'} disabled={isResolved} />
 							<Button size="icon" onClick={sendMessage} disabled={isCreatingComplaint || isResolved}>
 								<Send size={16} />
 							</Button>
