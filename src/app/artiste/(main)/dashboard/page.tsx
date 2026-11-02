@@ -4,7 +4,9 @@ import { useGetDashboardData } from './misc/api';
 import { formatCurrency } from '@/utils/currency';
 import { RevenueHistoryChart, StreamsHistoryChart } from './misc/components';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { AlertTriangle, BarChart2, ChevronsRight, Globe, Music } from 'lucide-react';
+import { AlertTriangle, BarChart2, ChevronsRight, Globe, Music, UploadCloud } from 'lucide-react';
+import { FREE_RELEASE_LIMIT, releaseAllowance } from '@/lib/release-allowance';
+import SubscribeButton from '@/components/subscribe-button';
 import { LinkButton } from '@/components/ui';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useCurrency, Currency } from '@/app/artiste/context/CurrencyContext';
@@ -162,6 +164,8 @@ const MusicDashboard = () => {
 						<p className="text-xs text-muted-foreground">{data?.topCountries[0]?.totalStreams.toLocaleString()} streams</p>
 					</CardContent>
 				</Card>
+
+				<FreeReleasesCard />
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
@@ -200,5 +204,46 @@ const MusicDashboard = () => {
 		</div>
 	);
 };
+
+/**
+ * How many of the free releases are left, or that the artist is subscribed. A
+ * single, video, EP or album each count as one release.
+ */
+function FreeReleasesCard() {
+	const { artist } = useAuthContext();
+	if (!artist) return null;
+	const { used, remaining, subscribed } = releaseAllowance(artist);
+	const paidUntil = artist.bankDetails?.registrationFeePaidUntil;
+
+	return (
+		<Card>
+			<CardHeader className="flex flex-row items-center gap-1.5 pb-2">
+				<UploadCloud className="size-6 text-muted-foreground" />
+				<CardTitle className="text-sm lg:text-xl font-semibold">{subscribed ? 'Releases' : 'Free releases'}</CardTitle>
+			</CardHeader>
+			<CardContent className="space-y-2">
+				{subscribed ? (
+					<>
+						<div className="text-2xl lg:text-3xl font-bold">Unlimited</div>
+						<p className="text-xs text-muted-foreground">
+							Subscribed{paidUntil ? ` until ${new Date(paidUntil).toLocaleDateString()}` : ''}. {used} released so far.
+						</p>
+					</>
+				) : (
+					<>
+						<div className="text-2xl lg:text-3xl font-bold">
+							{remaining} <span className="text-base font-normal text-muted-foreground">of {FREE_RELEASE_LIMIT} left</span>
+						</div>
+						<div className="h-2 w-full rounded-full bg-muted overflow-hidden" role="progressbar" aria-valuenow={Math.min(used, FREE_RELEASE_LIMIT)} aria-valuemin={0} aria-valuemax={FREE_RELEASE_LIMIT}>
+							<div className={`h-full ${remaining === 0 ? 'bg-red-500' : remaining <= 2 ? 'bg-amber-500' : 'bg-primary'}`} style={{ width: `${(Math.min(used, FREE_RELEASE_LIMIT) / FREE_RELEASE_LIMIT) * 100}%` }} />
+						</div>
+						<p className="text-xs text-muted-foreground">A single, EP or album each count as one release.</p>
+						{remaining === 0 && <SubscribeButton />}
+					</>
+				)}
+			</CardContent>
+		</Card>
+	);
+}
 
 export default MusicDashboard;
