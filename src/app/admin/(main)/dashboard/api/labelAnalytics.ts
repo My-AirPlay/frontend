@@ -50,7 +50,7 @@ export async function downloadLabelCsv(table: LabelExportTable, filters: LabelFi
 	URL.revokeObjectURL(url);
 }
 
-interface ReleaseItem {
+export interface ReleaseItem {
 	id: string;
 	type: 'single' | 'album';
 	title: string;
@@ -60,7 +60,7 @@ interface ReleaseItem {
 	lastError: string | null;
 	takedownReason: string | null;
 }
-interface ArtistItem {
+export interface ArtistItem {
 	artistId: string;
 	artistName: string;
 	email: string;

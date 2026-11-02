@@ -7,10 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { CatalogueHealth, useCatalogueHealth } from '../api/labelAnalytics';
 
-type Section = { count: number; items: any[] }; // eslint-disable-line @typescript-eslint/no-explicit-any
+type Keyed = { id?: string; artistId?: string };
 
-function HealthCard({ title, hint, section, render, tone = 'warn' }: { title: string; hint: string; section: Section; render: (item: any) => React.ReactNode; tone?: 'warn' | 'info' }) {
-	// eslint-disable-line @typescript-eslint/no-explicit-any
+function HealthCard<T extends Keyed>({ title, hint, section, render, tone = 'warn' }: { title: string; hint: string; section: { count: number; items: T[] }; render: (item: T) => React.ReactNode; tone?: 'warn' | 'info' }) {
 	const ok = section.count === 0;
 	return (
 		<Card>
