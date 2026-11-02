@@ -8,9 +8,16 @@ import { BarChart2, Globe, Music } from 'lucide-react';
 import { useGetDashboardData } from '../dashboard/misc/api';
 import { TrackPerformanceCard } from '@/app/artiste/(main)/analytics/misc/components/TrackPerformanceCard';
 import { useCurrency } from '@/app/artiste/context/CurrencyContext';
+import { useState } from 'react';
+import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { AnalyticsFilterBar, ChangeBadge, PeriodRange } from './misc/components/AnalyticsFilterBar';
 
 const MusicDashboard = () => {
-	const { data, isLoading, error } = useGetDashboardData();
+	const [range, setRange] = useState<PeriodRange>({});
+	// Drill-down: one track's platforms, countries and month-by-month trend.
+	const [track, setTrack] = useState<{ key: string; title: string } | null>(null);
+	const { data, isLoading, error, isFetching } = useGetDashboardData({ ...range, track: track?.key });
 	const { currency } = useCurrency();
 	if (isLoading) {
 		return (
@@ -30,42 +37,9 @@ const MusicDashboard = () => {
 		);
 	}
 
-	// Prepare data for charts
-	const revenueHistory = [...(data?.revenueHistory || [])]
-		.sort((a, b) => {
-			const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-			const aMonth = a.period.split(' ')[0];
-			const bMonth = b.period.split(' ')[0];
-			const aYear = parseInt(a.period.split(' ')[1]);
-			const bYear = parseInt(b.period.split(' ')[1]);
-			if (aYear !== bYear) {
-				return aYear - bYear;
-			}
-			return months.indexOf(aMonth) - months.indexOf(bMonth);
-		})
-		.map(entry => ({
-			...entry,
-			value: entry.value,
-			period: entry.period
-		}));
-
-	const streamsHistory = [...(data?.streamsHistory || [])]
-		?.sort((a, b) => {
-			const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-			const aMonth = a.period.split(' ')[0];
-			const bMonth = b.period.split(' ')[0];
-			const aYear = parseInt(a.period.split(' ')[1]);
-			const bYear = parseInt(b.period.split(' ')[1]);
-			if (aYear !== bYear) {
-				return aYear - bYear;
-			}
-			return months.indexOf(aMonth) - months.indexOf(bMonth);
-		})
-		.map(entry => ({
-			...entry,
-			value: entry.value,
-			period: entry.period
-		}));
+	// The server returns history already in period order.
+	const revenueHistory = data?.revenueHistory || [];
+	const streamsHistory = data?.streamsHistory || [];
 	// Prepare DSP data for pie chart
 	const dspData = Object.entries(data?.dspBreakdown || {})
 		.map(([name, details]) => ({
@@ -84,7 +58,20 @@ const MusicDashboard = () => {
 						<h1 className="text-3xl font-bold">Analytics</h1>
 						<p className="text-muted-foreground">Track your music performance across platforms</p>
 					</div>
+					<div className={isFetching ? 'opacity-60' : ''}>
+						<AnalyticsFilterBar periods={data?.availablePeriods || []} value={range} onChange={setRange} />
+					</div>
 				</div>
+				{track && (
+					<div className="flex items-center gap-3 rounded-lg border bg-muted/40 p-3">
+						<p className="text-sm flex-1">
+							Showing <span className="font-semibold">{track.title}</span> only: its platforms, countries and monthly trend.
+						</p>
+						<Button variant="ghost" size="sm" onClick={() => setTrack(null)}>
+							<X size={14} className="mr-1" /> All tracks
+						</Button>
+					</div>
+				)}
 			</header>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
@@ -95,7 +82,10 @@ const MusicDashboard = () => {
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl lg:text-3xl font-bold">{data?.totalStreams.toLocaleString()}</div>
-						<p className="text-xs text-muted-foreground">Across all platforms</p>
+						<p className="text-xs text-muted-foreground">
+							<ChangeBadge change={data?.change?.streams} previousPeriod={data?.change?.previousPeriod} />
+							{!data?.change?.previousPeriod && 'Across all platforms'}
+						</p>
 					</CardContent>
 				</Card>
 
@@ -107,7 +97,10 @@ const MusicDashboard = () => {
 					</CardHeader>
 					<CardContent>
 						<div className="text-2xl lg:text-3xl font-bold">{formatCurrency(data?.totalRevenue || 0, data?.currency || currency)}</div>
-						<p className="text-xs text-muted-foreground">Across all platforms</p>
+						<p className="text-xs text-muted-foreground">
+							<ChangeBadge change={data?.change?.revenue} previousPeriod={data?.change?.previousPeriod} />
+							{!data?.change?.previousPeriod && 'Across all platforms'}
+						</p>
 					</CardContent>
 				</Card>
 
@@ -158,7 +151,7 @@ const MusicDashboard = () => {
 
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 				<DSPBreakdownChart data={dspData} />
-				<TrackPerformanceCard data={data} />
+				<TrackPerformanceCard data={data} onSelectTrack={t => setTrack({ key: t.isrc || t.trackTitle, title: t.trackTitle })} />
 			</div>
 
 			<Tabs defaultValue="platforms" className="mb-8">

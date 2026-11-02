@@ -58,7 +58,8 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 			soundCloud: artist?.socialLinks?.soundCloud ?? '',
 			tiktok: artist?.socialLinks?.tiktok ?? '',
 			website: artist?.socialLinks?.website ?? '',
-			dspProfiles: artist?.dspProfiles ?? []
+			dspProfiles: artist?.dspProfiles ?? [],
+			newOnDsps: artist?.newOnDsps ?? []
 		},
 		onSubmit: value => {
 			mutateAsync({
@@ -112,8 +113,9 @@ const OnboardingSocialMedia = ({ email, setCurrentStep }: OnboardingSocialMedial
 			<FormStep formFields={fields} formik={formik} title="CONNECT SOCIAL MEDIA" description="Please use your real name and data. It will be used for security purposes to make sure you and only you have access to your account including withdrawals (if applicable).">
 				<div className="flex flex-col gap-2 w-full mb-8">
 					<h3 className="text-sm font-medium">Streaming profiles</h3>
-					<p className="text-sm text-muted-foreground">If you are already on a streaming platform, add the link to your profile there so your releases go to it instead of a new one.</p>
-					<DspProfilesField value={formik.values.dspProfiles} onChange={next => formik.setFieldValue('dspProfiles', next)} options={formattedData?.StreamingPlatform || []} isLoadingOptions={isLoadingOptions} />
+					<p className="text-sm text-muted-foreground">Add the link to your Spotify and Apple Music artist pages so your releases go there instead of to a new page. If you&apos;re not on one yet, tick the box and we&apos;ll create the page.</p>
+					<DspProfilesField value={formik.values.dspProfiles} onChange={next => formik.setFieldValue('dspProfiles', next)} newOnDsps={formik.values.newOnDsps} onNewOnDspsChange={next => formik.setFieldValue('newOnDsps', next)} options={formattedData?.StreamingPlatform || []} isLoadingOptions={isLoadingOptions} />
+					{typeof formik.errors.dspProfiles === 'string' && <p className="text-sm text-destructive">{formik.errors.dspProfiles}</p>}
 				</div>
 
 				<div className="flex justify-between md:items-center gap-12 w-full md:flex-row flex-col">

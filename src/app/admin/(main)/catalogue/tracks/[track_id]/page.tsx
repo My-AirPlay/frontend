@@ -131,7 +131,7 @@ const TrackDetails: React.FC = () => {
 						.
 					</div>
 				) : (
-					<ReleaseReviewPanel releaseId={track_id} reviewStatus={contract.reviewStatus} rejectionReasons={contract.rejectionReasons} />
+					<ReleaseReviewPanel releaseId={track_id} artistId={contract.artistId} reviewStatus={contract.reviewStatus} rejectionReasons={contract.rejectionReasons} />
 				))}
 
 			<Tabs defaultValue="overview">

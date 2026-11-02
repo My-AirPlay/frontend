@@ -32,7 +32,8 @@ export default function SectionProfile() {
 		twitter: artist?.socialLinks?.twitter || '',
 		facebook: artist?.socialLinks?.facebook || '',
 		website: artist?.socialLinks?.website || '',
-		dspProfiles: artist?.dspProfiles || []
+		dspProfiles: artist?.dspProfiles || [],
+		newOnDsps: artist?.newOnDsps || []
 	};
 
 	const form = useForm<ProfileFormValues>({
@@ -276,9 +277,11 @@ export default function SectionProfile() {
 									render={({ field }) => (
 										<FormItem className="sm:col-span-2">
 											<FormLabel>Streaming profiles</FormLabel>
+											<p className="text-sm text-muted-foreground">We use these to put your releases on your existing artist pages instead of creating new ones. Required before you can upload.</p>
 											<FormControl>
-												<DspProfilesField value={field.value || []} onChange={field.onChange} options={formattedData?.StreamingPlatform || []} isLoadingOptions={isLoadingOptions} disabled={!isEditing} />
+												<DspProfilesField value={field.value || []} onChange={next => field.onChange(next)} newOnDsps={form.watch('newOnDsps') || []} onNewOnDspsChange={next => form.setValue('newOnDsps', next, { shouldValidate: true, shouldDirty: true })} options={formattedData?.StreamingPlatform || []} isLoadingOptions={isLoadingOptions} disabled={!isEditing} />
 											</FormControl>
+											{errors.dspProfiles?.message && <p className="text-sm text-destructive">{errors.dspProfiles.message}</p>}
 										</FormItem>
 									)}
 								/>

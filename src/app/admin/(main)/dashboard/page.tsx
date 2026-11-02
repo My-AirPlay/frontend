@@ -16,6 +16,8 @@ import moment from 'moment';
 import { useGetAllAlbums } from '../catalogue/api/getAdminGetAllAlbums';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { useGetFullAnalysis } from './api/getFullAnalysis';
+import CatalogueHealthPanel from './misc/CatalogueHealthPanel';
+import LabelAnalyticsSection from './misc/LabelAnalyticsSection';
 
 // Define an interface for the DSP data structure
 interface DspData {
@@ -179,8 +181,8 @@ const Dashboard: React.FC = () => {
 	// Mock data - Ensure data access is safe even if analysis is loading/undefined
 	const uploads = [
 		{ id: 1, type: 'Music - Tracks', lastUploaded: audio?.data?.[0]?.createdAt, category: 'Tracks', count: audio?.total || 0, icon: <Music color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=tracks' },
-		{ id: 2, type: 'Music - Album', lastUploaded: video?.data?.[0]?.createdAt, category: 'Album', count: video?.total || 0, icon: <Disc color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=releases' },
-		{ id: 3, type: 'Music - Videos', lastUploaded: albums?.data?.[0]?.createdAt, category: 'Videos', count: albums?.total || 0, icon: <Video color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=videos' }
+		{ id: 2, type: 'Music - Album', lastUploaded: albums?.data?.[0]?.createdAt, category: 'Album', count: albums?.total || 0, icon: <Disc color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=releases' },
+		{ id: 3, type: 'Music - Videos', lastUploaded: video?.data?.[0]?.createdAt, category: 'Videos', count: video?.total || 0, icon: <Video color="#fe6b02" size={24} />, route: '/admin/catalogue?tab=videos' }
 	];
 
 	// analysis?.periodSummary?.map((x)=>({month:x.}))
@@ -487,6 +489,10 @@ const Dashboard: React.FC = () => {
 					</div>
 				</article>
 			</section>
+
+			<CatalogueHealthPanel />
+
+			<LabelAnalyticsSection />
 		</div>
 	);
 };

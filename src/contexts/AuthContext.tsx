@@ -25,12 +25,16 @@ export interface IArtistUser {
 	bio: string;
 	socialLinks: SocialLinks;
 	dspProfiles?: DspProfile[];
+	/** Required platforms the artist isn't on yet; a new page is created there. */
+	newOnDsps?: string[];
 	totalRoyaltyUSD: number;
 	walletBalance: number;
 	totalStreams: number;
 	paidRoyalty: number;
 	distributionStatus?: 'active' | 'paused';
 	usedFreeUpload?: boolean;
+	/** Releases (one per UPC: single, video, EP or album) used toward the free limit. */
+	releasesUsed?: number;
 }
 
 export interface IAdminUser {
@@ -87,6 +91,8 @@ interface BankDetails {
 	rate: number;
 	paidRegistrationFee?: boolean;
 	registrationFeeReference?: string;
+	/** When the yearly subscription lapses. */
+	registrationFeePaidUntil?: string;
 }
 
 export interface AuthState {

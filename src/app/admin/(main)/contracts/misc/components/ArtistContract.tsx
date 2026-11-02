@@ -1,3 +1,4 @@
+import { FREE_RELEASE_LIMIT } from '@/lib/release-allowance';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { SingleDatePicker } from '@/components/ui';
@@ -236,6 +237,11 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 			</div>
 
 			<div className="flex justify-end items-center mt-8 gap-4">
+				<span className="text-sm text-muted-foreground mr-auto">
+					Releases used: {(artist as any).releasesUsed ?? 0} / {FREE_RELEASE_LIMIT} free
+					{artist.bankDetails?.paidRegistrationFee ? ' · Subscribed' : ''}
+					{(artist.bankDetails as any)?.registrationFeePaidUntil ? ` until ${new Date((artist.bankDetails as any).registrationFeePaidUntil).toLocaleDateString()}` : ''}
+				</span>
 				{!artist.bankDetails?.paidRegistrationFee && (
 					<Button variant="outline" className="text-amber-500 border-amber-500 hover:bg-amber-50" onClick={() => setIsOverrideModalOpen(true)} disabled={isOverriding}>
 						<ShieldCheck size={16} className="mr-2" />

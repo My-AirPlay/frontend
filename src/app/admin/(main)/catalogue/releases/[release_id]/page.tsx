@@ -227,7 +227,7 @@ const ReleaseDetails: React.FC = () => {
 			</div>
 
 			{/* Release Review / Rejection */}
-			{!albumLoading && album && <ReleaseReviewPanel releaseId={release_id} reviewStatus={(album as any).reviewStatus} rejectionReasons={(album as any).rejectionReasons} />}
+			{!albumLoading && album && <ReleaseReviewPanel releaseId={release_id} artistId={(album as any).artistId} reviewStatus={(album as any).reviewStatus} rejectionReasons={(album as any).rejectionReasons} />}
 
 			{/* Album Metadata Summary */}
 			{!albumLoading && album && (
