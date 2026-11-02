@@ -3,16 +3,25 @@ import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { SupportedCurrency } from '@/utils/currency';
 
-const getData = async () => {
-	const response = await APIAxios.get('/artist/artist_analytics');
+/** Narrow analytics to a period range ("January - 2026") and/or one track (ISRC or title). */
+export interface AnalyticsFilters {
+	from?: string;
+	to?: string;
+	track?: string;
+}
+
+const getData = async (filters: AnalyticsFilters = {}) => {
+	const params = Object.fromEntries(Object.entries(filters).filter(([, v]) => !!v));
+	const response = await APIAxios.get('/artist/artist_analytics', { params });
 	return response.data as APIResponse;
 };
 
-export const useGetDashboardData = () => {
+export const useGetDashboardData = (filters: AnalyticsFilters = {}) => {
 	return useQuery({
-		queryKey: ['ArtistDashboardData'],
-		queryFn: getData,
-		refetchOnWindowFocus: true
+		queryKey: ['ArtistDashboardData', filters],
+		queryFn: () => getData(filters),
+		refetchOnWindowFocus: true,
+		placeholderData: previous => previous
 	});
 };
 
@@ -69,6 +78,11 @@ export interface PerformanceItem {
 
 export interface TrackPerformance extends PerformanceItem {
 	trackTitle: string;
+	isrc?: string | null;
+	mediaId?: string;
+	releaseDate?: string | null;
+	coverArtUrl?: string | null;
+	albumTitle?: string | null;
 }
 
 export interface NamedPerformanceItem extends PerformanceItem {
@@ -105,6 +119,12 @@ export interface APIResponse {
 	topTracks: TrackPerformance[];
 	topDSPs: NamedPerformanceItem[];
 	topCountries: NamedPerformanceItem[];
+
+	/** Every period with data, whatever range is selected. */
+	availablePeriods?: string[];
+	/** Latest period against the one before, as percentages (null when not comparable). */
+	change?: { period: string; previousPeriod: string | null; streams: number | null; revenue: number | null } | null;
+	filters?: { from: string | null; to: string | null; track: string | null };
 }
 export interface ReportPeriodPair {
 	reportId: string;

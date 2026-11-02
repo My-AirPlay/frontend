@@ -1,3 +1,4 @@
+import { dspProfilesError } from './dsp';
 import * as Yup from 'yup';
 
 export const onboardingBasciInfoSchema = Yup.object({
@@ -41,7 +42,11 @@ export const onboardingSocialLinkSchema = Yup.object({
 				url: Yup.string().required('Add the profile link').url('Invalid url')
 			})
 		)
-		.optional()
+		.optional(),
+	newOnDsps: Yup.array().of(Yup.string().required()).optional()
+}).test('dsp-profiles', function (values) {
+	const error = dspProfilesError(values.dspProfiles as { dsp: string; url: string }[], values.newOnDsps as string[]);
+	return error ? this.createError({ path: 'dspProfiles', message: error }) : true;
 });
 
 export const musicInfoSchema = Yup.object({

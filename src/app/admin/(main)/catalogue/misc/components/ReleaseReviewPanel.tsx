@@ -3,12 +3,16 @@
 
 import React, { useState } from 'react';
 import { Button, Badge, Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Textarea } from '@/components/ui';
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, ExternalLink, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useReviewRelease } from '../../api/reviewRelease';
+import { useGetOneArtist } from '../../api/getOneArtist';
+import { DSP_LABELS, REQUIRED_DSPS } from '@/lib/dsp';
 
 interface ReleaseReviewPanelProps {
 	releaseId: string;
+	/** Whose streaming pages the release should be attached to in FUGA. */
+	artistId?: string;
 	reviewStatus?: 'pending' | 'approved' | 'rejected' | string;
 	rejectionReasons?: string[];
 }
@@ -19,8 +23,11 @@ const STATUS_BADGE: Record<string, { variant: any; label: string }> = {
 	rejected: { variant: 'destructive', label: 'Rejected' }
 };
 
-const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, reviewStatus = 'pending', rejectionReasons = [] }) => {
+const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, artistId, reviewStatus = 'pending', rejectionReasons = [] }) => {
 	const reviewMutation = useReviewRelease();
+	const { data: artist } = useGetOneArtist({ artistId: artistId ?? '' });
+	const profiles: { dsp: string; url: string }[] = artist?.dspProfiles ?? [];
+	const newOn: string[] = artist?.newOnDsps ?? [];
 	const [rejectOpen, setRejectOpen] = useState(false);
 	const [reasonsText, setReasonsText] = useState('');
 
@@ -81,6 +88,41 @@ const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, revi
 					</Button>
 				</div>
 			</div>
+
+			{artistId && artist && (
+				<div className="text-sm">
+					<p className="text-muted-foreground mb-1">Artist pages: attach the release to these in FUGA</p>
+					<ul className="space-y-0.5">
+						{REQUIRED_DSPS.map(dsp => {
+							const link = profiles.find(p => p.dsp === dsp)?.url;
+							return (
+								<li key={dsp} className="flex gap-2">
+									<span className="w-28 shrink-0">{DSP_LABELS[dsp] ?? dsp}</span>
+									{link ? (
+										<a href={link} target="_blank" rel="noreferrer" className="text-primary hover:underline inline-flex items-center gap-1 break-all">
+											{link} <ExternalLink size={12} />
+										</a>
+									) : newOn.includes(dsp) ? (
+										<span>New artist: create a page</span>
+									) : (
+										<span className="text-destructive">Not provided</span>
+									)}
+								</li>
+							);
+						})}
+						{profiles
+							.filter(p => !(REQUIRED_DSPS as readonly string[]).includes(p.dsp))
+							.map(p => (
+								<li key={p.dsp} className="flex gap-2">
+									<span className="w-28 shrink-0">{p.dsp}</span>
+									<a href={p.url} target="_blank" rel="noreferrer" className="text-primary hover:underline break-all">
+										{p.url}
+									</a>
+								</li>
+							))}
+					</ul>
+				</div>
+			)}
 
 			{reviewStatus === 'rejected' && rejectionReasons.length > 0 && (
 				<div className="text-sm">

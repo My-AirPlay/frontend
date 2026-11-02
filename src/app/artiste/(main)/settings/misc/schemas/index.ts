@@ -1,28 +1,35 @@
 import * as z from 'zod';
+import { dspProfilesError } from '@/lib/dsp';
 
 // Profile Information Schema
-export const profileSchema = z.object({
-	firstName: z.string().min(2, 'Full name must be at least 2 characters'),
-	lastName: z.string().min(2, 'Full name must be at least 2 characters'),
-	artistName: z.string().min(1, 'Stage name is required'),
-	phoneNumber: z.string().regex(/^\d+$/, 'Phone number must contain only numbers').min(10, 'Phone number must be at least 10 characters'),
-	email: z.string().email('Please enter a valid email address'),
-	bio: z.string().optional(),
-	instagram: z.string().optional(),
-	soundCloud: z.string().optional(),
-	tiktok: z.string().optional(),
-	twitter: z.string().optional(),
-	facebook: z.string().optional(),
-	website: z.string().url().optional().or(z.literal('')),
-	dspProfiles: z
-		.array(
-			z.object({
-				dsp: z.string().min(1, 'Choose a platform'),
-				url: z.string().url('Enter a valid link')
-			})
-		)
-		.optional()
-});
+export const profileSchema = z
+	.object({
+		firstName: z.string().min(2, 'Full name must be at least 2 characters'),
+		lastName: z.string().min(2, 'Full name must be at least 2 characters'),
+		artistName: z.string().min(1, 'Stage name is required'),
+		phoneNumber: z.string().regex(/^\d+$/, 'Phone number must contain only numbers').min(10, 'Phone number must be at least 10 characters'),
+		email: z.string().email('Please enter a valid email address'),
+		bio: z.string().optional(),
+		instagram: z.string().optional(),
+		soundCloud: z.string().optional(),
+		tiktok: z.string().optional(),
+		twitter: z.string().optional(),
+		facebook: z.string().optional(),
+		website: z.string().url().optional().or(z.literal('')),
+		dspProfiles: z
+			.array(
+				z.object({
+					dsp: z.string().min(1, 'Choose a platform'),
+					url: z.string().url('Enter a valid link')
+				})
+			)
+			.optional(),
+		newOnDsps: z.array(z.string()).optional()
+	})
+	.superRefine((values, ctx) => {
+		const error = dspProfilesError(values.dspProfiles, values.newOnDsps);
+		if (error) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['dspProfiles'], message: error });
+	});
 
 export type ProfileFormValues = z.infer<typeof profileSchema>;
 

@@ -12,15 +12,16 @@ import { Button } from '@/components/ui'; // Assuming Button is in this path
 // =======================================================
 // This is a great pattern! No changes needed here.
 // It isolates the currency conversion logic.
-const TrackRevenue = ({ amount }: { amount: number }) => {
+const TrackRevenue = ({ amount, currency }: { amount: number; currency?: string }) => {
 	const { currency: contextCurrency } = useCurrency();
-	const formattedRevenue = formatCurrency(amount || 0, contextCurrency);
+	// The amounts are in the currency the server says, so format in that one.
+	const formattedRevenue = formatCurrency(amount || 0, (currency || contextCurrency) as any);
 
 	return <span className="w-28 text-right">{formattedRevenue}</span>;
 };
 // =======================================================
 
-export const TrackPerformanceCard = ({ data }: { data: any }) => {
+export const TrackPerformanceCard = ({ data, onSelectTrack }: { data: any; onSelectTrack?: (track: any) => void }) => {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const tracksPerPage = 5;
@@ -67,15 +68,28 @@ export const TrackPerformanceCard = ({ data }: { data: any }) => {
 					<div className="space-y-3">
 						{paginatedTracks.length > 0 ? (
 							paginatedTracks.map((track: any) => (
-								<div key={track.trackTitle} className="p-3 rounded-lg border hover:bg-muted/50">
-									{/* CHANGE: This container now stacks on mobile and is a row on larger screens */}
+								<div key={track.trackTitle} className={`p-3 rounded-lg border hover:bg-muted/50 ${onSelectTrack ? 'cursor-pointer' : ''}`} onClick={() => onSelectTrack?.(track)} role={onSelectTrack ? 'button' : undefined} title={onSelectTrack ? 'See this track on its own' : undefined}>
 									<div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center font-semibold">
-										<span className="truncate pr-4">{track.trackTitle}</span>
+										<div className="flex items-center gap-3 min-w-0">
+											{track.coverArtUrl && (
+												// eslint-disable-next-line @next/next/no-img-element
+												<img src={track.coverArtUrl} alt="" className="size-10 rounded object-cover shrink-0" />
+											)}
+											<div className="min-w-0">
+												<p className="truncate pr-4">{track.trackTitle}</p>
+												{(track.albumTitle || track.releaseDate) && (
+													<p className="text-xs font-normal text-muted-foreground truncate">
+														{track.albumTitle ? `${track.albumTitle} · ` : ''}
+														{track.releaseDate ? `Released ${new Date(track.releaseDate).toLocaleDateString()}` : ''}
+													</p>
+												)}
+											</div>
+										</div>
 
 										{/* CHANGE: This sub-container also adapts for better mobile layout */}
 										<div className="flex items-center justify-between text-sm sm:justify-end sm:space-x-4 sm:text-right w-full sm:w-auto">
 											<span className="text-muted-foreground">{track.totalStreams.toLocaleString()} streams</span>
-											<TrackRevenue amount={track.totalRevenue} />
+											<TrackRevenue amount={track.totalRevenue} currency={data?.currency} />
 										</div>
 									</div>
 								</div>
