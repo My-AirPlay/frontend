@@ -20,7 +20,8 @@ interface AnalyticsFilterBarProps {
  * months the viewer has data for.
  */
 export function AnalyticsFilterBar({ periods, value, onChange }: AnalyticsFilterBarProps) {
-	const options = periods.map(p => ({ label: p, value: p }));
+	// Radix Select can't have an item with an empty value.
+	const options = periods.filter(p => p?.trim()).map(p => ({ label: p, value: p }));
 	const fromIndex = value.from ? periods.indexOf(value.from) : 0;
 	const active = !!(value.from || value.to);
 

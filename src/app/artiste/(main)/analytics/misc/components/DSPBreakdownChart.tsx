@@ -18,7 +18,11 @@ interface DSPBreakdownChartProps {
 	data: DSPData[];
 }
 
-export const DSPBreakdownChart: React.FC<DSPBreakdownChartProps> = ({ data }) => {
+export const DSPBreakdownChart: React.FC<DSPBreakdownChartProps> = ({ data: rawData }) => {
+	// Some report rows have no platform name. Radix Select throws on an item whose
+	// value is an empty string, which took down the whole analytics page, so give
+	// those rows a name.
+	const data = React.useMemo(() => rawData.map(item => (item.name?.trim() ? item : { ...item, name: 'Unknown' })), [rawData]);
 	const dspColors: Record<string, string> = {
 		Spotify: '#1DB954',
 		'Apple Music': '#FA243C',
