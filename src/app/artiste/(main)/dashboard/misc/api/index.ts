@@ -45,7 +45,8 @@ export const getAllWithdrawalSlips = async ({ page, limit, artistId }: GetAllWit
 export const useGetAllWithdrawalSlips = (params: GetAllWithdrawalSlipsParams) => {
 	return useQuery({
 		queryKey: ['withdrawalSlips', params.page, params.limit, params.artistId], // Unique key for caching
-		queryFn: () => getAllWithdrawalSlips(params)
+		queryFn: () => getAllWithdrawalSlips(params),
+		enabled: !!params.artistId
 	});
 };
 

@@ -34,7 +34,8 @@ const scaleSlip = (slip: WithdrawalSlipData, currency: SupportedCurrency) => sca
 
 const ArtistRevenuePage: React.FC = () => {
 	const { artist } = useAuthContext();
-	const artistId = artist!._id;
+	// The profile loads after the page first renders; reading `_id` off null crashed it.
+	const artistId = artist?._id ?? '';
 	const artistCurrency = normalizeCurrency(artist?.bankDetails?.currency);
 	const router = useRouter();
 	const { setCurrency, currency } = useCurrency();
@@ -215,7 +216,7 @@ const ArtistRevenuePage: React.FC = () => {
 		[currency]
 	);
 
-	if (isLoading) {
+	if (isLoading || !artistId) {
 		return (
 			<div className="flex justify-center items-center min-h-[60vh]">
 				<LoadingBox />
