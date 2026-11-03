@@ -14,9 +14,10 @@ interface PeriodRow {
 
 const ExportPage: React.FC = () => {
 	const { artist } = useAuthContext();
-	const artistId = artist!._id;
+	// The profile loads after the page first renders; reading `_id` off null crashed it.
+	const artistId = artist?._id ?? '';
 
-	const { data: reports, isLoading } = useGetReportPeriodPairs(artistId!);
+	const { data: reports, isLoading } = useGetReportPeriodPairs(artistId);
 
 	const periods = useMemo<PeriodRow[]>(() => {
 		if (!reports?.length) return [];
@@ -94,7 +95,7 @@ const ExportPage: React.FC = () => {
 			</div>
 
 			<div className="bg-secondary rounded-lg border border-border">
-				{isLoading ? (
+				{isLoading || !artistId ? (
 					<div className="flex justify-center items-center min-h-[300px]">
 						<LoadingBox />
 					</div>
