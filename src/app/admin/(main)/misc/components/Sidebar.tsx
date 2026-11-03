@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useGetSupportCount } from '@/app/admin/(main)/catalogue/api/getComplaints';
 import { useGetContractsCount } from '@/app/admin/(main)/catalogue/api/getArtistAnalytics';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { usePendingReviewCount } from '@/app/admin/(main)/review/api/reviewQueue';
 
 interface SidebarProps {
 	className?: string;
@@ -20,6 +21,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 	const supportTicketCount = supportData?.unreadCount;
 	const contractsCount = contractsData?.count;
 	const { admin, hasPageAccess } = useAuthContext();
+	const { data: pendingReviews } = usePendingReviewCount(hasPageAccess('catalogue'));
 	const sidebarItems = useMemo(
 		() => [
 			{
@@ -30,6 +32,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 				title: 'Artists',
 				items: [
 					{ href: '/admin/contracts', icon: Edit2, label: 'Contracts', pageKey: 'contracts', ...(contractsCount && contractsCount > 0 && { badge: contractsCount }) },
+					{ href: '/admin/review', icon: Headphone, label: 'Review Releases', pageKey: 'catalogue', ...(pendingReviews && pendingReviews > 0 && { badge: pendingReviews }) },
 					{ href: '/admin/tracks', icon: Musicnote, label: 'Tracks/Releases', pageKey: 'tracks' },
 					{ href: '/admin/catalogue', icon: Document, label: 'Catalogue', pageKey: 'catalogue' },
 					{ href: '/admin/fuga', icon: HuobiToken, label: 'FUGA Management', pageKey: 'fuga_delivery' }
@@ -68,7 +71,7 @@ const Sidebar = ({ className, onClose }: SidebarProps) => {
 				items: [{ href: '/admin/settings', icon: Setting2, label: 'Settings', pageKey: null }]
 			}
 		],
-		[supportTicketCount, contractsCount]
+		[supportTicketCount, contractsCount, pendingReviews]
 	);
 
 	const filteredSidebarItems = sidebarItems

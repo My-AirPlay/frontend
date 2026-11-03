@@ -24,6 +24,7 @@ const Header: React.FC = () => {
 		if (path === '/') return 'Overview';
 		if (path.startsWith('/admin/contracts')) return 'Contracts';
 		if (path.startsWith('/admin/catalogue')) return 'Catalogue';
+		if (path.startsWith('/admin/review')) return 'Review Releases';
 		if (path.startsWith('/admin/sales')) return 'Sales';
 		if (path.startsWith('/admin/artists')) return 'Artists';
 		if (path.startsWith('/admin/settings')) return 'Settings';

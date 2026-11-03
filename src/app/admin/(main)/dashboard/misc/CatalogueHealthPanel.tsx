@@ -71,7 +71,17 @@ export default function CatalogueHealthPanel() {
 			</header>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-				<HealthCard title="Waiting for approval" hint="Oldest first. Nothing is delivered until approved." section={h.awaitingApproval} render={releaseLink} />
+				<HealthCard
+					title="Waiting for approval"
+					hint="Oldest first. Nothing is delivered until approved."
+					section={h.awaitingApproval}
+					render={item => (
+						<Link href={`/admin/review?id=${item.id}`} className="hover:underline">
+							{item.title || 'Untitled'}
+							{item.artistName ? <span className="text-muted-foreground"> · {item.artistName}</span> : null}
+						</Link>
+					)}
+				/>
 				<HealthCard title="Failed deliveries" hint="FUGA rejected or couldn't receive these." section={h.failedDeliveries} render={item => <span title={item.lastError ?? ''}>{releaseLink(item)}</span>} />
 				<HealthCard title="Takedown requests" hint="Remove in FUGA, then mark completed." section={h.openTakedowns} render={releaseLink} />
 

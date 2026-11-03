@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react'; // Added useState import
-import { Trash2, Download } from 'lucide-react'; // Removed LinkIcon import
+import { Trash2, Download, Headphones } from 'lucide-react'; // Removed LinkIcon import
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -101,6 +101,12 @@ const TrackDetails: React.FC = () => {
 					>
 						<Trash2 size={16} className="mr-2" />
 						{deletePending ? <LoadingBox size={16} color="white" /> : <span>Delete</span>}
+					</Button>
+					<Button asChild variant="outline" className="bg-secondary text-foreground border-border">
+						<Link href={`/admin/review?id=${contract?.parentAlbum?._id ?? track_id}`}>
+							<Headphones size={16} className="mr-2" />
+							<span>{contract?.fileType === 'video' ? 'Watch' : 'Listen'} &amp; review</span>
+						</Link>
 					</Button>
 					{/* <Button variant="outline" className="bg-secondary text-foreground border-border">
 						<Copy size={16} className="mr-2" />

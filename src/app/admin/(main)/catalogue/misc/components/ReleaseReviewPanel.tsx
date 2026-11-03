@@ -15,7 +15,12 @@ interface ReleaseReviewPanelProps {
 	artistId?: string;
 	reviewStatus?: 'pending' | 'approved' | 'rejected' | string;
 	rejectionReasons?: string[];
+	/** Called after a decision is saved, e.g. to move on to the next release. */
+	onReviewed?: (decision: 'approved' | 'rejected') => void;
 }
+
+/** Common reasons, one tap to add. */
+const QUICK_REASONS = ['Mixtapes are not accepted. Upload each song as its own release.', 'The song ends abruptly or is cut off.', 'Poor audio quality (distorted, very quiet or clipping).', 'Cover art doesn’t meet store requirements (3000x3000, no blur, logos or website links).', 'Explicit content is not marked as explicit.', 'Title or artist name doesn’t match the audio.'];
 
 const STATUS_BADGE: Record<string, { variant: any; label: string }> = {
 	pending: { variant: 'outline', label: 'Pending review' },
@@ -23,7 +28,7 @@ const STATUS_BADGE: Record<string, { variant: any; label: string }> = {
 	rejected: { variant: 'destructive', label: 'Rejected' }
 };
 
-const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, artistId, reviewStatus = 'pending', rejectionReasons = [] }) => {
+const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, artistId, reviewStatus = 'pending', rejectionReasons = [], onReviewed }) => {
 	const reviewMutation = useReviewRelease();
 	const { data: artist } = useGetOneArtist({ artistId: artistId ?? '' });
 	const profiles: { dsp: string; url: string }[] = artist?.dspProfiles ?? [];
@@ -37,6 +42,7 @@ const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, arti
 		try {
 			await reviewMutation.mutateAsync({ releaseId, decision: 'approved' });
 			toast.success('Release approved');
+			onReviewed?.('approved');
 		} catch (error: any) {
 			toast.error(error?.response?.data?.message || 'Failed to approve release');
 		}
@@ -56,6 +62,7 @@ const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, arti
 			toast.success('Release rejected — the artist has been notified');
 			setRejectOpen(false);
 			setReasonsText('');
+			onReviewed?.('rejected');
 		} catch (error: any) {
 			toast.error(error?.response?.data?.message || 'Failed to reject release');
 		}
@@ -142,6 +149,16 @@ const ReleaseReviewPanel: React.FC<ReleaseReviewPanelProps> = ({ releaseId, arti
 						<DialogDescription>Enter one reason per line. The artist is emailed these reasons and can fix &amp; resubmit. Any pending FUGA delivery is cancelled.</DialogDescription>
 					</DialogHeader>
 					<div className="space-y-3">
+						<div className="flex flex-wrap gap-1.5">
+							{QUICK_REASONS.map(reason => {
+								const added = reasonsText.split('\n').some(line => line.trim() === reason);
+								return (
+									<button key={reason} type="button" disabled={added} onClick={() => setReasonsText(text => (text.trim() ? `${text.trimEnd()}\n${reason}` : reason))} className="rounded-full border border-border px-2.5 py-1 text-xs text-left hover:bg-secondary disabled:opacity-40">
+										+ {reason}
+									</button>
+								);
+							})}
+						</div>
 						<Textarea autoResize minRows={4} placeholder={'e.g.\nArtwork must be 1400x1400 or 3000x3000\nMissing songwriter credits'} value={reasonsText} onChange={e => setReasonsText(e.target.value)} />
 						<div className="flex justify-end gap-2">
 							<Button variant="outline" size="sm" onClick={() => setRejectOpen(false)}>

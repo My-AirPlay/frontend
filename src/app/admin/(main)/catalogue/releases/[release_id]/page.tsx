@@ -11,7 +11,8 @@ import { useDeleteAlbum } from '../../api/deleteAlbum';
 import JSZip from 'jszip'; // Import JSZip
 import { saveAs } from 'file-saver'; // Import file-saver
 import { toast } from 'sonner';
-import { Trash2, Download, Loader2, FolderDown } from 'lucide-react';
+import { Trash2, Download, Loader2, FolderDown, Headphones } from 'lucide-react';
+import Link from 'next/link';
 import APIAxios from '@/utils/axios';
 
 const ReleaseDetails: React.FC = () => {
@@ -206,6 +207,13 @@ const ReleaseDetails: React.FC = () => {
 
 				{/* Right Side: Action Buttons */}
 				<div className="flex items-center space-x-2 flex-shrink-0">
+					<Button asChild variant="outline" className="bg-secondary text-foreground border-border" size="sm">
+						<Link href={`/admin/review?id=${release_id}`}>
+							<Headphones size={16} className="mr-2" />
+							Listen &amp; review
+						</Link>
+					</Button>
+
 					{/* Download Album Button */}
 					<Button className="admin-button-primary" onClick={handleAlbumDownload} disabled={isAlbumDownloading || albumLoading || !album} size="sm">
 						{isAlbumDownloading ? <Loader2 size={16} className="animate-spin mr-2" /> : <FolderDown size={16} className="mr-2" />}
