@@ -11,6 +11,7 @@ const ROUTE_TO_PAGE_KEY: Record<string, string> = {
 	'/admin/contracts': 'contracts',
 	'/admin/tracks': 'tracks',
 	'/admin/catalogue': 'catalogue',
+	'/admin/review': 'catalogue',
 	'/admin/sales': 'sales',
 	'/admin/sales-history': 'sales_history',
 	'/admin/artist-revenue': 'artist_revenue',

@@ -23,6 +23,8 @@ export const useReviewRelease = () => {
 			queryClient.invalidateQueries({ queryKey: ['albumDetail'] });
 			queryClient.invalidateQueries({ queryKey: ['getAllAlbums'] });
 			queryClient.invalidateQueries({ queryKey: ['media'] });
+			queryClient.invalidateQueries({ queryKey: ['review-queue'] });
+			queryClient.invalidateQueries({ queryKey: ['review-item'] });
 		}
 	});
 };
