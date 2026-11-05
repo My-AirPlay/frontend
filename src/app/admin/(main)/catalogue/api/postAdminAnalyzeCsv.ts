@@ -32,9 +32,27 @@ export const useAdminAnalyzeCsv = () => {
 	});
 };
 
+/** How far a running import has got (sent while `status` is `processing`). */
+export interface ImportJobInfo {
+	/** `waiting` means it's queued behind another import. */
+	state: 'waiting' | 'active' | 'delayed' | 'prioritized' | 'waiting-children' | 'completed' | 'failed' | 'unknown';
+	queuedAt: number | null;
+	startedAt: number | null;
+	progress: {
+		stage: 'reading' | 'saving';
+		bytesRead: number;
+		totalBytes: number | null;
+		rowsRead: number;
+		tracksDone: number;
+		tracksTotal: number | null;
+		at: number;
+	} | null;
+}
+
 interface ReportStatusResponse {
 	status: 'processing' | 'completed' | 'failed';
 	data?: ReportItem[];
+	job?: ImportJobInfo;
 }
 
 const getReportStatus = async (reportId: string): Promise<ReportStatusResponse> => {
