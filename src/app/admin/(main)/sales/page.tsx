@@ -11,6 +11,7 @@ import UnmatchedArtistsTable from './misc/components/UnmatchedArtistsTable';
 import MatchArtistForm from './misc/components/MatchArtistForm';
 import CreateArtistForm from './misc/components/CreateArtistForm';
 import SuccessModal from './misc/components/SuccessModal';
+import ImportProgressPanel, { UploadProgress } from './misc/components/ImportProgressPanel';
 import { useStaticAppInfo } from '@/contexts/StaticAppInfoContext';
 import { toast } from 'sonner';
 import axios from 'axios';
@@ -160,6 +161,10 @@ const Sales: React.FC = () => {
 	const [csvUploaded, setCsvUploaded] = useSessionStorageState('csvUploaded', false);
 	const [processingComplete, setProcessingComplete] = useSessionStorageState('processingComplete', false);
 	const [loadingComplete, setLoadingComplete] = useSessionStorageState('loadingComplete', false);
+
+	const [uploadProgress, setUploadProgress] = useState<UploadProgress | null>(null);
+	const [importStartedAt, setImportStartedAt] = useSessionStorageState<number | null>('importStartedAt', null);
+	const [importFileName, setImportFileName] = useSessionStorageState<string | null>('importFileName', null);
 
 	const [processingSteps, setProcessingSteps] = useSessionStorageState('processingSteps', {
 		uploadSuccessful: false,
@@ -351,13 +356,18 @@ const Sales: React.FC = () => {
 			completed: false
 		});
 
+		setImportStartedAt(Date.now());
+		setImportFileName(file.name);
+		setUploadProgress({ loaded: 0, total: file.size });
+
 		try {
 			toast.info('Preparing secure upload...');
 			const { signedUrl, finalUrl } = await getUploadUrl(file.name, file.type);
 
 			toast.info('Uploading file...');
 			await axios.put(signedUrl, file, {
-				headers: { 'Content-Type': file.type }
+				headers: { 'Content-Type': file.type },
+				onUploadProgress: e => setUploadProgress({ loaded: e.loaded, total: e.total ?? file.size })
 			});
 
 			setProcessingSteps(prev => ({ ...prev, uploadSuccessful: true }));
@@ -544,12 +554,6 @@ const Sales: React.FC = () => {
 		setSelectedRow(null);
 	};
 
-	const getProgressPercentage = () => {
-		const steps = Object.values(processingSteps);
-		const completedSteps = steps.filter(step => step).length;
-		return (completedSteps / steps.length) * 100;
-	};
-
 	return (
 		<div className="space-y-8">
 			<div className="flex items-center justify-between">
@@ -647,39 +651,7 @@ const Sales: React.FC = () => {
 				{currentStep === 'processing' && (
 					<>
 						<h2 className="text-lg font-medium mb-4">CSV Status</h2>
-
-						<div className="bg-background p-6 rounded-md">
-							<h3 className="text-md font-medium mb-4">Progress Bar</h3>
-
-							<div className="space-y-4">
-								<div className="w-full bg-accent rounded-sm h-2 overflow-hidden">
-									<div className="bg-primary h-full transition-all duration-500" style={{ width: `${getProgressPercentage()}%` }}></div>
-								</div>
-								<p className="text-xs text-muted">{getProgressPercentage()}% complete</p>
-
-								<div className="space-y-3 mt-6">
-									<div className="flex items-center space-x-3 p-3 rounded-md bg-secondary">
-										<div className={`w-5 h-5 rounded-full ${processingSteps.uploadSuccessful ? 'bg-primary' : 'bg-accent'} flex items-center justify-center`}>{processingSteps.uploadSuccessful && <div className="w-2 h-2 bg-white rounded-full"></div>}</div>
-										<span>Upload Successful</span>
-									</div>
-
-									<div className="flex items-center space-x-3 p-3 rounded-md bg-secondary">
-										<div className={`w-5 h-5 rounded-full ${processingSteps.sortingInformation ? 'bg-primary' : 'bg-accent'} flex items-center justify-center`}>{processingSteps.sortingInformation && <div className="w-2 h-2 bg-white rounded-full"></div>}</div>
-										<span>Sorting Information</span>
-									</div>
-
-									<div className="flex items-center space-x-3 p-3 rounded-md bg-secondary">
-										<div className={`w-5 h-5 rounded-full ${processingSteps.collectionFromBackend ? 'bg-primary' : 'bg-accent'} flex items-center justify-center`}>{processingSteps.collectionFromBackend && <div className="w-2 h-2 bg-white rounded-full"></div>}</div>
-										<span>Collection from Back-end</span>
-									</div>
-
-									<div className="flex items-center space-x-3 p-3 rounded-md bg-secondary">
-										<div className={`w-5 h-5 rounded-full ${processingSteps.completed ? 'bg-primary' : 'bg-accent'} flex items-center justify-center`}>{processingSteps.completed && <div className="w-2 h-2 bg-white rounded-full"></div>}</div>
-										<span>Completed</span>
-									</div>
-								</div>
-							</div>
-						</div>
+						<ImportProgressPanel fileName={importFileName} upload={uploadProgress} uploadDone={processingSteps.uploadSuccessful} queued={processingSteps.sortingInformation} job={reportStatusData?.job} completed={processingSteps.completed} startedAt={importStartedAt} />
 					</>
 				)}
 
