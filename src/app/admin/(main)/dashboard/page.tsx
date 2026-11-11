@@ -33,6 +33,9 @@ interface PeriodSummaryData {
 	totalRevenue: number;
 }
 
+// How many delivery types the Recent Sales card lists before "View All".
+const RECENT_SALES_LIMIT = 5;
+
 // Helper function to get Sale icon based on type
 const getSaleIcon = (type: string | undefined) => {
 	const iconSize = 16; // Smaller icon size for the list
@@ -149,6 +152,7 @@ const Dashboard: React.FC = () => {
 				}
 
 				return {
+					revenueValue: data.totalRevenue || 0,
 					id: type, // Use type as a unique identifier
 					type: type, // Use the delivery type name (e.g., "Streaming", "UGC")
 					// Format the revenue amount with '$' and two decimal places
@@ -162,20 +166,22 @@ const Dashboard: React.FC = () => {
 				// Optional: Sort sales by date if needed, handling 'N/A'
 				const dateA = a.date === 'N/A' ? 0 : moment(a.date, 'DD MMM YYYY').valueOf();
 				const dateB = b.date === 'N/A' ? 0 : moment(b.date, 'DD MMM YYYY').valueOf();
-				return dateB - dateA; // Sort descending by date
+				// Newest first; within the same period, biggest earners first.
+				return dateB - dateA || b.revenueValue - a.revenueValue;
 			});
 	}, [analysis]); // Dependency array includes analysis
 
-	// Filtered recent sales based on the active tab
+	// Filtered recent sales based on the active tab. The card only shows the
+	// top few; "View All" links to the full revenue page.
 	const filteredRecentSales = useMemo(() => {
+		let sales = recentSales; // 'All' tab shows everything
 		if (activeSalesTab === 'Revenue') {
-			// Filter for items marked as revenue
-			return recentSales.filter(sale => sale.revenue);
+			sales = recentSales.filter(sale => sale.revenue);
 		} else if (activeSalesTab === 'Expenses') {
 			// Filter for items marked as expenses (currently none)
-			return recentSales.filter(sale => !sale.revenue); // Assuming !sale.revenue indicates an expense
+			sales = recentSales.filter(sale => !sale.revenue);
 		}
-		return recentSales; // 'All' tab shows everything
+		return sales.slice(0, RECENT_SALES_LIMIT);
 	}, [recentSales, activeSalesTab]);
 
 	// Mock data - Ensure data access is safe even if analysis is loading/undefined
