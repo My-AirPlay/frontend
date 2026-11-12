@@ -5,7 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 export interface GroupedSalesHistoryItem {
 	activityPeriod: string;
 	createdAt: string;
+	/** Published reports only; the figures below count these alone. */
 	reportIds: string[];
+	/** Imported but not yet published: not in any totals, but can be published or deleted. */
+	unpublishedReportIds?: string[];
+	unpublishedReportCount?: number;
 	artistNames: string[];
 	netRevenue: number;
 	grossRevenue: number;

@@ -47,7 +47,16 @@ const SalesHistory: React.FC = () => {
 							<div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">{isNavigating ? <Loader2 className="w-5 h-5 text-primary animate-spin" /> : <Calendar className="w-5 h-5 text-primary" />}</div>
 							<div>
 								<span className="font-semibold group-hover:text-primary transition-colors">{row.original.activityPeriod || '-'}</span>
-								<p className="text-xs text-muted-foreground">{isNavigating ? 'Loading...' : `${row.original.reportIds?.length || 0} reports`}</p>
+								<p className="text-xs text-muted-foreground">
+									{isNavigating ? (
+										'Loading...'
+									) : (
+										<>
+											{`${row.original.reportIds?.length || 0} reports`}
+											{!!row.original.unpublishedReportCount && <span className="text-amber-500">{` · ${row.original.unpublishedReportCount} unpublished`}</span>}
+										</>
+									)}
+								</p>
 							</div>
 						</div>
 					);
