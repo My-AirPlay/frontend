@@ -203,6 +203,11 @@ const ActivityPeriodContent: React.FC = () => {
 										Send email
 									</Button>
 								</>
+							) : !row.original.published ? (
+								// Not in any totals and can't be released until published.
+								<Badge variant="outline" className="text-amber-500 border-amber-500/50">
+									Not published
+								</Badge>
 							) : (
 								<Button variant="outline" size="sm" onClick={() => handleReleaseReport(reportId)} disabled={isReleasing || releasingId !== null}>
 									{isReleasing ? (
