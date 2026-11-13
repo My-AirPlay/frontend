@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { Musicnote } from 'iconsax-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { optionalUpcSchema, UPC_PLACEHOLDER } from '@/lib/release-codes';
 
 import { Button, ReusableDropdownMenu, Dialog, DialogContent, Sheet, SheetContent, SheetHeader, SheetTitle, Skeleton, DialogTitle, CustomAlertDialog } from '@/components/ui';
 
@@ -36,7 +37,7 @@ const mediaUpdateSchema = z.object({
 	writer: z.string().min(1, 'Writer (full legal name) is required'),
 	copyright: z.string().min(1, 'Copyright is required'),
 	explicitContent: z.string().optional(),
-	universalProductCode: z.string().min(1, 'UPC is required'),
+	universalProductCode: optionalUpcSchema,
 	releaseVersion: z.string().min(1, 'Release version is required')
 });
 
@@ -443,9 +444,9 @@ const AlbumCard = ({ album }: { album: TArtisteAlbum }) => {
 										name="universalProductCode"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Universal Product Code (UPC)</FormLabel>
+												<FormLabel>Universal Product Code (UPC, optional)</FormLabel>
 												<FormControl>
-													<Input placeholder="Enter UPC" hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
+													<Input placeholder={UPC_PLACEHOLDER} hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
 												</FormControl>
 											</FormItem>
 										)}

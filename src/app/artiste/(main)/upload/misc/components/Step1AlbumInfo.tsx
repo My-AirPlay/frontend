@@ -17,6 +17,7 @@ import { AlbumInfoFormValues, albumInfoSchema } from '../schema';
 import SelectMultipleCombo from '@/components/ui/select-multiple-combobox';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { z } from 'zod';
+import { optionalUpcSchema, UPC_PLACEHOLDER } from '@/lib/release-codes';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const mediaUpdateSchema = z.object({
 	title: z.string().min(1, 'Title is required'),
@@ -32,7 +33,7 @@ const mediaUpdateSchema = z.object({
 	producer: z.string().optional(),
 	copyright: z.string().min(1, 'Copyright is required'),
 	explicitContent: z.string().optional(),
-	universalProductCode: z.string().min(1, 'UPC is required'),
+	universalProductCode: optionalUpcSchema,
 	releaseVersion: z.string().optional(),
 	secondaryGenres: z.array(z.string()).optional()
 });
@@ -313,9 +314,9 @@ export default function Step1MusicInfo() {
 							name="universalProductCode"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Universal Product Code (UPC)</FormLabel>
+									<FormLabel>Universal Product Code (UPC, optional)</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter UPC" hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
+										<Input placeholder={UPC_PLACEHOLDER} hasError={!!errors.universalProductCode} errormessage={errors.universalProductCode?.message} {...field} />
 									</FormControl>
 								</FormItem>
 							)}
