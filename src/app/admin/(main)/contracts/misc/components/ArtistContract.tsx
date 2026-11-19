@@ -5,9 +5,9 @@ import { SingleDatePicker } from '@/components/ui';
 import { Artist } from '@/lib/types';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useUpdateArtistContract, useUploadArtistContract, useOverridePayment } from '../../../catalogue/api/postAdminUploadArtistContract';
+import { useUpdateArtistContract, useUploadArtistContract, useOverridePayment, useRevokeSubscription } from '../../../catalogue/api/postAdminUploadArtistContract';
 import { Button } from '@/components/ui/button';
-import { Save, Download, ShieldCheck } from 'lucide-react';
+import { Save, Download, ShieldCheck, ShieldOff } from 'lucide-react';
 import { LoadingBox } from '@/components/ui/LoadingBox';
 import { toast } from 'sonner';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
@@ -48,6 +48,7 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 	const [primaryFile, setPrimaryFile] = useState<FileWithPreview>({ file: null, previewUrl: null });
 	const [isDownloading, setIsDownloading] = useState(false);
 	const [isOverrideModalOpen, setIsOverrideModalOpen] = useState(false);
+	const [isRevokeModalOpen, setIsRevokeModalOpen] = useState(false);
 
 	const handleDownloadSigned = async () => {
 		setIsDownloading(true);
@@ -118,6 +119,24 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 				},
 				onError: error => {
 					toast.error((error as any)?.response?.data?.message || 'Failed to override payment');
+				}
+			}
+		);
+	};
+
+	const { mutate: mutateRevokeSubscription, isPending: isRevoking } = useRevokeSubscription();
+
+	const handleRevokeSubscription = () => {
+		mutateRevokeSubscription(
+			{ artistId: artist._id },
+			{
+				onSuccess: () => {
+					artistRefetch();
+					setIsRevokeModalOpen(false);
+					toast.success('Subscription removed');
+				},
+				onError: error => {
+					toast.error((error as any)?.response?.data?.message || 'Failed to remove subscription');
 				}
 			}
 		);
@@ -242,6 +261,12 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 					{artist.bankDetails?.paidRegistrationFee ? ' · Subscribed' : ''}
 					{(artist.bankDetails as any)?.registrationFeePaidUntil ? ` until ${new Date((artist.bankDetails as any).registrationFeePaidUntil).toLocaleDateString()}` : ''}
 				</span>
+				{artist.bankDetails?.paidRegistrationFee && (
+					<Button variant="outline" className="text-red-500 border-red-500 hover:bg-red-50" onClick={() => setIsRevokeModalOpen(true)} disabled={isRevoking}>
+						<ShieldOff size={16} className="mr-2" />
+						{isRevoking ? 'Removing...' : 'Remove Subscription'}
+					</Button>
+				)}
 				{!artist.bankDetails?.paidRegistrationFee && (
 					<Button variant="outline" className="text-amber-500 border-amber-500 hover:bg-amber-50" onClick={() => setIsOverrideModalOpen(true)} disabled={isOverriding}>
 						<ShieldCheck size={16} className="mr-2" />
@@ -279,6 +304,26 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 						</Button>
 						<Button className="bg-amber-600 hover:bg-amber-700 text-white" onClick={handleOverridePayment} disabled={isOverriding}>
 							{isOverriding ? 'Processing...' : 'Confirm Override'}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog open={isRevokeModalOpen} onOpenChange={setIsRevokeModalOpen}>
+				<DialogContent className="sm:max-w-[425px]">
+					<DialogHeader>
+						<DialogTitle>Remove Subscription</DialogTitle>
+						<DialogDescription>
+							This takes <strong>{artist.artistName || artist.firstName}</strong> off the yearly subscription and back to {FREE_RELEASE_LIMIT} free releases. They have used {(artist as any).releasesUsed ?? 0}
+							{((artist as any).releasesUsed ?? 0) >= FREE_RELEASE_LIMIT ? ", so they won't be able to upload new releases until they subscribe again" : ''}. Their contract and releases already in stores are not affected.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setIsRevokeModalOpen(false)}>
+							Cancel
+						</Button>
+						<Button className="bg-red-600 hover:bg-red-700 text-white" onClick={handleRevokeSubscription} disabled={isRevoking}>
+							{isRevoking ? 'Removing...' : 'Remove Subscription'}
 						</Button>
 					</DialogFooter>
 				</DialogContent>
