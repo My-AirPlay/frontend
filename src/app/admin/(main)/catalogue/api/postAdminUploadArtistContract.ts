@@ -85,3 +85,14 @@ export const useOverridePayment = () => {
 		mutationFn: overridePayment
 	});
 };
+
+export const revokeSubscription = async ({ artistId }: { artistId: string }) => {
+	const response = await APIAxios.post(`/admin/artist/${artistId}/revoke-subscription`);
+	return response.data;
+};
+
+export const useRevokeSubscription = () => {
+	return useMutation({
+		mutationFn: revokeSubscription
+	});
+};
