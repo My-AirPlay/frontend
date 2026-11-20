@@ -257,9 +257,17 @@ const ArtistContract: React.FC<ArtistContractProps> = ({ artist, artistRefetch }
 
 			<div className="flex justify-end items-center mt-8 gap-4">
 				<span className="text-sm text-muted-foreground mr-auto">
-					Releases used: {(artist as any).releasesUsed ?? 0} / {FREE_RELEASE_LIMIT} free
-					{artist.bankDetails?.paidRegistrationFee ? ' · Subscribed' : ''}
-					{(artist.bankDetails as any)?.registrationFeePaidUntil ? ` until ${new Date((artist.bankDetails as any).registrationFeePaidUntil).toLocaleDateString()}` : ''}
+					{artist.bankDetails?.paidRegistrationFee ? (
+						<>
+							Subscribed, unlimited releases
+							{(artist.bankDetails as any)?.registrationFeePaidUntil ? ` until ${new Date((artist.bankDetails as any).registrationFeePaidUntil).toLocaleDateString()}` : ''}
+							{` · ${(artist as any).releasesUsed ?? 0} released`}
+						</>
+					) : (
+						<>
+							Not subscribed · Releases used: {(artist as any).releasesUsed ?? 0} / {FREE_RELEASE_LIMIT} free
+						</>
+					)}
 				</span>
 				{artist.bankDetails?.paidRegistrationFee && (
 					<Button variant="outline" className="text-red-500 border-red-500 hover:bg-red-50" onClick={() => setIsRevokeModalOpen(true)} disabled={isRevoking}>
